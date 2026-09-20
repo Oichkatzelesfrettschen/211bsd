@@ -14,18 +14,21 @@
 # WITHOUT LIMITATION, THE IMPLIED WARRANTIES OF MERCHANTIBILITY AND
 # FITNESS FOR A PARTICULAR PURPOSE.
 #
-# @(#)Makefile	5.3.2 (2.11BSD) 1996/12/1
+# @(#)Makefile	5.3.3 (2.11BSD) 2025/11/26
 #
 
-CFLAGS=	-O -i
+CFLAGS=	-O
 SRCS=	login.c
-OBJS=	login.o
+OBJS=	login.o gettytab.o subr.o init.o
 MAN=
+VPATH=	../../libexec/getty
 
 all: login
 
 login: ${OBJS}
-	${CC} -o $@ ${CFLAGS} ${OBJS} -lutil
+	${CC} -i -o $@ ${CFLAGS} ${OBJS} -lutil
+
+${OBJS}: ../../libexec/getty/gettytab.h
 
 clean:
 	rm -f ${OBJS} core login
@@ -37,7 +40,7 @@ depend: ${SRCS}
 	mkdep ${CFLAGS} ${SRCS}
 
 install: login
-	install -s -o root -g bin -m 4755 login ${DESTDIR}/bin/login
+	install -c -s -o root -g staff -m 4755 login /bin/login
 
 lint: ${SRCS}
 	lint ${CFLAGS} ${SRCS}

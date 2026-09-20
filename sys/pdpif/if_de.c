@@ -1,8 +1,17 @@
 /*
- * SCCSID: @(#)if_de.c	1.1	(2.11BSD GTE)	12/31/93
- *	2.11BSD - Remove dereset since 1) it was never called, and 2)
- *		  wouldn't work if it were called. Also uballoc and
- *		  ubmalloc calling convention changed. - sms
+ * SCCSID: @(#)if_de.c	2.0	(2.11BSD) 2025/8/31
+ *
+ * 2.11BSD - Remove dereset since 1) it was never called, and 2)
+ *	     wouldn't work if it were called. Also uballoc and
+ *           ubmalloc calling convention changed. - sms
+ *
+ * 1.2	12-Mar-2025
+ *	Add printout of type of controller and MAC address for
+ *	Unibus ethernet similarly to what Qbus drivers were doing.
+ *
+ * 2.0  31-Aug-2025
+ *      Remove trailer support.  If a packet with trailer info is received
+ *      increment the input error count and return.
  */
 #include "de.h"
 #if NDE > 0
@@ -182,11 +191,6 @@ struct	uba_device *ui;
 	csr1 = addr->pcsr1;
 	ds->ds_devid = (csr1 & PCSR1_DEVID) >> 4;
 
-#ifdef DE_DEBUG
-	if (dedebug >= 1)
-		printf("de%d: Device Type: %s\n", ui->ui_unit,
-			(ds->ds_devid == DEUNA) ? "DEUNA" : "DELUA");
-#endif		/* DE_DEBUG */
 	/*
 	 * Board Status Check
 	 */
@@ -236,17 +240,15 @@ struct	uba_device *ui;
 
 	bcopy((caddr_t)&ds->ds_pcbb.pcbb2,(caddr_t)ds->ds_addr,
 	    sizeof (ds->ds_addr));
-#ifdef	DE_DEBUG
-	if (dedebug >= 1)
-		printf("de%d: hardware address %s\n",
-			ui->ui_unit, ether_sprintf(ds->ds_addr));
-#endif		/* DE_DEBUG */
 	ifp->if_init = deinit;
 	ifp->if_output = deoutput;
 	ifp->if_ioctl = deioctl;
 	ifp->if_reset = 0;
 	ds->ds_deuba.difu_flags = UBA_CANTWAIT;
 
+	printf("de%d: DE%sA addr %s\n", ui->ui_unit,
+		ds->ds_devid == DEUNA ? "UN" : "LU",
+		ether_sprintf(ds->ds_addr));
 	if_attach(ifp);
 }
 
@@ -623,67 +625,31 @@ deread(ds, ifrw, len)
 	struct ether_header *eh;
     	struct mbuf *m;
 	struct protosw *pr;
-	int off, resid, s;
+	int s;
 	struct ifqueue *inq;
 	segm	sav5;
 	int	type;
 
-	/*
-	 * Deal with trailer protocol: if type is trailer
-	 * get true type from first 16-bit word past data.
-	 * Remember that type was trailer by setting off.
-	 */
 	saveseg5(sav5);
 	mapseg5(ifrw->ifrw_click, MAPBUFDESC);
 	eh = (struct ether_header *) SEG5;
-
 	type = eh->ether_type = ntohs((u_short)eh->ether_type);
-
-#define	dedataaddr(eh, off, type)	((type)(((caddr_t)((eh)+1)+(off))))
-	if (type >= ETHERTYPE_TRAIL &&
-		type < ETHERTYPE_TRAIL+ETHERTYPE_NTRAILER) {
-		off = (type - ETHERTYPE_TRAIL) * 512;
-		if (off >= ETHERMTU) {
-			restorseg5(sav5);
-			return;		/* sanity */
-		}
-		type = ntohs(*dedataaddr(eh, off, u_short *));
-		resid = ntohs(*(dedataaddr(eh, off+2, u_short *)));
-
-		if (off + resid > len) {
-			restorseg5(sav5);
-			return;		/* sanity */
-		}
-		len = off + resid;
-	} else
-		off = 0;
-
-	if (len == 0) {
-		restorseg5(sav5);
-		return;
-	}
-
 	restorseg5(sav5);
 
+        if (len == 0 || type >= ETHERTYPE_TRAIL &&
+            type < ETHERTYPE_TRAIL+ETHERTYPE_NTRAILER) {
+                ds->ds_if.if_ierrors++;
+                return;
+        }
+
 	/*
-	 * Pull packet off interface.  Off is nonzero if packet
-	 * has trailing header; deget will then force this header
-	 * information to be at the front, but we still have to drop
-	 * the type and length which are at the front of any trailer data.
+	 * Pull packet off interface.
 	 */
 
-	m = deget(&ds->ds_deuba, ifrw, len, off, &ds->ds_if);
+	m = deget(&ds->ds_deuba, ifrw, len, 0, &ds->ds_if);
 
 	if (m == 0)
 		return;
-	if (off) {
-		struct ifnet *ifp;
-
-		ifp = *(mtod(m, struct ifnet **));
-		m->m_off += 2 * sizeof (u_short);
-		m->m_len -= 2 * sizeof (u_short);
-		*(mtod(m, struct ifnet **)) = ifp;
-	}
 
 	switch (type) {
 

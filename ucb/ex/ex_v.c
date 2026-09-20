@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char *sccsid = "@(#)ex_v.c	7.8.1 (2.11BSD GTE) 12/9/94";
+static char *sccsid = "@(#)ex_v.c	7.8.2 (2.11BSD) 2025/3/14";
 #endif
 
 #include "ex.h"
@@ -60,15 +60,10 @@ int	winch();
 /*
  * Enter open mode
  */
-#ifdef u370
-char	atube[TUBESIZE+LBSIZE];
-#endif
+static char	atube[TUBESIZE+LBSIZE];
 oop()
 {
 	register char *ic;
-#ifndef u370
-	char atube[TUBESIZE + LBSIZE];
-#endif
 	ttymode f;	/* mjm: was register */
 	int resize;
 
@@ -177,11 +172,9 @@ ovend(f)
 vop()
 {
 	register int c;
-#ifndef u370
-	char atube[TUBESIZE + LBSIZE];
-#endif
 	ttymode f;	/* mjm: was register */
 	int resize;
+	long oldmask;
 
 	if (!CA && UP == NOSTR) {
 		if (initev) {
@@ -231,8 +224,10 @@ toopen:
 	vmoving = 0;
 	f = ostart();
 	if (initev == 0) {
+		oldmask = sigblock(sigmask(SIGWINCH));
 		vcontext(dot, c);
 		vnline(NOSTR);
+		(void)sigsetmask(oldmask);
 	}
 	vmain();
 	Command = "visual";

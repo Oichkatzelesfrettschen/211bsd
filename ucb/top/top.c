@@ -24,6 +24,9 @@
  *               Changed header layout.
  *               Added %cpu time to header.
  * 07 26/8/2022  Truncate hostname by first period or 7 char.     bqt
+ * 08 20/9/2024  Change /vmunix to /unix                          sms
+ * 09 28/3/2025  Exit gracefully when out of memory               martin
+ * 10 06/5/2025  Handle long user names gracefully                hbe
  */
 /*
  * Using RAW removes the need for signal processing, but adds a requirement
@@ -163,6 +166,16 @@ int	onoff;
 		noecho();
 	}
 	return(0);
+}
+
+/*
+ * Exit gracefully when out of memory
+ */
+LOCAL int oom_reset_exit(int status)
+{
+	resetty();
+	printf("This error may occur if the window size is too large.\n");
+	exit(status);
 }
 
 /*
@@ -380,6 +393,10 @@ short	uid;
 		return(-1);
 	untab[idx].uid = uid;
 	strcpy(untab[idx].uname, pw->pw_name);
+	if(strlen(untab[idx].uname) > 8) {
+		untab[idx].uname[7] = '+';
+		untab[idx].uname[8] = 0;
+	}
 	return(1);
 }
 
@@ -700,7 +717,7 @@ unsigned long *freeswap;
 		{
 			perror("SWAPMAP");
 			printf("\r\n");
-			exit(1);
+			oom_reset_exit(1);
 		}
 		memset(swapmap, 0, smsz);
 	}
@@ -873,10 +890,10 @@ int	max;
 		{
 			printw("%5d ",	p->p_pid);
 			if(a->o_uname != NULL)
-				printw("%-7s", a->o_uname);
+				printw("%-8s", a->o_uname);
 			else
-				printw("%7d", p->p_uid);
-			printw("%5d",	p->p_pri);
+				printw("%8d", p->p_uid);
+			printw("%4d",	p->p_pri);
 			printw("%4d",	p->p_nice);
 			printw("%5.1fK", (ctob(a->o_tsize))/1024.0);
 			printw("%5.1fK", (ctob(p->p_dsize))/1024.0);
@@ -1033,10 +1050,10 @@ do_top()
 	int			nread;
 	int			npr;
 
-	nlist("/vmunix", nl);
+	nlist("/unix", nl);
 	if(nl[0].n_type == 0)
 	{
-		fprintf(stderr, "no /vmunix namelist\n");
+		fprintf(stderr, "no /unix namelist\n");
 		return(1);
 	}
 
@@ -1097,7 +1114,7 @@ do_top()
 	if((proctab = (struct proc *)malloc(ptsz))==NULL)
 	{
 		fprintf(stderr, "top: not enough memory for proc table\r\n");
-		exit(1);
+		oom_reset_exit(1);
 	}
 	/*
 	 * allocate an array to user struct information
@@ -1105,7 +1122,7 @@ do_top()
 	if((userdata=(struct udata_s *)calloc(nproc, sizeof(struct udata_s)))==NULL)
 	{
 		fprintf(stderr, "top: can't allocate %d bytes for saving info\r\n", nproc*sizeof(struct udata_s));
-		exit(1);
+		oom_reset_exit(1);
 	}
 	/*
 	 * allocate an indirection table for efficient sorting
@@ -1113,7 +1130,7 @@ do_top()
 	if( (procidx = (int *) malloc(nproc*sizeof(short))) == NULL)
 	{
 		fprintf(stderr, "top: cant allocate index table\r\n");
-		return(1);
+		oom_reset_exit(1);
 	}
 	if((npr = update()) < 0)
 		return(1);

@@ -20,7 +20,7 @@ char copyright[] =
 "@(#) Copyright (c) 1985, 1989 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)main.c	based on 5.13.1 (2.11BSD) 1997/10/2";
+static char sccsid[] = "@(#)main.c	based on 5.15 (2.11BSD) 2026/1/5";
 #endif
 
 /*
@@ -113,6 +113,7 @@ main(argc, argv)
 	cpend = 0;           /* no pending replies */
 	proxy = 0;	/* proxy not active */
 	crflag = 1;    /* strip c.r. on ascii gets */
+	passive = 1;	/* default to passive mode */
 	/*
 	 * Set up the home directory in case we're globbing.
 	 */
@@ -206,6 +207,7 @@ cmdscanner(top)
 {
 	register struct cmd *c;
 	struct cmd *getcmd();
+	char *cp;
 	extern int help();
 
 	if (!top)
@@ -215,11 +217,14 @@ cmdscanner(top)
 			printf("ftp> ");
 			(void) fflush(stdout);
 		}
-		if (gets(line) == 0) {
+		if (fgets(line, sizeof line, stdin) == 0) {
 			if (feof(stdin) || ferror(stdin))
 				quit();
 			break;
 		}
+		cp = index(line, '\n');
+		if (cp) *cp = '\0';
+
 		if (line[0] == 0)
 			break;
 		makeargv();

@@ -1,4 +1,4 @@
-# sccsid = "@(#)Makefile	1.5 (2.11BSD GTE) 1996/11/16"
+# sccsid = "@(#)Makefile	1.7 (2.11BSD) 2025/11/25"
 #
 #	dump.h			header file
 #	dumpitime.c		reads /etc/ddate
@@ -14,7 +14,7 @@
 #	TDEBUG			trace out the process forking
 
 CFLAGS=	-O -I.
-SEPFLAG=-i
+LDFLAGS=-i
 
 HDRS=	dump.h
 SRCS=	dumpitime.c dumpmain.c dumpoptr.c dumptape.c dumptraverse.c unctime.c \
@@ -26,18 +26,18 @@ ROBJS=	dumpitime.o dumprmain.o dumpoptr.o dumprtape.o dumptraverse.o \
 all: dump rdump dumpdir
 
 dump: ${OBJS}
-	cc ${CFLAGS} ${SEPFLAG} ${OBJS} -o dump
+	cc ${CFLAGS} ${LDFLAGS} ${OBJS} -o dump
 
 rdump: ${ROBJS}
-	cc ${CFLAGS} ${SEPFLAG} ${ROBJS} -o rdump
+	cc ${CFLAGS} ${LDFLAGS} ${ROBJS} -o rdump
 
-dumpdir: dumpdir.c
-	cc ${CFLAGS} ${SEPFLAG} dumpdir.c -o dumpdir
+dumpdir: dumpdir.o
+	cc ${CFLAGS} ${LDFLAGS} dumpdir.o -o dumpdir
 
 install: all
-	install -s dump ${DESTDIR}/sbin/dump
-	install -s rdump ${DESTDIR}/sbin/rdump
-	install -s dumpdir ${DESTDIR}/sbin/dumpdir
+	install -c -s -m 755 dump /sbin/dump
+	install -c -s -m 755 rdump /sbin/rdump
+	install -c -s -m 755 dumpdir /sbin/dumpdir
 
 clean:
 	rm -f *.o dump rdump dumpdir

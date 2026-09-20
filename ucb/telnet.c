@@ -5,7 +5,7 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)telnet.c	5.17 (2.11BSD) 2020/1/7";
+static char sccsid[] = "@(#)telnet.c	5.19 (2.11BSD) 2026/1/5";
 #endif
 
 /*
@@ -81,6 +81,9 @@ char	doopt[] = { IAC, DO, '%', 'c', 0 };
 char	dont[] = { IAC, DONT, '%', 'c', 0 };
 char	will[] = { IAC, WILL, '%', 'c', 0 };
 char	wont[] = { IAC, WONT, '%', 'c', 0 };
+char	naws[] = {
+    IAC, SB, TELOPT_NAWS, '%', 'c', '%', 'c', '%', 'c', '%', 'c', IAC, SE, 0
+};
 
 struct cmd {
 	char	*name;		/* command name */
@@ -506,6 +509,20 @@ doescape()
 {
     command(0);
 }
+
+void sendnaws()
+{
+	if (!myopts[TELOPT_NAWS]) return;
+
+	if (connected && (9 < NETROOM())) {
+		struct winsize ws;
+		if (ioctl(0, TIOCGWINSZ, &ws) < 0) return;
+		sprintf(nfrontp, naws, ws.ws_col >> 8 , ws.ws_col,
+			ws.ws_row >> 8, ws.ws_row);
+		nfrontp += 9;
+		printoption(">SENT", naws, TELOPT_NAWS, 1);
+	}
+}
 
 /*
  * The following are routines used to print out debugging information.
@@ -561,6 +578,8 @@ printoption(direction, fmt, option, what)
 		fmt = "will";
 	else if (fmt == wont)
 		fmt = "wont";
+	else if (fmt == naws)
+		fmt = "notify";
 	else
 		fmt = "???";
 	if (option < (sizeof telopts/sizeof telopts[0]))
@@ -753,7 +772,10 @@ telnet()
 		willoption(TELOPT_SGA, 0);
 	    }
 	    if (!myopts[TELOPT_TTYPE]) {
-		dooption(TELOPT_TTYPE, 0);
+		dooption(TELOPT_TTYPE);
+	    }
+	    if (!myopts[TELOPT_NAWS]) {
+		dooption(TELOPT_NAWS);
 	    }
 	}
 	for (;;) {
@@ -1142,6 +1164,9 @@ telrcv()
 			printoption(">RCVD", doopt, c, !myopts[c]);
 			if (!myopts[c])
 				dooption(c);
+
+			if (c == TELOPT_NAWS) sendnaws();
+
 			state = TS_DATA;
 			continue;
 
@@ -1251,6 +1276,7 @@ dooption(option)
 		fmt = will;
 		break;
 
+	case TELOPT_NAWS:		/* negotiate about window size */
 	case TELOPT_TTYPE:		/* terminal type option */
 	case TELOPT_SGA:		/* no big deal */
 		fmt = will;
@@ -1910,7 +1936,7 @@ setescape(argc, argv)
 	char *argv[];
 {
 	register char *arg;
-	char buf[50];
+	char buf[4];
 
 	printf(
 	    "Deprecated usage - please use 'set escape%s%s' in the future.\n",
@@ -1919,7 +1945,8 @@ setescape(argc, argv)
 		arg = argv[1];
 	else {
 		printf("new escape character: ");
-		gets(buf);
+		fgets(buf, sizeof (buf), stdin);
+		if (arg = index(buf, '\n')) *arg = '\0';
 		arg = buf;
 	}
 	if (arg[0] != '\0')
@@ -2007,6 +2034,7 @@ tn(argc, argv)
 	char *argv[];
 {
 	register struct hostent *host = 0;
+	char *cp;
 
 	if (connected) {
 		printf("?Already connected to %s\n", hostname);
@@ -2015,7 +2043,9 @@ tn(argc, argv)
 	if (argc < 2) {
 		(void) strcpy(line, "Connect ");
 		printf("(to) ");
-		gets(&line[strlen(line)]);
+		fgets(&line[strlen(line)], sizeof(line) - strlen(line), stdin);
+		cp = index(line, '\n');
+		if (cp) *cp = '\0';
 		makeargv();
 		argc = margc;
 		argv = margv;
@@ -2111,6 +2141,7 @@ tn(argc, argv)
 		connected++;
 	} while (connected == 0);
 	call(status, "status", "notmuch", 0);
+	signal(SIGWINCH, sendnaws);
 	if (setjmp(peerdied) == 0)
 		telnet();
 	fprintf(stderr, "Connection closed by foreign host.\n");
@@ -2256,6 +2287,7 @@ command(top)
 	int top;
 {
 	register struct cmd *c;
+	char *cp;
 
 	setcommandmode();
 	if (!top) {
@@ -2266,11 +2298,14 @@ command(top)
 	}
 	for (;;) {
 		printf("%s> ", prompt);
-		if (gets(line) == 0) {
+		if (fgets(line, sizeof (line), stdin) == 0) {
 			if (feof(stdin))
 				quit();
 			break;
 		}
+		cp = index(line, '\n');
+		if (cp) *cp = '\0';
+
 		if (line[0] == 0)
 			break;
 		makeargv();

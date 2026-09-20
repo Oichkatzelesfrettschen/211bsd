@@ -1,5 +1,5 @@
 /*
- * savecore, 1.1 (2.11BSD) 1995/07/15
+ * savecore.c 1.3 (2.11BSD) 2025/9/6
  */
 
 #include	<sys/param.h>
@@ -324,6 +324,13 @@ save_core()
 			perror("Read");
 			break;
 		}
+/*
+ * n = 0 means end-of-file was encountered.  this happens when the swap
+ * partition is smaller than physical memory.  The core image will be 
+ * incomplete but usable (since kernel tables are in low memory)
+*/
+		if (n == 0)
+		   break;
 		Write(ofd, cp, n);
 		physmem -= n/CLICK;
 	}

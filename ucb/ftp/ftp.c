@@ -16,7 +16,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)ftp.c	5.28.2 (2.11BSD) 2002/8/18";
+static char sccsid[] = "@(#)ftp.c	5.30 (2.11BSD) 2025/12/26";
 #endif
 
 #include <sys/param.h>
@@ -38,43 +38,9 @@ static char sccsid[] = "@(#)ftp.c	5.28.2 (2.11BSD) 2002/8/18";
 #include <fcntl.h>
 #include <pwd.h>
 #include <unistd.h>
-#include <varargs.h>
+#include <string.h>
 
 #include "ftp_var.h"
-
-#ifndef MAXHOSTNAMELEN
-#define MAXHOSTNAMELEN 64
-#endif
-
-#ifdef sun
-/* FD_SET wasn't defined until 4.0. its a cheap test for uid_t  presence */
-#ifndef FD_SET
-#define	NBBY	8		/* number of bits in a byte */
-/*
- * Select uses bit masks of file descriptors in longs.
- * These macros manipulate such bit fields (the filesystem macros use chars).
- * FD_SETSIZE may be defined by the user, but the default here
- * should be >= NOFILE (param.h).
- */
-#ifndef	FD_SETSIZE
-#define	FD_SETSIZE	256
-#endif
-
-typedef long	fd_mask;
-#define NFDBITS	(sizeof(fd_mask) * NBBY)	/* bits per mask */
-#ifndef howmany
-#define	howmany(x, y)	(((x)+((y)-1))/(y))
-#endif
-
-#define	FD_SET(n, p)	((p)->fds_bits[(n)/NFDBITS] |= (1 << ((n) % NFDBITS)))
-#define	FD_CLR(n, p)	((p)->fds_bits[(n)/NFDBITS] &= ~(1 << ((n) % NFDBITS)))
-#define	FD_ISSET(n, p)	((p)->fds_bits[(n)/NFDBITS] & (1 << ((n) % NFDBITS)))
-#define FD_ZERO(p)	bzero((char *)(p), sizeof(*(p)))
-
-typedef int uid_t;
-typedef int gid_t;
-#endif
-#endif
 
 struct	sockaddr_in hisctladdr;
 struct	sockaddr_in data_addr;
@@ -269,30 +235,17 @@ cmdabort()
 }
 
 /*VARARGS1*/
-#ifdef pyr
-command(fmt, va_alist)
-	char *fmt;
-va_dcl
-#else
-command(fmt, args)
-	char *fmt;
-#endif /* !pyr */
+command(char *fmt, ...)
 {
-#ifdef pyr
 	va_list ap;
-#endif /* pyr */
 	int r, (*oldintr)(), cmdabort();
 
 	abrtflag = 0;
 	if (debug) {
 		printf("---> ");
-#ifdef pyr
-		va_start(ap);
-		_doprnt(fmt, ap, stdout);
+		va_start(ap, fmt);
+		vfprintf(stdout, fmt, ap);
 		va_end(ap);
-#else
-		_doprnt(fmt, &args, stdout);
-#endif /* !pyr */
 		printf("\n");
 		(void) fflush(stdout);
 	}
@@ -302,13 +255,9 @@ command(fmt, args)
 		return (0);
 	}
 	oldintr = signal(SIGINT,cmdabort);
-#ifdef pyr
-	va_start(ap);
-	_doprnt(fmt, ap, cout);
+	va_start(ap, fmt);
+	vfprintf(cout, fmt, ap);
 	va_end(ap);
-#else
-	_doprnt(fmt, &args, cout);
-#endif /* !pyr */
 	fprintf(cout, "\r\n");
 	(void) fflush(cout);
 	cpend = 1;
@@ -1092,6 +1041,10 @@ abort:
  * Need to start a listen on the data channel
  * before we send the command, otherwise the
  * server's connect may fail.
+ *
+ * Alternatively, if we're in passive mode, we need to request
+ * the remote side to give us a port to connect to, and get it
+ * set up.
  */
 int sendport = -1;
 
@@ -1131,6 +1084,46 @@ noport:
 		perror("ftp: getsockname");
 		goto bad;
 	}
+	if (passive) {
+		char *p;
+		unsigned int port;
+		union {
+			unsigned long ad;
+			char adb[4];
+		} a;
+		int a1,a2,a3,a4,p1,p2;
+		struct sockaddr_in in;
+
+		result = command("PASV");
+		if (code != 227) {
+			printf("Unexpected response.\n");
+			goto bad;
+		}
+		p = strchr(reply_string, '(');
+		if (p == NULL) {
+			printf("Badly formatted response.\n");
+			goto bad;
+		}
+		++p;
+		if (sscanf(p, "%d,%d,%d,%d,%d,%d",
+			      &a1, &a2, &a3, &a4, &p1, &p2) != 6) {
+			printf("Bad response to passive command.\n");
+			goto bad;
+		}
+		a.adb[0] = a1;
+		a.adb[1] = a2;
+		a.adb[2] = a3;
+		a.adb[3] = a4;
+		port = p1*256+p2;
+		in.sin_family = AF_INET;
+		in.sin_addr.s_addr = a.ad;
+		in.sin_port = htons(port);
+		if (connect(data, &in, sizeof(in)) < 0) {
+			perror("Failed to connect.\n");
+			goto bad;
+		}
+		return 0;
+	}
 	if (listen(data, 1) < 0)
 		perror("ftp: listen");
 	if (sendport) {
@@ -1165,14 +1158,16 @@ dataconn(mode)
 	struct sockaddr_in from;
 	int s, fromlen = sizeof (from);
 
-	s = accept(data, (struct sockaddr *) &from, &fromlen);
-	if (s < 0) {
-		perror("ftp: accept");
-		(void) close(data), data = -1;
-		return (NULL);
+	if (!passive) {
+		s = accept(data, (struct sockaddr *) &from, &fromlen);
+		if (s < 0) {
+			perror("ftp: accept");
+			(void) close(data), data = -1;
+			return (NULL);
+		}
+		(void) close(data);
+		data = s;
 	}
-	(void) close(data);
-	data = s;
 	return (fdopen(data, mode));
 }
 

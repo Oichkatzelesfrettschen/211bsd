@@ -16,8 +16,8 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)rcmd.c	5.20.1 (2.11BSD) 1999/10/24";
-#endif /* LIBC_SCCS and not lint */
+static char sccsid[] = "@(#)rcmd.c	5.22 (2.11BSD) 2025/3/26";
+#endif
 
 #include <stdio.h>
 #include <ctype.h>
@@ -42,7 +42,7 @@ rcmd(ahost, rport, locuser, remuser, cmd, fd2p)
 {
 	int s, timo = 1, pid;
 	sigset_t oldmask, nmask;
-	struct sockaddr_in sin, sin2, from;
+	struct sockaddr_in sin, from;
 	char c;
 	int lport = IPPORT_RESERVED - 1;
 	struct hostent *hp;
@@ -73,7 +73,7 @@ rcmd(ahost, rport, locuser, remuser, cmd, fd2p)
 		sin.sin_family = hp->h_addrtype;
 		bcopy(hp->h_addr_list[0], (caddr_t)&sin.sin_addr, hp->h_length);
 		sin.sin_port = rport;
-		if (connect(s, (caddr_t)&sin, sizeof (sin), 0) >= 0)
+		if (connect(s, (caddr_t)&sin, sizeof (sin)) >= 0)
 			break;
 		(void) close(s);
 		if (errno == EADDRINUSE) {
@@ -135,7 +135,7 @@ rcmd(ahost, rport, locuser, remuser, cmd, fd2p)
 			(void) close(s2);
 			goto bad;
 		}
-		s3 = accept(s2, &from, &len, 0);
+		s3 = accept(s2, &from, &len);
 		(void) close(s2);
 		if (s3 < 0) {
 			perror("accept");

@@ -1,10 +1,10 @@
 #
 # Public Domain.  1996/11/16 - Steven Schultz
 #
-#	@(#)Makefile	1.0 (2.11BSD) 1996/11/16
+#	@(#)Makefile	1.1 (2.11BSD) 2025/11/28
 #
 CFLAGS=	 -O
-SEPFLAG= -i
+LDFLAGS= -i
 SRCS=	syslogd.c
 OBJS=	syslogd.o
 MAN=	syslogd.0
@@ -13,7 +13,7 @@ MANSRC=	syslogd.8
 all: syslogd syslogd.0
 
 syslogd: ${OBJS}
-	${CC} ${CFLAGS} ${SEPFLAG} -o $@ ${OBJS}
+	${CC} ${LDFLAGS} -o $@ ${OBJS}
 
 syslogd.0: ${MANSRC}
 	/usr/man/manroff ${MANSRC} > ${MAN}
@@ -24,9 +24,9 @@ clean:
 depend: ${SRCS}
 	mkdep ${CFLAGS} ${SRCS}
 
-install: syslogd
-	install -c -o bin -g bin -m 444 ${MAN} ${DESTDIR}/usr/man/cat8
-	install -s -o root -g bin -m 755 syslogd ${DESTDIR}/usr/sbin/syslogd
+install: syslogd syslogd.0
+	install -c -o root -g staff -m 444 ${MAN} /usr/man/cat8
+	install -c -s -o root -g staff -m 755 syslogd /usr/sbin/syslogd
 
 lint: ${SRCS}
 	lint -hax ${SRCS}

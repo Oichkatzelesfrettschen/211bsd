@@ -1,5 +1,5 @@
 #if !defined(lint) && defined(DOSCCS)
-static	char sccsid[] = "@(#)cc.c 5.0 (2.11BSD) 2020/1/7";
+static	char sccsid[] = "@(#)cc.c 5.1 (2.11BSD) 2025/8/16";
 #endif
 
 /*
@@ -10,6 +10,7 @@ static	char sccsid[] = "@(#)cc.c 5.0 (2.11BSD) 2020/1/7";
 #include <ctype.h>
 #include <signal.h>
 #include <sys/dir.h>
+#include <time.h>
 
 char	*cpp = "/lib/cpp";
 char	*ccom = "/lib/c0";
@@ -38,7 +39,8 @@ int	nc, nl, np, nxo, na;
 main(argc, argv)
 	char **argv;
 {
-	char *t;
+	time_t tid;
+	char *t, *ctbuf;
 	char *assource;
 	int i, j, c;
 
@@ -46,7 +48,7 @@ main(argc, argv)
 	av = (char **)calloc(argc+10, sizeof (char **));
 	clist = (char **)calloc(argc, sizeof (char **));
 	llist = (char **)calloc(argc, sizeof (char **));
-	plist = (char **)calloc(argc, sizeof (char **));
+	plist = (char **)calloc(argc+2, sizeof (char **));
 	for (i = 1; i < argc; i++) {
 		if (*argv[i] == '-') switch (argv[i][1]) {
 
@@ -175,6 +177,7 @@ main(argc, argv)
 		tmp4 = strspl(tmp0, "4");
 	if (oflag)
 		tmp5 = strspl(tmp0, "5");
+
 	for (i=0; i<nc; i++) {
 		if (nc > 1 && !Mflag) {
 			printf("%s:\n", clist[i]);

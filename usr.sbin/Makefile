@@ -1,31 +1,24 @@
 #
 # Public domain - 1996/10/24 - sms
 #
-#	@(#)Makefile	1.3 (2.11BSD) 2021/8/30
-#
-DESTDIR=
-CFLAGS=	-O
-SEPFLAG= -i
+#	@(#)Makefile	1.5 (2.11BSD) 2025/11/25
 
-SUBDIR=	ac accton arff arp bad144 catman chown chroot config cron dev_mkdb \
-	diskpart edquota flcopy gettable htable implog implogd inetd kgmon \
+SUBDIR=	ac accton arp bad144 catman chown chroot cron dev_mkdb \
+	edquota inetd \
 	lpr makewhatis mkhosts mklost+found mkproto named nc ntp pstat quot \
 	quotaon repquota rmt rwhod rxformat sa sendmail sysgen syslogd timed \
-	traceroute trpt update vipw
-
-# This is broken and doesn't compile - thus it is not included in SUBDIR above.
-BROKEN=	trsp
+	traceroute trpt trsp update vipw
 
 all:	${SUBDIR}
 
 ${SUBDIR}: FRC
-	cd $@; make ${MFLAGS} SEPFLAG=${SEPFLAG} all
+	cd $@; make ${MFLAGS} all
 
 FRC:
 
 install: FRC
 	-for i in ${SUBDIR}; do \
-		(cd $$i; make ${MFLAGS} DESTDIR=${DESTDIR} install); done
+		(cd $$i; make ${MFLAGS} install); done
 
 clean:
 	for i in ${SUBDIR}; do (cd $$i; make ${MFLAGS} clean); done

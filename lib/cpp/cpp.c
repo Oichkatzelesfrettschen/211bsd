@@ -1,7 +1,5 @@
-/*	$Id: cpp.c,v 1.311 2019/12/14 15:12:52 ragge Exp $	*/
-
 #if	!defined(lint) && defined(DOSCCS)
-static	char	sccsid[] = "@(#)cpp.c	1.0 (2.11BSD) 2020/1/7";
+static	char	sccsid[] = "@(#)cpp.c	1.2 (2.11BSD) 2025/8/29";
 #endif
 
 /*
@@ -90,6 +88,7 @@ char *Mfile, *MPfile;
 char *Mxfile;
 int warnings, Mxlen, skpows;
 static usch utbuf[CPPBUF];
+static char timebuf[12], datebuf[14];
 struct iobuf pb /* = { utbuf, 0, CPPBUF, 0, 1, BUTBUF } */ ;
 static void macstr(const usch *s);
 #if LIBVMF
@@ -117,6 +116,8 @@ struct incs {
 	ino_t ino;
 } *incdir[2];
 
+static struct symtab *timloc;
+static struct symtab *datloc;
 static struct symtab *filloc;
 static struct symtab *linloc;
 static struct symtab *pragloc;
@@ -307,6 +308,13 @@ main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
+	if (tflag == 0) {
+		datloc = lookup((const usch *)"__DATE__", ENTER);
+		timloc = lookup((const usch *)"__TIME__", ENTER);
+		timloc->type = TIMLOC;
+		datloc->type = DATLOC;
+		datloc->valoff = timloc->valoff = 1;
+	}
 	filloc = lookup((const usch *)"__FILE__", ENTER);
 	linloc = lookup((const usch *)"__LINE__", ENTER);
 	pragloc = lookup((const usch *)"_Pragma", ENTER);
@@ -336,9 +344,13 @@ main(int argc, char **argv)
 	bsheap(fb, "#define pdp11 1\n");
 	bsheap(fb, "#define unix 1\n"); /* XXX go away */
 	addidir("/usr/include", &incdir[SYSINC]);
-	if (tflag == 0)
-		bsheap(fb, "#define __STDC__ 1\n");
 #endif
+
+	if	(tflag == 0)
+		{
+		bsheap(fb, "#define __STDC__ 1\n");
+		bsheap(fb, "#define __STDC_VERSION__ 199901L\n");
+		}
 
 	macsav(0);
 	filloc->valoff = linloc->valoff = pragloc->valoff =
@@ -1353,7 +1365,7 @@ back:					if (c == '*') {
 	if (macget(begpos) == CONC)
 		goto bad; /* 6.10.3.3 p1 */
 
-	if (redef && ifiles->idx != SYSINC) {
+	if (redef) {
 		if (cmprepl(np->valoff, begpos) || 
 		    np->type != type || np->narg != narg) { /* not equal */
 			np->valoff = begpos;
@@ -1780,6 +1792,24 @@ newmac:				if ((xob = submac(sp, 1, ib, 0)) == NULL) {
 	return 0;
 }
 
+static void
+inittime(void)
+{
+	static int timeinited;
+	char *timestring;
+	time_t t;
+
+	if (timeinited)
+		return;
+	/* Create __TIME__ and __DATE__ as required by ANSI C */
+	t = time(NULL);
+	timestring = ctime(&t);
+/* ctime() string is a fixed size so we can "cheat" by using fixed offsets */
+	sprintf(timebuf, "\"%.8s\"", &timestring[11]);
+	sprintf(datebuf, "\"%.6s %.4s\"", &timestring[4], &timestring[20]);
+	timeinited = 1;
+}
+
 /*
  * Handle defined macro keywords found on input stream.
  * When finished print out the full expanded line.
@@ -1806,6 +1836,14 @@ kfind(struct symtab *sp)
 
 	case LINLOC:
 		return bsheap(NULL, "%d", ifiles->lineno);
+
+	case TIMLOC:
+		inittime();
+		return bsheap(NULL, "%s", timebuf);
+
+	case DATLOC:
+		inittime();
+		return bsheap(NULL, "%s", datebuf);
 
 	case PRAGLOC:
 		pragoper(NULL);
@@ -1903,6 +1941,14 @@ submac(struct symtab *sp, int lvl, register struct iobuf *ib, int l)
 		break;
 	case LINLOC:
 		ob = bsheap(NULL, "%d", ifiles->lineno);
+		break;
+	case TIMLOC:
+		inittime();
+		ob = bsheap(NULL, "%s", timebuf);
+		break;
+	case DATLOC:
+		inittime();
+		ob = bsheap(NULL, "%s", datebuf);
 		break;
 	case PRAGLOC:
 		pragoper(ib);
