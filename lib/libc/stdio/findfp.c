@@ -140,8 +140,8 @@ _fwalk(int (*function)(FILE *))
 	for (n = 0, fp = __sF; n < FOPEN_MAX; n++, fp++)
 		if (fp->_flags != 0)
 			ret |= (*function)(fp);
-	for (g = fpole; g; g->next)
-		if (g->sfile._flags == 0)
+	for (g = fpole; g; g = g->next)
+		if (g->sfile._flags != 0)
 			ret |= (*function)(&g->sfile);
 	return (ret);
 }
