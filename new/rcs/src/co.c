@@ -1,9 +1,8 @@
 /*
  *                     RCS checkout operation
  */
-#ifndef lint
-static char rcsid[]=
-"$Header: /usr/src/local/bin/rcs/src/RCS/co.c,v 4.5 87/12/18 11:35:40 narten Exp $ Purdue CS";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)co.c 4.6 (2.11BSD) 2026/5/11";
 #endif
 /*****************************************************************************
  *                       check out revisions from RCS files
@@ -87,22 +86,11 @@ static char rcsid[]=
  * removed unused variables.
  */
 
-
-
-
 #include "rcsbase.h"
 #include "time.h"
-#include <sys/types.h>
 #include <sys/stat.h>
 
-#ifndef lint
-static char rcsbaseid[] = RCSBASE;
-#endif
-
-extern FILE * fopen();
-extern int    rename();
 extern char * getcaller();          /*get login of caller                   */
-extern char * malloc();
 extern struct hshentry * genrevs(); /*generate delta numbers                */
 extern char * getancestor();
 extern int  nextc;                  /*next input character                  */
@@ -113,7 +101,6 @@ extern int    buildjoin();          /*join several revisions                */
 extern char * mktempfile();         /*temporary file name generator         */
 extern struct hshentry * findlock();/*find (and delete) a lock              */
 extern struct lock * addlock();     /*add a new lock                        */
-extern long   maketime();           /*convert parsed time to unix time.     */
 extern struct tm * localtime();     /*convert unixtime into a tm-structure  */
 extern int StrictLocks;
 extern FILE * finptr;               /* RCS input file                       */

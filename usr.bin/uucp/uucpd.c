@@ -1,5 +1,5 @@
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)uucpd.c	5.4.1 (2.11BSD GTE) 1/1/94";
+static char sccsid[] = "@(#)uucpd.c	5.4.2 (2.11BSD) 2026/9/24";
 #endif
 
 /*
@@ -296,8 +296,7 @@ struct sockaddr_in *sin;
 
 		time(&ll.ll_time);
 		lseek(f, (long)pw->pw_uid * sizeof(struct lastlog), 0);
-		strcpy(line, remotehost);
-		SCPYN(ll.ll_line, line);
+		SCPYN(ll.ll_line, remotehost);
 		SCPYN(ll.ll_host, remotehost);
 		(void) write(f, (char *) &ll, sizeof ll);
 		(void) close(f);

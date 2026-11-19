@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)io.c	5.2 (2.11BSD) 2025/12/25";
+static char sccsid[] = "@(#)io.c	5.3 (2.11BSD) 2026/9/22";
 #endif
 
 # include	<curses.h>
@@ -564,6 +564,7 @@ getline()
  * bye:
  *	Leave the program, cleaning things up as we go.
  */
+void
 bye()
 {
 	signal(SIGINT, SIG_IGN);

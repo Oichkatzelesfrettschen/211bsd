@@ -1,9 +1,9 @@
-#ifndef lint
-static char sccsid[] = "@(#)wrapup.c	4.3	(Berkeley)	5/15/86";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)wrapup.c	4.4	(2.11BSD)	2026/5/8";
+#endif
 
-#include "signal.h"
-#include "stdio.h"
+#include <signal.h>
+#include <stdio.h>
 #include "lrnref.h"
 
 extern char learnrc[];

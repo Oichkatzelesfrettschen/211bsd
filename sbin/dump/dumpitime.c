@@ -1,5 +1,5 @@
 #if	!defined(lint) && defined(DOSCCS)
-static	char *sccsid = "@(#)dumpitime.c	1.2 (2.11BSD GTE) 12/6/94";
+static	char *sccsid = "@(#)dumpitime.c	1.3 (2.11BSD) 2026/5/7";
 #endif
 
 #include "dump.h"
@@ -18,7 +18,7 @@ char *prdate(d)
 
 inititimes()
 {
-			FILE	*df;
+	FILE	*df;
 	register	int	i;
 	register	struct	itime	*itwalk;
 
@@ -51,9 +51,9 @@ inititimes()
 
 getitime()
 {
-	register	struct	idates	*ip;
-	register	int	i;
-			char	*fname;
+register	struct	idates	*ip;
+register	int	i;
+	char	*fname;
 
 	fname = disk;
 #ifdef FDEBUG

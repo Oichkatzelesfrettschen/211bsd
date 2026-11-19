@@ -5,13 +5,27 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char *sccsid = "@(#)sh.sem.c	5.4.1 (2.11BSD GTE) 12/9/94";
+static char *sccsid = "@(#)sh.sem.c	5.4.2 (2.11BSD) 2026/9/21";
 #endif
 
 #include "sh.h"
 #include "sh.proc.h"
 #include <fcntl.h>
 #include <sys/ioctl.h>
+
+#ifdef VFORK
+void
+vffree()
+{
+	register char **v;
+
+	if (v = gargv)
+		gargv = 0, blkfree(v);
+	if (v = pargv)
+		pargv = 0, blkfree(v);
+	_exit(1);
+}
+#endif
 
 /*
  * C shell
@@ -119,7 +133,6 @@ execute(t, wanttty, pipein, pipeout)
 			{ forked++; pid = pfork(t, wanttty); }
 #ifdef VFORK
 		    else {
-			int vffree();
 			int ochild, osetintr, ohaderr, odidfds;
 			int oSHIN, oSHOUT, oSHDIAG, oOLDSTD, otpgrp;
 			long omask;
@@ -313,19 +326,6 @@ execute(t, wanttty, pipein, pipeout)
 	if (didfds && !(t->t_dflg & FREDO))
 		donefds();
 }
-
-#ifdef VFORK
-vffree()
-{
-	register char **v;
-
-	if (v = gargv)
-		gargv = 0, blkfree(v);
-	if (v = pargv)
-		pargv = 0, blkfree(v);
-	_exit(1);
-}
-#endif
 
 /*
  * Perform io redirection.

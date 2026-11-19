@@ -2,9 +2,9 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)intro.4n	6.3 (Berkeley) 8/1/87
+.\"	@(#)networking.4	6.4 (2.11BSD) 2026/9/28
 .\"
-.TH INTRO 4N "August 1, 1987"
+.TH NETWORKING 4 "August 1, 1987"
 .UC 5
 .SH NAME
 networking \- introduction to networking facilities
@@ -14,7 +14,7 @@ networking \- introduction to networking facilities
 #include <sys/socket.h>
 #include <net/route.h>
 #include <net/if.h>
-.fi R
+.ft R
 .fi
 .SH DESCRIPTION
 .de _d
@@ -36,10 +36,6 @@ Documentation in this part of section
 .IR protocols ,
 and
 .IR "network interfaces" .
-Entries describing a protocol family are marked ``4F,''
-while entries describing protocol use are marked ``4P.''
-Hardware support for network interfaces are found
-among the standard ``4'' entries.
 .PP
 All network protocols are associated with a specific
 .IR "protocol family" .
@@ -51,14 +47,14 @@ basic transport.  A protocol family may support multiple
 methods of addressing, though the current protocol implementations
 do not.  A protocol family is normally comprised of a number
 of protocols, one per
-.IR socket (2)
+.BR socket (2)
 type.  It is not required that a protocol family support
 all socket types.  A protocol family may contain multiple
 protocols supporting the same socket abstraction. 
 .PP
 A protocol supports one of the socket abstractions detailed
 in
-.IR socket (2).
+.BR socket (2).
 A specific protocol may be accessed either by creating a
 socket of the appropriate type and protocol family, or
 by requesting the protocol explicitly when creating a socket.
@@ -81,15 +77,12 @@ hardware.  An interface may support one or more protocol
 families and/or address formats.
 The SYNOPSIS section of each network interface
 entry gives a sample specification
-of the related drivers for use in providing
-a system description to the
-.IR /sys/conf/config
-script.
+of the related drivers for use in the kernel configuration file.
 The DIAGNOSTICS section lists messages which may appear on the console
 and/or in the system error log,
 .I /usr/adm/messages
 (see
-.IR syslogd (8)),
+.BR syslogd (8)),
 due to errors in device operation.
 .SH PROTOCOLS
 The system currently supports the DARPA Internet
@@ -111,7 +104,6 @@ formats are defined for possible future implementation):
 #define	AF_IMPLINK	3	/* arpanet imp addresses */
 #define	AF_PUP	4	/* pup protocols: e.g. BSP */
 #define	AF_NS	6	/* Xerox NS protocols */
-#define	AF_HYLINK	15	/* NSC Hyperchannel */
 .fi
 .SH ROUTING
 The network facilities provided limited packet routing.
@@ -121,7 +113,7 @@ transmitting packets.  This table contains a single entry for
 each route to a specific network or host.  A user process,
 the routing daemon, maintains this data base with the aid
 of two socket-specific 
-.IR ioctl (2)
+.BR ioctl (2)
 commands, SIOCADDRT and SIOCDELRT.  The commands allow
 the addition and deletion of a single routing
 table entry, respectively.  Routing table manipulations may
@@ -210,14 +202,14 @@ Each network interface in a system corresponds to a
 path through which messages may be sent and received.  A network
 interface usually has a hardware device associated with it, though
 certain interfaces such as the loopback interface,
-.IR lo (4),
+.BR lo (4),
 do not.
 .PP
 The following 
-.I ioctl
+.B ioctl
 calls may be used to manipulate network interfaces.
 The
-.I ioctl
+.B ioctl
 is made on a socket (typically of type SOCK_DGRAM)
 in the desired domain.
 Unless specified otherwise, the request takes an
@@ -317,4 +309,4 @@ socket(2),
 ioctl(2),
 intro(4),
 config(8),
-routed(8C)
+routed(8)

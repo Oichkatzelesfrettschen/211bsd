@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)arc.c	5.1 (Berkeley) 6/7/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)arc.c     5.2 (2.11BSD) 2026/5/11";
+#endif
 
 arc_(x,y,x0,y0,x1,y1)
 int *x, *y, *x0, *y0, *x1, *y1;

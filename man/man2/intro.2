@@ -2,10 +2,10 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)intro.2	6.7 (Berkeley) 5/23/86
+.\"	@(#)intro.2	6.8 (2.11BSD) 2026/9/4
 .\"
-.TH INTRO 2 "May 23, 1986"
-.UC 4
+.TH INTRO 2 "September 4, 2026"
+.UC 2
 .de en
 .HP
 \\$1  \\$2  \\$3
@@ -75,7 +75,7 @@ It may also occur when, for example, an illegal tape drive
 unit number is selected 
 or a disk pack is not loaded on a drive.
 .en 7 E2BIG "Arg list too long
-An argument list longer than 20480 bytes (or the current limit, NCARGS in
+An argument list longer than 5120 bytes (NCARGS in
 .IR <sys/param.h> )
 is presented to
 .IR execve .
@@ -163,12 +163,10 @@ and temporarily no more
 .I opens
 can be accepted.
 .en 24 EMFILE "Too many open files
-As released, the limit on the number of
-open files per process is 64.
-.IR Getdtablesize (2)
+As released the limit on the number of
+open files per process is 30.
+.IR getdtablesize (2)
 will obtain the current limit.
-Customary configuration limit on most other UNIX systems
-is 20 per process.
 .en 25 ENOTTY "Inappropriate ioctl for device
 The file mentioned in an
 .I ioctl
@@ -211,10 +209,10 @@ to read the data.
 This condition normally generates a signal;
 the error is returned if the signal is caught or ignored.
 .en 33 EDOM "Argument too large
-The argument of a function in the math package (3M)
+The argument of a function in the math package (3)
 is out of the domain of the function.
 .en 34 ERANGE "Result too large
-The value of a function in the math package (3M)
+The value of a function in the math package (3)
 is unrepresentable within machine precision.
 .en 35 EWOULDBLOCK "Operation would block"
 An operation that would cause a process to block was attempted
@@ -313,8 +311,8 @@ to a service that is inactive on the foreign host.
 .en 62 ELOOP "Too many levels of symbolic links"
 A path name lookup involved more than 8 symbolic links.
 .en 63 ENAMETOOLONG "File name too long"
-A component of a path name exceeded 255 (MAXNAMELEN) characters, or an entire
-path name exceeded 1023 (MAXPATHLEN-1) characters.
+A component of a path name exceeded 63 (MAXNAMLEN) characters, or an entire
+path name exceeded 255 (MAXPATHLEN-1) characters.
 .en 64 EHOSTDOWN "Host is down"
 A socket operation failed because the destination host was down.
 .en 65 EHOSTUNREACH "Host is unreachable"
@@ -429,7 +427,7 @@ a given process or any of its children.
 .TP 5
 File Name
 .br
-Names consisting of up to 255 (MAXNAMELEN) characters may be used to name
+Names consisting of up to 63 (MAXNAMLEN) characters may be used to name
 an ordinary file, special file, or directory.
 .IP
 These characters may be selected from the set of all ASCII character
@@ -445,7 +443,7 @@ Path Name
 A path name is a null-terminated character string starting with an
 optional slash (/), followed by zero or more directory names separated
 by slashes, optionally followed by a file name.
-The total length of a path name must be less than 1024 (MAXPATHLEN) characters.
+The total length of a path name must be less than 256 (MAXPATHLEN) characters.
 .IP
 If a path name begins with a slash, the path search begins at the
 .I root

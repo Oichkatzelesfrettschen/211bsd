@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)rename.2	6.4 (Berkeley) 5/22/86
+.\"	@(#)rename.2	6.5 (2.11BSD) 2026/9/20
 .\"
 .TH RENAME 2 "May 22, 1986"
 .UC 5
@@ -11,12 +11,14 @@ rename \- change the name of a file
 .SH SYNOPSIS
 .ft B
 .nf
-rename(from, to)
-char *from, *to;
+#include <stdio.h>
+
+int
+rename(\fIchar *from\fP, \fIchar *to\fP)
 .fi
 .ft R
 .SH DESCRIPTION
-.I Rename
+.B rename
 causes the link named
 .I from
 to be renamed as
@@ -31,7 +33,7 @@ and
 must be of the same type (that is, both directories or both
 non-directories), and must reside on the same file system.
 .PP
-.I Rename
+.B rename
 guarantees that an instance of
 .I to
 will always exist, even if the system should crash in
@@ -63,7 +65,7 @@ returns \-1 and the global variable
 .I errno
 indicates the reason for the failure.
 .SH "ERRORS
-.I Rename
+.B rename
 will fail and neither of the argument files will be
 affected if any of the following are true:
 .TP 15

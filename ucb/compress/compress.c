@@ -1,5 +1,5 @@
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)compress.c	@(#)compress.c	5.9.1 (2.11BSD) 2026/1/1";
+static char sccsid[] = "@(#)compress.c	@(#)compress.c	5.9.2 (2.11BSD) 2026/9/22";
 #endif
 
 /* 
@@ -151,6 +151,8 @@ char_type magic_header[] = { "\037\235" };	/* 1F 9D */
 #include <stdio.h>
 #include <ctype.h>
 #include <signal.h>
+#include <strings.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -225,7 +227,7 @@ char ofname [100];
 #ifdef DEBUG
 int verbose = 0;
 #endif /* DEBUG */
-int (*oldint)();
+sig_t oldint;
 int bgnd_flag;
 
 int do_decomp = 0;
@@ -273,9 +275,9 @@ register int argc; char **argv;
     int overwrite = 0;	/* Do not overwrite unless given -f flag */
     char tempname[100];
     char **filelist, **fileptr;
-    char *cp, *rindex(), *malloc();
+    char *cp;
     struct stat statbuf;
-    extern onintr(), oops();
+    extern void onintr(), oops();
 
     /* This bg check only works for sh. */
     if ( (oldint = signal ( SIGINT, SIG_IGN )) != SIG_IGN ) {
@@ -1140,6 +1142,7 @@ char *ifname, *ofname;
 	perror(ofname);
 }
 
+void
 onintr ( )
 {
     if (!precious)
@@ -1147,6 +1150,7 @@ onintr ( )
     exit ( 1 );
 }
 
+void
 oops ( )	/* wild pointer -- assume bad input */
 {
     if ( do_decomp ) 

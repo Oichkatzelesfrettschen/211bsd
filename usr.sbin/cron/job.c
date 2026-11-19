@@ -15,10 +15,9 @@
  * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
  */
 
-#if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: job.c,v 1.6 1994/01/15 20:43:43 vixie Exp $";
+#if !defined(lint) && defined(DOSCCS)
+char sccsid[] = "@(#)job.c 1.7 (2.11BSD) 2026/5/10"
 #endif
-
 
 #include "cron.h"
 
@@ -29,9 +28,7 @@ typedef	struct _job {
 	user		*u;
 } job;
 
-
 static job	*jhead = NULL, *jtail = NULL;
-
 
 void
 job_add(e, u)
@@ -55,7 +52,6 @@ job_add(e, u)
 	else { jtail->next=j; }
 	jtail = j;
 }
-
 
 int
 job_runqueue()

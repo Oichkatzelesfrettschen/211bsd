@@ -1,5 +1,5 @@
 #if	defined(DOSCCS) && !defined(lint)
-static	char *sccsid = "@(#)arp.c	5.6 (2.11BSD) 2025/12/27";
+static	char *sccsid = "@(#)arp.c	5.7 (2.11BSD) 2026/9/13";
 #endif
 
 /*
@@ -24,11 +24,7 @@ main(argc, argv)
 	char **argv;
 {
 	if (argc >= 2 && strcmp(argv[1], "-a") == 0) {
-#ifdef pdp11
 		char *kernel = "/netnix", *mem = "/dev/mem";
-#else
-		char *kernel = "/unix", *mem = "/dev/kmem";
-#endif
 
 		if (argc >= 3)
 			kernel = argv[2];
@@ -132,8 +128,6 @@ set(argc, argv)
 			ar.arp_flags &= ~ATF_PERM;
 		if (strncmp(argv[0], "pub", 3) == 0)
 			ar.arp_flags |= ATF_PUBL;
-		if (strncmp(argv[0], "trail", 5) == 0)
-			ar.arp_flags |= ATF_USETRAILERS;
 		argv++;
 	}
 	
@@ -199,7 +193,6 @@ get(host)
 		printf("(incomplete)");
 	if (ar.arp_flags & ATF_PERM) printf(" permanent");
 	if (ar.arp_flags & ATF_PUBL) printf(" published");
-	if (ar.arp_flags & ATF_USETRAILERS) printf(" trailers");
 	printf("\n");
 }
 
@@ -253,7 +246,6 @@ struct nlist nl[] = {
 	{ "" },
 };
 
-#ifdef pdp11
 char	unix2_10[] = "/unix";
 u_int	base2_10;
 struct nlist kl[] = {
@@ -261,7 +253,6 @@ struct nlist kl[] = {
 	{ "_netdata" },
 	{ "" }
 };
-#endif
 
 /*
  * Dump the entire arp table
@@ -277,13 +268,11 @@ dump(kernel, mem)
 	extern int h_errno;
 
 	nlist(kernel, nl);
-#ifdef pdp11
 	nlist(unix2_10, kl);
 	if(kl[X_NETDATA].n_type == 0) {
 		fprintf(stderr, "arp: %s: bad namelist\n", unix2_10);
 		exit(1);
 	}
-#endif
 	if(nl[X_ARPTAB_SIZE].n_type == 0) {
 		fprintf(stderr, "arp: %s: bad namelist\n", kernel);
 		exit(1);
@@ -293,13 +282,9 @@ dump(kernel, mem)
 		fprintf(stderr, "arp: cannot open %s\n", mem);
 		exit(1);
 	}
-#ifdef pdp11
 	lseek(mf, (long)kl[X_NETDATA].n_value, 0);
 	read(mf, &base2_10, sizeof(base2_10));
 	lseek(mf, (long)nl[X_ARPTAB_SIZE].n_value + ctob((long)base2_10), 0);
-#else
-	lseek(mf, (long)nl[X_ARPTAB_SIZE].n_value, 0);
-#endif
 	read(mf, &arptab_size, sizeof arptab_size);
 	if (arptab_size <=0 || arptab_size > 1000) {
 		fprintf(stderr, "arp: %s: namelist wrong\n", kernel);
@@ -311,11 +296,7 @@ dump(kernel, mem)
 		fprintf(stderr, "arp: can't get memory for arptab\n");
 		exit(1);
 	}
-#ifdef pdp11
 	lseek(mf, (long)nl[X_ARPTAB].n_value + ctob((long)base2_10), 0);
-#else
-	lseek(mf, (long)nl[X_ARPTAB].n_value, 0);
-#endif
 	if (read(mf, (char *)at, sz) != sz) {
 		perror("arp: error reading arptab");
 		exit(1);
@@ -343,7 +324,6 @@ dump(kernel, mem)
 			printf("(incomplete)");
 		if (at->at_flags & ATF_PERM) printf(" permanent");
 		if (at->at_flags & ATF_PUBL) printf(" published");
-		if (at->at_flags & ATF_USETRAILERS) printf(" trailers");
 		printf("\n");
 	}
 }
@@ -376,6 +356,6 @@ usage()
 	printf("Usage: arp hostname\n");
 	printf("       arp -a [/unix] [/dev/kmem]\n");
 	printf("       arp -d hostname\n");
-	printf("       arp -s hostname ether_addr [temp] [pub] [trail]\n");
+	printf("       arp -s hostname ether_addr [temp] [pub]\n");
 	printf("       arp -f filename\n");
 }

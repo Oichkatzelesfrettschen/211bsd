@@ -1,4 +1,5 @@
-.TH QUOT 8
+.\"     @(#)syslogd.8   2.0 (2.11BSD) 2026/5/27
+.TH QUOT 8 "May 27, 2026"
 .SH NAME
 quot \- summarize file system ownership
 .SH SYNOPSIS
@@ -16,7 +17,7 @@ is named, a default name is assumed.
 The following options are available:
 .TP
 .B \-\^n
-Cause the pipeline
+Execute the pipeline
 .I "ncheck filesystem | sort +0n | quot \-n filesystem
 to produce a list of all files and their owners.
 .TP
@@ -30,7 +31,12 @@ Print count of number of files as well as space owned by each user.
 .SH FILES
 /etc/passwd	to get user names
 .SH "SEE ALSO"
-du(1), ls(1)
+du(1), ls(1), ncheck(8)
 .SH BUGS
-Default file systems vary with installations.
-Holes in files are counted as if they actually occupied space.
+The default file systems \fB/dev/rxp0a\fP and \fB/dev/rxp0h\fP are probably
+not correct for most systems.
+.sp
+Files with links are included multiple times in the totals.
+.sp
+A static array indexed by userid is used internally.  Userids greater than NUID 
+(currently set to 500) will not be included in totals.

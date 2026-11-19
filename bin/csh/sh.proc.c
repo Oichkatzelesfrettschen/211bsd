@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char *sccsid = "@(#)sh.proc.c	5.5.1 (2.11BSD) 1996/3/20";
+static char *sccsid = "@(#)sh.proc.c	5.5.2 (2.11BSD) 2026/9/21";
 #endif
 
 #include "sh.h"
@@ -28,6 +28,7 @@ static char *sccsid = "@(#)sh.proc.c	5.5.1 (2.11BSD) 1996/3/20";
  *	childs status.  Top level routines (like pwait) must be sure
  *	to mask interrupts when playing with the proclist data structures!
  */
+void
 pchild()
 {
 	register struct process *pp;

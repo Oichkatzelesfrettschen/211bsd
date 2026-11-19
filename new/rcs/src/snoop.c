@@ -1,10 +1,9 @@
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)snoop.c 4.4 (2.11BSD) 2026/5/11";
+#endif
 /*
  *                     Logging of RCS commands co and ci
  */
-#ifndef lint
- static char rcsid[]=
- "$Header: /usr/src/local/bin/rcs/src/RCS/snoop.c,v 4.3 87/12/18 11:46:52 narten Exp $ Purdue CS";
-#endif
 /*******************************************************************
  * This program appends argv[1] to the file SNOOPFILE.
  * To avoid overlaps, it creates a lockfile with name lock in the same

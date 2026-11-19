@@ -26,6 +26,8 @@
 #include <sgtty.h>
 #include <ctype.h>
 #include <errno.h>
+#include <stdlib.h>
+#include <strings.h>
 #include "lp.local.h"
 
 extern int	DU;		/* daeomon user-id */
@@ -86,7 +88,3 @@ struct queue {
 };
 
 char	*pgetstr();
-char	*malloc();
-char	*getenv();
-char	*index();
-char	*rindex();

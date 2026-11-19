@@ -9,7 +9,7 @@
  * software without specific prior written permission. This software
  * is provided ``as is'' without express or implied warranty.
  *
- *	@(#)tcp_input.c	7.15.1.3 (2.11BSD) 2000/5/17
+ *	@(#)tcp_input.c	7.15.1.4 (2.11BSD) 2026/7/10
  */
 
 #include "param.h"
@@ -40,6 +40,7 @@
 int	tcpprintfs = 0;
 int	tcpcksum = 1;
 int	tcprexmtthresh = 3;
+int	tcp_fw2timeout = 30 * PR_SLOWHZ;	/* set to 0 to disable timer */
 struct	tcpiphdr tcp_saveti;
 extern	tcpnodelack;
 
@@ -222,7 +223,7 @@ tcp_input(m0)
 		ti->ti_len = htons((u_short)ti->ti_len);
 		if (ti->ti_sum = in_cksum(m, len)) {
 			if (tcpprintfs)
-				printf("tcp sum: src %x\n", ti->ti_src);
+				printf("tcpsum %x\n", ti->ti_src);
 			tcpstat.tcps_rcvbadsum++;
 			goto drop;
 		}
@@ -235,7 +236,7 @@ tcp_input(m0)
 	off = ti->ti_off << 2;
 	if (off < sizeof (struct tcphdr) || off > tlen) {
 		if (tcpprintfs)
-			printf("tcp off: src %x off %d\n", ti->ti_src, off);
+			printf("tcpoff %x %d\n", ti->ti_src, off);
 		tcpstat.tcps_rcvbadoff++;
 		goto drop;
 	}
@@ -873,9 +874,10 @@ trimthenstep6:
 				 * specification, but if we don't get a FIN
 				 * we'll hang forever.
 				 */
-				if (so->so_state & SS_CANTRCVMORE) {
+				if ((so->so_state & SS_CANTRCVMORE) && tcp_fw2timeout) {
 					soisdisconnected(so);
-					tp->t_timer[TCPT_2MSL] = tcp_maxidle;
+					tcp_canceltimers(tp);
+					tp->t_timer[TCPT_2MSL] = tcp_fw2timeout;
 				}
 				tp->t_state = TCPS_FIN_WAIT_2;
 			}
@@ -1211,7 +1213,7 @@ tcp_pulloutofband(so, ti)
 		if (m == 0)
 			break;
 	}
-	panic("tcp_pulloutofband");
+	panic("tcp_pull");
 }
 
 /*

@@ -18,7 +18,7 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)tftp.c	5.9.1 (2.11BSD GTE) 1/1/94";
+static char sccsid[] = "@(#)tftp.c	5.9.2 (2.11BSD) 2026/9/14";
 #endif
 
 /* Many bug fixes are from Jim Guyton <guyton@rand-unix> */
@@ -39,8 +39,6 @@ static char sccsid[] = "@(#)tftp.c	5.9.1 (2.11BSD GTE) 1/1/94";
 #include <errno.h>
 #include <setjmp.h>
 
-extern	int errno;
-
 extern  struct sockaddr_in sin;         /* filled in by main */
 extern  int     f;                      /* the opened socket */
 extern  int     trace;
@@ -54,6 +52,7 @@ int	timeout;
 jmp_buf	toplevel;
 jmp_buf	timeoutbuf;
 
+void
 timer()
 {
 

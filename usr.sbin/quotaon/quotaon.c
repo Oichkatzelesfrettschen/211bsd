@@ -39,8 +39,8 @@ static char copyright[] =
 "@(#) Copyright (c) 1980, 1990, 1993\n\
 	The Regents of the University of California.  All rights reserved.\n";
 
-static char sccsid[] = "@(#)quotaon.c	8.1.1 (2.11BSD) 1996/1/21";
-#endif /* not lint */
+static char sccsid[] = "@(#)quotaon.c	8.1.2 (2.11BSD) 2026/9/16";
+#endif
 
 /*
  * Turn quota on/off for a filesystem.
@@ -53,30 +53,34 @@ static char sccsid[] = "@(#)quotaon.c	8.1.1 (2.11BSD) 1996/1/21";
 #include <string.h>
 #include <stdlib.h>
 
+extern	char	*__progname;
+
 char *qfname = "quotas";
 
 int	aflag;		/* all file systems */
 int	vflag;		/* verbose */
+
+void
+usage()
+{
+
+	errx(1, "[-v] -a\n\t [-v] filesys ...");
+}
 
 main(argc, argv)
 	int argc;
 	char **argv;
 {
 	register struct fstab *fs;
-	char ch, *qfnp, *whoami;
+	char ch, *qfnp;
 	long done = 0;
 	int i, argnum, offmode = 0, errs = 0;
 
-	whoami = rindex(*argv, '/') + 1;
-	if (whoami == (char *)1)
-		whoami = *argv;
-	if (strcmp(whoami, "quotaoff") == 0)
+	if (strcmp(__progname, "quotaoff") == 0)
 		offmode++;
-	else if (strcmp(whoami, "quotaon") != 0) {
-		fprintf(stderr, "Name must be quotaon or quotaoff not %s\n",
-			whoami);
-		exit(1);
-	}
+	else if (strcmp(__progname, "quotaon") != 0)
+		errx(1, "Name must be quotaon or quotaoff not %s", __progname);
+
 	while ((ch = getopt(argc, argv, "avug")) != EOF) {
 		switch(ch) {
 		case 'a':
@@ -86,13 +90,14 @@ main(argc, argv)
 			vflag++;
 			break;
 		default:
-			usage(whoami);
+			usage();
 		}
 	}
 	argc -= optind;
 	argv += optind;
 	if (argc <= 0 && !aflag)
-		usage(whoami);
+		usage();
+
 	setfsent();
 	while ((fs = getfsent()) != NULL) {
 		if (strcmp(fs->fs_type, FSTAB_RQ) == 0)  /* XXX compatibility */
@@ -118,15 +123,6 @@ main(argc, argv)
 			fprintf(stderr, "%s not found in fstab\n",
 				argv[i]);
 	exit(errs);
-}
-
-usage(whoami)
-	char *whoami;
-{
-
-	fprintf(stderr, "Usage:\n\t%s [-v] -a\n", whoami);
-	fprintf(stderr, "\t%s [-v] filesys ...\n", whoami);
-	exit(1);
 }
 
 quotaonoff(fs, offmode, qfpathname)

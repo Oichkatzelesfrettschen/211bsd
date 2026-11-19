@@ -7,10 +7,8 @@ mv /tmp/t1 /etc/motd
 chmod 644 /etc/motd
 
 echo -n			starting local daemons:			>/dev/console 2>&1
-#if [ $INET = YES -a -f /usr/sbin/timed ]; then
-#	timed &				echo -n ' timed'	>/dev/console 2>&1
-#fi
-if [ -f /usr/sbin/sendmail ]; then
+
+if [ "${sendmail-NO}" = YES -a -f /usr/sbin/sendmail ]; then
 	(cd /usr/spool/mqueue; rm -f lf*)
 	if [ $INET = YES ]; then
 		/usr/sbin/sendmail -bd -q1h; echo -n ' sendmail'>/dev/console 2>&1
@@ -18,6 +16,5 @@ if [ -f /usr/sbin/sendmail ]; then
 		/usr/sbin/sendmail -q1h; echo -n ' sendmail'	>/dev/console 2>&1
 	fi
 fi
-				echo '.'			>/dev/console 2>&1
 
-ntpd
+echo '.'			>/dev/console 2>&1

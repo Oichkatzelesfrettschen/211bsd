@@ -15,19 +15,17 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1988 The Regents of the University of California.\n\
  All rights reserved.\n";
-#endif /* not lint */
 
-#ifndef lint
-static char sccsid[] = "@(#)passwd.c	4.36 (2.11BSD) 12/25/2018";
-#endif /* not lint */
+static char sccsid[] = "@(#)passwd.c	4.37 (2.11BSD) 2026/5/10";
+#endif
 
 #include <sys/param.h>
 #include <sys/file.h>
-#include <sys/signal.h>
+#include <signal.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <errno.h>
@@ -36,6 +34,7 @@ static char sccsid[] = "@(#)passwd.c	4.36 (2.11BSD) 12/25/2018";
 #include <ctype.h>
 #include <strings.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 uid_t uid;
 
@@ -43,7 +42,6 @@ main(argc, argv)
 	int argc;
 	char **argv;
 {
-	extern int errno;
 	struct passwd *pw;
 	struct rlimit rlim;
 	FILE *temp_fp;
@@ -213,8 +211,7 @@ getnewpasswd(pw, temp)
 	char *temp;
 {
 	register char *p, *t;
-	char buf[10], salt[2], *crypt(), *getpass();
-	time_t time();
+	char buf[10], salt[2];
 
 	if (uid && pw->pw_passwd &&
 	    strcmp(crypt(getpass("Old password:"), pw->pw_passwd),

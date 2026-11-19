@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)gename.c	5.6 (Berkeley) 10/9/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)gename.c	5.7 (2.11BSD) 2026/5/9";
 #endif
 
 #include "uucp.h"
@@ -13,11 +13,7 @@ static char sccsid[] = "@(#)gename.c	5.6 (Berkeley) 10/9/85";
  */
 static char alphabet[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-#ifdef BSD4_2
 #include <sys/file.h>
-#endif BSD4_2
-
-/*LINTLIBRARY*/
 
 /*
  *	generate file name
@@ -30,24 +26,10 @@ char pre, *sys, grade, *file;
 	static char *lastchar = NULL;
 
 	if (lastchar == NULL || (snum[SEQLEN-1] = *(lastchar++)) == '\0') {
-#ifndef BSD4_2
-		for (i = 0; i < SLOCKTRIES; i++) {
-			if (!ulockf(SEQLOCK, SLOCKTIME))
-				break;
-			sleep(5);
-		}
-
-		if (i >= SLOCKTRIES) {
-			logent(SEQLOCK, "CAN NOT LOCK");
-			goto getrandseq;
-		}
-#endif !BSD4_2
-
 		if ((fd = open(SEQFILE, 2)) >= 0) {
 			register char *p;
-#ifdef BSD4_2
+
 			flock(fd, LOCK_EX);
-#endif !BSD4_2
 			read(fd, snum, SEQLEN);
 			/* increment the penultimate character */
 			for (i = SEQLEN - 2; i >= 0; --i) {
@@ -75,9 +57,6 @@ getrandseq:		srand((int)time((time_t *)0));
 			write(fd, snum, SEQLEN);
 			close(fd);
 		}
-#ifndef BSD4_2
-		rmlock(SEQLOCK);
-#endif !BSD4_2
 		lastchar = alphabet + 1;
 	}
 	sprintf(file,"%c.%.*s%c%.*s", pre, SYSNSIZE, sys, grade, SEQLEN, snum);

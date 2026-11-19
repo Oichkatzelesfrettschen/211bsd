@@ -1,4 +1,4 @@
-/*	uucp.h	5.11.6	1997/10/2 */
+/*	uucp.h	5.11.7	(2.11BSD) 2026/2/6 */
 
 #include <stdio.h>
 #include <paths.h>
@@ -7,46 +7,8 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-/*
- * Determine local uucp name of this machine.
- * Define one of the following:
- *
- * For UCB 4.1A and later systems, you will have the gethostname(2) call.
- * If this call exists, define GETHOSTNAME.
- *
- * For USG 3.0 and later systems, you will have the uname(2) call.
- * If this call exists, define UNAME.
- *
- * Some systems have a line of the form '#define sysname "myuucpname",'
- * in the file /usr/include/whoami.h, to identify their machine.
- * If your site does that, define WHOAMI.
- *
- * If your site has <whoami.h>, but you do not want to read
- * that file every time uucp runs, you can compile sysname into uucp.
- * This is faster and more reliable, but binaries do not port.
- * If you want to do that, define CCWHOAMI.
- *
- * Some systems put the local uucp name in a single-line file
- * named /etc/uucpname or /local/uucpname.
- * If your site does that, define UUNAME.
- *
- * Systems running 3Com's UNET will have the getmyhname() call.
- * If you want to, define GETMYHNAME.
- *
- * You should also define MYNAME to be your uucp name.
- *
- * For each of the above that are defined, uucp checks them in order.
- * It stops on the first method that returns a non null name.
- * If everything fails, it uses "unknown" for the system name.
- */
 #define	GETHOSTNAME	/**/
-/* #define UNAME	/**/
-/* #define WHOAMI	/**/
-/* #define CCWHOAMI	/**/
-/* #define UUNAME	/**/
-/* #define GETMYHNAME	/**/
-/* If the above fails ... */
-#define	MYNAME	"wlonex"
+#define	MYNAME	"example"
 
 /*
  * If you have it, include <sysexits.h> to use exit
@@ -54,9 +16,6 @@
  * Otherwise, define EX_NOHOST, EX_CANTCREAT, and EX_NOINPUT.
  */
 #include <sysexits.h>
-/*#define EX_NOINPUT	66	/**/
-/*#define EX_NOHOST	68	/**/
-/*#define EX_CANTCREAT	73	/**/
 
 /*
  * Define the various kinds of connections to include.
@@ -91,52 +50,15 @@
 #define HAYES
 #endif USR2400 && !HAYES
 
-#if defined(UNETTCP) || defined(BSDTCP)
 #define TCPIP
-#endif
-
-/*
- * We need a timer to write slowly to certain modems.
- * and for generating breaks.
- *
- * define INTERVALTIMER to use 4.[23] bsd interval timer.
- * define FASTTIMER if you have the nap() system call.
- * define FTIME if you have the ftime() system call.
- * define BUSYLOOP if you must do a busy loop.
- * Look at uucpdelay() in condevs.c for details.
- */
-#define INTERVALTIMER /**/
-/*#define FASTTIMER /**/
-/*#define FTIME /**/
-/*#define BUSYLOOP /**/
-
-/*
- * If your site is using "ndir.h" to retrofit the Berkeley
- * directory reading routines, define NDIR.
- * You will probably also have to set LIBNDIR in Makefile.
- * Otherwise, <dir.h> is assumed to have the Berkeley directory definitions.
- */
-/*#define	NDIR	/**/
-
-/*
- * If yours is a BTL system III, IV, V or so-on site, define USG.
- */
-/*#define	USG	/**/
 
 /*
  * If you are running 4.3bsd, define BSD4_3 and BSD4_2
  * If you are just running 4.2bsd, define BSD4_2
  * If you are running 2.11bsd, define BSD4_3 and BSD4_2
- * If you are running the BRL version of 4.2BSD define BRL4_2, NOT BSD4_3
  */
 #define BSD4_3 	/**/
 #define BSD4_2 	/**/
-/*#define BRL4_2 /**/
-
-#if defined(BRL4_2) && !defined(BSD4_2)
-#define BSD4_2
-#undef BSD4_3
-#endif BRL4_2
 
 /*
  * If you are running 2.9bsd define BSD2_9
@@ -149,15 +71,13 @@
 /* #define BSDINETD	/**/
 
 /*
- * If you are running 4.3bsd, 2.11bsd or BRL 4.2, you are running 'inetd'
+ * If you are running 4.3bsd, 2.11bsd you are running 'inetd'
  */
 
-#if (defined(BSD4_3) || defined(BRL4_2)) && !defined(BSDINETD)
+#if (defined(BSD4_3) && !defined(BSDINETD))
 #define BSDINETD
-#endif (BSD4_3 ||BRL4_2) && !BSDINETD
+#endif
 
-/*#define VMSDTR	/* Turn on modem control on vms(works DTR) for
-			   develcon and gandalf ports to gain access */
 /*
  *	If you want to use the same modem for dialing in and out define
  *	DIALINOUT to be the localtion of the acucntrl program
@@ -358,19 +278,7 @@ struct Devices {
 #define WKDSIZE		100	/*  size of work dir name  */
 
 #include <sys/types.h>
-#ifndef USG
 #include <sys/timeb.h>
-#else USG
-struct timeb
-{
-	time_t	time;
-	unsigned short millitm;
-	short	timezone;
-	short	dstflag;
-};
-#define rindex strrchr
-#define index strchr
-#endif USG
 
 extern struct timeb Now;
 

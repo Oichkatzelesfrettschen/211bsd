@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)worm.c	5.3 (2.11BSD) 2020/1/7";
+static char sccsid[] = "@(#)worm.c	5.4 (2.11BSD) 2026/9/22";
 #endif
 
 /*
@@ -48,7 +48,7 @@ char outbuf[BUFSIZ];
 main(argc, argv)
 char **argv;
 {
-	int leave(), wake(), suspend();
+	void leave(), wake(), suspend();
 	char ch;
 
 	if (argc == 2)
@@ -126,12 +126,14 @@ char chr;
 	waddch(tv, chr);
 }
 
+void
 leave()
 {
 	endwin();
 	exit(0);
 }
 
+void
 wake()
 {
 	signal(SIGALRM, wake);
@@ -238,6 +240,7 @@ crash()
 	leave();
 }
 
+void
 suspend()
 {
 	char *sh;

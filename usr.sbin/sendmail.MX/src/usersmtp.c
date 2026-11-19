@@ -41,7 +41,7 @@ static char sccsid[] = "@(#)usersmtp.c	5.9.1 (2.11BSD) 1997/10/3 (without SMTP)"
 
 char	SmtpMsgBuffer[MAXLINE];		/* buffer for commands */
 char	SmtpReplyBuffer[MAXLINE];	/* buffer for replies */
-char	SmtpError[MAXLINE] = "";	/* save failure error messages */
+char	SmtpError[MAXLINE];		/* save failure error messages */
 FILE	*SmtpOut;			/* output file */
 FILE	*SmtpIn;			/* input file */
 int	SmtpPid;			/* pid of mailer */

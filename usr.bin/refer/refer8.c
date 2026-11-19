@@ -1,5 +1,5 @@
-#ifndef lint
-static char *sccsid = "@(#)refer8.c	4.1 (Berkeley) 5/6/83";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)refer8.c	4.2 (2.11BSD) 2026/5/9";
 #endif
 
 #include "refer..c"
@@ -33,7 +33,7 @@ lookat()
 }
 
 addch(s, c)
-char *s;
+register char *s;
 {
 	while (*s)
 		s++;

@@ -1,10 +1,9 @@
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)rcsmerge.c 4.4 (2.11BSD) 2026/5/11";
+#endif
 /*
  *                       rcsmerge operation
  */
-#ifndef lint
-static char rcsid[]=
-"$Header: /arthur/src/local/bin/rcs/src/RCS/rcsmerge.c,v 4.3 87/10/18 10:38:02 narten Exp $ Purdue CS";
-#endif
 /*****************************************************************************
  *                       join 2 revisions with respect to a third
  *****************************************************************************
@@ -50,9 +49,6 @@ static char rcsid[]=
  *
  */
 #include "rcsbase.h"
-#ifndef lint
-static char rcsbaseid[] = RCSBASE;
-#endif
 
 extern int  cleanup();              /* cleanup after signals                */
 extern char * mktempfile();         /*temporary file name generator         */

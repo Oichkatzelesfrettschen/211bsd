@@ -35,7 +35,7 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)wbuf.c	8.2 (2.11BSD) 2025/12/25";
+static char sccsid[] = "@(#)wbuf.c	8.3 (2.11BSD) 2026/6/5";
 #endif /* LIBC_SCCS and not lint */
 
 #include <stdio.h>
@@ -51,6 +51,14 @@ __swbuf(register int c, register FILE *fp)
 {
 	register int n;
 
+        /*
+        * snprintf() will end up here when the output buffer is full,
+        * so just return without doing else.
+        * This routine will get called for each extra character,
+        * but we ignore that.
+        */
+       if (fp->_flags & __SSTR)
+               return 0;
 	/*
 	 * In case we cannot write, or longjmp takes us out early,
 	 * make sure _w is 0 (if fully- or un-buffered) or -_bf._size

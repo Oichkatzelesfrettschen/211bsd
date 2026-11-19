@@ -1,4 +1,4 @@
-.\"	@(#)uucp.1	6.3.1 (2.11BSD) 1996/10/22
+.\"	@(#)uucp.1	6.3.2 (2.11BSD) 2026/9/28
 .\"
 .TH UUCP 1 "April 24, 1986"
 .AT 3
@@ -18,7 +18,7 @@ uucp \- unix to unix copy
 .BI \-x debug
 ] source-file....  destination-file
 .SH DESCRIPTION
-.I Uucp
+.B uucp
 copies files named by the source-file arguments
 to the destination-file argument.
 A file name may be a pathname on your machine, or may 
@@ -28,7 +28,7 @@ system-name!pathname
 .LP
 where `system-name' is taken from a list of system names
 that
-.I uucp
+.B uucp
 knows about.
 Shell metacharacters ?*[] appearing in the pathname part
 will be expanded on the appropriate system.
@@ -60,19 +60,19 @@ source-file name is used.
 If a simple
 .I ~user
 destination is inaccessible to 
-.IR uucp ,
+.BR uucp ,
 data is copied to a spool directory and the user
 is notified by
 .IR mail (1).
 ..
 .PP
-.I Uucp
+.B uucp
 preserves execute permissions across the transmission
 and gives 0666 read and write permissions (see
-.IR chmod (2)).
+.BR chmod (2)).
 .PP
 The following options are interpreted by
-.IR uucp .
+.BR uucp .
 .TP
 .B \-a
 Avoid doing a
@@ -101,7 +101,7 @@ Do not make intermediate directories for the file copy.
 is a single letter/number; lower ASCII sequence characters
 will cause a job to be transmitted earlier during a particular conversation.
 Default is `n'. By way of comparison,
-.IR uux (1C)
+.BR uux (1)
 defaults to `A'; mail is usually sent at `C'.
 .TP 
 .B \-m
@@ -127,10 +127,10 @@ Turn on the debugging at level
 .I debug.
 .SH FILES
 /usr/spool/uucp - spool directory
-.br
+.sp
 /etc/uucp/* - data and configuration files
 .SH SEE ALSO
-uux(1C), mail(1)
+uux(1), mail(1)
 .PP
 D. A. Nowitz and M. E. Lesk,
 .IR "A Dial-Up Network of UNIX Systems" .
@@ -148,9 +148,8 @@ send them to you.
 For the same reasons you will probably not be able
 to send files to arbitrary pathnames.
 .SH BUGS
-.br
 All files received by
-.I uucp
+.B uucp
 will be owned by the uucp administrator (usually UID 5).
 .PP
 The 
@@ -164,7 +163,7 @@ the
 option.)
 .PP
 At present
-.I uucp
+.B uucp
 cannot copy to a system several "hops" away, that is, a command of
 the form
 .PP
@@ -173,17 +172,17 @@ the form
 .fi
 .PP
 is not permitted. Use
-.IR uusend (1C)
+.IR uusend (1)
 instead.
 .PP
 When invoking
-.I uucp
+.B uucp
 from
-.IR csh (1),
+.BR csh (1),
 the `!' character must be prefixed by the `\e' escape to inhibit
-.IR csh 's
+.BR csh 's
 history mechanism. (Quotes are not sufficient.)
 .PP
-.I Uucp
+.B uucp
 refuses to copy a file that does not give read access to ``other'';
 that is, the file must have at least 0444 modes.

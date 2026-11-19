@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)netstat.1	6.6 (2.11BSD) 2024/9/20
+.\"	@(#)netstat.1	6.7 (2.11BSD) 2026/9/28
 .\"
 .TH NETSTAT 1 "Sep 20, 2024"
 .UC 5
@@ -48,7 +48,7 @@ netstat \- show network status
 ]
 .SH DESCRIPTION
 The
-.I netstat 
+.B netstat 
 command symbolically displays the contents of various network-related
 data structures.
 There are a number of output formats,
@@ -60,7 +60,7 @@ data structures according to the option selected.
 Using the third form, with an 
 .I interval
 specified,
-.I netstat
+.B netstat
 will continuously display the information regarding packet
 traffic on the configured network interfaces.
 .PP
@@ -96,7 +96,7 @@ Show statistics recorded by the memory management routines
 .TP
 .B \-n
 Show network addresses as numbers (normally 
-.I netstat
+.B netstat
 interprets addresses and attempts to display them
 symbolically).
 This option may be used with any of the display formats.
@@ -151,7 +151,7 @@ to the address family.
 For more information regarding 
 the Internet ``dot format,''
 refer to 
-.IR inet (3N).
+.BR inet (3).
 Unspecified,
 or ``wildcard'', addresses and ports appear as ``*''.  
 .PP
@@ -178,7 +178,7 @@ sent using that route.  The interface entry indicates the network
 interface utilized for the route.
 .PP
 When 
-.I netstat
+.B netstat
 is invoked with an
 .I interval
 argument, it displays a running count of statistics related to
@@ -200,7 +200,7 @@ hosts(5),
 networks(5),
 protocols(5),
 services(5),
-trpt(8C)
+trpt(8)
 .SH BUGS
 The notion of errors is ill-defined.  Collisions mean
 something else for the IMP.

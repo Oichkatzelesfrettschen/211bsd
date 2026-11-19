@@ -2,41 +2,38 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)j0.3m	6.6 (Berkeley) 5/12/86
+.\"	@(#)j0.3	6.7 (2.11BSD) 2026/9/27
 .\"
-.TH J0 3M  "May 12, 1986"
+.TH J0 3  "May 12, 1986"
 .UC 4
 .SH NAME
 j0, j1, jn, y0, y1, yn \- bessel functions
 .SH SYNOPSIS
 .nf
-.B #include <math.h>
-.PP
-.B double j0(x)
-.B double x;
-.PP
-.B double j1(x)
-.B double x;
-.PP
-.B double jn(n,x)
-.B int n;
-.B double x;
-.PP
-.B double y0(x)
-.B double x;
-.PP
-.B double y1(x)
-.B double x;
-.PP
-.B double yn(n,x)
-.B int n;
-.B double x;
+.ft B
+#include <math.h>
+
+double
+j0(\fIdouble x\fP)
+
+double
+j1(\fIdouble x\fP)
+
+double
+jn(\fIint n\fP, \fIdouble x\fP)
+
+double
+y0(\fI double x\fP)
+
+double
+y1(\fIdouble x\fP)
+
+double
+yn(\fIint n\fP, \fIdouble x\fP)
+.ft R
 .fi
 .SH DESCRIPTION
 These functions calculate Bessel functions of the first
 and second kinds for real arguments and integer orders.
-.SH DIAGNOSTICS
-On a VAX, negative arguments cause y0, y1 and yn
-to return the reserved operand and set \fIerrno\fR to EDOM.
 .SH SEE ALSO
-math(3M), infnan(3M)
+math(3)

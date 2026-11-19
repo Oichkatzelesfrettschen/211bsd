@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)termcap.5	6.4 (Berkeley) 5/15/86
+.\"	@(#)termcap.5	6.5 (2.11BSD) 2026/9/28
 .\"
 .ie n \{\
 .	ds lq \&"\"
@@ -29,7 +29,7 @@ used,
 by
 .IR vi\^ (1)
 and
-.IR curses\^ (3X).
+.IR curses\^ (3).
 Terminals are described in
 .I termcap\^
 by giving a set of capabilities that they have and by describing
@@ -633,7 +633,7 @@ and the Lear Siegler \s-1ADM\s0\-3 is described as
 Cursor addressing and other strings requiring parameters
 are described by a
 parameterized string capability, with 
-.IR printf\^ (3S)-like
+.IR printf\^ (3)-like
 escapes
 .B %x
 in it,
@@ -1657,7 +1657,7 @@ Mark Horton added underlining and keypad support
 .DT
 /etc/termcap	file containing terminal descriptions
 .SH SEE ALSO
-ex(1), more(1), tset(1), ul(1), vi(1), curses(3X), printf(3S), term(7).
+ex(1), more(1), tset(1), ul(1), vi(1), curses(3), printf(3), term(7).
 .SH "CAVEATS AND BUGS"
 .B Note:
 .I termcap\^

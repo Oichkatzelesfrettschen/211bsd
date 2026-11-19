@@ -29,9 +29,9 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"     @(#)getopt.3	8.4.1 (2.11BSD) 1996/1/12
+.\"     @(#)getopt.3	8.4.2 (2.11BSD) 2026/6/13
 .\"
-.TH GETOPT 3 "January 12, 1996"
+.TH GETOPT 3 "June 13, 2026"
 .UC 6
 .SH NAME
 \fBgetopt\fP \- get option character from command line argument list
@@ -153,8 +153,7 @@ function encounters a character not found in the string
 .I optarg
 or detects
 a missing option argument it writes an error message and returns `?'
-to the
-.IR stderr .
+to the caller.
 Setting
 .I opterr
 to a zero will disable these error messages.

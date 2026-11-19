@@ -8,15 +8,13 @@
  * may not be used to endorse or promote products derived from this
  * software without specific prior written permission. This software
  * is provided ``as is'' without express or implied warranty.
- *
- *	@(#)Version.c	4.8 (Berkeley) 3/28/88
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char sccsid[] = "@(#)named 4.8 %VERSION% %WHOANDWHERE%\n";
-#endif /* not lint */
 
 char Version[] = "named 4.8 %VERSION%\n\t%WHOANDWHERE%\n";
+#endif
 
 #ifdef COMMENT
 

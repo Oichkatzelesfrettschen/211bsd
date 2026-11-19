@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)subs.c	5.2 (2.11BSD) 2022/10/3";
+static char sccsid[] = "@(#)subs.c	5.3 (2.11BSD) 2026/9/17";
 #endif
 
 #include <stdio.h>
@@ -399,7 +399,7 @@ getout ()  {
 
 	/* fix terminal status */
 	fixtty (old);
-	exit();
+	exit(0);
 }
 roll ()  {
 	register char	c;

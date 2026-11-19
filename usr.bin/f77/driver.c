@@ -1,14 +1,16 @@
-char *xxxvers[] = "\n FORTRAN 77 DRIVER, VERSION 1.13.1+,   09 JUN 1995\n";
+static char xxxvers[] = "f77 driver version 1.14 2026/6/29\n";
 
 #include <stdio.h>
 #include <ctype.h>
 #include "defines"
-#include "locdefs"
+#include "pdp11defs"
 #include "drivedefs"
 #include "ftypes"
 #include <signal.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
-static FILEP diagfile	= {stderr} ;
+static FILE *diagfile	= {stderr} ;
 static int pid;
 static int sigivalue	= 0;
 static int sigqvalue	= 0;
@@ -39,17 +41,13 @@ static char setfname[20];
 
 static char fflags[30]	= "-";
 static char cflags[20]	= "-c -V";
-#if	TARGET == PDP11
 static char aflags[20]	= "-u -V";
-#endif
 static char eflags[30]	= "";
 static char rflags[30]	= "";
 static char lflag[3]	= "-x";
 static char *fflagp	= fflags+1;
 static char *cflagp	= cflags+5;
-#if	TARGET == PDP11
 static char *aflagp	= aflags+5;
-#endif
 static char *eflagp	= eflags;
 static char *rflagp	= rflags;
 static char **loadargs;
@@ -65,7 +63,6 @@ static flag verbose	= NO;
 static flag nofloating	= NO;
 static flag fortonly	= NO;
 static flag macroflag	= NO;
-
 
 main(argc, argv)
 int argc;
@@ -73,7 +70,6 @@ char **argv;
 {
 int i, c, status;
 char *setdoto(), *lastchar(), *lastfield();
-ptr ckalloc();
 register char *s;
 char fortfile[20], *t;
 char buff[100];
@@ -88,15 +84,10 @@ enbint(intrupt);
 pid = getpid();
 crfnames();
 
-loadargs = (char **) ckalloc( (argc+20) * sizeof(*loadargs) );
+loadargs = (char **) calloc(argc+20, sizeof(*loadargs));
 loadargs[1] = "-X";
 loadargs[2] = "-u";
-#if HERE==PDP11 || HERE==VAX
-	loadargs[3] = "_MAIN_";
-#endif
-#if HERE == INTERDATA
-	loadargs[3] = "main";
-#endif
+loadargs[3] = "_MAIN_";
 loadp = loadargs + 4;
 
 --argc;
@@ -144,10 +135,6 @@ while(argc>0 && argv[0][0]=='-' && argv[0][1]!='\0')
 
 		case 'O':
 			optimflag = YES;
-#if TARGET == INTERDATA
-				*loadp++ = "-r";
-				*loadp++ = "-d";
-#endif
 			*fflagp++ = 'O';
 			if( isdigit(s[1]) )
 				*fflagp++ = *++s;
@@ -164,7 +151,6 @@ while(argc>0 && argv[0][0]=='-' && argv[0][1]!='\0')
 
 		case 'S':
 			saveasmflag = YES;
-
 		case 'c':
 			loadflag = NO;
 			break;
@@ -194,12 +180,10 @@ while(argc>0 && argv[0][0]=='-' && argv[0][1]!='\0')
 			--argc;
 			break;
 
-#if TARGET == PDP11
 		case 'f':
 			nofloating = YES;
 			pass2name = NOFLPASS2;
-		break;
-#endif
+			break;
 
 		case 'F':
 			fortonly = YES;
@@ -207,7 +191,7 @@ while(argc>0 && argv[0][0]=='-' && argv[0][1]!='\0')
 			break;
 
 		case 'I':
-			if(s[1]=='2' || s[1]=='4' || s[1]=='s')
+			if(s[1]=='2' || s[1]=='4')
 				{
 				*fflagp++ = *s++;
 				goto copyfflag;
@@ -234,7 +218,7 @@ while(argc>0 && argv[0][0]=='-' && argv[0][1]!='\0')
 			break;
 		default:
 			lflag[1] = *s;
-			*loadp++ = copys(lflag);
+			*loadp++ = strdup(lflag);
 			break;
 		}
 endfor:
@@ -242,13 +226,11 @@ endfor:
 	++argv;
 	}
 
-loadargs[0] = ldname;
-#if TARGET == PDP11
+	loadargs[0] = ldname;
 	if(nofloating)
 		*loadp++ = (profileflag ? NOFLPROF : NOFLFOOT);
 	else
-#endif
-*loadp++ = (profileflag ? proffoot : footname);
+		*loadp++ = (profileflag ? proffoot : footname);
 
 for(i = 0 ; i<argc ; ++i)
 	switch(c =  dotchar(infname = argv[i]) )
@@ -324,9 +306,7 @@ for(i = 0 ; i<argc ; ++i)
 				erred = YES;
 				break;
 				}
-#if HERE==PDP11 || HERE==VAX
 			fprintf(diagfile, "%s:\n", argv[i]);
-#endif
 			sprintf(buff, "%s %s %s", CC, cflags, argv[i] );
 			if( sys(buff) )
 				erred = YES;
@@ -352,7 +332,7 @@ if(loadflag && !erred)
 	doload(loadargs, loadp);
 done(erred);
 }
-
+
 dofort(s)
 char *s;
 {
@@ -399,9 +379,6 @@ comperror:
 	goto ret;
 }
 
-
-
-
 dopass2()
 {
 char buff[100];
@@ -409,23 +386,9 @@ char buff[100];
 if(verbose)
 	fprintf(diagfile, "PASS2.");
 
-#if FAMILY==DMR
 	sprintf(buff, "%s %s - %s %s", pass2name, textfname, asmpass2, "-V");
 	return( sys(buff) );
-#endif
-
-#if FAMILY == SCJ
-#	if TARGET==INTERDATA
-	sprintf(buff, "%s -A%s <%s >%s", pass2name, setfname, textfname, asmpass2);
-#	else
-	sprintf(buff, "%s <%s >%s", pass2name, textfname, asmpass2);
-#	endif
-	return( sys(buff) );
-#endif
 }
-
-
-
 
 doasm(s)
 char *s;
@@ -439,7 +402,6 @@ if(*s == '\0')
 lastc = lastchar(s);
 obj = setdoto(s);
 
-#if TARGET==PDP11 || TARGET==VAX
 #ifdef PASS2OPT
 if(optimflag)
 	{
@@ -453,57 +415,30 @@ if(optimflag)
 		}
 	}
 #endif
-#endif
 
 if(saveasmflag)
 	{
 	*lastc = 's';
-#if TARGET == INTERDATA
-	sprintf(buff, "cat %s %s %s >%s", asmfname, setfname, asmpass2, obj);
-	sys(buff);
-#else
 	sprintf(buff, "cat %s %s >%s", asmfname, asmpass2, obj);
 	sys(buff);
-#endif
 	*lastc = 'o';
 	}
 else
 	{
 	if(verbose)
 		fprintf(diagfile, "  ASM.");
-#if TARGET == INTERDATA
-	sprintf(buff, "%s -o %s %s %s %s", asmname, obj, asmfname, setfname, asmpass2);
-#endif
 
-#if TARGET == VAX
-	/* vax assembler currently accepts only one input file */
-	sprintf(buff, "cat %s >>%s", asmpass2, asmfname);
-	sys(buff);
-	sprintf(buff, "%s -o %s %s", asmname, obj, asmfname);
-#endif
-
-#if TARGET == PDP11
 	sprintf(buff, "%s %s -o %s %s %s", asmname, aflags,
 		obj, asmfname, asmpass2);
-#endif
-
-#if TARGET!=INTERDATA && TARGET!=PDP11 && TARGET!=VAX
-	sprintf(buff, "%s -o %s %s %s", asmname, obj, asmfname, asmpass2);
-#endif
 
 	if( sys(buff) )
 		fatal("assembler error");
 	if(verbose)
 		fprintf(diagfile, "\n");
-#if HERE==PDP11 && TARGET!=PDP11
-	rmf(obj);
-#endif
 	}
 
 rmf(asmpass2);
 }
-
-
 
 doload(v0, v)
 register char *v0[], *v[];
@@ -518,9 +453,7 @@ for(p = liblist  ; *p ; *v++ = *p++)
 *v++ = aoutname;
 *v = NULL;
 
-/*
 if(verbose)
-*/
 	fprintf(diagfile, "LOAD\n");
 if(debugflag)
 	{
@@ -529,7 +462,6 @@ if(debugflag)
 	fprintf(diagfile, "\n");
 	}
 
-#if HERE==PDP11 || HERE==INTERDATA || HERE==VAX
 	if( (waitpid = fork()) == 0)
 		{
 		enbint(SIG_DFL);
@@ -537,23 +469,8 @@ if(debugflag)
 		fatal1("couldn't load %s", ldname);
 		}
 	await(waitpid,ldname);
-#endif
-
-#if HERE==INTERDATA
-	if(optimflag)
-		{
-		char bufa[100], bufb[100];
-		sprintf(bufa, "nopt %s -o junk.%d", aoutname, pid);
-		sprintf(bufb, "mv junk.%d %s", pid, aoutname);
-		if (sys(bufa) || sys(bufb))
-			err("bad optimization");
-		}
-#endif
-
-if(verbose)
-	fprintf(diagfile, "\n");
 }
-
+
 /* Process control and Shell-simulating routines */
 
 sys(str)
@@ -565,7 +482,6 @@ char *inname, *outname;
 int append;
 int waitpid;
 int argc;
-
 
 if(debugflag)
 	fprintf(diagfile, "%s\n", str);
@@ -633,10 +549,6 @@ if((waitpid = fork()) == 0)
 return( await(waitpid,path+9) );
 }
 
-
-
-
-
 #include "errno.h"
 
 /* modified version from the Shell */
@@ -644,7 +556,6 @@ texec(f, av)
 char *f;
 char **av;
 {
-extern int errno;
 
 execv(f, av+1);
 
@@ -657,11 +568,6 @@ if (errno==ENOEXEC)
 if (errno==ENOMEM)
 	fatal1("%s: too large", f);
 }
-
-
-
-
-
 
 done(k)
 int k;
@@ -676,11 +582,6 @@ if(recurs == NO)
 exit(k);
 }
 
-
-
-
-
-
 enbint(k)
 int (*k)();
 {
@@ -694,15 +595,10 @@ if(sigtvalue == 0)
 	signal(SIGTERM,k);
 }
 
-
-
-
 intrupt()
 {
 done(2);
 }
-
-
 
 await(waitpid,where)
 int waitpid;
@@ -725,7 +621,7 @@ if(status & 0377)
 	}
 return(status>>8);
 }
-
+
 /* File Name and File Manipulation Routines */
 
 unreadable(s)
@@ -746,10 +642,8 @@ else
 	}
 }
 
-
-
 clf(p)
-FILEP *p;
+FILE **p;
 {
 if(p!=NULL && *p!=NULL && *p!=stdout)
 	{
@@ -766,17 +660,7 @@ rmf(textfname);
 rmf(asmfname);
 rmf(initfname);
 rmf(asmpass2);
-#if TARGET == INTERDATA
-	rmf(setfname);
-#endif
 }
-
-
-
-
-
-
-
 
 /* return -1 if file does not exist, 0 if it is of zero length
    and 1 if of positive length
@@ -784,31 +668,12 @@ rmf(asmpass2);
 content(filename)
 char *filename;
 {
-#ifdef VERSION6
-	struct stat
-		{
-		char cjunk[9];
-		char size0;
-		int size1;
-		int ijunk[12];
-		} buf;
-#else
-#	include <sys/types.h>
-#	include <sys/stat.h>
 	struct stat buf;
-#endif
 
-if(stat(filename,&buf) < 0) 
-	return(-1);
-#ifdef VERSION6
-	return(buf.size0 || buf.size1);
-#else
+	if	(stat(filename,&buf) < 0) 
+		return(-1);
 	return( buf.st_size > 0 );
-#endif
 }
-
-
-
 
 crfnames()
 {
@@ -823,19 +688,12 @@ fname(optzfname, "z");
 fname(setfname, "A");
 }
 
-
-
-
 rmf(fn)
 register char *fn;
 {
 if(!debugflag && fn!=NULL && *fn!='\0')
 	unlink(fn);
 }
-
-
-
-
 
 LOCAL fname(name, suff)
 char *name, *suff;
@@ -846,9 +704,6 @@ sprintf(name, "%s%d.%s", tmpfiles, pid, suff);
  */
 }
 
-
-
-
 dotchar(s)
 register char *s;
 {
@@ -857,8 +712,6 @@ for( ; *s ; ++s)
 		return( s[1] );
 return(NO);
 }
-
-
 
 char *lastfield(s)
 register char *s;
@@ -869,8 +722,6 @@ for(t = s; *s ; ++s)
 		t = s+1;
 return(t);
 }
-
-
 
 char *lastchar(s)
 register char *s;
@@ -887,55 +738,11 @@ register char *s;
 return( lastfield(s) );
 }
 
-
-
 badfile(s)
 char *s;
 {
 fatal1("cannot open intermediate file %s", s);
 }
-
-
-
-ptr ckalloc(n)
-int n;
-{
-ptr p, calloc();
-
-if( p = calloc(1, (unsigned) n) )
-	return(p);
-
-fatal("out of memory");
-/* NOTREACHED */
-}
-
-
-
-
-
-copyn(n, s)
-register int n;
-register char *s;
-{
-register char *p, *q;
-
-p = q = (char *) ckalloc(n);
-while(n-- > 0)
-	*q++ = *s++;
-return(p);
-}
-
-
-
-copys(s)
-char *s;
-{
-return( copyn( strlen(s)+1 , s) );
-}
-
-
-
-
 
 nodup(s)
 char *s;
@@ -945,11 +752,8 @@ register char **p;
 for(p = loadargs ; p < loadp ; ++p)
 	if( !strcmp(*p, s) )
 		return(NO);
-
 return(YES);
 }
-
-
 
 static fatal(t)
 char *t;
@@ -961,9 +765,6 @@ done(1);
 exit(1);
 }
 
-
-
-
 static fatal1(t,d)
 char *t, *d;
 {
@@ -972,20 +773,15 @@ sprintf(buff, t, d);
 fatal(buff);
 }
 
-
-
-
 err(s)
 char *s;
 {
 fprintf(diagfile, "Error in file %s: %s\n", infname, s);
 }
-
-LOCAL int nch	= 0;
-LOCAL FILEP asmfile;
-LOCAL FILEP sortfile;
 
-#include "ftypes"
+LOCAL int nch	= 0;
+LOCAL FILE *asmfile;
+LOCAL FILE *sortfile;
 
 static ftnint typesize[NTYPES]
 	= { 1, SZADDR, SZSHORT, SZLONG, SZLONG, 2*SZLONG,
@@ -1021,7 +817,7 @@ if( (sortfile = fopen(sortfname, "r")) == NULL)
 	badfile(sortfname);
 if( (asmfile = fopen(asmfname, "a")) == NULL)
 	badfile(asmfname);
-pruse(asmfile, USEINIT);
+fprintf(asmfile, "%s\n", USEINIT);
 
 while( rdname(&vargroup, varname) && rdlong(&offset) && rdlong(&vlen) && rdlong(&type) )
 	{
@@ -1037,10 +833,7 @@ while( rdname(&vargroup, varname) && rdlong(&offset) && rdlong(&vlen) && rdlong(
 			align = (type==TYCHAR ? SZLONG : typealign[type]);
 		else	align = ALIDOUBLE;
 		totlen = doeven(totlen, align);
-		if(vargroup == 2)
-			prcomblock(asmfile, varname);
-		else
-			fprintf(asmfile, LABELFMT, varname);
+		fprintf(asmfile, LABELFMT, varname);
 		}
 	if(offset < ooffset)
 		{
@@ -1080,9 +873,6 @@ rmf(sortfname);
 return(erred);
 }
 
-
-
-
 prspace(n)
 register ftnint n;
 {
@@ -1100,9 +890,6 @@ for(n -= m ; n>0 ; --n)
 	prch(0);
 }
 
-
-
-
 ftnint doeven(tot, align)
 register ftnint tot;
 int align;
@@ -1112,8 +899,6 @@ new = roundup(tot, align);
 prspace(new - tot);
 return(new);
 }
-
-
 
 rdname(vargroupp, name)
 int *vargroupp;
@@ -1136,8 +921,6 @@ for(i = 0 ; i<XL ; ++i)
 return(YES);
 }
 
-
-
 rdlong(n)
 register ftnint *n;
 {
@@ -1152,9 +935,6 @@ for(*n = 0 ; isdigit(c) ; c = getc(sortfile) )
 	*n = 10* (*n) + c - '0';
 return(YES);
 }
-
-
-
 
 prch(c)
 register int c;

@@ -1,6 +1,6 @@
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 static char *rcsid =
-	"@(#)$Header: traceroute.c,v 1.17 89/02/28 21:01:13 van Exp $ (LBL)";
+	"@(#)$Header: traceroute.c,v 1.18 2026/5/10 06:06:13 sms Exp $ (2.11BSD)";
 #endif
 
 /*

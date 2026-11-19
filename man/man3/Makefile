@@ -14,7 +14,7 @@
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-#	@(#)Makefile	5.4.18 (2.11BSD) 2025/12/24
+#	@(#)Makefile	5.4.19 (2.11BSD) 2026/6/5
 #
 MDIR=	/usr/man/cat3
 SRCS1=	abort.3 abs.3 alarm.3 asinh.3 assert.3 atof.3 bstring.3 byteorder.3 \
@@ -25,7 +25,9 @@ SRCS1=	abort.3 abs.3 alarm.3 asinh.3 assert.3 atof.3 bstring.3 byteorder.3 \
 	getgrent.3 gethostbyname.3 getnetent.3 getopt.3 getpass.3 \
 	getgrouplist.3 getloadavg.3 getmntinfo.3 getsubopt.3 \
 	getprotoent.3 getpwent.3 fgets.3 getservent.3 getttyent.3 \
-	getusershell.3 getwd.3 hypot.3 ieee.3 inet.3 infnan.3 initgroups.3 
+	getusershell.3 getwd.3 hypot.3 inet.3 initgroups.3 \
+	isalnum.3 isalpha.3 isascii.3 isblank.3 iscntrl.3 isdigit.3 isgraph.3 \
+	islower.3 isprint.3 ispunct.3 isspace.3 isupper.3 isxdigit.3
 SRCS2=	insque.3 intro.3 j0.3 l3tol.3 ldfps.3 lgamma.3 lib2648.3 \
 	malloc.3 math.3 mktemp.3 monitor.3 mp.3 ndbm.3 nice.3 nlist.3 ns.3 \
 	pause.3 perror.3 plot.3 popen.3 printf.3 psignal.3 putc.3 fputs.3 \
@@ -33,11 +35,11 @@ SRCS2=	insque.3 intro.3 j0.3 l3tol.3 ldfps.3 lgamma.3 lib2648.3 \
 	scandir.3 \
 	scanf.3 setbuf.3 setjmp.3 siginterrupt.3 signal.3 sin.3 \
 	sinh.3 sleep.3 sqrt.3 stdarg.3 stdio.3 strftime.3 string.3 \
-	strtok.3 stty.3 setmode.3 setruid.3 sigsetops.3 \
+	strdup.3 strtok.3 stty.3 setmode.3 setruid.3 sigsetops.3 \
 	strcspn.3 strpbrk.3 strsep.3 strspn.3 strtol.3 strtoul.3 strstr.3 \
-	swab.3 sysctl.3 syslog.3 \
+	swab.3 swapdevname.3 sysctl.3 syslog.3 \
 	system.3 termcap.3 time.3 times.3 tmpnam.3 \
-	ttyname.3 ualarm.3 uname.3 ungetc.3 \
+	toascii.3 tolower.3 toupper.3 ttyname.3 ualarm.3 uname.3 ungetc.3 \
 	syserrlst.3 \
 	utime.3 valloc.3 varargs.3
 OBJS1=	abort.0 abs.0 alarm.0 asinh.0 assert.0 atof.0 bstring.0 byteorder.0 \
@@ -48,7 +50,9 @@ OBJS1=	abort.0 abs.0 alarm.0 asinh.0 assert.0 atof.0 bstring.0 byteorder.0 \
 	getgrent.0 gethostbyname.0 getnetent.0 getopt.0 getpass.0 \
 	getprotoent.0 getpwent.0 fgets.0 getservent.0 getttyent.0 \
 	getgrouplist.0 getloadavg.0 getmntinfo.0 getsubopt.0 \
-	getusershell.0 getwd.0 hypot.0 ieee.0 inet.0 infnan.0 initgroups.0 
+	getusershell.0 getwd.0 hypot.0 inet.0 initgroups.0 \
+	isalnum.0 isalpha.0 isascii.0 isblank.0 iscntrl.0 isdigit.0 isgraph.0 \
+	islower.0 isprint.0 ispunct.0 isspace.0 isupper.0 isxdigit.0
 OBJS2=	insque.0 intro.0 j0.0 l3tol.0 ldfps.0 lgamma.0 lib2648.0 \
 	malloc.0 math.0 mktemp.0 monitor.0 mp.0 ndbm.0 nice.0 nlist.0 ns.0 \
 	pause.0 perror.0 plot.0 popen.0 printf.0 psignal.0 putc.0 fputs.0 \
@@ -56,11 +60,11 @@ OBJS2=	insque.0 intro.0 j0.0 l3tol.0 ldfps.0 lgamma.0 lib2648.0 \
 	scandir.0 \
 	scanf.0 setbuf.0 setjmp.0 siginterrupt.0 signal.0 sin.0 \
 	sinh.0 sleep.0 sqrt.0 stdarg.0 stdio.0 strftime.0 string.0 \
-	strtok.0 stty.0 setmode.0 setruid.0 sigsetops.0 \
+	strdup.0 strtok.0 stty.0 setmode.0 setruid.0 sigsetops.0 \
 	strcspn.0 strpbrk.0 strsep.0 strspn.0 strtol.0 strtoul.0 strstr.0 \
-	swab.0 sysctl.0 syslog.0 \
+	swab.0 swapdevname.0 sysctl.0 syslog.0 \
 	system.0 termcap.0 time.0 times.0 tmpnam.0 \
-	ttyname.0 ualarm.0 uname.0 ungetc.0 \
+	toascii.0 tolower.0 toupper.0 ttyname.0 ualarm.0 uname.0 ungetc.0 \
 	syserrlst.0 \
 	utime.0 valloc.0 varargs.0
 REMO1=	edata.0 etext.0 j1.0 jn.0 ns_addr.0 ns_ntoa.0 y0.0 y1.0 yn.0 acos.0 \
@@ -70,20 +74,19 @@ REMO1=	edata.0 etext.0 j1.0 jn.0 ns_addr.0 ns_ntoa.0 y0.0 y1.0 yn.0 acos.0 \
 	fetch.0 firstkey.0 gcvt.0 log.0 log10.0 log1p.0 nextkey.0 pow.0 \
 	rresvport.0 ruserok.0 store.0 tan.0 addr.0 arc.0 asctime.0 cbrt.0 \
 	circle.0 comp.0 cont.0 copysign.0 cosh.0 drem.0 encrypt.0 environ.0 \
-	erase.0 execle.0 execlp.0 exect.0 execv.0 execve.0 execvp.0 fgetc.0 \
+	erase.0 execle.0 execlp.0 execv.0 execve.0 execvp.0 fgetc.0 \
 	gets.0 finite.0 fputc.0 puts.0 ftime.0 getchar.0 getw.0 gmtime.0 \
 	gtty.0 inet_addr.0 inet_lnaof.0 inet_makeaddr.0 inet_netof.0 \
-	inet_network.0 inet_ntoa.0 isalnum.0 isalpha.0 isascii.0 iscntrl.0 \
-	isdigit.0 islower.0 isprint.0 ispunct.0 isspace.0 isupper.0 \
-	isxdigit.0 label.0 ldexp.0 line.0 linemod.0 localtime.0 logb.0 modf.0 \
+	inet_network.0 inet_ntoa.0 \
+	label.0 ldexp.0 line.0 linemod.0 localtime.0 logb.0 modf.0 \
 	move.0 network.0 ntoa.0 openpl.0 pclose.0 point.0 putchar.0 putw.0
 REMO2=	re_comp.0 re_exec.0 scalb.0 setkey.0 space.0 srand.0 tanh.0 \
-	timezone.0 toascii.0 tolower.0 toupper.0 ltol3.0 _longjmp.0 \
+	timezone.0 ltol3.0 _longjmp.0 \
 	_setjmp.0 acosh.0 alloca.0 atanh.0 cabs.0 calloc.0 ceil.0 \
 	closelog.0 fpurge.0 fabs.0 fdopen.0 free.0 freopen.0 fscanf.0 \
 	ftell.0 fwrite.0 index.0 initstate.0 longjmp.0 mkstemp.0 openlog.0  \
 	realloc.0 remque.0 rewind.0 rindex.0 rint.0 \
-	setlogmask.0 setstate.0 setrgid.0 srandom.0 \
+	setlogmask.0 setstate.0 setrgid.0 srandom.0 vsyslog.0 \
 	sscanf.0 strcat.0 strcmp.0 strcpy.0 strlen.0 strncat.0 strncmp.0 \
 	strncpy.0 strcasecmp.0 strncasecmp.0 fropen.0 fwopen.0 \
 	strerror.0 snprintf.0 vsnprintf.0 vfscanf.0 vscanf.0 vsscanf.0 \
@@ -95,6 +98,8 @@ REMO2=	re_comp.0 re_exec.0 scalb.0 setkey.0 space.0 srand.0 tanh.0 \
 
 REMO3=	getgrnam.0 getpwnam.0 getpwuid.0 setfsent.0 setgrent.0 setpwent.0 \
 	setpwfile.0 tgetent.0 tgetflag.0 tgetnum.0 tgetstr.0 tgoto.0 tputs.0 \
+	setpassent.0 \
+	devname_close.0 \
 	closedir.0 endttyent.0 getttynam.0 opendir.0 readdir.0 rewinddir.0 \
 	seekdir.0 setttyent.0 telldir.0 endnetent.0 getnetbyaddr.0 \
 	getnetbyname.0 htonl.0 htons.0 ntohl.0 ntohs.0 setnetent.0 \
@@ -103,6 +108,7 @@ REMO3=	getgrnam.0 getpwnam.0 getpwuid.0 setfsent.0 setgrent.0 setpwent.0 \
 	setprotoent.0 setusershell.0 endhostent.0 gethostbyaddr.0 gethostent.0 \
 	sethostent.0 sethostfile.0 memccpy.0 memchr.0 memcmp.0 memcpy.0 \
 	memset.0 strchr.0 strrchr.0 tempnam.0 tmpfile.0 fgetpos.0 fsetpos.0 \
+	strtoimax.0 strtoumax.0 \
 	tempnam.0 getmode.0 usleep.0 setenv.0 unsetenv.0
 
 REMO4=	verr.0 errx.0 verrx.0 warn.0 warnx.0 vwarnx.0 
@@ -149,6 +155,7 @@ install: _make_01 _make_02
 		ln ${MDIR}/sigsetops.0 ${MDIR}/$$i; \
 	done
 
+	ln ${MDIR}/devname.0 ${MDIR}/devname_close.0
 	ln ${MDIR}/end.0 ${MDIR}/edata.0
 	ln ${MDIR}/end.0 ${MDIR}/etext.0
 	ln ${MDIR}/j0.0 ${MDIR}/j1.0
@@ -198,21 +205,17 @@ install: _make_01 _make_02
 	ln ${MDIR}/plot.0 ${MDIR}/circle.0
 	ln ${MDIR}/regex.0 ${MDIR}/comp.0
 	ln ${MDIR}/plot.0 ${MDIR}/cont.0
-	ln ${MDIR}/ieee.0 ${MDIR}/copysign.0
 	ln ${MDIR}/sinh.0 ${MDIR}/cosh.0
-	ln ${MDIR}/ieee.0 ${MDIR}/drem.0
 	ln ${MDIR}/crypt.0 ${MDIR}/encrypt.0
 	ln ${MDIR}/execl.0 ${MDIR}/environ.0
 	ln ${MDIR}/plot.0 ${MDIR}/erase.0
 	ln ${MDIR}/execl.0 ${MDIR}/execle.0
 	ln ${MDIR}/execl.0 ${MDIR}/execlp.0
-	ln ${MDIR}/execl.0 ${MDIR}/exect.0
 	ln ${MDIR}/execl.0 ${MDIR}/execv.0
 	ln ${MDIR}/execl.0 ${MDIR}/execve.0
 	ln ${MDIR}/execl.0 ${MDIR}/execvp.0
 	ln ${MDIR}/getc.0 ${MDIR}/fgetc.0
 	ln ${MDIR}/fgets.0 ${MDIR}/gets.0
-	ln ${MDIR}/ieee.0 ${MDIR}/finite.0
 	ln ${MDIR}/putc.0 ${MDIR}/fputc.0
 	ln ${MDIR}/fputs.0 ${MDIR}/puts.0
 	ln ${MDIR}/time.0 ${MDIR}/ftime.0
@@ -226,23 +229,11 @@ install: _make_01 _make_02
 	ln ${MDIR}/inet.0 ${MDIR}/inet_netof.0
 	ln ${MDIR}/inet.0 ${MDIR}/inet_network.0
 	ln ${MDIR}/inet.0 ${MDIR}/inet_ntoa.0
-	ln ${MDIR}/ctype.0 ${MDIR}/isalnum.0
-	ln ${MDIR}/ctype.0 ${MDIR}/isalpha.0
-	ln ${MDIR}/ctype.0 ${MDIR}/isascii.0
-	ln ${MDIR}/ctype.0 ${MDIR}/iscntrl.0
-	ln ${MDIR}/ctype.0 ${MDIR}/isdigit.0
-	ln ${MDIR}/ctype.0 ${MDIR}/islower.0
-	ln ${MDIR}/ctype.0 ${MDIR}/isprint.0
-	ln ${MDIR}/ctype.0 ${MDIR}/ispunct.0
-	ln ${MDIR}/ctype.0 ${MDIR}/isspace.0
-	ln ${MDIR}/ctype.0 ${MDIR}/isupper.0
-	ln ${MDIR}/ctype.0 ${MDIR}/isxdigit.0
 	ln ${MDIR}/plot.0 ${MDIR}/label.0
 	ln ${MDIR}/frexp.0 ${MDIR}/ldexp.0
 	ln ${MDIR}/plot.0 ${MDIR}/line.0
 	ln ${MDIR}/plot.0 ${MDIR}/linemod.0
 	ln ${MDIR}/ctime.0 ${MDIR}/localtime.0
-	ln ${MDIR}/ieee.0 ${MDIR}/logb.0
 	ln ${MDIR}/frexp.0 ${MDIR}/modf.0
 	ln ${MDIR}/plot.0 ${MDIR}/move.0
 	ln ${MDIR}/inet.0 ${MDIR}/network.0
@@ -254,15 +245,11 @@ install: _make_01 _make_02
 	ln ${MDIR}/putc.0 ${MDIR}/putw.0
 	ln ${MDIR}/regex.0 ${MDIR}/re_comp.0
 	ln ${MDIR}/regex.0 ${MDIR}/re_exec.0
-	ln ${MDIR}/ieee.0 ${MDIR}/scalb.0
 	ln ${MDIR}/crypt.0 ${MDIR}/setkey.0
 	ln ${MDIR}/plot.0 ${MDIR}/space.0
 	ln ${MDIR}/rand.0 ${MDIR}/srand.0
 	ln ${MDIR}/sinh.0 ${MDIR}/tanh.0
 	ln ${MDIR}/ctime.0 ${MDIR}/timezone.0
-	ln ${MDIR}/ctype.0 ${MDIR}/toascii.0
-	ln ${MDIR}/ctype.0 ${MDIR}/tolower.0
-	ln ${MDIR}/ctype.0 ${MDIR}/toupper.0
 	ln ${MDIR}/l3tol.0 ${MDIR}/ltol3.0
 	ln ${MDIR}/setjmp.0 ${MDIR}/_longjmp.0
 	ln ${MDIR}/setjmp.0 ${MDIR}/_setjmp.0
@@ -273,6 +260,7 @@ install: _make_01 _make_02
 	ln ${MDIR}/malloc.0 ${MDIR}/calloc.0
 	ln ${MDIR}/floor.0 ${MDIR}/ceil.0
 	ln ${MDIR}/syslog.0 ${MDIR}/closelog.0
+	ln ${MDIR}/syslog.0 ${MDIR}/vsyslog.0
 	ln ${MDIR}/perror.0 ${MDIR}/strerror.0
 	ln ${MDIR}/floor.0 ${MDIR}/fabs.0
 	ln ${MDIR}/fopen.0 ${MDIR}/fdopen.0
@@ -348,6 +336,7 @@ install: _make_01 _make_02
 	ln ${MDIR}/getgrent.0 ${MDIR}/setgrent.0
 	ln ${MDIR}/getpwent.0 ${MDIR}/setpwent.0
 	ln ${MDIR}/getpwent.0 ${MDIR}/setpwfile.0
+	ln ${MDIR}/getpwent.0 ${MDIR}/setpassent.0
 	ln ${MDIR}/termcap.0 ${MDIR}/tgetent.0
 	ln ${MDIR}/termcap.0 ${MDIR}/tgetflag.0
 	ln ${MDIR}/termcap.0 ${MDIR}/tgetnum.0
@@ -403,5 +392,7 @@ install: _make_01 _make_02
 	ln ${MDIR}/fflush.0 ${MDIR}/fpurge.0
 	ln ${MDIR}/funopen.0 ${MDIR}/fropen.0
 	ln ${MDIR}/funopen.0 ${MDIR}/fwopen.0
+	ln ${MDIR}/strtol.0 ${MDIR}/strtoimax.0
+	ln ${MDIR}/strtoul.0 ${MDIR}/strtoumax.0
 
 FRC:

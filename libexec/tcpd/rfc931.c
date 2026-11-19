@@ -9,8 +9,8 @@
   * Author: Wietse Venema, Eindhoven University of Technology, The Netherlands.
   */
 
-#ifndef lint
-static char sccsid[] = "@(#) rfc931.c 1.10 95/01/02 16:11:34";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#) rfc931.c 1.11 (2.11BSD) 2026/5/11";
 #endif
 
 /* System libraries. */

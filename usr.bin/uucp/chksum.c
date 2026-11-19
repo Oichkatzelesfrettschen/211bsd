@@ -1,31 +1,7 @@
-#ifndef lint
-static char sccsid[] = "@(#)chksum.c	4.2 (Berkeley) 6/19/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)chksum.c	4.3 (2.11BSD) 2026/5/9";
 #endif
 
-#ifndef pdp11
-chksum (s, n)
-register char *s;
-register n;
-{
-	register long sum, x, t;
-
-	sum = 0xffff;
-	x = 0;
-	do {
-		/* Rotate left, copying bit 15 to bit 0 */
-		sum <<= 1;
-		if (sum & 0x10000)
-			sum ^= 0x10001;
-		t = sum;
-		sum = (sum + (*s++ & 0377)) & 0xffff;
-		x += sum ^ n;
-		if (sum <= t)
-			sum = (sum ^ x) & 0xffff;
-	} while (--n > 0);
-
-	return (long) (short) sum;
-}
-#else pdp11
 chksum(s,n)
 register char *s;
 register n;
@@ -52,5 +28,3 @@ register n;
 
 	return sum & 0xffff;
 }
-
-#endif pdp11

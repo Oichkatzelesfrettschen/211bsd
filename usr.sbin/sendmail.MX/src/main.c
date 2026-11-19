@@ -19,7 +19,7 @@ char copyright[] =
 "@(#) Copyright (c) 1988 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)main.c	5.17.2 (2.11BSD) 1997/10/3";
+static char sccsid[] = "@(#)main.c	5.17.3 (2.11BSD) 2026/9/22";
 #endif
 
 #define	_DEFINE
@@ -112,7 +112,7 @@ main(argc, argv, envp)
 	extern time_t convtime();
 	extern putheader(), putbody();
 	extern ENVELOPE *newenvelope();
-	extern intsig();
+	extern void intsig();
 	extern char **myhostname();
 	extern char *arpadate();
 	extern char **environ;

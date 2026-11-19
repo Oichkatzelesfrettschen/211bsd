@@ -1,4 +1,8 @@
-#include "stdio.h"
+/*
+ * "@(#)defs 2.0 (2.11BSD) 2026/7/15";
+*/
+
+#include <stdio.h>
 
 #define NO  0
 #define YES 1
@@ -56,10 +60,6 @@ extern int dumpcore;
 extern char msg[];
 
 #define UNIX 1
-#define GCOS 2
-#define GCOSBCD 3
-#define CRAY	4
-#define IBM	5
 
 #define FIELDMAX 32768.
 

@@ -1,4 +1,4 @@
-#	Makefile	(2.11BSD)	2.6	2026/1/4
+#	Makefile	(2.11BSD)	2.7	2026/3/6
 #
 #	The limitations on program size have been removed.  The addition
 #	of disklabel support pushed 'restor' over the limit.  Even with
@@ -13,6 +13,8 @@
 #	It is still possible to hand craft a version of the utilities by leaving
 #	out all but the necessary drivers. 
 #
+# 2026/3/6   - make clean after running ./maketape so that executables, objects
+#              and libsa.a are not included in the tar of the sources.
 # 2020/1/4   - remove unmaintained copy of the system include files in src/ and
 #              the unused sed scripts asm.sed*
 # 2000/11/13 - use libkern instead of libc because the libc routines use 
@@ -68,6 +70,7 @@ distribution: tape1 switch_tapes tape2
 
 tmscptape: ${ALL} ${DUMP}
 	./maketape /dev/nr${TAPE} maketape.data
+	make clean
 	dd if=${DUMP} of=/dev/nr${TAPE} bs=20b
 	cd ${ROOT}/usr; tar cfb /dev/nr${TAPE} 20 \
 		adm bin crash dict doc games guest include ingres \
@@ -82,6 +85,7 @@ tmscptape: ${ALL} ${DUMP}
 
 tape1: ${ALL} ${DUMP}
 	./maketape /dev/nr${TAPE} maketape.data
+	make clean
 	dd if=${DUMP} of=/dev/nr${TAPE} bs=20b
 	cd ${ROOT}/usr; tar cfb /dev/nr${TAPE} 20 \
 		adm bin crash dict doc games guest include ingres \
@@ -168,7 +172,7 @@ tags: FRC
 FRC:
 
 clean:
-	rm -f ${ALL} ${AUX} libsa.a *.o tags
+	rm -f ${ALL} libsa.a *.o tags
 
 boot.o:		boot.c
 conf.o:		conf.c

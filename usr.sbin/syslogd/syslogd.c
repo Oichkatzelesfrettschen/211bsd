@@ -157,7 +157,7 @@ main(argc, argv)
 	sigset_t oset;
 	struct sigaction sigact;
 	char line[MSG_BSIZE + 1];
-	extern int die(), domark(), reapchild(), init();
+	extern void die(), domark(), reapchild(), init();
 
 	while (--argc > 0) {
 		p = *++argv;
@@ -709,6 +709,7 @@ wallmsg(f, iov)
 	reenter = 0;
 }
 
+void
 reapchild()
 {
 	union wait status;
@@ -745,6 +746,7 @@ cvthname(f)
 	return (hp->h_name);
 }
 
+void
 domark()
 {
 
@@ -782,6 +784,7 @@ logerror(type)
 	logmsg(LOG_SYSLOG|LOG_ERR, buf, LocalHostName, ADDDATE);
 }
 
+void
 die(sig)
 {
 	char buf[100];
@@ -801,6 +804,7 @@ die(sig)
  */
 
 /* ARGSUSED */
+void
 init(sig)
 	int	sig;		/* signal number */
 {

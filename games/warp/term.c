@@ -1,4 +1,4 @@
-/* $Header: term.c,v 7.0.1.2 86/12/12 17:04:09 lwall Exp $ */
+/* $Header: term.c,v 7.0.1.3 (2.11BSD) 2026/5/11 17:04:09 sms Exp $ */
 
 /* $Log:	term.c,v $
  * Revision 7.0.1.2  86/12/12  17:04:09  lwall
@@ -377,11 +377,7 @@ newkeymap()
     Reg1 int i;
     Reg2 KEYMAP *map;
 
-#ifndef lint
     map = (KEYMAP*)safemalloc(sizeof(KEYMAP));
-#else
-    map = Null(KEYMAP*);
-#endif /* lint */
     for (i=127; i>=0; --i) {
 	map->km_ptr[i].km_km = Null(KEYMAP*);
 	map->km_type[i] = KM_NOTHIN;
@@ -607,9 +603,6 @@ read_tty(addr,size)
 char *addr;
 int size;	/* ignored for now */
 {
-#ifdef lint
-    size = size;
-#endif
     if (nextout != nextin) {
 	*addr = circlebuf[nextout++];
 	nextout %= PUSHSIZE;

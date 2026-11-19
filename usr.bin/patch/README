@@ -1,4 +1,4 @@
-		Patch Kit (2.11BSD) Version 2.1 2025/12/26
+		Patch Kit (2.11BSD) Version 2.2 2026/6/18
 
 		    Copyright (c) 1988, Larry Wall
 
@@ -40,3 +40,4 @@ You can specify how much of the leading pathname to strip off filenames.
 Uses a Configure script for greater portability.
 You are now asked if you want to apply a reversed patch.
 No limit (apart from memory) on the size of hunks.
+Remove SCCS and RCS support.  SCCS never existed on 2.11 anyhow.

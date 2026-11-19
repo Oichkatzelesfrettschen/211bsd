@@ -1,0 +1,46 @@
+.TH TRAVERSE 1 "January 30, 2026"
+.SH NAME
+traverse \- print indented list of files in a specified directory
+.SH SYNOPSIS
+traverse a directory and show the files that \fIshar\fP(1) would process.
+.SH DESCRIPTION
+.I traverse
+is a simple program
+using the traverse() function from the \fIshar\fP sources to print the 
+tab indented list of files that \fIshar\fP(1) would process.
+.sp
+If the argument is a directory,
+then traverse applies func to all its entries.
+This traversal is in depth first order
+so that files are processed in the order
+that they are stored in the directory.
+.SH EXAMPLE
+.nf
+traverse /var
+/var/
+	db/
+		find.codes
+	run/
+		dev.dir
+		syslog.pid
+		dev.pag
+		psdatabase
+		utmp
+		cron.pid
+		acctd.pid
+	log/
+		learn/
+			C
+			editor
+			eqn
+			files
+			macros
+			morefiles
+			vi
+		sendmail.st
+	cron/
+.fi
+.SH AUTHOR
+Gary Perlman
+.SH BUGS
+There are no diagnostics when directories cannot be searched.

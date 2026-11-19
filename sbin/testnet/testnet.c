@@ -1,3 +1,6 @@
+#if     !defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)testnet.c   1.1 (2.11BSD) 2026/5/7";
+#endif
 
 #include <stdio.h>
 #include <netdb.h>

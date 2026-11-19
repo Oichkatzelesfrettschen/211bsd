@@ -5,11 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-char copyright[] =
-"@(#) Copyright (c) 1980 Regents of the University of California.\n\
- All rights reserved.\n";
-
-static char sccsid[] = "@(#)main.c	5.1.2 (2.11BSD) 2025/12/27";
+static char sccsid[] = "@(#)main.c     5.2 (2.11BSD) 2026/5/12";
 #endif
 
 # include	"trek.h"

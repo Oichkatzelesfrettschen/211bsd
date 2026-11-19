@@ -5,7 +5,7 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)process.c	5.4.2 (2.11BSD GTE) 1996/11/16";
+static char sccsid[] = "@(#)process.c	5.4.3 (2.11BSD) 2026/9/15";
 #endif
 
 /*
@@ -20,12 +20,11 @@ static char sccsid[] = "@(#)process.c	5.4.2 (2.11BSD GTE) 1996/11/16";
 #include <sys/stat.h>
 #include <stdio.h>
 #include <syslog.h>
+#include <strings.h>
 #include <netdb.h>
 #include <netinet/in.h>
-
 #include <protocols/talkd.h>
 
-char	*strcpy();
 CTL_MSG *find_request();
 CTL_MSG *find_match();
 

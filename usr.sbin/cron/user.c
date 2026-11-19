@@ -15,16 +15,14 @@
  * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
  */
 
-#if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: user.c,v 2.8 1994/01/15 20:43:43 vixie Exp $";
+#if !defined(lint) && defined(DOSCCS)
+char sccsid[] = "@(#)user.c 2.9 (2.11BSD) 2026/5/10"
 #endif
 
 /* vix 26jan87 [log is in RCS file]
  */
 
-
 #include "cron.h"
-
 
 void
 free_user(u)
@@ -39,7 +37,6 @@ free_user(u)
 	}
 	free(u);
 }
-
 
 user *
 load_user(crontab_fd, pw, name)

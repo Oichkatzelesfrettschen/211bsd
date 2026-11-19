@@ -18,16 +18,18 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)net.c	5.4 (Berkeley) 2/21/90";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)net.c	5.5 (2.11BSD) 2026/5/9";
+#endif
 
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <strings.h>
 
 netfinger(name)
 	char *name;
@@ -40,8 +42,7 @@ netfinger(name)
 	struct servent *sp;
 	struct sockaddr_in sin;
 	int s;
-	char *alist[1], *host, *rindex();
-	u_long inet_addr();
+	char *alist[1], *host;
 
 	if (!(host = rindex(name, '@')))
 		return;

@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)fdate_.c	5.1	6/7/85
+ *	@(#)fdate_.c	5.2	(2.11BSD) 2026/7/30
  */
 
 /*
@@ -18,11 +18,13 @@
  *	No 'newline' or NULL will be included.
  */
 
+#include <time.h>
+
 fdate_(s, strlen)
 char *s; long strlen;
 {
-	char *ctime(), *c;
-	long time(), t;
+	char *c;
+	time_t t;
 
 	t = time(0);
 	c = ctime(&t);

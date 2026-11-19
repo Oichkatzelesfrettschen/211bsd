@@ -1,12 +1,9 @@
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)mailst.c	5.6.1 (2.11BSD GTE) 6/11/94";
+static char sccsid[] = "@(#)mailst.c	5.6.2 (2.11BSD) 2026/5/9";
 #endif
 
 #include <signal.h>
 #include "uucp.h"
-#ifdef USG
-#include <fcntl.h>
-#endif USG
 
 /*LINTLIBRARY*/
 
@@ -62,12 +59,7 @@ char	*mode;
 	if((pid = fork()) == 0) {
 		/* myside and hisside reverse roles in child */
 		close(myside);
-#ifdef USG
-		close(tst(0, 1));
-		fcntl(hisside, F_DUPFD, tst(0, 1));
-#else !USG
 		dup2(hisside, tst(0, 1));
-#endif !USG
 		close(hisside);
 		/* revert permissions */
 		setgid(getgid());
@@ -85,7 +77,8 @@ char	*mode;
 rpclose(ptr)
 FILE *ptr;
 {
-	register f, r, (*hstat)(), (*istat)(), (*qstat)();
+	register f, r;
+	sig_t hstat, istat, qstat;
 	int status;
 
 	f = fileno(ptr);

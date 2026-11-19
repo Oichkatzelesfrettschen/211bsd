@@ -11,7 +11,7 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)if.c	5.6.1 (2.11BSD GTE) 1/1/94";
+static char sccsid[] = "@(#)if.c	5.6.22(2.11BSD) 2026/9/21";
 #endif
 
 #include <sys/types.h>
@@ -204,7 +204,7 @@ sidewaysintpr(interval, off)
 	register int line;
 	struct iftot *lastif, *sum, *interesting;
 	long oldmask;
-	int catchalarm();
+	void catchalarm();
 
 	klseek(kmem, off, 0);
 #ifdef pdp11
@@ -320,6 +320,7 @@ loop:
  * Called if an interval expires before sidewaysintpr has completed a loop.
  * Sets a flag to not wait for the alarm.
  */
+void
 catchalarm()
 {
 	signalled = YES;

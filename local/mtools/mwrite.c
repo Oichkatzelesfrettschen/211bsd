@@ -1,3 +1,7 @@
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)mwrite.c 2.1 (2.11BSD) 2026/3/21";
+#endif
+
 /*
  * Write (copy) a Unix file to MSDOS
  *
@@ -10,6 +14,7 @@
 
 #include <stdio.h>
 #include <signal.h>
+#include <strings.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "msdos.h"
@@ -26,7 +31,7 @@ int fat_error;				/* FAT error detected? */
 int full = 0;
 int textmode = 0;
 int nowarn = 0;
-static int got_signal();
+static void got_signal();
 static struct directory *writeit();
 static long free_space();
 
@@ -41,14 +46,15 @@ char *argv[];
 	unsigned int dot, start;
 	char *filename, *newfile, *get_name(), get_drive();
 	char *unix_name(), ans[10], *pathname, *get_path(), *fix_mcwd();
-	char tmp[MAX_PATH], target[13], *strcat(), *strcpy(), drive;
+	char tmp[MAX_PATH], target[13], drive;
+	register char *cp;
 	unsigned char *fixed, *dos_name();
 	void exit(), fat_write(), dir_write(), disk_flush(), dir_flush();
 	struct directory *dir, *dir_read();
 					/* catch signals */
-	signal(SIGINT, (SIG_TYPE(*) ()) got_signal);
-	signal(SIGTERM, (SIG_TYPE(*) ()) got_signal);
-	signal(SIGQUIT, (SIG_TYPE(*) ()) got_signal);
+	signal(SIGINT, got_signal);
+	signal(SIGTERM, got_signal);
+	signal(SIGQUIT, got_signal);
 					/* get command line options */
 	oops = 0;
 	verbose = 0;
@@ -175,7 +181,11 @@ char *argv[];
 					/* CONSTCOND */
 					while (1) {
 						printf("File \"%s\" exists, overwrite (y/n) ? ", target);
-						gets(ans);
+						ans[0] = '\0';
+						fgets(ans, sizeof ans, stdin);
+						cp = index(ans, '\n');
+						if	(cp) *cp = '\0';
+
 						if (ans[0] == 'n' || ans[0] == 'N') {
 							nogo = 1;
 							break;
@@ -315,7 +325,7 @@ char *target;
  * a user abort.
  */
 
-static int
+static void
 got_signal()
 {
 	void exit(), disk_flush(), fat_write(), dir_flush();

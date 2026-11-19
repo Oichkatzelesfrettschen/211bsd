@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)l3tol.3	2.3 (Berkeley) 1/22/87
+.\"	@(#)l3tol.3	2.4 (2.11BSD) 2026/9/19
 .\"
 .TH L3TOL 3 
 .UC 2
@@ -21,7 +21,7 @@ long *lp;
 .fi
 .ft R
 .SH DESCRIPTION
-.I L3tol
+.B l3tol
 converts a list of
 .I n
 three-byte integers packed into a character string
@@ -30,16 +30,17 @@ pointed to by
 into a list of long integers pointed to by
 .IR lp .
 .PP
-.I Ltol3
+.B ltol3
 performs the inverse conversion from long integers
 .RI ( lp )
 to three-byte integers
 .RI ( cp ).
 .PP
-These functions are useful for file-system maintenance under
-2BSD where disk addresses within inodes are three bytes long.
+These functions were used for file-system maintenance under
+2.9BSD where disk addresses in inodes are three bytes long.
 .SH SEE ALSO
 fs(5)
 .SH BUGS
 .IR l3tol " and " ltol3
-are unique to the PDP-11 and 2BSD; their use is discouraged.
+are present in 2.11BSD only for compatibility with 2.9BSD.  The functions are
+deprecated and will be removed eventually.

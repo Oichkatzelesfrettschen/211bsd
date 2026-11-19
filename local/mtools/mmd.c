@@ -1,4 +1,6 @@
 /*
+ * @(#)mmd.c    1.1 (2.11BSD) 2026/9/22
+ *
  * Make an MSDOS subdirectory
  *
  * Emmet P. Gray			US Army, HQ III Corps & Fort Hood
@@ -21,7 +23,7 @@ int clus_size;				/* cluster size (in sectors) */
 char *mcwd;				/* the Current Working Directory */
 int fat_error;				/* FAT error detected? */
 
-static int got_signal();
+static void got_signal();
 static void empty_dir();
 
 main(argc, argv)
@@ -38,9 +40,9 @@ char *argv[];
 	struct directory *dir, *dir_read(), *mk_entry();
 	long time(), now;
 					/* catch signals */
-	signal(SIGINT, (SIG_TYPE(*) ()) got_signal);
-	signal(SIGTERM, (SIG_TYPE(*) ()) got_signal);
-	signal(SIGQUIT, (SIG_TYPE(*) ()) got_signal);
+	signal(SIGINT, got_signal);
+	signal(SIGTERM, got_signal);
+	signal(SIGQUIT, got_signal);
 
 	fargn = 1;
 	verbose = 0;
@@ -194,7 +196,7 @@ unsigned int dot, dot_dot;
  * a user abort.
  */
 
-static int
+static void
 got_signal()
 {
 	void exit(), disk_flush(), fat_write(), dir_flush();

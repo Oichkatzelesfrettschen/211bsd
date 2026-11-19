@@ -1,11 +1,13 @@
 #if     !defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)link.c    1.1 (2.11BSD) 2025/12/26";
+static char sccsid[] = "@(#)link.c    1.2 (2.11BSD) 2026/9/22";
 #endif
 
 # include	"link.h"
-char *strcpy(), *ctime(), *strsub(), *tack(), *lalloc();
+char *strsub(), *tack(), *lalloc();
 WORD	getword();
 #include	<signal.h>
+#include	<strings.h>
+#include	<time.h>
 
 /******************** variables with global scope ************************/
 
@@ -60,8 +62,7 @@ int		Nerrors = 0;		/* the number of user errors */
 char		No_out = 0;		/* boolean for no out file */
 char		Scanerr = 0;		/* boolean for error in arguments */
 
-/**********************  main  ********************************************/
-
+extern	void bail_out();
 
 main(argc, argv)
 int	argc;
@@ -81,9 +82,7 @@ char	*argv[];
 	loose_ends();
 }
 
-
 /*********************  scanargs  ******************************************/
-
 
 scanargs(argc, argv)
 int	argc;
@@ -714,7 +713,7 @@ printmap()
 {
 	register struct objfile	*op;
 	register struct psect 	*pp;
-	int			tvec[2];	/* time vector */
+	time_t			tvec;
 	static char		dashes[] = "----------------";
 
 	Mapp = fopen(Mapname, "w");
@@ -727,8 +726,8 @@ printmap()
 		if(Do_411) datstart = 0L;
 		
 		/* print map header */
-		time(tvec);
-		fprintf(Mapp, "%s    Linker-11 version 22may79    %s\n", Outname, ctime(tvec));
+		time(&tvec);
+		fprintf(Mapp, "%s    Linker-11 version 22may79    %s\n", Outname, ctime(&tvec));
 		fprintf(Mapp, "Magic number:     %o\t",
 				Do_410 ? 0410 : ( Do_411 ? 0411 : 0407) );
 		if(Do_410) fprintf(Mapp, "(Shared text)\n");
@@ -837,8 +836,6 @@ int		n;
 post_bail()	/* set interrupt routine to bail_out */
 
 {
-	extern	bail_out();
-
 	sigx(1);
 	sigx(2);
 	sigx(3);
@@ -846,8 +843,6 @@ post_bail()	/* set interrupt routine to bail_out */
 }
 sigx(n)
 {
-	extern	bail_out();
-
 	if(signal(n, SIG_IGN) != SIG_IGN)
 		signal(n, bail_out);
 }

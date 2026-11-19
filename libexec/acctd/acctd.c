@@ -1,7 +1,7 @@
 /*
  * Steven Schultz - sms@2bsd.com
  *
- *	@(#)acctd.c	1.1 (2.11BSD) 2025/12/25
+ *	@(#)acctd.c	1.2 (2.11BSD) 2026/9/17
  *
  * acctd - process accounting daemon
 */
@@ -39,7 +39,7 @@
 	struct	ACCTPARM Acctparms;
 	FILE	*Acctfp;
 	char	*Acctdcf = _PATH_ACCTDCF;
-	int	checkacctspace(), hupcatch(), terminate();
+	void	checkacctspace(), hupcatch(), terminate();
 	void	usage(), errline();
 	void	die(), reportit();
 
@@ -204,6 +204,7 @@ doit()
 		}
 	}
 
+void
 checkacctspace()
 	{
 	struct	statfs	fsb;
@@ -219,14 +220,14 @@ checkacctspace()
 		if	(!Disabled)
 			reportit("less than %d%% freespace on %s, accounting suspended\n", Acctparms.suspend, fsb.f_mntfromname);
 		Disabled = 1;
-		return(0);
+		return;
 		}
 /*
  * If accounting is not disabled then just return.  If it has been disabled
  * check if enough space is free to resume accounting.
 */
 	if	(!Disabled)
-		return(0);
+		return;
 
 	resumefree = ((float)fsb.f_blocks * (float)Acctparms.resume) / 100.0;
 	if	(totalfree >= resumefree)
@@ -235,7 +236,7 @@ checkacctspace()
 			Acctparms.resume, fsb.f_mntfromname);
 		Disabled = 0;
 		}
-	return(0);
+	return;
 	}
 
 /*
@@ -243,6 +244,7 @@ checkacctspace()
  * in the signal handler because other signals are blocked.
 */
 
+void
 hupcatch()
 	{
 	struct	ACCTPARM ajunk;
@@ -270,6 +272,7 @@ hupcatch()
  * assumption is made here as in doit() - that the reads are atomic, we
  * either get all that we asked for or nothing.
 */
+void
 terminate()
 	{
 	register int	i, cnt;
@@ -281,7 +284,7 @@ terminate()
 		{
 		while	((cnt = read(Alogfd, &a, sizeof (a)) > 0))
 			fwrite(&a, sizeof (a), 1, Acctfp);
-		usleep(1000000L);
+		usleep(1100000L);
 		}
 	if	(Acctfp)
 		fclose(Acctfp);

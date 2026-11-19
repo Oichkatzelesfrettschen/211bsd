@@ -1,4 +1,4 @@
-/*	@(#)malloc.c	2.3	(2.11BSD) 1999/1/18 */
+/*	@(#)malloc.c	2.4	(2.11BSD) 2026/8/20 */
 
 #include <unistd.h>
 
@@ -55,7 +55,7 @@ char *s;
  * Uses circular first-fit strategy.  Works with a noncontiguous, but
  * monotonically linked, arena.  Each block is preceded by a ptr to the
  * pointer of the next following block.  Blocks are exact number of words
- * long aligned to the data type requirements of ALIGN.
+ * aligned to the data type requirements of ALIGN.
  *
  * Bit 0 (LSB) of pointers is used to indicate whether the block associated
  * with the pointer is in use.  A 1 indicates a busy block and a 0 a free
@@ -82,8 +82,7 @@ char *s;
 union store {
 	union store	*ptr;
 	ALIGN		dummy[NALIGN];
-	int		calloc;	/* calloc clears an array of integers */
-};
+	};
 
 static union store	allocs[2];	/* initial arena */
 static union store	*allocp;	/* search ptr */
@@ -92,7 +91,7 @@ static union store	*allocx;	/* for benefit of realloc */
 
 extern char		*sbrk();
 
-char *
+void *
 malloc(nbytes)
 	unsigned nbytes;
 {
@@ -164,6 +163,7 @@ found:
 /*
  * Freeing strategy tuned for LIFO allocation.
  */
+void
 free(ap)
 	register char *ap;
 {
@@ -182,7 +182,7 @@ free(ap)
  * since last call of malloc() to have new size nbytes, and old content
  * returns new location, or 0 on failure.
  */
-char *
+void *
 realloc(p, nbytes)
 	register union store *p;
 	unsigned nbytes;

@@ -1,5 +1,9 @@
 %Start DOTSON
 %{
+/*
+ * @(#)lex.l    2.0  (2.11BSD)  2026/7/15";
+*/
+
 #include <ctype.h>
 #include "defs"
 #include "tokdefs"
@@ -327,12 +331,6 @@ else	BEGIN 0;
 FILE *opincl(namep)
 char **namep;
 {
-#ifndef unix
-	return( fopen(*namep, "r") );
-#else
-
-	/* On Unix, follow the C include conventions */
-	
 	register char *s, *lastslash;
 	char *dir, *name, temp[100];
 	int i;
@@ -372,7 +370,5 @@ char **namep;
 		*namep = temp;
 		}
 	return(fp);
-
-#endif
 }
 

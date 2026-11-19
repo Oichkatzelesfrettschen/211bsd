@@ -1,20 +1,20 @@
 /* 
- * version.c 2.0  (2.11BSD) 2025/12/26
+ * version.c 2.1  (2.11BSD) 2026/6/18
  */
 
-#include "EXTERN.h"
-#include "common.h"
-#include "util.h"
-#include "INTERN.h"
-#include "patchlevel.h"
-#include "version.h"
+/*
+ *  Print out the version number and die.  Skip the global rcsid, etc and
+ * just print a pretty version string
+*/
 
-/* Print out the version number and die. */
+#include <stdio.h>
+
+extern char	*__progname;
 
 void
 version()
 {
-    extern char rcsid[];
 
-    fatal3("%s\nPatch level: %d\n", rcsid, PATCHLEVEL);
+    fprintf(stderr, "%s 2.1 (2.11BSD) 2026/6/18 pl: 14\n", __progname);
+    exit(0);
 }

@@ -39,8 +39,8 @@ static char copyright[] =
 "@(#) Copyright (c) 1989, 1993\n\
 	The Regents of the University of California.  All rights reserved.\n";
 
-static char sccsid[] = "@(#)ping.c	8.1.2 (2.11BSD) 1996/1/18";
-#endif /* not lint */
+static char sccsid[] = "@(#)ping.c	8.1.3 (2.11BSD) 2026/9/21";
+#endif
 
 /*
  *			P I N G . C
@@ -64,7 +64,7 @@ static char sccsid[] = "@(#)ping.c	8.1.2 (2.11BSD) 1996/1/18";
 #include <sys/socket.h>
 #include <sys/file.h>
 #include <sys/time.h>
-#include <sys/signal.h>
+#include <signal.h>
 
 #include <netinet/in_systm.h>
 #include <netinet/in.h>
@@ -77,6 +77,7 @@ static char sccsid[] = "@(#)ping.c	8.1.2 (2.11BSD) 1996/1/18";
 #include <ctype.h>
 #include <errno.h>
 #include <string.h>
+#include <stdlib.h>
 
 #define	DEFDATALEN	(64 - 8)	/* default data length */
 #define	MAXIPLEN	60
@@ -141,8 +142,6 @@ main(argc, argv)
 	int argc;
 	char **argv;
 {
-	extern int errno, optind;
-	extern char *optarg;
 	struct timeval timeout;
 	struct hostent *hp;
 	struct sockaddr_in *to;
@@ -150,7 +149,7 @@ main(argc, argv)
 	register int i;
 	int ch, fdmask, hold, packlen, preload;
 	u_char *datap, *packet;
-	char *target, hnamebuf[MAXHOSTNAMELEN], *malloc();
+	char *target, hnamebuf[MAXHOSTNAMELEN];
 #ifdef IP_OPTIONS
 	char rspace[3 + 4 * NROUTES + 1];	/* record route space */
 #endif
@@ -376,6 +375,7 @@ main(argc, argv)
  * launched exactly at 1-second intervals).  This does not affect the
  * quality of the delay and loss statistics.
  */
+
 void
 catcher()
 {

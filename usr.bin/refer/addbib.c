@@ -1,5 +1,5 @@
-#ifndef lint
-static char *sccsid = "@(#)addbib.c	4.2 (Berkeley) 11/2/84";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)addbib.c	4.3 (2.11BSD) 2026/5/9";
 #endif
 
 #include <stdio.h>
@@ -37,7 +37,7 @@ main(argc, argv)	/* addbib: bibliography entry program */
 int argc;
 char *argv[];
 {
-	FILE *fp, *fopen();
+	FILE *fp;
 	int i;
 
 	if (argc == 1)

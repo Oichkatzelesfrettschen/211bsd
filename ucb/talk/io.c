@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)io.c	5.1.1 (2.11BSD) 1996/3/22";
+static char sccsid[] = "@(#)io.c	5.1.2 (2.11BSD) 2026/5/9";
 #endif
 
 /*
@@ -23,16 +23,14 @@ static char sccsid[] = "@(#)io.c	5.1.1 (2.11BSD) 1996/3/22";
 #define A_LONG_TIME 10000000
 #define STDIN_MASK (1L<<fileno(stdin))	/* the bit mask for standard
 					   input */
-extern int errno;
-
 /*
  * The routine to do the actual talking
  */
 talk()
 {
-	register long read_template, sockt_mask;
+	long read_template, sockt_mask;
 	long read_set;
-	int nb;
+	register int nb;
 	long nbl;
 	char buf[BUFSIZ];
 	struct timeval wait;

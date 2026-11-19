@@ -1,5 +1,6 @@
-
+#if	!defined(lint) && defined(DOSCCS)
 static char sccsid[] = "	backgammon.c	4.1	82/10/24	";
+#endif
 
 /*
 **	The game of Backgammon
@@ -60,14 +61,14 @@ main()
 	srand(time(0));
 	go[5] = NIL;
 	fprintf(stdout, "Instructions? ");
-	gets(s);
+	fgets(s, sizeof (s), stdin);
 	if(*s == 'y')
 		instructions();
 	putchar('\n');
 	fprintf(stdout, "Opponent's level: b - beginner,\n");
 	fprintf(stdout, "i - intermediate, e - expert? ");
 	level='e';
-	gets(s);
+	fgets(s, sizeof (s), stdin);
 	if(*s == 'b')
 		level = 'b';
 	else if(*s == 'i')
@@ -75,12 +76,12 @@ main()
 	putchar('\n');
 	fprintf(stdout, "You will play brown.\n\n");
 	fprintf(stdout, "Would you like to roll your own dice? ");
-	gets(s);
+	fgets(s, sizeof (s), stdin);
 	putchar('\n');
 	if(*s == 'y')
 		nobroll = 1;
 	fprintf(stdout, "Would you like to go first? ");
-	gets(s);
+	fgets(s, sizeof (s), stdin);
 	putchar('\n');
 	if(*s == 'y')
 		goto nowhmove;
@@ -107,7 +108,7 @@ nowhmove:
 retry:
 	fprintf(stdout, "\nYour roll is %d  %d\n", die1, die2);
 	fprintf(stdout, "Move? ");
-	gets(s);
+	fgets(s, sizeof (s), stdin);
 	switch(*s) {
 		case '\0':			/* empty line */
 			fprintf(stdout, "Brown's move skipped.\n");
@@ -328,7 +329,7 @@ roll(who)
 
 	if(who == BROWN && nobroll) {
 		fprintf(stdout, "Roll? ");
-		gets(s);
+		fgets(s, sizeof (s), stdin);
 		n = sscanf(s, "%d%d", &die1, &die2);
 		if(n != 2 || die1 < 1 || die1 > 6 || die2 < 1 || die2 > 6)
 			fprintf(stdout, "Illegal - I'll do it!\n");

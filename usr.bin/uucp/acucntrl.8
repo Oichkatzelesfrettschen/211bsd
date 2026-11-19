@@ -1,6 +1,6 @@
-.\"	@(#)acucntrl.8	6.3 (2.11BSD) 2024/9/20
+.\"	@(#)acucntrl.8	6.3 (2.11BSD) 2026/2/6
 .\"
-.TH acucntrl 8 "Sep 20, 2024"
+.TH acucntrl 8 "February 6, 2026"
 .UC 6
 .SH NAME
 acucntrl \- turn around tty line between dialin and dialout
@@ -40,7 +40,7 @@ and if the process is not running as the superuser.
 The last condition is to allow the superuser to clear the state of the line.
 .PP
 Turning modem control on or off is handled by poking into /dev/kmem.
-It is currently implemented for dz, dh, and dmf lines.
+It is currently implemented for dz and dh lines.
 .PP
 Under 4.2 BSD the program will also refuse to disable a line if carrier is
 sensed on it.  This is to avoid the dead period where someone has just dialed
@@ -109,11 +109,6 @@ hacked to death)
 .SH FILES
 /dev/kmem, /unix, /etc/ttys, /var/run/utmp, /dev/tty*
 .SH BUGS
-.PP
-Sensing carrier requires the 4.2 BSD TIOCMGET ioctl call.  Unfortunately this
-ioctl is not implemented in the vanilla 4.2 BSD dh driver even though the
-dz and dmf drivers use an emulation of the DH11's modem control bits. This
-has been fixed here.
 .PP
 Some time (currently 2 seconds) is required between disabling modem control
 and opening the device.  This is probably because of a race with getty whose

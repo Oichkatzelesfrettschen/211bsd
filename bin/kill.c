@@ -1,10 +1,14 @@
-static	char *sccsid = "@(#)kill.c	4.4.1 (2.11BSD) 1996/3/21";
+#if	!defined(lint) && defined(DOSCCS)
+static	char *sccsid = "@(#)kill.c	4.4.2 (2.11BSD) 2026/5/7";
+#endif
+
 /*
  * kill - send signal to process
  */
 
 #include <signal.h>
 #include <ctype.h>
+#include <errno.h>
 
 char *signm[] = { 0,
 "HUP", "INT", "QUIT", "ILL", "TRAP", "IOT", "EMT", "FPE",	/* 1-8 */
@@ -18,7 +22,6 @@ char **argv;
 {
 	register signo, pid, res;
 	int errlev;
-	extern errno;
 
 	errlev = 0;
 	if (argc <= 1) {

@@ -1,0 +1,43 @@
+.\"
+.\"     @(#)swapdevname.3	1.0 (2.11BSD) 2026/6/3
+.\"
+.TH SWAPDEVNAME 3 "June 3, 2026"
+.UC 4
+.SH NAME
+swapdevname \- kernel swapdev to device pathname
+.SH SYNOPSIS
+.B #include <stdlib.h>
+.sp
+\fBint retval = swapdevname\fP(\fIchar *buf, int len\fP)
+.SH DESCRIPTION
+The
+.B swapdevname
+function returns the kernel variable \fIswapdev\fP as a pathname (e.g. /dev/xp0b)
+.SH DIAGNOSTICS
+If sysctl(3) fails (kernel lacks VM_SWAPDEV) OR
+if the DBM database (/var/run/dev) can not be opened OR if 
+\fIswapdev\fP can not be found in the database 
+.B swapdevname
+will use the traditional value \fB/dev/swap\fP
+.sp
+.B devname
+prints a warning message to stderr if the device database can not be opened.
+.PP
+.SH BUGS
+If 
+.B len
+is not large enough only \fIlen - 1\fP bytes will be placed in \fIbuf\fP 
+followed by a terminating '\\0'
+.SH RETURN VALUE
+.sp
+.nf
+ retval < 0 retval bytes unused in \fIbuf\fP
+ retval = 0 the string + '\\0' exactly fit in \fIbuf\fP
+ retval > 0 \fIbuf\fP is retval bytes too small
+.fi
+.SH SEE ALSO
+snprintf(3), sysctl(3), devname(3), dev_mkdb(8), sysctl(8)
+.SH HISTORY
+The
+.B swapdevname
+function appeared in \fB2.11BSD 35th Anniversary Edition\fP.

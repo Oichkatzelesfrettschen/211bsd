@@ -9,6 +9,8 @@
 #include "termcap.h"
 #include "ctype.h"
 #include <signal.h>
+#include <stdlib.h>
+#include <strings.h>
 
 #ifdef MAC
 #	include "mac.h"

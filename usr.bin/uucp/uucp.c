@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)uucp.c	5.5 (Berkeley) 10/9/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)uucp.c	5.6 (2.11BSD) 2026/5/9";
 #endif
 
 #include "uucp.h"
@@ -413,11 +413,7 @@ register char *sys;
 			clscfile();
 		}
 		gename(CMDPRE, sys, Grade, Cfile);
-#ifdef VMS
-		savemask = umask(~0600); /* vms must have read permission */
-#else !VMS
 		savemask = umask(~0200);
-#endif !VMS
 		Cfp = fopen(subfile(Cfile), "w");
 		umask(savemask);
 		ASSERT(Cfp != NULL, CANTOPEN, Cfile, 0);

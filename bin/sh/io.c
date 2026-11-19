@@ -1,18 +1,15 @@
-#ifndef lint
-static char sccsid[] = "@(#)io.c	4.3 3/19/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)io.c	4.4 (2.11BSD) 2026/5/11";
 #endif
 
-#
 /*
  * UNIX shell
  *
  * S. R. Bourne
  * Bell Telephone Laboratories
- *
  */
 
 #include	"defs.h"
-
 
 /* ========	input output and file copying ======== */
 

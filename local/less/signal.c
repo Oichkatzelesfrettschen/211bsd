@@ -12,18 +12,12 @@
  */
 
 #if     defined(DOSCCS) && !defined(lint)
-static char *sccsid = "@(#)signal.c 1.1 (2.11BSD) 2025/12/25";
+static char *sccsid = "@(#)signal.c 1.2 (2.11BSD) 2026/9/21";
 #endif
 
 #include "less.h"
 #include <signal.h>
 #include <setjmp.h>
-
-/*
- * The type of signal handler functions.
- * Usually int, although it should be void.
- */
-typedef	int		HANDLER;
 
 /*
  * "sigs" contains bits indicating signals which need to be processed.
@@ -41,7 +35,7 @@ extern jmp_buf main_loop;
 /*
  * Interrupt signal handler.
  */
-	static HANDLER
+static void
 interrupt()
 {
 	SIGNAL(SIGINT, interrupt);
@@ -54,7 +48,7 @@ interrupt()
 /*
  * "Stop" (^Z) signal handler.
  */
-	static HANDLER
+static void
 stop()
 {
 	SIGNAL(SIGTSTP, stop);

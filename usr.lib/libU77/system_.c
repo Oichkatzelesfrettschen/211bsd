@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)system_.c	5.1	6/7/85
+ *	@(#)system_.c	5.2	(2.11BSD) 2026/9/21
  */
 
 /*
@@ -18,6 +18,8 @@
 
 #include	"../libI77/fiodefs.h"
 #include	"../libI77/f_errno.h"
+#include <strings.h>
+#include <stdlib.h>
 #include <sys/param.h>
 #ifndef	NCARGS
 #define NCARGS	256
@@ -45,15 +47,12 @@ long n;
 
 #include	<signal.h>
 
-char	*getenv();
-char	*rindex();
-
 system(s)
 char *s;
 {
-	register int (*istat)(), (*qstat)();
+	sig_t istat, qstat;
 	int status, pid, w;
-	char	*shname, *shell;
+	register char	*shname, *shell;
 
 	if ((shell = getenv("SHELL")) == NULL)
 		shell = "/bin/sh";

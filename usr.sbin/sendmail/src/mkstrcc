@@ -1,6 +1,10 @@
 #! /bin/sh
+
+# @(#)mkstrcc 1.1 (2.11BSD) 2026/5/1
+
 # Special cc preprocessor for using mkstr(1) to extract strings from the
 # sendmail source.
+
 STRINGS=sendmail.sr
 
 # Get filename and arguments.

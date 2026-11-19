@@ -1,5 +1,5 @@
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)conn.c	5.10.2 (2.11BSD) 1997/10/2";
+static char sccsid[] = "@(#)conn.c	5.10.3 (2.11BSD) 2026/5/9";
 #endif
 
 #include <signal.h>
@@ -7,13 +7,7 @@ static char sccsid[] = "@(#)conn.c	5.10.2 (2.11BSD) 1997/10/2";
 #include <setjmp.h>
 #include <ctype.h>
 #include <errno.h>
-#ifdef	USG
-#include <termio.h>
-#include <fcntl.h>
-#endif
-#ifndef	USG
 #include <sgtty.h>
-#endif
 
 #define MAXC 1000
 
@@ -39,6 +33,7 @@ char *PCP = "PCP";	/* PC Pursuit device type */
 /*
  *	catch alarm routine for "expect".
  */
+void
 alarmtr()
 {
 	signal(SIGALRM, alarmtr);
@@ -516,11 +511,7 @@ struct sg_spds {int sp_val, sp_name;} spds[] = {
 fixline(tty, spwant)
 int tty, spwant;
 {
-#ifdef	USG
-	struct termio ttbuf;
-#else	!USG
 	struct sgttyb ttbuf;
-#endif !USG
 	register struct sg_spds *ps;
 	int speed = -1;
 
@@ -528,33 +519,16 @@ int tty, spwant;
 		if (ps->sp_val == spwant)
 			speed = ps->sp_name;
 	ASSERT(speed >= 0, "BAD SPEED", CNULL, speed);
-#ifdef	USG
-	if (ioctl(tty, TCGETA, &ttbuf) < 0)
-		return FAIL;
-	/* ttbuf.sg_flags = (ANYP|RAW);
-	ttbuf.sg_ispeed = ttbuf.sg_ospeed = speed; */
-	ttbuf.c_iflag = (ushort)0;
-	ttbuf.c_oflag = (ushort)0;
-	ttbuf.c_cflag = (speed|CS8|HUPCL|CREAD);
-	ttbuf.c_lflag = (ushort)0;
-	ttbuf.c_cc[VMIN] = 6;
-	ttbuf.c_cc[VTIME] = 1;
-	if (ioctl(tty, TCSETA, &ttbuf) < 0)
-		return FAIL;
-#else	!USG
 	if (ioctl(tty, TIOCGETP, &ttbuf) < 0)
 		return FAIL;
 	ttbuf.sg_flags = (ANYP|RAW);
 	ttbuf.sg_ispeed = ttbuf.sg_ospeed = speed;
 	if (ioctl(tty, TIOCSETP, &ttbuf) < 0)
 		return FAIL;
-#endif
-#ifndef	USG
 	if (ioctl(tty, TIOCHPCL, STBNULL) < 0)
 		return FAIL;
 	if (ioctl(tty, TIOCEXCL, STBNULL) < 0)
 		return FAIL;
-#endif
 	linebaudrate = spwant;
 	return SUCCESS;
 }
@@ -690,7 +664,7 @@ int fn;
 		if (i <= 0 || i > 10)
 			i = 3;
 		/* pause for a while */
-		sleep((unsigned)i);
+		sleep(i);
 		return;
 	}
 
@@ -1105,31 +1079,17 @@ int fd;
 fixmode(tty)
 register int tty;
 {
-#ifdef	USG
-	struct termio ttbuf;
-#else	!USG
 	struct sgttyb ttbuf;
-#endif	!USG
 	register struct sg_spds *ps;
 	int speed;
 
 	if (IsTcpIp)
 		return;
-#ifdef	USG
-	ioctl(tty, TCGETA, &ttbuf);
-	ttbuf.c_iflag = ttbuf.c_oflag = ttbuf.c_lflag = (ushort)0;
-	speed = ttbuf.c_cflag &= (CBAUD);
-	ttbuf.c_cflag |= (CS8|CREAD);
-	ttbuf.c_cc[VMIN] = 6;
-	ttbuf.c_cc[VTIME] = 1;
-	ioctl(tty, TCSETA, &ttbuf);
-#else	!USG
 	ioctl(tty, TIOCGETP, &ttbuf);
 	ttbuf.sg_flags = (ANYP | RAW);
 	ioctl(tty, TIOCSETP, &ttbuf);
 	speed = ttbuf.sg_ispeed;
 	ioctl(tty, TIOCEXCL, STBNULL);
-#endif	!USG
 
 	for (ps = spds; ps->sp_val; ps++)
 		if (ps->sp_name == speed) {

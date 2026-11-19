@@ -10,9 +10,9 @@
  *
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)init.c	5.1 (Berkeley) 11/25/87";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)init.c	5.2 (2.11BSD) 2026/5/12";
+#endif
 
 #include <stdio.h>
 #include "rogue.h"
@@ -165,6 +165,7 @@ stop_window()
 	md_control_keybord(1);
 }
 
+void
 byebye()
 {
 	md_ignore_signals();
@@ -176,6 +177,7 @@ byebye()
 	md_heed_signals();
 }
 
+void
 onintr()
 {
 	md_ignore_signals();
@@ -188,6 +190,7 @@ onintr()
 	md_heed_signals();
 }
 
+void
 error_save()
 {
 	save_is_interactive = 0;

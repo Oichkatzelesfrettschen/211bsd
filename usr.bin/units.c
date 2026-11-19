@@ -1,5 +1,5 @@
-#if	!defined(lint)
-static char *sccsid = "@(#)units.c	4.1.1 (2.11BSD) 1996/10/23";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)units.c	4.1.2 (2.11BSD) 2026/5/8";
 #endif
 
 #include <stdio.h>

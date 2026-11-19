@@ -1,6 +1,6 @@
-#ifndef lint
-static char sccsid[] = "@(#)list.c	4.2	(Berkeley)	4/25/83";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)list.c	4.3	(2.11BSD)	2026/5/8";
+#endif
 
 #include "stdio.h"
 #include "lrnref.h"
@@ -11,7 +11,7 @@ int istop;
 list(r)
 char *r;
 {
-	int stop(), intrpt();
+	void stop(), intrpt();
 	FILE *ft;
 	char s[100];
 

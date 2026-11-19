@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)mv.1	6.1 (Berkeley) 4/29/85
+.\"	@(#)mv.1	6.2 (2.11BSD) 2026/8/6
 .\"
 .TH MV 1 "April 29, 1985"
 .UC 4
@@ -14,8 +14,6 @@ mv \- move or rename files
 .B \-i
 ] [
 .B \-f
-] [
-.B \-
 ] file1 file2
 .PP
 .B mv
@@ -23,11 +21,9 @@ mv \- move or rename files
 .B \-i
 ] [
 .B \-f
-] [
-.B \-
 ] file ... directory
 .SH DESCRIPTION
-.I Mv
+.I mv
 moves (changes the name of)
 .I file1
 to
@@ -49,13 +45,13 @@ the move takes place; if not,
 .I mv
 exits.
 .PP
-In the second form, one or more
+In the second form one or more
 .I files
 (plain files or directories) are moved to the
 .I directory
 with their original file-names.
 .PP
-.I Mv
+.I mv
 refuses to move a file onto itself.
 .PP
 Options:
@@ -64,17 +60,13 @@ Options:
 stands for interactive mode. Whenever a move is to supercede an
 existing file, the user is prompted by the name of the file
 followed by a question mark. If he answers with a line starting
-with 'y', the move continues. Any other reply prevents the move from
+with 'y' the move continues. Any other reply prevents the move from
 occurring.
 .TP
 .B \-f
 stands for force. This option overrides any mode restrictions or the
 \-i switch.
 .TP
-.B \-
-means interpret all the following arguments to 
-.I mv
-as file names.  This allows file names starting with minus.
 .SH "SEE ALSO"
 cp(1), ln(1)
 .SH BUGS
@@ -82,7 +74,7 @@ If
 .I file1
 and
 .I file2
-lie on different file systems,
+lie on different file systems
 .I mv
 must copy the file and delete the original.
 In this case the owner name becomes that of the copying process and any

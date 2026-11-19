@@ -1,5 +1,4 @@
-
-static char sccsid[] = "	arithmetic.c	4.1	82/10/24	";
+/* arithmetic.c	4.2 (2.11BSD) 2026/9/22"; */
 
 #include <stdio.h>
 #include <signal.h>
@@ -21,7 +20,7 @@ char	*argv[];
 	char line[100];
 	int ans,pans,i,j,t;
 	char	dir,sense;
-	extern	delete();
+	extern	void delete();
 
 	signal(SIGINT, delete);
 

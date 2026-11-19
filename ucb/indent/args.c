@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)args.c	5.2 (Berkeley) 9/10/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)args.c	5.3 (2.11BSD) 2026/5/9";
+#endif
 
 /*
  * Argument scanning and profile reading code.  Default parameters
@@ -16,8 +16,9 @@ static char sccsid[] = "@(#)args.c	5.2 (Berkeley) 9/10/85";
 #include "indent_globs.h"
 #include <sys/types.h>
 #include <ctype.h>
-
-char *getenv(), *index();
+#include <stdlib.h>
+#include <strings.h>
+#include <math.h>
 
 /* profile types */
 #define	PRO_SPECIAL	1	/* special case */
@@ -189,7 +190,6 @@ set_option(arg)
     register char *arg;
 {
     register struct pro *p;
-    extern double atof();
 
     arg++;			/* ignore leading "-" */
     for (p = pro; p->p_name; p++)

@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)uipc_syscalls.c	7.1.3 (2.11BSD) 1999/9/13
+ *	@(#)uipc_syscalls.c	7.1.4 (2.11BSD) 2026/7/16
  */
 
 #include "param.h"
@@ -136,12 +136,6 @@ accept()
 		sizeof (namelen));
 	if (u.u_error)
 		return;
-#ifndef pdp11
-	if (useracc((caddr_t)uap->name, (u_int)namelen, B_WRITE) == 0) {
-		u.u_error = EFAULT;
-		return;
-	}
-#endif
 noname:
 	fp = gtsockf(uap->s);
 	if (fp == 0)
@@ -519,7 +513,7 @@ recvit(s, mp, flags, namelenp, rightslenp)
 	register struct iovec *iov;
 	register int i;
 	struct mbuf *from, *rights;
-	int len, m_freem();
+	int len;
 
 	if (netoff)
 		return(u.u_error = ENETDOWN);
@@ -634,7 +628,7 @@ getsockopt()
 		int	*avalsize;
 	} *uap = (struct a *)u.u_ap;
 	register struct file *fp;
-	struct mbuf *m = NULL, *m_free();
+	struct mbuf *m = NULL;
 	int valsize;
 
 	if (netoff)
@@ -649,8 +643,7 @@ getsockopt()
 			return;
 	} else
 		valsize = 0;
-	u.u_error =
-	    SOGETOPT(fp->f_socket, uap->level, uap->name, &m);
+	u.u_error = SOGETOPT(fp->f_socket, uap->level, uap->name, &m);
 	if (u.u_error)
 		goto bad;
 	if (uap->val && valsize && m != NULL) {
@@ -736,31 +729,6 @@ getpeername()
 		return;
 	u.u_error = copyout((caddr_t)&len, (caddr_t)uap->alen, sizeof (len));
 }
-
-#ifndef pdp11
-sockargs(aname, name, namelen, type)
-	struct mbuf **aname;
-	caddr_t name;
-	int namelen, type;
-{
-	register struct mbuf *m;
-	int error;
-	struct mbuf *m_free();
-
-	if (namelen > MLEN)
-		return (EINVAL);
-	m = m_get(M_WAIT, type);
-	if (m == NULL)
-		return (ENOBUFS);
-	m->m_len = namelen;
-	error = copyin(name, mtod(m, caddr_t), (u_int)namelen);
-	if (error)
-		(void) m_free(m);
-	else
-		*aname = m;
-	return (error);
-}
-#endif
 
 struct file *
 gtsockf(fdes)

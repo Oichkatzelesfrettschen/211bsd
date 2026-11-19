@@ -10,7 +10,7 @@ OPTS=-DGENERIC -DSOFUB_MAP
 # software without specific prior written permission. This software
 # is provided ``as is'' without express or implied warranty.
 #
-#	2.14 (2.11BSD) 2001/8/3
+#	2.16 (2.11BSD) 2026/2/28
 #
 #########################################################
 # Non-network, but separate I/D kernel			#
@@ -21,7 +21,6 @@ I=	/usr/include
 M=	../machine
 S=	../sys
 U=	../pdpuba
-MB=	../pdpmba
 
 DEFS=	-DKERNEL ${OPTS} -I. -I${H}
 CFLAGS=	-O ${DEFS}
@@ -31,7 +30,7 @@ AS=	/bin/as -V
 ED=	/bin/ed
 SED=	/bin/sed
 
-SUB=	sys pdp pdpuba pdpmba
+SUB=	sys pdp pdpuba
 
 # GENERAL RULES:
 # scb.o MUST be loaded first, param.o MUST be loaded last,
@@ -87,10 +86,10 @@ unix: ${SUB} ${KERNOBJ} checksys
 	size unix
 	@echo Compacting symbol table
 	-symcompact unix
-	@echo Compacting strings table
-	-strcompact unix
 	@echo rearranging symbols
 	-symorder ../pdp/symbols.sort unix
+	@echo Compacting strings table
+	-strcompact unix
 	./checksys unix
 
 vers.o: FRC
@@ -109,7 +108,7 @@ param.o:
 ioconf.o: ioconf.c
 	${CC} -c ${CFLAGS} ioconf.c
 
-sys pdp pdpuba pdpmba:
+sys pdp pdpuba:
 	make -f Make.$@ I=${I} H=${H} M=${M} AS="${AS}" CPP="${CPP}" \
 	    CFLAGS="${CFLAGS}" SED="${SED}"
 
@@ -128,7 +127,7 @@ depend: FRC
 	mkdep ${CFLAGS} param.c ioconf.c ../conf/checksys.c
 
 TAGSFILE= ${S}/tags
-TLIST=	${H} ${I} ${N1} ${N2} ${N3} ${N4} ${N5} ${N6} ${M} ${S} ${U} ${MB} ${SS}
+TLIST=	${H} ${I} ${N1} ${N2} ${N3} ${N4} ${N5} ${N6} ${M} ${S} ${U} ${SS}
 
 tags: FRC
 	rm -f ${TAGSFILE}

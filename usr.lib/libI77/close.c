@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)close.c	5.2	7/30/85
+ *	@(#)close.c	5.3 (2.11BSD) 2026/8/4
  */
 
 /*
@@ -13,6 +13,7 @@
  */
 
 #include "fio.h"
+#include <ctype.h>
 
 static char FROM_OPEN[] =	"\2";
 static char clse[]	=	"close";
@@ -32,7 +33,7 @@ f_clos(a) cllist *a;
 	b= &units[lunit];
 	if(!b->ufd) return(OK);
 	if(a->csta && *a->csta != FROM_OPEN[0])
-		switch(lcase(*a->csta))
+		switch(tolower(*a->csta))
 		{
 	delete:
 		case 'd':

@@ -1,5 +1,5 @@
-#ifndef lint
-static char *sccsid = "@(#)annobib.c	4.1 (Berkeley) 5/6/83";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)annobib.c	4.2 (2.11BSD) 2026/5/9";
 #endif
 
 /*
@@ -15,7 +15,7 @@ main(argc, argv)	/* format (annotated) bibliography for n/troff */
 int argc;
 char *argv[];
 {
-	FILE *fp, *fopen();
+	FILE *fp;
 
 	if (argv[1][0] == '-' && argv[1][1] == 'x')
 	{

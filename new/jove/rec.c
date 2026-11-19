@@ -1,25 +1,24 @@
-/***************************************************************************
- * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
- * is provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is    *
- * included in all the files.                                              *
- ***************************************************************************/
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)rec.c 2.0 (2.11BSD) 2026/9/17";
+#endif
 
+/*
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE
+ * is provided to you without charge, and with no warranty.  You may give
+ * away copies of JOVE, including sources, provided that this notice is
+ * included in all the files.
+ */
+
+#include <stdlib.h>
 #include "jove.h"
 #include "io.h"
 #include "rec.h"
 
-#ifndef MAC
-#	include <sys/file.h>
-#endif
+#include <sys/file.h>
 
 private int	rec_fd = -1;
 private char	*recfname;
 private File	*rec_out;
-
-#ifndef L_SET
-#	define L_SET 0
-#endif
 
 private struct rec_head	Header;
 
@@ -27,13 +26,9 @@ recinit()
 {
 	char	buf[128];
 
-#ifdef MAC
-	sprintf(buf, "%s/%s", HomeDir, p_tempfile);
-#else
 	sprintf(buf, "%s/%s", TmpFilePath, p_tempfile);
-#endif
 	recfname = copystr(buf);
-	recfname = mktemp(recfname);
+	recfname = (char *)mktemp(recfname);
 	rec_fd = creat(recfname, 0644);
 	if (rec_fd == -1) {
 		complain("Cannot create \"%s\"; recovery disabled.", recfname);
@@ -47,7 +42,7 @@ recinit()
 	Header.Pid = getpid();
 	Header.UpdTime = 0L;
 	Header.Nbuffers = 0;
-	(void) write(rec_fd, (char *) &Header, sizeof Header);
+	(void) write(rec_fd, (void *) &Header, sizeof Header);
 }
 
 recclose()

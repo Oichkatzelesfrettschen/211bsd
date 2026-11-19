@@ -33,7 +33,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)kern_sysctl.c	8.7 (2.11BSD) 2022/8/28
+ *	@(#)kern_sysctl.c	8.8 (2.11BSD) 2026/5/27
  */
 
 /*
@@ -52,9 +52,11 @@
 #include <sys/text.h>
 #include <sys/tty.h>
 #include <sys/vm.h>
+#include <sys/dk.h>
 #include <sys/map.h>
 #include <machine/seg.h>
 #include <sys/sysctl.h>
+#include <sys/trace.h>
 #include <machine/cpu.h>
 #include <conf.h>
 
@@ -206,7 +208,7 @@ kern_sysctl(name, namelen, oldp, oldlenp, newp, newlen)
 	void *newp;
 	size_t newlen;
 {
-	int error, level;
+	int error, level, tmphz;
 	u_long longhostid;
 	extern int Acctthresh;		/* kern_acct.c */
 	extern char version[];
@@ -267,6 +269,23 @@ kern_sysctl(name, namelen, oldp, oldlenp, newp, newlen)
 		return (error);
 	case KERN_CLOCKRATE:
 		return (sysctl_clockrate(oldp, oldlenp));
+	case KERN_LINEHZ:
+		tmphz = hz;
+		error = sysctl_int(oldp, oldlenp, newp, newlen, &tmphz);
+		if (!error && newp)
+		   {
+		   if  (tmphz == 50 || tmphz == 60)
+		        {
+		        hz = tmphz;
+		        mshz = (1000000L + hz + 1) / hz;
+#ifdef	INET
+			NETSETHZ();
+#endif
+		        }
+		   else
+		        error = EINVAL;
+		   }
+		return(error);
 	case KERN_BOOTTIME:
 		return (sysctl_rdstruct(oldp, oldlenp, newp, &boottime,
 		    sizeof(struct timeval)));
@@ -278,11 +297,6 @@ kern_sysctl(name, namelen, oldp, oldlenp, newp, newlen)
 		return (sysctl_file(oldp, oldlenp));
 	case KERN_TEXT:
 		return (sysctl_text(oldp, oldlenp));
-#ifdef GPROF
-	case KERN_PROF:
-		return (sysctl_doprof(name + 1, namelen - 1, oldp, oldlenp,
-		    newp, newlen));
-#endif
 	case KERN_NGROUPS:
 		return (sysctl_rdint(oldp, oldlenp, newp, NGROUPS));
 	case KERN_JOB_CONTROL:
@@ -331,6 +345,11 @@ hw_sysctl(name, namelen, oldp, oldlenp, newp, newlen)
 		return (sysctl_rdlong(oldp, oldlenp, newp,ctob((long)freemem)));
 	case HW_PAGESIZE:
 		return (sysctl_rdint(oldp, oldlenp, newp, NBPG*CLSIZE));
+#ifdef	UCB_METER
+	case	HW_TRACEBUF:
+		return (sysctl_rdstruct(oldp, oldlenp, newp, tracebuf,
+			sizeof(tracebuf)));
+#endif
 	default:
 		return (EOPNOTSUPP);
 	}
@@ -461,13 +480,18 @@ vm_sysctl(name, namelen, oldp, oldlenp, newp, newlen)
 		averunnable.ldavg[1] = avenrun[1];
 		averunnable.ldavg[2] = avenrun[2];
 		return (sysctl_rdstruct(oldp, oldlenp, newp, &averunnable,
-		    sizeof(averunnable)));
+			sizeof(averunnable)));
 	case VM_METER:
 #ifdef	notsure
 		vmtotal();	/* could be expensive to do this every time */
 #endif
 		return (sysctl_rdstruct(oldp, oldlenp, newp, &total,
-		    sizeof(total)));
+			sizeof(total)));
+#ifdef	UCB_METER
+	case VM_CP_TIME:
+		return (sysctl_rdstruct(oldp, oldlenp, newp, cp_time,
+			sizeof(cp_time)));
+#endif
 	case VM_SWAPMAP:
 		if (oldp == NULL) {
 			*oldlenp = (char *)swapmap[0].m_limit - 
@@ -486,6 +510,11 @@ vm_sysctl(name, namelen, oldp, oldlenp, newp, newlen)
 			(int)coremap[0].m_limit - (int)coremap[0].m_map));
 	case VM_NSWAP:
 		return (sysctl_rdint(oldp, oldlenp, newp, nswap));
+/*
+ * added for 2.11BSD 35th Anniversary Edition
+*/
+	case VM_SWAPDEV:
+		return (sysctl_rdint(oldp, oldlenp, newp, swapdev));
 	default:
 		return (EOPNOTSUPP);
 	}
@@ -720,7 +749,7 @@ sysctl_file(where, sizep)
 
 /*
  * This one is in kern_clock.c in 4.4 but placed here for the reasons
- * given earlier (back around line 367).
+ * given earlier (back around line 414).
 */
 
 int

@@ -1,6 +1,6 @@
 /*
  *      Program Name:   mkerrlst.c
- *      Date: March 5, 1996
+ *      Date: September 16, 2026
  *      Author: S.M. Schultz
  *
  *      -----------------   Modification History   ---------------
@@ -8,6 +8,8 @@
  *      1.0     05Mar96         1. Initial release into the public domain.
  *	1.1	14Mar96		2. Add ability to take messages from a file
  *				   in place of a fixed array.
+ *	1.2     16Sep2026	3. stdlib has getopt prototype so argc
+ *				   and argv need to be specified correctly.
 */
 
 /*
@@ -25,8 +27,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/uio.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include <errlst.h>
 #include <string.h>
@@ -43,6 +44,8 @@ extern	char	*sys_errlist[];
 extern	int	sys_nerr;
 
 main(argc,argv)
+	int	argc;
+	char	**argv;
 	{
 	register int	c;
 	int	len, maxlen = -1;

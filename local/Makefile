@@ -1,53 +1,33 @@
 #
-# 	#(@)Makefile	2.1 (2.11BSD) 2025/11/25
+# 	#(@)Makefile	2.2 (2.11BSD) 2026/5/13
 #
 CFLAGS=	-O
 LDFLAGS= -i
 
 # Programs that live in subdirectories, and have makefiles of their own.
-SUBDIR= afio cxref ddd less mkovmake mp mtools welcome qterm zmodem
-
-# C source that lives in the current directory
-SRCS= decompr16.c trace.c
+SUBDIR= afio cxref ddd less mkovmake mtools welcome qterm zmodem
 
 # C programs that live in the current directory and do not need
 # explicit make lines.
-STD= decompr16 trace 
 
 # Manpage directory
 MANDIR= /usr/local/man
 
-all:	${SUBDIR} ${STD}
+all:	${SUBDIR}
 
 ${SUBDIR}: FRC
-	cd $@; make ${MFLAGS}
+	cd $@; make
 
 FRC:
 
-${STD}:
-	cc ${CFLAGS} ${LDFLAGS} -o $@ $@.c
-
-install: ${STD}
-	-mkdir ${MANDIR}
-	-chmod a+r ${MANDIR}
-	-for i in 1 2 3 4 5 6 7 8; do \
-		(mkdir ${MANDIR}/cat$$i; chmod a+r ${MANDIR}/cat$$i); done
+install: FRC
+	-mkdir -p ${MANDIR}/cat1
+	-chmod 755 ${MANDIR} ${MANDIR}/cat1
 	-for i in ${SUBDIR}; do \
-		(cd $$i; make ${MFLAGS} install); done
-	-install -s -o root -g staff  decompr16 /usr/local/decompr16
-	-install -s -o root -g kmem -m 2755 trace /usr/local/trace
+		(cd $$i; make install); done
 	-sh /usr/sbin/makewhatis ${MANDIR}
 
 clean:
-	rm -f a.out core *.s *.o ${STD}
-	for i in ${SUBDIR}; do (cd $$i; make ${MFLAGS} clean); done
+	for i in ${SUBDIR}; do (cd $$i; make clean); done
 
 depend:
-	-chmod +w Makefile
-	mkdep -p ${CFLAGS} ${SRCS}
-
-# DO NOT DELETE THIS LINE -- make depend uses it
-
-# DEPENDENCIES MUST END AT END OF FILE
-# IF YOU PUT STUFF HERE IT WILL GO AWAY
-# see make depend above

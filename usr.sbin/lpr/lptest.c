@@ -4,15 +4,13 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)lptest.c	5.1 (Berkeley) 6/6/85";
-#endif not lint
+static char sccsid[] = "@(#)lptest.c	5.2 (2.11BSD) 2026/5/10";
+#endif
 
 /*
  * lptest -- line printer test program (and other devices).

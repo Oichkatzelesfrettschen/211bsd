@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)tar.c	5.8 (2.11BSD) 2025/12/25";
+static char sccsid[] = "@(#)tar.c	5.9 (2.11BSD) 2026/9/21";
 #endif
 
 /*
@@ -25,6 +25,7 @@ static char sccsid[] = "@(#)tar.c	5.8 (2.11BSD) 2025/12/25";
 #include <signal.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <stdlib.h>
 #include <strings.h>
 
 #define TBLOCK	512
@@ -86,11 +87,11 @@ int	first;
 int	prtlinkerr;
 int	freemem = 1;
 int	nblock = 0;
-int	onintr();
-int	onquit();
-int	onhup();
+void	onintr();
+void	onquit();
+void	onhup();
 #ifdef notdef
-int	onterm();
+void	onterm();
 #endif
 
 daddr_t	low;
@@ -102,7 +103,6 @@ FILE	*tfile;
 char	tname[] = "/tmp/tarXXXXXX";
 char	*usefile;
 char	magtape[] = "/dev/rmt8";
-char	*malloc();
 char	*getmem();
 char	*getcwd();
 
@@ -904,17 +904,20 @@ checkdir(name)
 	return (cp[-1]=='/');
 }
 
+void
 onintr()
 {
 	(void) signal(SIGINT, SIG_IGN);
 	term++;
 }
 
+void
 onquit()
 {
 	(void) signal(SIGQUIT, SIG_IGN);
 	term++;
 }
+void
 
 onhup()
 {
@@ -923,6 +926,7 @@ onhup()
 }
 
 #ifdef notdef
+void
 onterm()
 {
 	(void) signal(SIGTERM, SIG_IGN);

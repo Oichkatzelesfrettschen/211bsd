@@ -1,25 +1,21 @@
-#ifndef lint
-static char sccsid[] = "@(#)fault.c	4.3 8/11/83";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)fault.c	4.4 (2.11BSD) 2026/5/11";
 #endif
 
-#
 /*
  * UNIX shell
  *
  * S. R. Bourne
  * Bell Telephone Laboratories
- *
  */
 
 #include	"defs.h"
-
 
 STRING		trapcom[MAXTRAP];
 BOOL		trapflg[MAXTRAP];
 BOOL		trapjmp[MAXTRAP];
 
 /* ========	fault handling routines	   ======== */
-
 
 VOID	fault(sig)
 	REG INT		sig;

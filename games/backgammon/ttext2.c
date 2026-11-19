@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)ttext2.c	5.1 (Berkeley) 5/29/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ttext2.c	5.2 (2.11BSD) 2026/5/11";
+#endif
 
 #include "back.h"
 
@@ -42,7 +42,7 @@ char	*stragy[] = {
     "tional hints on strategy are presented in the practice game.",
     "",
     0};
-
+
 char	*prog[] = {
    "\nThe Program and How It Works:",
    "\n   A general rule of thumb is when you don't know what to do,",
@@ -95,16 +95,15 @@ char	*lastch[] = {
    "torial starts.",
    "",
    0};
-
+
 text (txt)
 char	**txt;
-
 {
 	char	**begin;
 	char	*a;
 	char	b;
 	char	*c;
-	int	i;
+	register int	i;
 
 	fixtty (noech);
 	begin = txt;

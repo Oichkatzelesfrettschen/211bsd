@@ -2,12 +2,12 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)execl.3	6.2 (Berkeley) 8/4/87
+.\"	@(#)execl.3	6.3 (2.11BSD) 2026/9/27
 .\"
 .TH EXECL 3 "August 4, 1987"
 .UC 5
 .SH NAME
-execl, execv, execle, execlp, execvp, exec, execve, exect, environ \- execute a file
+execl, execv, execle, execlp, execvp, exec, execve, environ \- execute a file
 .SH SYNOPSIS
 .nf
 .B execl(name, arg0, arg1, ..., argn, 0)
@@ -18,9 +18,6 @@ execl, execv, execle, execlp, execvp, exec, execve, exect, environ \- execute a 
 .PP
 .B "execle(name, arg0, arg1, ..., argn, 0, envp)"
 .B "char *name, *arg0, *arg1, ..., *argn, *envp[];"
-.PP
-.B "exect(name, argv, envp)
-.B "char *name, *argv[], *envp[];
 .PP
 .B extern char **environ;
 .fi
@@ -77,19 +74,6 @@ executed and a vector of strings containing
 the arguments.
 The last argument string must be followed
 by a 0 pointer.
-.PP
-The
-.I exect
-version is used when the executed file is to be
-manipulated with 
-.IR ptrace (2).
-The program is forced to single step a single
-instruction giving the parent an opportunity to
-manipulate its state.  On the VAX-11 this is done
-by setting the trace bit in the process status
-longword.
-.I Exect
-is not available on the PDP-11.
 .PP
 When a C program is executed,
 it is called as follows:

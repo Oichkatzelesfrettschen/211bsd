@@ -1,9 +1,8 @@
 /*
  *                     RCS checkin operation
  */
-#ifndef lint
- static char rcsid[]=
- "$Header: /usr/src/local/bin/rcs/src/RCS/ci.c,v 4.6 87/12/18 11:34:41 narten Exp $ Purdue CS";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ci.c 4.7 (2.11BSD) 2026/5/11";
 #endif
 /*******************************************************************
  *                       check revisions into RCS files
@@ -108,9 +107,6 @@
  */
 
 #include "rcsbase.h"
-#ifndef lint
-static char rcsbaseid[] = RCSBASE;
-#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "time.h"
@@ -123,9 +119,6 @@ extern quietflag;                      /*suppresses diagnostics if true     */
 extern int  nerror;                    /*counter for errors                 */
 extern char * buildrevision();         /*constructs desired revision        */
 extern char * checkid();               /*check identifiers                  */
-extern int    partime();               /*parse free-format date/time        */
-extern long   maketime();              /*convert parsed time to unix time.  */
-extern long   time();                  /*get date and time                  */
 extern struct tm * localtime();        /*convert unixtime into tm-structure */
 extern char * getdate();               /*formates current date  (forward)   */
 extern char * mktempfile();            /*temporary file name generator      */
@@ -769,10 +762,10 @@ char * getdate()
  * YY.MM.DD.hh.mm.ss\0
  */
 {
-        long clock;
+        time_t clock;
         struct tm * tm;
 	static char buffer[datelength]; /* date buffer */
-        clock=time((long *)0);
+        clock=time((time_t *)0);
         tm=localtime(&clock);
         VOID sprintf(buffer, DATEFORM,
                 tm->tm_year, tm->tm_mon+1, tm->tm_mday,

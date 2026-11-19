@@ -4,46 +4,34 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)rain.c	5.2 (Berkeley) 7/15/85";
-#endif not lint
-
-#define BSD
+static char sccsid[] = "@(#)rain.c	5.3 (2.11BSD) 2026/5/10";
+#endif
 
 #include <stdio.h>
-#ifdef USG
-#include <termio.h>
-#else
 #include <sgtty.h>
-#endif
 #include <signal.h>
-/* rain 11/3/1980 EPS/CITHEP */
-/* cc rain.c -o rain -O -ltermlib */
+#include <stdlib.h>
+
 #define cursor(col,row) tputs(tgoto(CM,col,row),1,fputchar)
+
 extern char *UP;
 extern short ospeed;
-#ifdef USG
-struct termio old_tty;
-#else
 struct sgttyb old_tty;
-#endif
 char *LL, *TE, *TI;
+
 main(argc,argv)
 int argc;
 char *argv[];
 {
     extern fputchar();
-    char *malloc();
-    char *getenv();
     char *tgetstr(), *tgoto();
     float ranf();
-    int onsig();
+    void onsig();
     register int x, y, j;
     static int xpos[5], ypos[5];
     register char *CM, *BC, *DN, *ND;
@@ -51,11 +39,7 @@ char *argv[];
     char *tcp;
     register char *term;
     char tcb[100];
-#ifdef USG
-    struct termio sg;
-#else
     struct sgttyb sg;
-#endif
     float cols, lines;
 
     setbuf(stdout,malloc(BUFSIZ));
@@ -85,28 +69,14 @@ char *argv[];
     TI=tgetstr("ti",&tcp);
     UP=tgetstr("up",&tcp);
     if (!(LL=tgetstr("ll",&tcp))) strcpy(LL=malloc(10),tgoto(CM,0,23));
-#ifdef USG
-    ioctl(1, TCGETA, &sg);
-    ospeed=sg.c_cflag&CBAUD;
-#else
     gtty(1, &sg);
     ospeed=sg.sg_ospeed;
-#endif
     for (j=SIGHUP;j<=SIGTERM;j++)
 	if (signal(j,SIG_IGN)!=SIG_IGN) signal(j,onsig);
-#ifdef USG
-    ioctl(1, TCGETA, &old_tty);	/* save tty bits for exit */
-    ioctl(1, TCGETA, &sg);
-    sg.c_iflag&=~ICRNL;
-    sg.c_oflag&=~ONLCR;
-    sg.c_lflag&=~ECHO;
-    ioctl(1, TCSETAW, &sg);
-#else
     gtty(1, &old_tty);	/* save tty bits for exit */
     gtty(1, &sg);
     sg.sg_flags&=~(CRMOD|ECHO);
     stty(1, &sg);
-#endif
     if (TI) tputs(TI,1,fputchar);
     tputs(tgetstr("cl",&tcp),1,fputchar);
     fflush(stdout);
@@ -153,24 +123,18 @@ char *argv[];
 	fflush(stdout);
     }
 }
+
+void
 onsig(n)
 int n;
 {
-#ifdef USG
-    struct termio sg;
-#else
     struct sgttyb sg;
-#endif
     int fputchar();
 
     tputs(LL, 1, fputchar);
     if (TE) tputs(TE, 1, fputchar);
     fflush(stdout);
-#ifdef USG
-    ioctl(1, TCSETAW, &old_tty);
-#else
     stty(1, &old_tty);
-#endif
     kill(getpid(),n);
     _exit(0);
 }
@@ -180,7 +144,7 @@ char c;
     putchar(c);
 }
 float ranf() {
-#if defined(BSD) && !defined(pdp11)
+#if !defined(pdp11)
     return((float)rand()/2147483647.);
 #else
     return((float)rand()/32767.);

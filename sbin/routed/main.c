@@ -4,15 +4,13 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)main.c	5.7 (Berkeley) 4/20/86";
-#endif not lint
+static char sccsid[] = "@(#)main.c	5.8 (2.11BSD) 2026/9/22";
+#endif
 
 /*
  * Routing Table Management Daemon
@@ -31,7 +29,7 @@ int	supplier = -1;		/* process should supply updates */
 int	gateway = 0;		/* 1 if we are a gateway to parts beyond */
 
 struct	rip *msg = (struct rip *)packet;
-int	hup();
+void	hup(), timer();
 
 main(argc, argv)
 	int argc;

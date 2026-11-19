@@ -2,24 +2,23 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)open.2	6.4.1 (2.11BSD GTE) 11/30/94
+.\"	@(#)open.2	6.4.2 (2.11BSD) 2026/9/24
 .\"
 .TH OPEN 2 "Nov 30, 1994"
 .UC 4
 .SH NAME
-open \- open a file for reading or writing, or create a new file
+open \- open file for reading or writing or creation
 .SH SYNOPSIS
 .nf
 .ft B
 #include <fcntl.h>
-.PP
-.ft B
-open(path, flags, mode)
-char *path;
-int flags, mode;
+
+int
+open(\fIchar *path\fP, \fIint flags\fP, \fIint mode\fP)
+.ft R
 .fi
 .SH DESCRIPTION
-.I Open
+.B open
 opens the file
 .I path
 for reading and/or writing, as specified by the
@@ -32,11 +31,11 @@ created if it does not already exist (by specifying the
 O_CREAT flag), in which case the file is created with mode
 .I mode
 as described in
-.IR chmod (2)
+.BR chmod (2)
 and modified by the process' umask value (see
-.IR umask (2)).
+.BR umask (2)).
 .PP
-.I Path
+.I path
 is the address of a string of ASCII characters representing
 a path name, terminated by a null character.
 The flags specified are formed by
@@ -78,7 +77,7 @@ controlling terminal of the caller.  This flag is not the default and
 is currently unimplemented (it will be Real Soon Now).
 .PP
 When opening a file, a lock with 
-.IR flock(2)
+.BR flock(2)
 semantics can be obtained by
 setting O_SHLOCK for a shared lock, or O_EXLOCK for an exclusive lock.
 If creating a file with O_CREAT, the request for the lock will never
@@ -90,13 +89,13 @@ The file pointer used to mark the current position within the
 file is set to the beginning of the file.
 .PP
 The new descriptor is set to remain open across
-.IR execve
-system calls; see
-.IR close (2).
+.BR execve (3)
+system call; see
+.BR close (2).
 .PP
 The system imposes a limit on the number of file descriptors
 open simultaneously by one process.
-.IR Getdtablesize (2)
+.BR getdtablesize (2)
 returns the current system limit.
 .SH "ERRORS
 The named file is opened unless one or more of the

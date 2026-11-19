@@ -5,8 +5,8 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)rotprt.c	5.1.1 (2.11BSD GTE) 1/21/95";
-#endif not lint
+static char sccsid[] = "@(#)rotprt.c	5.1.2 (2.11BSD) 2026/5/10";
+#endif
 
 /*
  * Print a rotated font.
@@ -16,9 +16,9 @@ static char sccsid[] = "@(#)rotprt.c	5.1.1 (2.11BSD GTE) 1/21/95";
 #include <vfont.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <unistd.h>
 
 char	*chp;
-char	*sbrk();
 
 main(argc,argv)
 char **argv;
@@ -26,7 +26,6 @@ char **argv;
 	struct header h;
 	struct dispatch d[256];
 	struct stat stb;
-	off_t lseek();
 	int i,size;
 
 	argc--, argv++;
@@ -52,7 +51,7 @@ char **argv;
 }
 
 rprt(i, dp, cp)
-	int i;
+	register int i;
 	struct dispatch *dp;
 	char *cp;
 {

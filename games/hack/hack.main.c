@@ -1,5 +1,5 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
-/* hack.main.c - version 1.0.4 */
+/* hack.main.c - version 1.0.5 (2.11BSD) 2026/9/22 */
 
 #include <stdio.h>
 #include <signal.h>
@@ -19,8 +19,8 @@ int (*afternmv)();
 int (*occupation)();
 char *occtxt;			/* defined when occupation != NULL */
 
-int done1();
-int hangup();
+void done1();
+void hangup();
 
 int hackpid;				/* current pid */
 int locknum;				/* max num of players */

@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)lread.c	5.2	7/30/85
+ *	@(#)lread.c	5.3	(2.11BSD) 2026/8/1
  */
 
 /*
@@ -138,10 +138,14 @@ l_read(number,ptr,len,type) ftnint *number,type; flex *ptr; ftnlen len;
 			ptr->flshort=lx;
 			break;
 		case TYLOGICAL:
+#ifdef	SHORT_LOGICAL
+			ptr->flshort = lx;
+#else
 			if(len == sizeof(short))
 				ptr->flshort = lx;
 			else
 				ptr->flint = lx;
+#endif
 			break;
 		case TYLONG:
 			ptr->flint=lx;

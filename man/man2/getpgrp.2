@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)getpgrp.2	6.3 (Berkeley) 8/26/85
+.\"	@(#)getpgrp.2	6.4 (2.11BSD) 2026/9/20
 .\"
 .TH GETPGRP 2 "August 26, 1985"
 .UC 5
@@ -11,14 +11,15 @@ getpgrp \- get process group
 .SH SYNOPSIS
 .ft B
 .nf
-pgrp = getpgrp(pid)
-int pgrp;
-int pid;
+#include <unistd.h>
+
+pid_t
+getpgrp(\fIpid_t pid\fP)
 .fi
 .ft R
 .SH DESCRIPTION
 The process group of the specified process is returned by
-.I getpgrp.
+.B getpgrp.
 If
 .I pid
 is zero, then the call applies to the current process.

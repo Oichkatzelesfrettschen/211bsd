@@ -20,7 +20,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980, 1987 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)lock.c	5.10.1 (2.11BSD GTE) 12/31/93";
+static char sccsid[] = "@(#)lock.c	5.10.2 (2.11BSD) 2026/9/21";
 #endif
 
 /*
@@ -34,16 +34,19 @@ static char sccsid[] = "@(#)lock.c	5.10.1 (2.11BSD GTE) 12/31/93";
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <sys/signal.h>
+#include <signal.h>
 #include <sgtty.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <strings.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <unistd.h>
 
 #define	TIMEOUT	15
 
-int	quit(), bye(), hi();
+void	quit(), bye(), hi();
 
 struct timeval	timeout;
 struct timeval	zerotime;
@@ -55,8 +58,6 @@ main(argc, argv)
 	int argc;
 	char **argv;
 {
-	extern char *optarg;
-	extern int errno, optind;
 	struct passwd *pw;
 	struct timeval timval;
 	struct itimerval ntimer, otimer;
@@ -64,7 +65,6 @@ main(argc, argv)
 	int ch, sectimeout, usemine;
 	char *ap, *mypw, *ttynam, *tzn;
 	char hostname[MAXHOSTNAMELEN], s[256], s1[256];
-	char *crypt(), *ttyname();
 
 	sectimeout = TIMEOUT;
 	mypw = NULL;
@@ -170,7 +170,7 @@ main(argc, argv)
 	quit();
 }
 
-static
+static void
 hi()
 {
 	struct timeval timval;
@@ -180,7 +180,7 @@ hi()
 	    (nexttime - timval.tv_sec) / 60, (nexttime - timval.tv_sec) % 60);
 }
 
-static
+static void
 quit()
 {
 	putchar('\n');
@@ -188,7 +188,7 @@ quit()
 	exit(0);
 }
 
-static
+static void
 bye()
 {
 	(void)ioctl(0, TIOCSETP, &tty);

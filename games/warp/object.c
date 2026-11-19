@@ -1,21 +1,14 @@
-/* $Header: object.c,v 7.0 86/10/08 15:12:55 lwall Exp $ */
+/* $Header: object.c,v 7.1 (2.11BSD) 2026/5/11 15:12:55 sms Exp $ */
 
 /* $Log:	object.c,v $
  * Revision 7.0  86/10/08  15:12:55  lwall
  * Split into separate files.  Added amoebas and pirates.
- * 
  */
 
 #include "EXTERN.h"
 #include "warp.h"
 #include "INTERN.h"
 #include "object.h"
-
-void
-object_init()
-{
-    ;
-}
 
 OBJECT *
 make_object(typ, img, py, px, vy, vx, energ, mas, where)
@@ -28,11 +21,7 @@ OBJECT *where;
     Reg1 OBJECT *obj;
 
     if (free_root.next == &free_root)
-#ifndef lint
 	obj = (OBJECT *) malloc(sizeof root);
-#else
-	obj = Null(OBJECT*);
-#endif
     else {
 	obj = free_root.next;
 	free_root.next = obj->next;

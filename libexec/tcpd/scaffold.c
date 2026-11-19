@@ -4,8 +4,8 @@
   * Author: Wietse Venema, Eindhoven University of Technology, The Netherlands.
   */
 
-#ifndef lint
-static char sccs_id[] = "@(#) scaffold.c 1.5 95/01/03 09:13:48";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccs_id[] = "@(#) scaffold.c 1.6 (2.11BSD) 2026/5/11";
 #endif
 
 /* System libraries. */
@@ -20,12 +20,11 @@ static char sccs_id[] = "@(#) scaffold.c 1.5 95/01/03 09:13:48";
 #include <syslog.h>
 #include <setjmp.h>
 #include <string.h>
+#include <stdlib.h>
 
 #ifndef INADDR_NONE
 #define	INADDR_NONE	(-1)		/* XXX should be 0xffffffff */
 #endif
-
-extern char *malloc();
 
 /* Application-specific. */
 

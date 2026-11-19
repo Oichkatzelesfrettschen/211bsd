@@ -2,30 +2,59 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)intro.8	6.3 (Berkeley) 5/29/86
+.\"	@(#)intro.8	6.4 (2.11BSD) 2026/9/27
 .\"
-.TH INTRO 8 "May 29, 1986"
-.UC 5
+.TH INTRO 8 "September 27, 2026"
+.UC 2
 .SH NAME
 intro \- introduction to system maintenance and operation commands
 .SH DESCRIPTION
 This section contains information related to system operation
 and maintenance.
 It describes commands used to create new file systems,
-.IR newfs ,
+.BR newfs ,
 verify the integrity of the file systems,
-.IR fsck ,
+.BR fsck ,
 control disk usage,
-.IR edquota ,
+.BR edquota ,
 maintain system backups,
-.IR dump ,
-and recover files when disks die an untimely death,
-.IR restore .
-The section 
-.I format
-should be consulted when formatting disk packs.
-Network related services are distinguished as 8C.
-The section
-.I crash
-should be consulted in understanding how to interpret system
-crash dumps.
+.BR dump ,
+.BR rdump ,
+recover files when disks die an untimely death,
+.BR restore ,
+add user accounts,
+.BR adduser ,
+detect devices for the kernel,
+.BR autoconfig ,
+boot the kernel and start system services,
+.BR boot ,
+.BR rc ,
+file bug reports,
+.BR bugfiler ,
+guidlines for analyzing kernel crashes,
+.BR crash ,
+enable/disable terminal lines,
+.BR getty ,
+manage the printing subsystem,
+.BR lpc ,
+.BR lpd ,
+.BR pac ,
+create the device name to major/minor database,
+.BR makedev ,
+generate encryption keys,
+.BR makekey ,
+send/receive mail,
+.BR sendmail ,
+persistent text and append-only directories,
+.BR sticky ,
+synchronize buffer cache to disk,
+.BR sync ,
+maintain system time,
+.BR timed ,
+.BR timedc,
+the uucp communications system,
+.BR uucico ,
+.BR uuclean ,
+.BR uupoll ,
+.BR uusnap ,
+.B uuxqt

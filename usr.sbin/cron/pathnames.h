@@ -16,7 +16,7 @@
  */
 
 /*
- * $Id: pathnames.h,v 1.3 1994/01/15 20:43:43 vixie Exp $
+ * $Id: pathnames.h,v 1.4 2026/5/31 20:43:43 (2.11BSD) Exp $
  */
 
 #include <paths.h>
@@ -68,10 +68,6 @@
 # define EDITOR _PATH_VI
 #else
 # define EDITOR "/usr/ucb/vi"
-#endif
-
-#ifndef _PATH_BSHELL
-# define _PATH_BSHELL "/bin/sh"
 #endif
 
 #ifndef _PATH_DEFPATH

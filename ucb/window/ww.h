@@ -1,5 +1,5 @@
 /*
- * @(#)ww.h	3.37.1 1996/3/22
+ * @(#)ww.h	3.37.2 (2.11BSD) 2026/9/14
  */
 
 /*
@@ -14,11 +14,7 @@
 #include <string.h>
 #include <errno.h>
 
-#ifdef pdp11
 #define NWW	9		/* maximum number of windows */
-#else
-#define NWW	30		/* maximum number of windows */
-#endif
 
 	/* a rectangle */
 struct ww_dim {
@@ -174,16 +170,10 @@ struct ww_tty wwoldtty;		/* the old (saved) terminal settings */
 struct ww_tty wwnewtty;		/* the new (current) terminal settings */
 struct ww_tty wwwintty;		/* the terminal settings for windows */
 char *wwterm;			/* the terminal name */
-#ifdef pdp11
 	/* these are on the stack; see main.c */
 char *wwtermcap;		/* place for the termcap */
 char *wwkeys;			/* termcap fields for the function keys */
 char *wwwintermcap;		/* termcap for windows */
-#else
-char wwtermcap[1024];		/* place for the termcap */
-char wwkeys[512];		/* termcap fields for the function keys */
-char wwwintermcap[1024];	/* termcap for windows */
-#endif
 
 	/* generally useful variables */
 int wwnrow, wwncol;		/* the screen size */
@@ -217,7 +207,7 @@ int wwnselect, wwnselecte, wwnselectz;
 #define wwupdate()	wwupdate1(0, wwnrow);
 
 	/* things for handling input */
-int wwrint();		/* interrupt handler */
+void wwrint();		/* interrupt handler */
 struct ww *wwcurwin;	/* window to copy input into */
 char wwsetjmp;		/* want a longjmp() from wwrint() */
 jmp_buf wwjmpbuf;	/* jmpbuf for above */
@@ -244,7 +234,7 @@ char *wwibq;		/* current write position in buffer */
 
 	/* our functions */
 struct ww *wwopen();
-int wwchild();
+void wwchild();
 int wwsuspend();
 char **wwalloc();
 char *wwerror();

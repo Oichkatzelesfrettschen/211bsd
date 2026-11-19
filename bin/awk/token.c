@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)token.c	4.3 (Berkeley) 12/8/84";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)token.c	4.4 (2.11BSD) 2026/5/10";
 #endif
 
 #include "awk.h"

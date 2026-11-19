@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)newfs.8	2.0 (2.11BSD) 1996/04/12
+.\"	@(#)newfs.8	2.1 (2.11BSD) 2026/10/23
 .\"
 .TH NEWFS 8 "April 12, 1996"
 .UC 5
@@ -30,19 +30,20 @@ newfs \- construct a new file system
 ]
 .B special
 .SH DESCRIPTION
-.B Newfs
+.B newfs
 is a ``friendly'' front-end to the
 .BR mkfs (8)
 program.
-.BR Newfs (8)
+.BR newfs (8)
 will normally read the disklabel from the drive to determine the 
 partition sizes.  If the driver for the disk does not support 
-disklabels the \-T option must be used to force a search of
+disklabels the \fB-T\fP option must be used to force a search of
 .IR /etc/disktab
 for partition information about \fIdrive-type\fP.
-.B Newfs
-calculates the appropriate parameters to use in calling
-.BR mkfs ,
+.sp
+.B newfs
+then calculates the appropriate parameters to use in calling
+.BR mkfs
 then builds the file system by forking \fBmkfs\fP.
 .PP
 .B \-N
@@ -89,12 +90,12 @@ no action is taken if the partition size is 0 or too large.
 .PP
 .in +0.5i
 .B NOTE:
-Mkfs deals in units of filesystem blocks not sectors.  Newfs uses sectors.
+\fBmkfs\fP deals in units of filesystem blocks not sectors.  \fBnewfs\fP uses sectors.
 .in -0.5i
 .SH FILES
-/etc/disktab	disk geometry and partition information 
+/etc/disktab
 .br
-mkfs	to actually build the file system
+\fBmkfs\fP
 .SH "SEE ALSO"
 getdisklabel(3), disklabel(8), disktab(5), diskpart(8), fs(5), fsck(8),
 mkfs(8)

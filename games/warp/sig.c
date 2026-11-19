@@ -1,4 +1,4 @@
-/* $Header: /usr/src/games/warp/RCS/sig.c,v 1.1 87/07/03 01:47:11 games Exp $ */
+/* $Header: /usr/src/games/warp/RCS/sig.c,v 1.2 (2.11BSD) 2026/5/11 01:47:11 sms Exp $ */
 
 /* $Log:	sig.c,v $
  * Revision 7.0.1.2   99/10/24 
@@ -28,9 +28,6 @@
 void
 sig_init()
 {
-#ifdef lint
-    ;
-#else
     sigignore(SIGINT);  /* for inquiry of existence via kill call */
 #ifdef SIGTTOU
     sigignore(SIGTTOU);
@@ -56,16 +53,13 @@ sig_init()
     sigset(SIGTSTP, stop_catcher);
     sigset(SIGSTOP, stop_catcher);
 #endif
-#endif /* lint */
 }
 
 #ifdef SIGTSTP
 void
 cont_catcher()
 {
-#ifndef lint
     sigset(SIGCONT,cont_catcher);
-#endif
     savetty();
     crmode();
     raw();
@@ -153,9 +147,7 @@ sig_catcher(signo)
 #endif
 
 #ifdef SIGTTOU
-#ifndef lint
     sigignore(SIGTTOU);
-#endif /* lint */
 #endif
 #ifdef DEBUGGING
     if (debug) {

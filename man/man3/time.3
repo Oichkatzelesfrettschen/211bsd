@@ -2,45 +2,35 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)time.3c	6.1 (Berkeley) 5/9/85
+.\"	@(#)time.3	6.2 (2.11BSD) 2026/7/21
 .\"
-.TH TIME 3C "May 9, 1985" 
+.TH TIME 3 "May 21, 2026" 
 .UC 4
 .SH NAME
 time, ftime \- get date and time
 .SH SYNOPSIS
-.nf
-.B long time(0)
-.PP
-.B long time(tloc)
-.B long *tloc;
-.PP
 .B #include <sys/types.h>
+.br
 .B #include <sys/timeb.h>
-.B ftime(tp)
-.B struct timeb *tp;
-.fi
+.sp
+.B time_t time(time_t *tloc);
+.sp
+.B ftime(struct timeb *tp);
 .SH DESCRIPTION
 .ft B
 These interfaces are obsoleted by gettimeofday(2).
 .ft R
 .PP
-.I Time
+.B time
 returns the time since 00:00:00 GMT, Jan. 1, 1970, measured
 in seconds.
 .PP
 If
 .I tloc
-is nonnull,
-the return value is also stored in the
-place to which
-.I tloc
-points.
+is nonnull the return value is also stored at that address.
 .PP
-The
-.I ftime
-entry fills in a structure pointed to by its argument,
-as defined by
+.B ftime
+fills in a structure pointed to by its argument as defined by
 .RI < sys/timeb.h >:
 .PP
 .ta .5i +\w'unsigned 'u

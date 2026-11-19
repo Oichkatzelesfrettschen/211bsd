@@ -1,5 +1,6 @@
-
-static char sccsid[] = "	banner.c	4.1	82/10/24	";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "	banner.c	4.2	2026/1/27";
+#endif
 
 /*
  * banner - prints large signs
@@ -7,9 +8,8 @@ static char sccsid[] = "	banner.c	4.1	82/10/24	";
  */
 
 #include <stdio.h>
-#define dir(f) "/e1/mrh/ucb/lib/f"
-#define INDTBL dir(ban.dat.indtbl)
-#define OBJECT dir(ban.dat.object)
+#include <strings.h>
+
 #define MAXMSG 100
 #define DWIDTH 132
 #define NCHARS 128
@@ -987,7 +987,6 @@ char message[MAXMSG];
 char *messp;
 int nchars;
 int linen;
-int x,y;
 int term,dup;
 int pc;
 int max;
@@ -996,6 +995,9 @@ main(argc,argv)
 int argc; 
 char **argv;
 { 
+	register int x,y;
+	char *cp;
+
 	if (argc > 1 && argv[1][0] == '-') {
 		switch(argv[1][1]) {
 		case 'w':
@@ -1021,17 +1023,6 @@ char **argv;
 		j = i * 132 / width;
 		print[j] = 1;
 	}
-#ifdef notdef
-	fd = fopen(INDTBL, "r");
-	for (i=0; i<NCHARS; i++) {
-		fscanf(fd, "%d", &asc_ptr[i]);
-	}
-	fclose(fd);
-
-	fd = fopen(OBJECT, "r");
-	fread(data_table, 1, NBYTES, fd);
-	fclose(fd);
-#endif
 
 	/* Have now read in the data. Next get the message to be printed. */
 	if (argc > 1) {
@@ -1042,7 +1033,11 @@ char **argv;
 		}
 	} else {
 		fprintf(stderr,"Message: ");
-		gets(message);
+		{
+		fgets(message, sizeof (message), stdin);
+		cp = index(message, '\n');
+		if (cp) *cp = '\0';
+		}
 	}
 	nchars = strlen(message);
 
@@ -1115,10 +1110,6 @@ char **argv;
 			else {
 				y = data_table[pc+1];
 				/* compensate for narrow teminals */
-#ifdef notdef
-				x = (x*width + (DWIDTH/2)) / DWIDTH;
-				y = (y*width + (DWIDTH/2)) / DWIDTH;
-#endif
 				max = x+y;
 				while (x < max) line[x++] = '#';
 				pc += 2;
@@ -1127,6 +1118,5 @@ char **argv;
 			}
 		}
 	}
-
 	exit(0);
 }

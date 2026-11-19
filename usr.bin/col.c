@@ -1,5 +1,11 @@
-static char *sccsid = "@(#)col.c	4.2 (Berkeley) 5/15/84";
-# include <stdio.h>
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)col.c	4.3 (2.11BSD) 2026/5/8";
+#endif
+
+#include <stdio.h>
+#include <strings.h>
+#include <stdlib.h>
+
 # define PL 256
 # define ESC '\033'
 # define RLF '\013'
@@ -15,8 +21,8 @@ int half;
 int cp, lp;
 int ll, llh, mustwr;
 int pcp = 0;
-char *pgmname;
-char	*strcpy();
+
+extern	char  *__progname;
 
 main (argc, argv)
 	int argc; char **argv;
@@ -25,13 +31,11 @@ main (argc, argv)
 	int greek;
 	register int c;
 
-	pgmname = argv[0];
-
 	for (i = 1; i < argc; i++) {
 		register char *p;
 		if (*argv[i] != '-') {
 			fprintf (stderr, "%s: bad option %s\n",
-				pgmname, argv[i]);
+				__progname, argv[i]);
 			exit (2);
 		}
 		for (p = argv[i]+1; *p; p++) {
@@ -50,7 +54,7 @@ main (argc, argv)
 
 			default:
 				fprintf (stderr, "%s: bad option letter %c\n",
-					pgmname, *p);
+					__progname, *p);
 				exit (2);
 			}
 		}
@@ -205,14 +209,13 @@ outc (c)
 
 store (lno)
 {
-	char *malloc();
 
 	lno %= PL;
 	if (page[lno] != 0)
 		free (page[lno]);
 	page[lno] = malloc((unsigned)strlen(lbuff) + 2);
 	if (page[lno] == 0) {
-		fprintf (stderr, "%s: no storage\n", pgmname);
+		fprintf (stderr, "%s: no storage\n", __progname);
 		exit (2);
 	}
 	strcpy (page[lno],lbuff);

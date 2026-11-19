@@ -1,4 +1,4 @@
-/* @(#)strfile.c 2.0 (2.11BSD) 2018/12/29 */
+/* @(#)strfile.c 2.1 (2.11BSD) 2026/7/21 */
 
 #include	<stdio.h>
 #include	<ctype.h>
@@ -356,7 +356,7 @@ randomize(seekpts)
 	long	tmp, *origsp;
 
 	Tbl.str_flags |= STR_RANDOM;
-	srandom(time((long *) NULL) + getpid());
+	srandom(time((time_t *) NULL) + getpid());
 	origsp = seekpts;
 
 	for (j = 0; j <= Delim; j++) {

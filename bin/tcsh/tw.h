@@ -1,6 +1,7 @@
-/* $Header: /home/hyperion/mu/christos/src/sys/tcsh-6.00/RCS/tw.h,v 3.0 1991/07/04 21:49:28 christos Exp $ */
 /*
  * tw.h: TwENEX functions headers
+ *
+ *      @(#)tw.h 2.0 (2.11BSD) 2026/6/1
  */
 /*-
  * Copyright (c) 1980, 1991 The Regents of the University of California.
@@ -37,52 +38,31 @@
 #ifndef _h_tw
 #define _h_tw
 
-#ifdef BSDSIGS
-
-# define FREE_ITEMS(items,num)\
+#define FREE_ITEMS(items,num)\
 {\
     sigmask_t omask;\
-    omask = sighold (SIGINT);\
-    free_items (items,num);\
+    omask = sighold(SIGINT);\
+    free_items(items,num);\
     items = NULL;\
     (void) sigsetmask(omask);\
 }
 
-# define FREE_DIR(fd)\
+#define FREE_DIR(fd)\
 {\
     sigmask_t omask;\
-    omask = sighold (SIGINT);\
-    (void) closedir (fd);\
+    omask = sighold(SIGINT);\
+    (void) closedir(fd);\
     fd = NULL;\
     (void) sigsetmask(omask);\
 }
-
-#else
-
-# define FREE_ITEMS(items,num)\
-{\
-    sighold (SIGINT);\
-    free_items (items,num);\
-    items = NULL;\
-    (void) sigrelse (SIGINT);\
-}
-
-# define FREE_DIR(fd)\
-{\
-    sighold (SIGINT);\
-    (void) closedir (fd);\
-    fd = NULL;\
-    (void) sigrelse (SIGINT);\
-}
-
-#endif
 
 #ifndef TRUE
-# define TRUE		1
+#define TRUE		1
 #endif
 #ifndef FALSE
-# define FALSE		0
+#define FALSE		0
 #endif
+
 #define ON		1
 #define OFF		0
 #define FILSIZ		256	/* Max reasonable file name length */
@@ -93,7 +73,7 @@
 
 #define BUILTINS	"/usr/local/lib/builtins/"	/* fake builtin bin */
 #define SEARCHLIST "HPATH"	/* Env. param for helpfile searchlist */
-#define DEFAULTLIST ":/usr/man/cat1:/usr/man/cat8:/usr/man/cat6:/usr/local/man/cat1:/usr/local/man/cat8:/usr/local/man/cat6"	/* if no HPATH */
+#define DEFAULTLIST ":/usr/man/cat1:/usr/man/cat8:/usr/man/cat6:/usr/local/man/cat1"	/* if no HPATH */
 
 extern Char PromptBuf[];
 
@@ -102,18 +82,10 @@ typedef enum {
     VARS_EXPAND
 }       COMMAND;
 
-
-#ifndef	pdp11
-#define NUMCMDS_START 512	/* was 800 */
-#define NUMCMDS_INCR 256
-#define ITEMS_START 512
-#define ITEMS_INCR 256
-#else
 #define NUMCMDS_START 256	/* was 800 */
-#define NUMCMDS_INCR 128
-#define ITEMS_START 256
-#define ITEMS_INCR 128
-#endif	/* pdp11 */
+#define NUMCMDS_INCR 128	/* was 128 */
+#define ITEMS_START 256		/* was 512 */
+#define ITEMS_INCR 128		/* was 256 */
 
 #ifndef DONT_EXTERN
 
@@ -125,8 +97,8 @@ extern int non_unique_match;
 
 extern Char dirflag[5];		/* ' nn\0' - dir #s -  . 1 2 ... */
 
-
 #endif
+
 #include "tw.decls.h"
 
 #endif				/* _h_tw */

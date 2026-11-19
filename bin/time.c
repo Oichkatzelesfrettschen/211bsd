@@ -1,5 +1,5 @@
-#ifndef lint
-static	char *sccsid = "@(#)time.c	4.5 (Berkeley) 7/1/83";
+#if	!defined(lint) && defined(DOSCCS)
+static	char *sccsid = "@(#)time.c	4.6 (2.11BSD) 2026/5/7";
 #endif
 
 /*
@@ -53,7 +53,7 @@ main(argc, argv)
 
 printt(s, tv)
 	char *s;
-	struct timeval *tv;
+	register struct timeval *tv;
 {
 
 	fprintf(stderr, "%9ld.%01ld %s ", tv->tv_sec, tv->tv_usec/100000, s);

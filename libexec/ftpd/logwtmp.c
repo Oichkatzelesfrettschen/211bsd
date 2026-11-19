@@ -16,14 +16,15 @@
  *
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)logwtmp.c	based on 5.5 (Berkeley) 4/2/89";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)logwtmp.c	5.6 (2.11BSD) 2026/5/11";
+#endif
 
 #include <sys/types.h>
 #include <sys/file.h>
-#include <sys/time.h>
+#include <time.h>
 #include <sys/stat.h>
+#include <strings.h>
 #include <utmp.h>
 
 #ifndef _PATH_WTMP
@@ -42,8 +43,6 @@ logwtmp(line, name, host)
 {
 	struct utmp ut;
 	struct stat buf;
-	time_t time();
-	char *strncpy();
 
 	if (fd < 0 && (fd = open(_PATH_WTMP, O_WRONLY|O_APPEND, 0)) < 0)
 		return;

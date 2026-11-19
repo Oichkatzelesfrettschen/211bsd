@@ -29,9 +29,9 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"	@(#)err.3	8.1.1 (2.11BSD GTE) 2/3/95
+.\"	@(#)err.3	8.1.2 (2.11BSD) 2026/7/12
 .\"
-.TH ERR 3 "February 3, 1995"
+.TH ERR 3 "July 12, 2026"
 .UC 4
 .SH NAME
 err,
@@ -43,43 +43,45 @@ vwarn ,
 warnx ,
 vwarnx \- formatted error messages
 .SH SYNOPSIS
+.B #include <err.h>
+.sp
 .nf
 .ft B
 void
 err(eval, fmt, ...)
     int eval;
     char *fmt;
-.PP
+.sp
 void
 verr(eval, fmt, args)
     int eval;
     char *fmt;
     va_list args;
-.PP
+.sp
 void
 errx(eval, fmt, ...)
     int eval;
     char *fmt;
-.PP
+.sp
 void
 verrx(eval, fmt, args)
     int eval
     char *fmt;
     va_list args;
-.PP
+.sp
 void
 warn(fmt, ...)
     char *fmt;
-.PP
+.sp
 void
 vwarn(fmt, args)
     char *fmt;
     va_list args;
-.PP
+.sp
 void
 warnx(fmt, ...)
     char *fmt;
-.PP
+.sp
 void
 vwarnx(fmt, args)
     char *fmt;

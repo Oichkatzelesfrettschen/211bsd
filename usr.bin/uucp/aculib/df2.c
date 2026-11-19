@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)df2.c	4.2 (Berkeley) 6/23/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)df2.c	4.3 (2.11BSD) 2026/5/9";
 #endif
 
 #include "../condevs.h"
@@ -18,15 +18,10 @@ char *flds[];
 struct Devices *dev;
 {
 	char dcname[20], dnname[20], phone[MAXPH+2], c = 0;
-#ifdef	USG
-	struct termio ttbuf;
-#endif  USG
 	int dcf, dnf;
 	int nw, lt, pid, st, status;
 	unsigned timelim;
-#ifdef	TIOCFLUSH
 	int zero = 0;
-#endif	TIOCFLUSH
 
 	sprintf(dnname, "/dev/%s", dev->D_calldev);
 	if (setjmp(Sjbuf)) {

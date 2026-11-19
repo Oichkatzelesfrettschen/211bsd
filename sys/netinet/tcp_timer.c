@@ -9,7 +9,7 @@
  * software without specific prior written permission. This software
  * is provided ``as is'' without express or implied warranty.
  *
- *	@(#)tcp_timer.c	7.11.1.3 (2.11BSD) 2000/5/17
+ *	@(#)tcp_timer.c	7.11.1.4 (2.11BSD) 2026/7/10
  */
 
 #include "param.h"
@@ -143,8 +143,16 @@ tcp_timers(tp, timer)
 	 * still waiting for peer to close and connection has been idle
 	 * too long, or if 2MSL time is up from TIME_WAIT, delete connection
 	 * control block.  Otherwise, check again in a bit.
+	 * 
+	 * If we are in FIN_WAIT_2 and the 2MSL timer has gone off,
+	 * the other end hasn't sent a FIN. Give up on this connection.
 	 */
 	case TCPT_2MSL:
+		if (tp->t_state == TCPS_FIN_WAIT_2) {
+			tp = tcp_close(tp);
+			break;
+		}
+
 		if (tp->t_state != TCPS_TIME_WAIT &&
 		    tp->t_idle <= tcp_maxidle)
 			tp->t_timer[TCPT_2MSL] = tcp_keepintvl;

@@ -1,6 +1,4 @@
-#define	TMSDEBUG	1
-
-/*	@(#)tmscp.c	1.12 (2.11BSD) 1999/2/25 */
+/*	@(#)tmscp.c	1.13 (2.11BSD) 2026/5/15 */
 
 #if	!defined(lint) && defined(DOSCCS)
 static	char	*sccsid = "@(#)tmscp.c	1.24	(ULTRIX)	1/21/86";
@@ -31,6 +29,9 @@ static	char	*sccsid = "@(#)tmscp.c	1.24	(ULTRIX)	1/21/86";
  * tmscp.c - TMSCP (TK50/TU81) tape device driver
  * 
  * Modification History:
+ * 15-May-2026 - sms
+ *      Remove superfluous TMSDEBUG define at top of file
+ *
  * 25-Feb-99 - sms
  *	Fix density selection to preserve the high byte of m_format.  This
  *	is required devices (such as the TK70) which have a nonzero value

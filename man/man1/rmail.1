@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)rmail.1	6.1 (Berkeley) 4/29/85
+.\"	@(#)rmail.1	6.2 (2.11BSD) 2026/7/18
 .\"
 .TH RMAIL 1 "April 29, 1985"
 .UC 5
@@ -12,25 +12,22 @@ rmail \- handle remote mail received via uucp
 .B rmail
 user ...
 .SH DESCRIPTION
-.I Rmail
+.I rmail
 interprets incoming mail received via
-.IR uucp (1C),
+.IR uucp (1)
 collapsing ``From'' lines in the form generated
 by 
-.IR binmail (1)
+.IR mail (1)
 into a single line of the form ``return-path!sender'',
 and passing the processed mail on to
 .IR sendmail (8).
 .PP
-.I Rmail
+.I rmail
 is explicitly designed for use with 
 .I uucp
 and
 .IR sendmail .
 .SH "SEE ALSO"
-binmail(1),
-uucp(1C),
+mail(1),
+uucp(1),
 sendmail(8)
-.SH BUGS
-.I Rmail
-should not reside in /bin.

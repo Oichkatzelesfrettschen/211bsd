@@ -4,15 +4,13 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)biff.c	5.1 (Berkeley) 5/31/85";
-#endif not lint
+static char sccsid[] = "@(#)biff.c	5.2 (2.11BSD) 2026/5/8";
+#endif
 
 /*
  * biff
@@ -21,8 +19,7 @@ static char sccsid[] = "@(#)biff.c	5.1 (Berkeley) 5/31/85";
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
-
-char	*ttyname();
+#include <unistd.h>
 
 main(argc, argv)
 	int argc;

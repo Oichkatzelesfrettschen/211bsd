@@ -10,9 +10,9 @@
  * is provided ``as is'' without express or implied warranty.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)ns_maint.c	4.23 (Berkeley) 2/28/88";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ns_maint.c	4.24 (2.11BSD) 2026/5/10";
+#endif
 
 #include <sys/param.h>
 #include <sys/socket.h>
@@ -29,7 +29,6 @@ static char sccsid[] = "@(#)ns_maint.c	4.23 (Berkeley) 2/28/88";
 #include "ns.h"
 #include "db.h"
 
-extern int errno;
 extern u_long maint_interval;
 
 
@@ -129,7 +128,7 @@ zoneref(zp)
 	extern struct sockaddr_in nsaddr;
 	extern int errno;
 	extern int read_interrupted;
-	extern int read_alarm();
+	extern void read_alarm();
 	struct sigvec sv, osv;
 
 #ifdef DEBUG

@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)ctl.c	5.2 (Berkeley) 3/13/86";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ctl.c	5.3 (2.11BSD) 2026/5/9";
+#endif
 
 /*
  * This file handles haggling with the various talk daemons to

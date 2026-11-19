@@ -35,7 +35,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)eval.c	8.1 (Berkeley) 6/6/93";
+static char sccsid[] = "@(#)eval.c	8.2 (2.11BSD) 2026/9/24";
 #endif
 
 /*
@@ -51,7 +51,6 @@ static char sccsid[] = "@(#)eval.c	8.1 (Berkeley) 6/6/93";
 #include "mdef.h"
 #include "stdd.h"
 #include "extern.h"
-#include "pathnames.h"
 
 /*
  * eval - evaluate built-in macros.

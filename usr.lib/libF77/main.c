@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)main.c	5.2	6/26/85
+ *	@(#)main.c	5.3	(2.11BSD) 2026/9/21
  */
 #include <stdio.h>
 #include <signal.h>
@@ -17,8 +17,8 @@ int argc;
 char **argv;
 char **arge;
 {
-int sigdie();
-int (*sigf)();
+void sigdie();
+sig_t sigf;
 int signum;
 
 xargc = argc;
@@ -29,9 +29,7 @@ for (signum=1; signum<=16; signum++)
 	if((sigf=signal(signum, sigdie)) != SIG_DFL) signal(signum, sigf);
 }
 
-#ifdef pdp11
 	ldfps(01200); /* detect overflow as an exception */
-#endif
 
 f_init();
 MAIN_();
@@ -80,6 +78,7 @@ struct action act_ill[] = {
 	{"operand", 0},
 };
 
+void
 sigdie(s, t, sc)
 int s; int t; struct sigcontext *sc;
 {

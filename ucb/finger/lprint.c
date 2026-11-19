@@ -18,9 +18,9 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)lprint.c	5.9 (Berkeley) 2/7/90";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)lprint.c	5.10 (2.11BSD) 2026/5/9";
+#endif
 
 #include <sys/types.h>
 #include <sys/file.h>
@@ -30,7 +30,7 @@ static char sccsid[] = "@(#)lprint.c	5.9 (Berkeley) 2/7/90";
 #include <stdio.h>
 #include <ctype.h>
 #include "finger.h"
-#include "pathnames.h"
+#include <paths.h>
 
 #define	LINE_LEN	80
 #define	TAB_LEN		8		/* 8 spaces between tabs */

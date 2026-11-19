@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1983,1986 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)shutdown.c	5.6.3 (2.11BSD GTE) 1997/10/3";
+static char sccsid[] = "@(#)shutdown.c	5.6.3 (2.11BSD) 2026/5/7";
 #endif
 
 #include <stdio.h>
@@ -48,7 +48,7 @@ static char sccsid[] = "@(#)shutdown.c	5.6.3 (2.11BSD GTE) 1997/10/3";
 
 char	hostname[MAXHOSTNAMELEN];
 
-int	timeout();
+void	finish(), timeout();
 time_t	getsdt();
 
 struct	utmp utmp;
@@ -151,7 +151,7 @@ main(argc,argv)
 		fprintf(stderr, "NOT super-user\n");
 		finish();
 	}
-	nowtime = time((long *)0);
+	nowtime = time((time_t *)0);
 	sdt = getsdt(argv[0]);
 	argc--, argv++;
 	nolog2[0] = '\0';
@@ -204,7 +204,7 @@ main(argc,argv)
 		}
 		if (sint >= stogo || sint == 0)
 			f = "FINAL ";
-		nowtime = time((long *)0);
+		nowtime = time((time_t *)0);
 		(void) lseek(ufd, 0L, 0);
 		while (read(ufd,(char *)&utmp,sizeof utmp)==sizeof utmp)
 		if (utmp.ut_name[0] &&
@@ -273,9 +273,9 @@ main(argc,argv)
 #endif
 			finish();
 		}
-		stogo = sdt - time((long *) 0);
+		stogo = sdt - time((time_t *) 0);
 		if (stogo > 0 && sint > 0)
-			sleep((unsigned)(sint<stogo ? sint : stogo));
+			sleep(sint < stogo ? sint : stogo);
 		stogo -= sint;
 		first = 0;
 	}
@@ -287,7 +287,7 @@ getsdt(s)
 {
 	time_t t, t1, tim;
 	register char c;
-	struct tm *lt;
+	register struct tm *lt;
 
 	if (strcmp(s, "now") == 0)
 		return(nowtime);
@@ -303,7 +303,7 @@ getsdt(s)
 		if (t <= 0)
 			t = 5;
 		t *= 60;
-		tim = time((long *) 0) + t;
+		tim = time((time_t *) 0) + t;
 		return(tim);
 	}
 	t = 0;
@@ -321,7 +321,7 @@ getsdt(s)
 		goto badform;
 	tim += t; 
 	tim *= 60;
-	t1 = time((long *) 0);
+	t1 = time((time_t *) 0);
 	lt = localtime(&t1);
 	t = lt->tm_sec + lt->tm_min*60 + (long)lt->tm_hour*3600;
 	if (tim < t || tim >= ((long)24*3600)) {
@@ -389,6 +389,7 @@ nolog(sdt)
 	}
 }
 
+void
 finish()
 {
 	(void) signal(SIGTERM, SIG_IGN);
@@ -396,6 +397,7 @@ finish()
 	exit(0);
 }
 
+void
 timeout()
 {
 	longjmp(alarmbuf, 1);

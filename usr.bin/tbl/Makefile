@@ -1,4 +1,4 @@
-#	Makefile	4.2	(2.11BSD) 2025/11/27
+#	Makefile	4.3	(2.11BSD) 2026/8/19
 
 CFLAGS=-O
 LDFLAGS= -i
@@ -14,7 +14,7 @@ install: tbl
 	install -c -s -m 755 tbl /usr/bin
 
 clean :
-	rm -f *.o
+	rm -f *.o tbl
 
 test:
 	sh compr sample01

@@ -3,14 +3,14 @@
  * All rights reserved.  The Berkeley Software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)sh.h	5.3.2 (2.11BSD GTE) 1996/9/20
+ *	@(#)sh.h	5.3.3 (2.11BSD) 2026/9/21
  */
 
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/param.h>
 #include <sys/stat.h>
-#include <sys/signal.h>
+#include <signal.h>
 #include <errno.h>
 #include <setjmp.h>
 #include "sh.local.h"
@@ -126,8 +126,8 @@ jmp_buf	reslab;
 #define	resexit(a)	copy((char *)reslab, ((char *)(a)), sizeof reslab)
 
 char	*gointr;		/* Label for an onintr transfer */
-int	(*parintr)();		/* Parents interrupt catch */
-int	(*parterm)();		/* Parents terminate catch */
+sig_t	parintr;		/* Parents interrupt catch */
+sig_t	parterm;		/* Parents terminate catch */
 
 /*
  * Lexical definitions.
@@ -426,9 +426,9 @@ char	*index();
 struct	biltins *isbfunc();
 off_t	lseek();
 char	*operate();
-int	phup();
-int	pintr();
-int	pchild();
+void	phup();
+void	pintr();
+void	pchild();
 char	*putn();
 char	*rindex();
 char	**saveblk();

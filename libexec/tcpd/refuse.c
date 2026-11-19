@@ -7,8 +7,8 @@
   * Author: Wietse Venema, Eindhoven University of Technology, The Netherlands.
   */
 
-#ifndef lint
-static char sccsid[] = "@(#) refuse.c 1.5 94/12/28 17:42:39";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#) refuse.c 1.6 (2.11BSD) 2026/5/11";
 #endif
 
 /* System libraries. */

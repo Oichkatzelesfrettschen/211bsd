@@ -36,7 +36,7 @@
  */
 
 #if !defined(lint) && defined(DOSCCS)
-    static char *sccsid = "@(#)tw.decls.h 3.1 (2.11BSD) 2020/1/7";
+    static char *sccsid = "@(#)tw.decls.h 3.2 (2.11BSD) 2026/6/1";
 #endif
 
 #ifndef _h_tc_decls
@@ -45,18 +45,10 @@
 /*
  * tc.alloc.c
  */
-#ifndef SYSMALLOC
-extern	void		  free		__P((ptr_t));
-extern	memalign_t	  malloc	__P((size_t));
-extern	memalign_t	  realloc	__P((ptr_t, size_t));
-extern	memalign_t	  calloc	__P((size_t, size_t));
-
-#else /* SYSMALLOC */
 extern	void		  Free		__P((ptr_t));
 extern	memalign_t	  Malloc	__P((size_t));
 extern	memalign_t	  Realloc	__P((ptr_t, size_t));
 extern	memalign_t	  Calloc	__P((size_t, size_t));
-#endif /* SYSMALLOC */
 extern	void		  showall	__P((void));
 
 /*
@@ -88,7 +80,7 @@ extern	void		  dosettc	__P((Char **));
 extern	void		  dowhich	__P((Char **));
 extern	struct process	 *find_stop_ed	__P((void));
 extern	void		  fg_proc_entry	__P((struct process *));
-extern	sigret_t	  alrmcatch	__P((int));
+extern	void	  	alrmcatch	__P((void));
 extern	void		  precmd	__P((void));
 extern	void		  cwd_cmd	__P((void));
 extern	void		  period_cmd	__P((void));
@@ -102,59 +94,6 @@ extern	void		  con_jobs	__P((struct wordent *));
 extern	Char		 *gettilde	__P((Char *));
 extern	Char		 *getusername	__P((Char **));
 extern	void		  do_aliases	__P((Char **));
-
-
-/*
- * tc.os.c
- */
-#ifdef MACH
-extern	void		  dosetpath	__P((Char **));
-#endif
-#ifdef TCF
-extern	void		  dogetxvers	__P((Char **));
-extern	void		  dosetxvers	__P((Char **));
-extern	void		  dogetspath	__P((Char **));
-extern	void		  dosetspath	__P((Char **));
-extern	char		 *sitename	__P((pid_t));
-extern	void		  domigrate	__P((Char **));
-#endif
-#ifdef WARP
-extern	void 		  dowarp	__P((Char **));
-#endif
-#ifdef masscomp
-extern	void		  douniverse	__P((Char **));
-#endif
-#ifdef _SEQUENT_
-extern	void	 	  pr_stat_sub	__P((struct pro_stats *, 
-					     struct pro_stats *, 
-					     struct pro_stats *));
-#endif
-#ifdef NEEDtcgetpgrp
-extern	int	 	  xtcgetpgrp	__P((int));
-#define tcgetpgrp(a) xtcgetpgrp(a)
-#endif
-#ifdef YPBUGS
-extern	void	 	  fix_yp_bugs	__P((void));
-#endif
-extern	void	 	  osinit	__P((void));
-#ifdef NEEDgetwd
-extern	char		 *xgetwd	__P((char *));
-#define getwd(a) xgetwd(a)
-#endif
-#ifdef NEEDgethostname
-extern	int	 	  gethostname	__P((char *, int));
-#define gethostname(a, b) xgethostname(a, b)
-#endif
-#ifdef iconuxv
-extern	int		  vfork		__P((void));
-#endif
-#ifdef apollo
-extern	void		  doinlib	__P((Char **));
-extern	void		  dover		__P((Char **));
-extern	void		  dorootnode	__P((Char **));
-extern	int		  getv		__P((Char *));
-#endif
-
 
 /*
  * tc.printf.h
@@ -178,40 +117,6 @@ extern	void		  printprompt	__P((int, Char *));
 extern	time_t		  sched_next	__P((void));
 extern	void		  dosched	__P((Char **));
 extern	void		  sched_run	__P((void));
-
-/*
- * tc.sig.c
- */
-#ifndef BSDSIGS
-# if SVID < 3
-#  ifdef UNIXPC
-extern	sigret_t	(*sigset	__P((int, sigret_t (*)())) ();
-extern	void		  sigrelse	__P((int));
-extern	void		  sighold	__P((int));
-extern	void		  sigignore	__P((int));
-extern	void 		  sigpause	__P((int));
-#  endif				/* UNIXPC */
-extern	int 		  ourwait	__P((int *));
-# endif
-# ifdef SXA
-extern	void 		  sigpause	__P((int));
-# endif
-#endif
-#ifdef NEEDsignal
-extern	sigret_t	(*xsignal	__P((int, sigret_t (*)()))) ();
-#define signal(a, b)	  xsignal(a, b)
-#endif
-#ifdef _SEQUENT_
-extern	sigmask_t	  sigsetmask	__P((sigmask_t));
-extern	sigmask_t	  sigblock	__P((sigmask_t));
-extern	void		  b_sigpause	__P((sigmask_t));
-#endif
-#ifdef SIGSYNCH
-extern	sigret_t	  synch_handler	__P((int));
-#endif
-
-
-
 
 /*
  * tc.str.c:

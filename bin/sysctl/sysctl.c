@@ -36,14 +36,16 @@ static char copyright[] =
 "@(#) Copyright (c) 1993\n\
 	The Regents of the University of California.  All rights reserved.\n";
 
-static char sccsid[] = "@(#)sysctl.c	8.1.4 (2.11BSD GTE) 1998/4/3";
-#endif /* not lint */
+static char sccsid[] = "@(#)sysctl.c	8.1.5 (2.11BSD) 2026/9/14";
+#endif
 
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/sysctl.h>
 #include <sys/socket.h>
 #include <machine/cpu.h>
+#include <sys/dk.h>	/* for CPUSTATES */
+#include <sys/trace.h>  /* for TR_NUM_210 */
 
 #include <netinet/in.h>
 #include <netinet/in_systm.h>
@@ -182,7 +184,7 @@ parse(string, flags)
 	char *string;
 	int flags;
 {
-	int indx, type, state, size, len;
+	int indx, type, state, size, len, dev;
 	int special = 0;
 	void *newval = (void *)0;
 	int intval, newsize = 0;
@@ -257,6 +259,21 @@ parse(string, flags)
 		break;
 
 	case CTL_HW:
+		if (mib[1] == HW_TRACEBUF) {
+			u_long trbuf[TR_NUM_210];
+			
+			mib[0] = CTL_HW;
+			mib[1] = HW_TRACEBUF;
+			len = sizeof (trbuf);
+			if	(sysctl(mib, 2, trbuf, &len, NULL, 0) < 0)
+			   	return;
+			if (!nflag)
+				printf("%s: ", string);
+			printf("%ld %ld %ld %ld %ld %ld %ld\n",
+				trbuf[0], trbuf[1], trbuf[2], trbuf[3],
+				trbuf[4], trbuf[5], trbuf[6]);
+			return;
+		}
 		break;
 
 	case CTL_VM:
@@ -265,9 +282,35 @@ parse(string, flags)
 
 			getloadavg(loads, 3);
 			if (!nflag)
-				fprintf(stdout, "%s: ", string);
-			fprintf(stdout, "%.2f %.2f %.2f\n", 
-			    loads[0], loads[1], loads[2]);
+				printf("%s: ", string);
+			printf("%.2f %.2f %.2f\n",loads[0], loads[1], loads[2]);
+			return;
+		}
+		if (mib[1] == VM_NSWAP) {
+			if (!nflag)
+				printf("%s: ", string);
+        		printf("%d\n", sysctl_vm_nswap());
+			return;
+		}
+		if (mib[1] == VM_SWAPDEV) {
+			if (!nflag)
+				printf("%s: ", string);
+			dev = sysctl_vm_swapdev();
+        		printf("%d,%d\n", major(dev), minor(dev));
+			return;
+		}
+		if (mib[1] == VM_CP_TIME) {
+			long	cptime[CPUSTATES];
+
+			mib[0] = CTL_VM;
+			mib[1] = VM_CP_TIME;
+			len = sizeof (cptime);
+			if	(sysctl(mib, 2, cptime, &len, NULL, 0) < 0)
+				return;
+			if (!nflag)
+				printf("%s: ", string);
+			printf("%ld %ld %ld %ld\n",
+				cptime[0], cptime[1], cptime[2], cptime[3]);
 			return;
 		}
 		if (flags == 0)
@@ -542,6 +585,30 @@ struct list inetvars[] = {
 	{ 0, 0 },
 	{ udpname, UDPCTL_MAXID },	/* udp */
 };
+
+sysctl_vm_nswap()
+	{
+	int mib[2], nsw, len;
+
+	mib[0] = CTL_VM;
+	mib[1] = VM_NSWAP;
+	len = sizeof (int);
+
+	sysctl(mib, 2, &nsw, &len, NULL, 0);
+	return(nsw);
+	}
+
+sysctl_vm_swapdev()
+	{
+	int mib[2], swapdev, len;
+
+	mib[0] = CTL_VM;
+	mib[1] = VM_SWAPDEV;
+	len = sizeof (int);
+
+	sysctl(mib, 2, &swapdev, &len, NULL, 0);
+	return(swapdev);
+	}
 
 /*
  * handle internet requests

@@ -1,5 +1,5 @@
-#if !defined(lint) && !defined(NOSCCS)
-static	char *sccsid = "@(#)alloc.c 4.1.1 1996/4/4";
+#if !defined(lint) && defined(DOSCCS)
+static	char *sccsid = "@(#)alloc.c 4.1.2 2026/5/10";
 #endif
 
 #include "config.h"
@@ -74,10 +74,10 @@ char *s;
 #define setbusy(p) (union store *)((INT)(p)|BUSY)
 #define clearbusy(p) (union store *)((INT)(p)&~BUSY)
 
-union store { union store *ptr;
-	      ALIGN dummy[NALIGN];
-	      int calloc;	/*calloc clears an array of integers*/
-};
+union store {
+	union store *ptr;
+	ALIGN dummy[NALIGN];
+	};
 
 static	union store allocs[2];	/*initial arena*/
 static	union store *allocp;	/*search ptr*/

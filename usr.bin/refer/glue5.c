@@ -1,5 +1,5 @@
 #if	defined(DOSCCS) && !defined(lint)
-static char *sccsid = "@(#)glue5.c	4.2.1 (2.11BSD GTE) 1/1/94";
+static char *sccsid = "@(#)glue5.c	4.2.2 (2.11BSD) 2026/9/14";
 #endif
 
 #include <stdio.h>
@@ -12,13 +12,8 @@ static char *sccsid = "@(#)glue5.c	4.2.1 (2.11BSD GTE) 1/1/94";
  *		1 - ok, but no matches
  *		2 - some error
  */
-#ifdef pdp11
 #define	MAXSIZ 350
 #define QSIZE 200
-#else
-#define	MAXSIZ 700
-#define QSIZE 400
-#endif
 struct words {
 	char 	inp;
 	char	out;

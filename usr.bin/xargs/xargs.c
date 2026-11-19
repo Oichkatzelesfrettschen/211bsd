@@ -38,10 +38,8 @@
 static char copyright[] =
 "@(#) Copyright (c) 1990, 1993\n\
 	The Regents of the University of California.  All rights reserved.\n";
-#endif
 
-#if defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)xargs.c	8.1 (Berkeley) 6/6/93";
+static char sccsid[] = "@(#)xargs.c	8.2 (2.11BSD) 2026/9/24";
 #endif
 
 #include <sys/param.h>
@@ -49,11 +47,10 @@ static char sccsid[] = "@(#)xargs.c	8.1 (Berkeley) 6/6/93";
 #include <sys/wait.h>
 #include <errno.h>
 #include <stdio.h>
-#include "pathnames.h"
+#include <stdlib.h>
+#include <err.h>
 
-extern int errno;
-extern char *optarg;
-extern int optind;
+#define _PATH_ECHO      "/bin/echo"
 
 /*
  * This is defined for pdp11s.  ARG_MAX is usually defined in
@@ -68,7 +65,8 @@ extern int optind;
 
 int tflag, rval;
 
-void err();
+static	char insufficient[] = "insufficient space for argument(s)";
+
 void run();
 void usage();
 
@@ -102,7 +100,7 @@ main(argc, argv)
 		case 'n':
 			nflag = 1;
 			if ((nargs = atoi(optarg)) <= 0)
-				err("illegal argument count");
+				errx(1, "illegal argument count %d", nargs);
 			break;
 		case 's':
 			nline = atoi(optarg);
@@ -128,9 +126,9 @@ main(argc, argv)
 	 * the maximum arguments to be read from stdin and the trailing
 	 * NULL.
 	 */
-	if (!(av = bxp =
-	    (char **)malloc((u_int)(1 + argc + nargs + 1) * sizeof(char **))))
-		err("%s", strerror(errno));
+	cnt = (1 + argc + nargs + 1) * sizeof(char **);
+	if (!(av = bxp = (char **)malloc(cnt)))
+		errx(1, "malloc(%d)", cnt);
 
 	/*
 	 * Use the user's name for the utility as argv[0], just like the
@@ -163,10 +161,10 @@ main(argc, argv)
 	 */
 	nline -= cnt;
 	if (nline <= 0)
-		err("insufficient space for command");
+		errx(1, "insufficient space for command");
 
-	if (!(bbp = (char *)malloc((u_int)nline + 1)))
-		err("%s", strerror(errno));
+	if (!(bbp = (char *)malloc(nline + 1)))
+		errx(1, "malloc(%d)", nline + 1);
 	ebp = (argp = p = bbp) + nline - 1;
 
 	for (insingle = indouble = 0;;)
@@ -196,7 +194,7 @@ main(argc, argv)
 
 			/* Quotes do not escape newlines. */
 arg1:			if (insingle || indouble)
-				 err("unterminated quote");
+				 errx(1, "unterminated quote");
 
 arg2:			*p = '\0';
 			*xp++ = argp;
@@ -208,7 +206,7 @@ arg2:			*p = '\0';
 			 */
 			if (xp == exp || p == ebp || ch == EOF) {
 				if (xflag && xp != exp && p == ebp)
-					err("insufficient space for arguments");
+					errx(1, insufficient);
 				*xp = NULL;
 				run(av);
 				if (ch == EOF)
@@ -232,7 +230,7 @@ arg2:			*p = '\0';
 		case '\\':
 			/* Backslash escapes anything, is escaped by quotes. */
 			if (!insingle && !indouble && (ch = getchar()) == EOF)
-				err("backslash at EOF");
+				errx(1, "backslash at EOF");
 			/* FALLTHROUGH */
 		default:
 addch:			if (p < ebp) {
@@ -242,10 +240,10 @@ addch:			if (p < ebp) {
 
 			/* If only one argument, not enough buffer space. */
 			if (bxp == xp)
-				err("insufficient space for argument");
+				errx(1, insufficient);
 			/* Didn't hit argument limit, so if xflag object. */
 			if (xflag)
-				err("insufficient space for arguments");
+				errx(1, insufficient);
 
 			*xp = NULL;
 			run(av);
@@ -278,7 +276,7 @@ run(argv)
 	noinvoke = 0;
 	switch(pid = vfork()) {
 	case -1:
-		err("vfork: %s", strerror(errno));
+		err(1, "vfork");
 	case 0:
 		execvp(argv[0], argv);
 		(void)fprintf(stderr,
@@ -288,7 +286,7 @@ run(argv)
 	}
 	pid = waitpid(pid, &status, 0);
 	if (pid == -1)
-		err("waitpid: %s", strerror(errno));
+		err(1, "waitpid");
 	/* If we couldn't invoke the utility, exit 127. */
 	if (noinvoke)
 		exit(127);
@@ -302,36 +300,6 @@ run(argv)
 void
 usage()
 {
-	(void)fprintf(stderr,
-"usage: xargs [-t] [-n number [-x]] [-s size] [utility [argument ...]]\n");
-	exit(1);
-}
-
-#if __STDC__
-#include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
-void
-#if __STDC__
-err(const char *fmt, ...)
-#else
-err(fmt, va_alist)
-	char *fmt;
-        va_dcl
-#endif
-{
-	va_list ap;
-#if __STDC__
-	va_start(ap, fmt);
-#else
-	va_start(ap);
-#endif
-	(void)fprintf(stderr, "xargs: ");
-	(void)vfprintf(stderr, fmt, ap);
-	va_end(ap);
-	(void)fprintf(stderr, "\n");
-	exit(1);
-	/* NOTREACHED */
+	errx(1,
+"usage: xargs [-t] [-n number [-x]] [-s size] [utility [argument ...]]");
 }

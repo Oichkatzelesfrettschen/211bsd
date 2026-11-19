@@ -35,7 +35,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)kern_sig.c	8.14.2 (2.11BSD) 1999/9/9
+ *	@(#)kern_sig2.c	8.14.3 (2.11BSD) 2026/9/21
  */
 
 /*
@@ -48,7 +48,7 @@
 
 #define	SIGPROP		/* include signal properties table */
 #include <sys/param.h>
-#include <sys/signal.h>
+#include <signal.h>
 #include <sys/signalvar.h>
 #include <sys/dir.h>
 #include <sys/namei.h>
@@ -91,7 +91,7 @@ sigaction()
 		}
 	sa = &vec;
 	if (uap->osa) {
-		sa->sa_handler = u.u_signal[signum];
+		sa->sa_handler = (sig_t)u.u_signal[signum];
 		sa->sa_mask = u.u_sigmask[signum];
 		bit = sigmask(signum);
 		sa->sa_flags = 0;
@@ -126,7 +126,7 @@ setsigvec(signum, sa)
 	 * Change setting atomically.
 	 */
 	(void) splhigh();
-	u.u_signal[signum] = sa->sa_handler;
+	(sig_t)u.u_signal[signum] = sa->sa_handler;
 	u.u_sigmask[signum] = sa->sa_mask &~ sigcantmask;
 	if ((sa->sa_flags & SA_RESTART) == 0)
 		u.u_sigintr |= bit;

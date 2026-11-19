@@ -1,5 +1,5 @@
 /*
- * @(#)tt.h	3.16 1/1/94
+ * @(#)tt.h	3.17 (2.11BSD) 2026/9/14
  */
 
 /*
@@ -62,13 +62,9 @@ struct tt_tab tt_tab[];
 
 /*
  * Clean interface to termcap routines.
- * Too may t's.
  */
-#ifdef pdp11
+
 char *tt_strings;		/* string buffer on stack (see main.c) */
-#else
-char tt_strings[1024];		/* string buffer */
-#endif
 char *tt_strp;			/* pointer for it */
 
 struct tt_str {
@@ -89,11 +85,7 @@ int tttputc();
  * But I'm too lazy to think up different names.
  */
 #define	TTOBSIZ	512
-#ifdef pdp11
 char *tt_ob;
-#else
-char tt_ob[TTOBSIZ];
-#endif
 char *tt_obp;
 char *tt_obe;
 #define ttputc(c)	(tt_obp < tt_obe ? (*tt_obp++ = (c)) \

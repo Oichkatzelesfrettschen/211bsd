@@ -1,3 +1,7 @@
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)mlabel.c 2.0 (2.11BSD) 2026/3/21";
+#endif
+
 /*
  * Make an MSDOS volume label
  *
@@ -10,6 +14,8 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <strings.h>
+#include <time.h>
 #include "msdos.h"
 #include "patchlevel.h"
 
@@ -26,12 +32,13 @@ int argc;
 char *argv[];
 {
 	int entry, slot, fargn, verbose, oops;
-	char filename[30], *strncpy(), drive, ans[10], *strncat();
-	char *strcpy(), *fix_mcwd();
+	char filename[30], drive, ans[10];
+	register char *cp;
+	char *fix_mcwd();
 	unsigned char fixed[12], vol[12];
 	void exit(), dir_write(), dir_flush(), disk_flush();
 	struct directory *dir, *dir_read(), *mk_entry();
-	long time(), now;
+	long now;
 
 	fargn = 1;
 	verbose = 0;
@@ -98,7 +105,11 @@ char *argv[];
 
 					/* ask for new label */
 	printf("Enter the new volume label (11 characters): ");
-	gets(filename);
+	filename[0] = '\0';
+	fgets(filename, sizeof (filename), stdin);
+	cp = index(filename, '\n');
+	if	(cp) *cp = '\0';
+
 	if (filename[0] != '\0') {
 		sprintf((char *) fixed, "%-11.11s", filename);
 		if (strlen(filename) > 11 && verbose)
@@ -109,7 +120,11 @@ char *argv[];
 			exit(0);
 
 		printf("Delete volume label (y/n): ");
-		gets(ans);
+		ans[0] = '\0';
+		fgets(ans, sizeof (ans), stdin);
+		cp = index(ans, '\n');
+		if	(cp) *cp = '\0';
+
 		if (ans[0] == 'y' || ans[0] == 'Y') {
 			strcpy((char *) fixed, (char *) vol);
 			fixed[0] = 0xe5;
@@ -118,7 +133,7 @@ char *argv[];
 			exit(0);
 	}
 					/* make directory entry */
-	time(&now);
+	(void)time(&now);
 	dir = mk_entry(fixed, 0x08, 0, 0L, now);
 	dir_write(slot, dir);
 

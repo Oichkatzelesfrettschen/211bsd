@@ -15,12 +15,12 @@
  * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
  */
 
-#if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: do_command.c,v 2.12 1994/01/15 20:43:43 vixie Exp $";
+#if !defined(lint) && defined(DOSCCS)
+char sccsid[] = "@(#)do_command.c 2.13 (2.11BSD) 2026/5/10"
 #endif
 
 #include "cron.h"
-#include <sys/signal.h>
+#include <signal.h>
 #if defined(SYSLOG)
 # include <syslog.h>
 #endif

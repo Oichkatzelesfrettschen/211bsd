@@ -5,7 +5,7 @@
  */
 
 #if !defined(lint) && !defined(NOSCCS)
-static char sccsid[] = "@(#)initscr.c	5.1 (Berkeley) 6/7/85";
+static char sccsid[] = "@(#)initscr.c	5.2 (2.11BSD) 2026/9/22";
 #endif
 
 # include	"curses.ext"
@@ -21,7 +21,7 @@ WINDOW *
 initscr() {
 
 	reg char	*sp;
-	int		tstp();
+	void		tstp();
 	int 		nfd;
 
 # ifdef DEBUG

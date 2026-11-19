@@ -1,6 +1,6 @@
-#ifndef lint
-static char sccsid[] = "@(#)lrntee.c	4.3	(Berkeley)	5/15/86";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)lrntee.c	4.4	(2.11BSD)	2026/5/8";
+#endif
 
 main()
 {
@@ -18,6 +18,7 @@ main()
 
 static char ln[512];
 char *p = ln;
+
 put(c, f)
 {
 	*p++ = c;

@@ -5,8 +5,8 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)cmdtab.c	5.1.1 (2.11BSD GTE) 1/1/94";
-#endif not lint
+static char sccsid[] = "@(#)cmdtab.c	5.1.2 (2.11BSD) 2026/9/14";
+#endif
 
 /*
  * lpc -- command tables
@@ -14,7 +14,7 @@ static char sccsid[] = "@(#)cmdtab.c	5.1.1 (2.11BSD GTE) 1/1/94";
 
 #include "lpc.h"
 
-int	abort(), clean(), enable(), disable(), down(), help();
+int	xabort(), clean(), enable(), disable(), down(), help();
 int	quit(), restart(), start(), status(), stop(), topq(), up();
 
 char	aborthelp[] =	"terminate a spooling daemon immediately and disable printing";
@@ -32,7 +32,7 @@ char	topqhelp[] =	"put job at top of printer queue";
 char	uphelp[] =	"enable everything and restart spooling daemon";
 
 struct cmd cmdtab[] = {
-	{ "abort",	aborthelp,	abort,		1 },
+	{ "abort",	aborthelp,	xabort,		1 },
 	{ "clean",	cleanhelp,	clean,		1 },
 	{ "enable",	enablehelp,	enable,		1 },
 	{ "exit",	quithelp,	quit,		0 },

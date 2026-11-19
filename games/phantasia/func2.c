@@ -1,5 +1,5 @@
 /*
- * func2.c	Phantasia support routines
+ * func2.c      1.2 (2.11BSD) 2026/7/12
  */
 
 #include "phant.h"
@@ -209,7 +209,7 @@ reg	int	loc;
 {
 FILE	*fp;
 
-	fp = fopen(voidfile,ACCESS);
+	fp = fopen(voidfile, "r+");
 	fseek(fp,(long) loc*sizeof(*vp),0);
 	fwrite((char *) vp,sizeof(*vp),1,fp);
 	fclose(fp);
@@ -538,7 +538,7 @@ char	foename[21];
 	foeplace = who * BLOCK;
 	fin = fopen(peoplefile,"r");
 	setbuf(fin, (char *) NULL);
-	fout = fopen(peoplefile,ACCESS);
+	fout = fopen(peoplefile, "r+");
 	stat->status = INBATTLE;
 	myhits = stat->nrg;
 	stat->tampered = oldtags = 1;	/* this must be non-zero to prevent a king or valar from trashing it */
@@ -746,18 +746,12 @@ LEAVE:	updateme();
 	clrtobot();
 }
 
-int	interrupt()				/* call when break key is hit */
+void	interrupt()				/* call when break key is hit */
 {
 char	line[81];
 reg	int	loop;
 int	x, y, ch;
 
-#ifdef USG3
-	signal(SIGINT,SIG_IGN);
-#endif
-#ifdef USG5
-	signal(SIGINT,SIG_IGN);
-#endif
 	getyx(stdscr,y,x);
 	for (loop = 79; loop >= 0; --loop)	/* snarf line */
 		{
@@ -787,12 +781,6 @@ int	x, y, ch;
 	mvaddstr(4,0,line);	/* return screen to previous state */
 	move(y,x);
 	refresh();
-#ifdef USG3
-	signal(SIGINT,interrupt);
-#endif
-#ifdef USG5
-	signal(SIGINT,interrupt);
-#endif
 }
 
 int	rgetch()		/* refresh, then get a char. */
@@ -812,7 +800,7 @@ long	ltime;
 	time(&ltime);
 	today = localtime(&ltime)->tm_yday;
 	fin = fopen(peoplefile,"r");
-	fout = fopen(peoplefile,ACCESS);
+	fout = fopen(peoplefile, "r+");
 	while(fread((char *) &sbuf,sizeof(sbuf),1,fin))
 		{
 		temp = today - sbuf.lastused;

@@ -19,24 +19,25 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)util.c	5.8.1 (2.11BSD) 1996/1/12";
-#endif /* not lint */
+static char sccsid[] = "@(#)util.c	5.8.2 (2.11BSD) 2026/5/9";
+#endif
 
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/file.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <errno.h>
 #include <strings.h>
+#include <unistd.h>
 #include <lastlog.h>
 #include "finger.h"
-#include "pathnames.h"
+#include <paths.h>
 
 find_idle_and_ttywrite(w)
 	register WHERE *w;
 {
 	extern time_t now;
-	extern int errno;
 	struct stat sb;
 
 	(void)sprintf(tbuf, "%s/%s", _PATH_DEV, w->tty);
@@ -127,7 +128,6 @@ enter_lastlog(pn)
 	static int opened, fd;
 	struct lastlog ll;
 	char doit = 0;
-	off_t lseek();
 
 	/* some systems may not maintain lastlog, don't report errors. */
 	if (!opened) {

@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)dz.c	1.7 (2.11BSD) 2025/8/13
+ *	@(#)dz.c	1.8 (2.11BSD) 2026/5/14
  */
 
 /*
@@ -238,11 +238,7 @@ dzrint(dz)
 			if (tp->t_flags & RAW)
 				c = 0;
 			else
-#ifdef	OLDWAY
-				c = tp->t_intrc;
-#else
 				c = tp->t_brkc;
-#endif
 		if (c&DZ_DO && overrun == 0) {
 			log(LOG_WARNING, "dz%d,%d: silo overflow\n", dz, (c>>8)&7);
 			overrun = 1;
@@ -251,12 +247,6 @@ dzrint(dz)
 			if (((tp->t_flags & (EVENP|ODDP)) == EVENP)
 			  || ((tp->t_flags & (EVENP|ODDP)) == ODDP))
 				continue;
-#if NBK > 0
-		if (tp->t_line == NETLDISC) {
-			c &= 0177;
-			BKINPUT(c, tp);
-		} else
-#endif
 			(*linesw[tp->t_line].l_rint)(c, tp);
 	}
 }

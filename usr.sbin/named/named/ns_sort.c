@@ -10,9 +10,9 @@
  * is provided ``as is'' without express or implied warranty.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)ns_sort.c	4.3 (Berkeley) 2/17/88";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ns_sort.c	4.4 (2.11BSD) 2026/5/10";
+#endif
 
 #include <stdio.h>
 #include <sys/types.h>

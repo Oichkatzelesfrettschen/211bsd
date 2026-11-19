@@ -15,25 +15,25 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1988 The Regents of the University of California.\n\
  All rights reserved.\n";
-#endif /* not lint */
 
-#ifndef lint
-static char sccsid[] = "@(#)chroot.c	5.4 (Berkeley) 3/5/89";
-#endif /* not lint */
+static char sccsid[] = "@(#)chroot.c	5.5 (2.11BSD) 2026/5/10";
+#endif
 
 #include <stdio.h>
-#include "pathnames.h"
+#include <paths.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
 
 main(argc, argv)
 	int argc;
 	char **argv;
 {
-	extern int errno;
-	char *shell, *getenv(), *strerror();
+	register char *shell;
 
 	if (argc < 2) {
 		fprintf(stderr, "usage: chroot newroot [command]\n");
@@ -57,7 +57,6 @@ main(argc, argv)
 fatal(msg)
 	char *msg;
 {
-	extern int errno;
 
 	fprintf(stderr, "chroot: %s: %s\n", msg, strerror(errno));
 	exit(1);

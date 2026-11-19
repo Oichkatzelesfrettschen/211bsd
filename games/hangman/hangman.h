@@ -1,3 +1,5 @@
+/* @(#)hangman.h    1.1 (2.11BSD) 2026/9/22 */
+
 # include	<curses.h>
 # include	<sys/types.h>
 # include	<sys/stat.h>
@@ -41,6 +43,6 @@ extern FILE	*Dict;
 
 extern off_t	Dict_size;
 
-int	die();
+void	die();
 
 off_t	abs();

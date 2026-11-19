@@ -5,25 +5,23 @@
  */
 
 #if  defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)cards.c	5.2 (2.11BSD) 2025/12/25";
+static char sccsid[] = "@(#)cards.c	5.3 (2.11BSD) 2026/7/21";
 #endif
 
 #include	<stdio.h>
+#include	<time.h>
 #include	"deck.h"
-
 
 /*
  * initialize a deck of cards to contain one of each type
  */
 
 makedeck( d )
-
     CARD	d[];
 {
 	register  int		i, j, k;
-	long			time();
 
-	i = time( (long *) 0 );
+	i = time((time_t *) 0);
 	i = ( (i&0xff) << 8 ) | ( (i >> 8)&0xff ) | 1;
 	srand( i );
 	k = 0;
@@ -35,15 +33,12 @@ makedeck( d )
 	}
 }
 
-
-
 /*
  * given a deck of cards, shuffle it -- i.e. randomize it
  * see Knuth, vol. 2, page 125
  */
 
 shuffle( d )
-
     CARD	d[];
 {
 	register  int		j, k;
@@ -57,27 +52,21 @@ shuffle( d )
 	}
 }
 
-
-
 /*
  * return true if the two cards are equal...
  */
 
 eq( a, b )
-
     CARD		a, b;
 {
 	return(  ( a.rank == b.rank )  &&  ( a.suit == b.suit )  );
 }
-
-
 
 /*
  * isone returns TRUE if a is in the set of cards b
  */
 
 isone( a, b, n )
-
     CARD		a, b[];
     int			n;
 {
@@ -89,14 +78,11 @@ isone( a, b, n )
 	return( FALSE );
 }
 
-
-
 /*
  * remove the card a from the deck d of n cards
  */
 
 cremove( a, d, n )
-
     CARD		a, d[];
     int			n;
 {
@@ -108,8 +94,6 @@ cremove( a, d, n )
 	}
 	if(  j < n  )  d[j].suit = d[j].rank = EMPTY;
 }
-
-
 
 /*
  * sorthand:
@@ -131,4 +115,3 @@ int			n;
 		    *cp = c;
 		}
 }
-

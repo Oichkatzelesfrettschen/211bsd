@@ -56,7 +56,7 @@ static char *rcsid()
 #endif				/* sparc */
 
 #ifdef VFORK
-static	sigret_t	vffree	__P((int));
+static	void	vffree	__P((void));
 #endif
 static	void		doio	__P((struct command *t, int *, int *));
 static	void		chkclob	__P((char *));
@@ -591,10 +591,9 @@ execute(t, wanttty, pipein, pipeout)
 }
 
 #ifdef VFORK
-static sigret_t
+void
 /*ARGSUSED*/
-vffree(snum)
-int snum;
+vffree()
 {
     register Char **v;
 

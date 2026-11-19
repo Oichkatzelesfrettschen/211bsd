@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)timer.c	5.3 (Berkeley) 11/20/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)timer.c	5.4 (2.11BSD) 2026/9/22";
+#endif
 
 /*
  * Routing Table Management Daemon
@@ -19,6 +19,7 @@ long	timeval = -TIMER_RATE;
  * Timer routine.  Performs routing information supply
  * duties and manages timers on routing table entries.
  */
+void
 timer()
 {
 	register struct rthash *rh;

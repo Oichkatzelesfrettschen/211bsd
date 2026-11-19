@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)dhu.c	2.4 (2.11BSD) 2025/8/112025/8/11
+ *	@(#)dhu.c	2.5 (2.11BSD) 2026/4/30
  */
 
 /*
@@ -131,7 +131,13 @@ dhuopen(dev, flag)
 	if	((dhuact&(1<<dhu)) == 0)
 		{
 		addr->dhucsr = DHU_SELECT(0) | DHU_IE;
+#ifdef simh_bug
+/*
+ * SimH does not handle the timer correctly.  Other systems, RSX/RSTS, leave
+ * the value at the default
+*/
 		addr->dhutimo = dhu_def_timo;
+#endif
 		dhuact |= (1<<dhu);
 		/* anything else to configure whole board */
 		}
@@ -204,7 +210,7 @@ dhuclose(dev, flag)
 		return(EBADF);
 	(*linesw[tp->t_line].l_close)(tp, flag);
 	(void) dhumctl(unit, (long)DHU_BRK, DMBIC);
-	(void) dhumctl(unit, DHU_OFF, DMSET);
+	(void) dhumctl(unit, (long)DHU_OFF, DMSET);
 	ttyclose(tp);
 	if	(dhu_overrun[unit])
 		{
@@ -324,20 +330,8 @@ dhurint(dhu)
 			if (tp->t_flags&RAW)
 				c = 0;
 			else
-#ifdef	OLDWAY
-				c = tp->t_intrc;
-#else
 				c = tp->t_brkc;
-#endif
 			}
-#if NBK > 0
-		if	(tp->t_line == NETLDISC)
-			{
-			c &= 0x7f;
-			BKINPUT(c, tp);
-			}
-		else
-#endif
 			(*linesw[tp->t_line].l_rint)(c, tp);
 		}
 	}

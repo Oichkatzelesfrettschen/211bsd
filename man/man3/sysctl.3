@@ -29,7 +29,7 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"	@(#)sysctl.3	8.1.2 (2.11BSD) 2020/3/2
+.\"	@(#)sysctl.3	8.1.3 (2.11BSD) 2026/5/28
 .\"
 .TH SYSCTL 3 "March 2, 2020"
 .UC 4
@@ -131,7 +131,7 @@ listed here, and described in separate sections below.
 	CTL\_MACHDEP	sys/sysctl.h	Machine dependent
 	CTL\_NET	sys/socket.h	Networking
 	CTL\_USER	sys/sysctl.h	User-level
-	CTL\_VM	vm/vm_param.h	Virtual memory
+	CTL\_VM	sys/vmparam.h	Virtual memory
 .fi
 .PP
 For example, the following retrieves the maximum number of processes allowed
@@ -210,6 +210,7 @@ privilege may change the value.
 	HW\_PHYSMEM	integer	no
 	HW\_USERMEM	integer	no
 	HW\_PAGESIZE	integer	no
+	HW\_TRACEBUF	struct	no
 .\".It HW\_DISKNAMES	integer	no
 .\".It HW\_DISKSTATS	integer	no
 .fi
@@ -243,6 +244,10 @@ HW_PAGESIZE
 .br
 	The software page size.
 .sp
+HW_TRACEBUF
+.br
+	The I/O statistics.
+.sp
 .\".It Fa HW_DISKNAMES
 .\".It Fa HW_DISKSTATS
 .SH CTL_KERN
@@ -259,40 +264,48 @@ information.
 .ta .25i 2.75i 4.5i
 
 	Second level name	Type	Changeable
-	KERN\_ARGMAX	integer	no
-	KERN\_BOOTTIME	struct timeval	no
-	KERN\_CHOWN\_RESTRICTED	integer	no
-	KERN\_CLOCKRATE	struct clockinfo	no
-	KERN\_FILE	struct file	no
-	KERN\_HOSTID	long	yes
-	KERN\_HOSTNAME	string	yes
-	KERN\_JOB\_CONTROL	integer	no
-.\"KERN\_LINK\_MAX	integer	no
-	KERN\_MAXFILES	integer	no
-	KERN\_MAXPROC	integer	no
-	KERN\_MAXINODES	integer	no
-	KERN\_MAXTEXTS	integer	no
-.\"KERN\_MAX\_CANON	integer	no
-.\"KERN\_MAX\_INPUT	integer	no
-.\"KERN\_NAME\_MAX	integer	no
-	KERN\_NGROUPS	integer	no
-.\"KERN\_NO\_TRUNC	integer	no
+	KERN\_OSTYPE	string	no
 	KERN\_OSRELEASE	string	no
 	KERN\_OSREV	integer	no
-	KERN\_OSTYPE	string	no
-.\"KERN\_PATH\_MAX	integer	no
-.\"KERN\_PIPE\_BUF	integer	no
-	KERN\_POSIX1	integer	no
-	KERN\_PROC	struct proc	no
-	KERN\_PROF	node	not applicable
-	KERN\_SAVED\_IDS	integer	no
-	KERN\_SECURELVL	integer	raise only
-	KERN\_TEXT	struct text	no
-.\"KERN\_VDISABLE	integer	no
 	KERN\_VERSION	string	no
+	KERN\_MAXINODES	integer	no
+	KERN\_MAXPROC	integer	no
+	KERN\_MAXFILES	integer	no
+	KERN\_ARGMAX	integer	no
+	KERN\_SECURELVL	integer	raise only
+	KERN\_HOSTNAME	string	yes
+	KERN\_HOSTID	long	yes
+	KERN\_CLOCKRATE	struct clockinfo	no
 	KERN\_INODE	struct inode	no
+	KERN\_PROC	struct proc	no
+	KERN\_FILE	struct file	no
+	KERN\_PROF	node	not applicable
+	KERN\_POSIX1	integer	no
+	KERN\_NGROUPS	integer	no
+	KERN\_JOB\_CONTROL	integer	no
+	KERN\_SAVED\_IDS	integer	no
+	KERN\_BOOTTIME	struct timeval	no
+	KERN\_MAXTEXTS	integer	no
+	KERN\_TEXT	struct text	no
+	KERN\_ACCTTHRESH	int	yes
+	KERN\_LINEHZ	int	yes
 .fi
 .PP
+KERN_ACCTTHRESH
+.br
+.in +.5i
+Number of process accounting records buffered before the accounting daemon
+.BR acctd (8)
+is notified that records are available to be read.
+.sp
+.in -.5i
+KERN_LINEHZ
+.br
+.in +.5i
+The kernel clock frequency.  This may be changed.  Values are
+restricted by the kernel to 50 or 60.
+.sp
+.in -.5i
 KERN_ARGMAX
 .br
 .in +.5i
@@ -306,10 +319,6 @@ A \fIstruct timeval\fP structure is returned.
 This structure contains the time that the system was booted.
 .sp
 .in -.5i
-.\"KERN_CHOWN_RESTRICTED
-.\"Return 1 if appropriate privileges are required for the
-.\".Xr chown 2
-.\"system call, otherwise 0.
 KERN_CLOCKRATE
 .br
 .in +.5i
@@ -326,8 +335,9 @@ structures.
 Each element of the array contains the kernel address of a file
 \fIstruct inode *\fP
 followed by the file itself
-\fIstruct file\fP.  There can never be more than \fBKERN_MAXFILES\fP
-inodes returned.
+\fIstruct file\fP.
+There can never be more than \fBKERN_MAXFILES\fP
+structures returned.
 .sp
 .in -.5i
 KERN_HOSTID
@@ -348,8 +358,6 @@ KERN_JOB_CONTROL
 Return 1 if job control is available on this system, otherwise 0.
 .sp
 .in -.5i
-.\"KERN_LINK_MAX
-.\"The maximum file link count.
 KERN_MAXFILES
 .br
 .in +.5i
@@ -374,21 +382,12 @@ KERN_MAXTEXTS
 The maximum number of text structures available on the system.
 .sp
 .in -.5i
-.\"KERN_MAX_CANON
-.\"The maximum number of bytes in terminal canonical input line.
-.\"KERN_MAX_INPUT
-.\"The minimum maximum number of bytes for which space is available in
-.\"a terminal input queue.
-.\"KERN_NAME_MAX
-.\"The maximum number of bytes in a file name.
 KERN_NGROUPS
 .br
 .in +.5i
 The maximum number of supplemental groups.
 .sp
 .in -.5i
-.\"KERN_NO_TRUNC
-.\"Return 1 if file names longer than KERN_NAME_MAX are truncated.
 KERN_OSRELEASE
 .br
 .in +.5i
@@ -407,10 +406,6 @@ KERN_OSTYPE
 The system type string.
 .sp
 .in -.5i
-.\"KERN_PATH_MAX
-.\"The maximum number of bytes in a pathname.
-.\"KERN_PIPE_BUF
-.\"The maximum number of bytes which will be written atomically to a pipe.
 KERN_POSIX1
 .br
 .in +.5i
@@ -427,11 +422,10 @@ An array of
 structures is returned,
 whose size depends on the current number of such objects in the system.
 .sp
-.in -.5i
 The third and fourth level names are as follows:
 .sp
 .nf
-.ta .25i 3.0i
+.ta .5i 3.0i
 	Third level name	Fourth level is:
 	KERN\_PROC\_ALL	None
 	KERN\_PROC\_PID	A process ID
@@ -439,72 +433,22 @@ The third and fourth level names are as follows:
 	KERN\_PROC\_TTY	A tty device
 	KERN\_PROC\_UID	A user ID
 	KERN\_PROC\_RUID	A real user ID
-	KERN\_PROF	Return kernel profiling information.
 .fi
 .sp
-.in + .5i
-If the kernel is not compiled for profiling,
-attempts to retrieve any of the KERN_PROF values will
+.in -.5i
+KERN\_PROF
+.br
+.in +.5i
+Kernel profiling is not supported on 2.11BSD.
+Attempts to retrieve any KERN_PROF values will
 fail with EOPNOTSUPP.
 .sp
 .in -.5i
-The third level names for the string and integer profiling information 
-is detailed below.
-The changeable column shows whether a process with appropriate
-privilege may change the value.
-.sp
-.in +.5i
-.nf
-.ta .25i 2.25i 4.25i
-Third level name	Type	Changeable
-	GPROF\_STATE	integer	yes
-	GPROF\_COUNT	u_short[\|]	yes
-	GPROF\_FROMS	u_short[\|]	yes
-	GPROF\_TOS	struct tostruct	yes
-	GPROF\_GMONPARAM	struct gmonparam	no
-.fi
-.PP
-The variables are as follows:
-.sp
-GPROF_STATE
-.br
-.in +.5i
-Returns GMON_PROF_ON or GMON_PROF_OFF to show that profiling
-is running or stopped.
-.sp
-.in -.5i
-GPROF_COUNT
-.br
-.in +.5i
-Array of statistical program counter counts.
-.sp
-.in -.5i
-GPROF_FROMS
-.br
-.in +.5i
-Array indexed by program counter of call-from points.
-.sp
-.in -.5i
-GPROF_TOS
-.br
-.in +.5i
-Array of
-\fIstruct tostruct\fP
-describing destination of calls and their counts.
-.sp
-.in -.5i
-GPROF_GMONPARAM
-.br
-.in +.5i
-Structure giving the sizes of the above arrays.
-.in -.5i
-.sp
 KERN_SAVED_IDS
 .br
 .in +.5i
 Returns 1 if saved set-group and saved set-user ID is available.
 .sp
-.in -.5i
 .in -.5i
 KERN_SECURELVL
 .br
@@ -514,8 +458,6 @@ This level may be raised by processes with appropriate privilege.
 It may only be lowered by process 1.
 .sp
 .in -.5i
-.\"KERN_VDISABLE
-.\"Returns the terminal character disabling value.
 KERN_VERSION
 .br
 .in +.5i
@@ -839,6 +781,8 @@ privilege may change the value.
 	VM\_SWAPMAP	struct mapent	no
 	VM\_COREMAP	struct mapent	no
 	VM\_NSWAP	int		no
+	VM\_SWAPDEV	int		no
+	VM\_CP_TIME	struct long[4]	no
 .fi
 .PP
 VM_LOADAVG
@@ -880,6 +824,21 @@ VM_NSWAP
 Return the number of sectors of swap space.  This is the value of the kernel
 variable 'nswap'.
 .br
+.in -.5i
+.sp
+VM_SWAPDEV
+.br
+.in +.5i
+Return the swap device.  This is the value of the kernel variable 'swapdev'.
+.br
+.in -.5i
+.sp
+VM_CP_TIME
+.br
+.in +.5i
+Display the kernel cpu state table.  The four values are the number of
+clock ticks since boot the cpu has spent in \fIuser\fP, \fInice\fP,
+\fIsystem\fP and \fIidle\fP state.
 .SH RETURN VALUES
 If the call to
 \fBsysctl\fP
@@ -962,7 +921,8 @@ The
 .B sysctl
 function first appeared in 4.4BSD.
 .PP
-The KERN_TEXT, KERN_MAXTEXTS, VM_SWAPMAP, VM_COREMAP options are
+The KERN_TEXT, KERN_MAXTEXTS, VM_SWAPMAP, VM_SWAPDEV, VM_NSWAP and
+VM_COREMAP options are
 2.11BSD specific extensions to the 4.4BSD \fIsysctl\fP implmentation.
 .PP
 Having KERN_FILE return the address of the file structure before the

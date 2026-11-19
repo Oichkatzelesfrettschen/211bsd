@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)hosts.5	6.3 (Berkeley) 5/14/86
+.\"	@(#)hosts.5	6.4 (2.11BSD) 2026/9/28
 .\"
 .TH HOSTS 5  "May 14, 1986"
 .UC 5
@@ -32,13 +32,13 @@ a comment; characters up to the end of the line are
 not interpreted by routines which search the file.
 .PP
 When using the name server
-.IR named (8),
+.BR named (8),
 this file provides a backup when the name server
 is not running.
 For the name server, it is suggested that only a few addresses
 be included in this file.
 These include  address for the local interfaces that 
-.IR ifconfig (8C)
+.BR ifconfig (8)
 needs at boot time and a few machines on the local network.
 .PP
 This file may be created from the official host
@@ -52,13 +52,13 @@ sites on the DARPA Internet.
 Network addresses are specified in the conventional
 ``.'' notation using the \fIinet_addr\fP() routine
 from the Internet address manipulation library,
-.IR inet (3N).
+.BR inet (3).
 Host names may contain any printable
 character other than a field delimiter, newline,
 or comment character.
 .SH FILES
 /etc/hosts
 .SH "SEE ALSO"
-gethostbyname(3N), ifconfig(8C), named(8)
+gethostbyname(3), ifconfig(8), named(8)
 .br
 Name Server Operations Guide for BIND

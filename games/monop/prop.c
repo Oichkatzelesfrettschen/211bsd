@@ -1,3 +1,7 @@
+#if     !defined(lint) && defined(DOSCCS)
+static char sccsid[] = "prop.c 4.1 (2.11BSD) 2026/8/19";
+#endif
+
 # include	"monop.ext"
 
 /*
@@ -31,7 +35,7 @@ int	op_sqr; {
 	last_tp = NULL;
 	for (tp = *head; tp && value(tp->sqr) < val; tp = tp->next)
 		if (val == value(tp->sqr)) {
-			cfree(op);
+			free(op);
 			return;
 		}
 		else
@@ -76,7 +80,7 @@ shrt	op_sqr; {
 		*head = op->next;
 	else {
 		last_op->next = op->next;
-		cfree(op);
+		free(op);
 	}
 }
 /*

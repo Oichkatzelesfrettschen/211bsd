@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)printjob.c	5.2.4 (2.11BSD) 2025/12/26";
+static char sccsid[] = "@(#)printjob.c	5.2.5 (2.11BSD) 2026/9/16";
 #endif
 
 /*
@@ -65,7 +65,7 @@ printjob()
 	register int i, nitems;
 	long pidoff;
 	int count = 0;
-	extern int abortpr();
+	extern void abortpr();
 
 	init();					/* set up capabilities */
 	(void) write(1, "", 1);			/* ack that daemon is started */
@@ -968,7 +968,7 @@ dofork(action)
 
 	for (i = 0; i < 20; i++) {
 		if ((pid = fork()) < 0) {
-			sleep((unsigned)(i*i));
+			sleep(i*i);
 			continue;
 		}
 		/*
@@ -995,6 +995,7 @@ dofork(action)
 /*
  * Kill child processes to abort current job.
  */
+void
 abortpr()
 {
 	(void) unlink(ptmpfile);

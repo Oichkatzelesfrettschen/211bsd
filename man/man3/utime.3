@@ -2,27 +2,27 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)utime.3c	6.1 (Berkeley) 5/9/85
+.\"	@(#)utime.3	6.2 (2.11BSD) 2026/9/27
 .\"
-.TH UTIME 3C "May 9, 1985"
+.TH UTIME 3 "May 9, 1985"
 .UC 4
 .SH NAME
 utime \- set file times
 .SH SYNOPSIS
 .nf
-.B #include <sys/types.h>
-.PP
-.B utime(file, timep)
-.B char *file;
-.B time_t timep[2];
+.ft B
+#include <sys/types.h>
+.sp
+utime(\fIchar *file\fP, \fItime_t timep[2]\fP)
+.ft R
 .fi
 .SH DESCRIPTION
 .ft B
-This interface is obsoleted by utimes(2).
+This interface is obsoleted by and implemented using utimes(2).
 .ft R
 .PP
 The
-.I utime
+.B utime
 call
 uses the
 `accessed' and `updated' times in that order

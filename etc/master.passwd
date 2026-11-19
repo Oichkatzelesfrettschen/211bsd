@@ -1,8 +1,9 @@
-root::0:1::0:0:The Man:/:/bin/sh
+root::0:1::0:0:System Administrator:/root:/bin/sh
 daemon:*:1:1::::The devil himself:/:/bin/sh
-sys:*:4:2::::Operating System:/tmp:nologin
 operator:*:2:5::::System &:/usr/guest/operator:/bin/csh
 bin:*:3:20::::Binaries Commands and Source:/:/bin/csh
+sys:*:4:2::::Operating System:/tmp:nologin
+games:*:5:31::::Games:/usr/guest/games:/bin/sh
 nobody:*:32767:31::::Nobody:/nonexistent:/bin/sh
 uucp:*:66:1::0:0:UNIX-to-UNIX Copy:/usr/spool/uucppublic:/usr/sbin/uucico
 ingres:*:39:74::0:0:INGRES Owner:/usr/ingres:/bin/csh

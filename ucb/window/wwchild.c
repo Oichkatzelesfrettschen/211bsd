@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)wwchild.c	3.5 4/24/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)wwchild.c	3.6 (2.11BSD) 2026/5/9";
 #endif
 
 /*
@@ -9,11 +9,12 @@ static char sccsid[] = "@(#)wwchild.c	3.5 4/24/85";
  */
 
 #include "ww.h"
+#include <errno.h>
 #include <sys/wait.h>
 
+void
 wwchild()
 {
-	extern errno;
 	int olderrno;
 	register struct ww **wp;
 	union wait w;

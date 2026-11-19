@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)ls.c	5.9.2 (2.11BSD GTE) 1996/12/23";
+static char sccsid[] = "@(#)ls.c	5.9.3 (2.11BSD) 2026/1/21";
 #endif
 
 /*
@@ -51,7 +51,7 @@ struct subdirs {
 } *subdirs;
 
 char	aflg, dflg, gflg, lflg, sflg, tflg, uflg, iflg, fflg, cflg, rflg = 1;
-char	oflg, qflg, Aflg, Cflg, Fflg, Lflg, Rflg, usetabs;
+char	oflg, qflg, Aflg, Cflg, Fflg, Lflg, Rflg, Tflg, usetabs;
 
 time_t	now, sixmonthsago;
 
@@ -59,6 +59,8 @@ char	*dotp = ".";
 
 struct	winsize win;
 int	twidth;
+
+extern	int     stat(), lstat();
 
 struct	afile *gstat();
 int	fcmp();
@@ -75,7 +77,6 @@ main(argc, argv)
 	register struct afile *fp;
 	struct sgttyb sgbuf;
 	int ch, i;
-	time_t time();
 
 	Aflg = !getuid();
 	(void) time(&now); sixmonthsago = now - 6L*30L*24L*60L*60L; now += 60;
@@ -89,7 +90,7 @@ main(argc, argv)
 			usetabs = 1;
 	} else
 		usetabs = 1;
-	while ((ch = getopt(argc, argv, "1ACLFRacdfgiloqrstu")) != EOF)
+	while ((ch = getopt(argc, argv, "1ACTLFRacdfgiloqrstu")) != EOF)
 		switch((char)ch) {
 /*
  * The -1, -C, and -l options override each other so shell aliasing 
@@ -98,6 +99,9 @@ main(argc, argv)
 		case '1':
 			lflg = 0;
 			Cflg = 0; break;
+		case 'T':
+			Tflg = 1;
+			break;
 		case 'C':
 			lflg = 0;
 			Cflg = 1; break;
@@ -199,8 +203,8 @@ main(argc, argv)
 				t = subdirs; subdirs = t->sd_next;
 				putchar('\n');
 				formatd(t->sd_name, 1);
-				cfree(t->sd_name);
-				cfree((char *)t);
+				free(t->sd_name);
+				free((char *)t);
 			}
 			if (++fp == fplast)
 				break;
@@ -242,11 +246,11 @@ formatd(name, dotitle)
 		}
 	for (fp = dfp0; fp < dfplast; fp++) {
 		if ((fp->fmode&ISARG) == 0 && fp->fname)
-			cfree(fp->fname);
+			free(fp->fname);
 		if (fp->flinkto)
-			cfree(fp->flinkto);
+			free(fp->flinkto);
 	}
-	cfree((char *)dfp0);
+	free((char *)dfp0);
 }
 
 long
@@ -304,8 +308,6 @@ getdir(dir, pfp0, pfplast, isadir)
 	*pfplast = fp;
 	return (kbytes(dbtob(nb)));
 }
-
-int	stat(), lstat();
 
 struct afile *
 gstat(fp, file, statarg, pnb)
@@ -566,11 +568,12 @@ fmtlstuff(p, maxflags)
 {
 	static char lstuffbuf[256];
 	char gname[32], uname[32], fsize[32], ftime[32], fflags[64];
-	register char *lp = lstuffbuf;
+	register char *lp = lstuffbuf, *cp;
 
 	/* type mode uname gname fsize ftime */
 /* get uname */
-	{ char *cp = getname(p->fuid);
+	{ 
+	  cp = getname(p->fuid);
 	  if (cp)
 		(void) sprintf(uname, "%-9.9s", cp);
 	  else
@@ -578,7 +581,7 @@ fmtlstuff(p, maxflags)
 	}
 /* get gname */
 	if (gflg) {
-	  char *cp = getgroup(p->fgid);
+	  cp = getgroup(p->fgid);
 	  if (cp)
 		(void) sprintf(gname, "%-9.9s", cp);
 	  else
@@ -597,12 +600,17 @@ fmtlstuff(p, maxflags)
 	else
 		(void) sprintf(fsize, "%8ld", p->fsize);
 /* get ftime */
-	{ char *cp = ctime(&p->fmtime);
-	  if ((p->fmtime < sixmonthsago) || (p->fmtime > now))
-		(void) sprintf(ftime, " %-7.7s %-4.4s ", cp+4, cp+20);
-	  else
-		(void) sprintf(ftime, " %-12.12s ", cp+4);
-	}
+	cp = ctime(&p->fmtime);
+	if	(Tflg)
+		sprintf(ftime, " %-15.15s %-4.4s ", cp+4, cp+20);
+	else
+		{
+		if	((p->fmtime < sixmonthsago) || (p->fmtime > now))
+                	(void) sprintf(ftime, " %-7.7s %-4.4s ", cp+4, cp+20);
+		else
+			(void) sprintf(ftime, " %-12.12s ", cp+4);
+		}
+
 /* splat */
 	*lp++ = p->ftype;
 	lp = fmtmode(lp, p->fmode);

@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)uipc_usrreq.c	7.1.2 (2.11BSD GTE) 1997/1/18
+ *	@(#)uipc_usrreq.c	7.1.3 (2.11BSD) 2026/7/15
  */
 
 #include "param.h"
@@ -254,7 +254,7 @@ uipc_usrreq(so, req, m, nam, rights)
 		break;
 
 	default:
-		panic("piusrreq");
+		panic("uipc 5");
 	}
 release:
 	if (m)
@@ -341,7 +341,7 @@ unp_bind(unp, nam)
 	if (error)
 		return(error);
 	if (!ip)
-		panic("unp_bind");
+		panic("unp 1");
 	unp->unp_inode = ip;
 	unp->unp_addr = m_copy(nam, 0, M_COPYALL);
 	return (0);
@@ -406,7 +406,7 @@ unp_connect2(so, so2)
 		break;
 
 	default:
-		panic("unp_connect2");
+		panic("unp 2");
 	}
 	return (0);
 }
@@ -428,7 +428,7 @@ unp_disconnect(unp)
 			unp2 = unp2->unp_refs;
 			for (;;) {
 				if (unp2 == 0)
-					panic("unp_disconnect");
+					panic("unp 3");
 				if (unp2->unp_nextref == unp)
 					break;
 				unp2 = unp2->unp_nextref;
@@ -495,7 +495,6 @@ unp_externalize(rights)
 	register struct file *fp;
 	int f;
 
-	printf("unp_externalize(0%o)\n",rights);
 	if (newfds > ufavail()) {
 		for (i = 0; i < newfds; i++) {
 			fp = *rp;
@@ -507,7 +506,7 @@ unp_externalize(rights)
 	for (i = 0; i < newfds; i++) {
 		f = ufalloc(0);
 		if (f < 0)
-			panic("unp_externalize");
+			panic("unp 4");
 		fp = *rp;
 		u.u_ofile[f] = fp;
 		/* -1 added to msgcount, 0 to count */
@@ -527,7 +526,6 @@ unp_internalize(rights)
 	register int i;
 	register struct file *fp;
 
-	printf("unp_internalize(0%o)\n",rights);
 	rp = mtod(rights, struct file **);
 	for (i = 0; i < oldfds; i++, rp++)
 		GETF(fp, *(int *)rp);

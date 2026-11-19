@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)machdep.c	2.4 (2.11BSD) 1999/9/13
+ *	@(#)machdep.c	2.5 (2.11BSD) 2026/5/16
  */
 
 #include "param.h"
@@ -299,7 +299,7 @@ mapfree(bp)
 
 	size_t	sofub_addr, sofub_off;
 	memaddr	sofub_base;
-	unsigned sofub_size;
+	unsigned sofub_size = (10240+64); /* initialized for checksys to use */
 
 static	int	bpxm, bpadd;
 static	int	sofub_flags;

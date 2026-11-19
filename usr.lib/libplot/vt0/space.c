@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)space.c	4.2 (Berkeley) 11/10/83";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)space.c     4.3 (2.11BSD) 2026/5/11";
 #endif
 
 extern float boty;

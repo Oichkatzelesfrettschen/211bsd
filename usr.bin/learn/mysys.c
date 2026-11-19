@@ -1,9 +1,10 @@
-#ifndef lint
-static char sccsid[] = "@(#)mysys.c	4.5	(Berkeley)	5/15/86";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)mysys.c	4.6	(2.11BSD)	2026/5/8";
+#endif
 
-#include "stdio.h"
-#include "signal.h"
+#include <stdio.h>
+#include <signal.h>
+#include <stdlib.h>
 
 #define	EASY	1
 #define	MEDIUM	2
@@ -26,7 +27,6 @@ chgenv()
 	extern char **environ;
 	extern char *direct;
 	char path[BUFSIZ], exinit[BUFSIZ];
-	char *malloc();
 
 	sprintf(path, "PATH=%s/bin:/usr/cc/bin:/usr/ucb/bin:", direct);
 	sprintf(exinit, "EXINIT=set prompt noopt open window=23");
@@ -145,7 +145,7 @@ system(s)
 char *s;
 {
 	int status, pid, w;
-	register int (*istat)(), (*qstat)();
+	register sig_t istat, qstat;
 
 	istat = signal(SIGINT, SIG_IGN);
 	qstat = signal(SIGQUIT, SIG_IGN);

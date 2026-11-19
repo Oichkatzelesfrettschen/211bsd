@@ -242,8 +242,10 @@ union ptr {
 # endif
 	if (colevel)
 	{
-		free(prevdrop, lmaster, iflong?sizeof(long): sizeof(int));
-		free(prevcoord, lmaster, sizeof (lmaster));
+		free((void *)prevdrop.a);
+		free((void *)prevcoord);
+//		free(prevdrop, lmaster, iflong?sizeof(long): sizeof(int));
+//		free(prevcoord, lmaster, sizeof (lmaster));
 	}
 # if D3
 	for(g=0;g<nf;g++)

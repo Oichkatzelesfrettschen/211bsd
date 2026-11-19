@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)rdfmt.c	5.1	6/7/85
+ *	@(#)rdfmt.c	5.2 (2.11BSD) 2026/8/6
  */
 
 /*
@@ -156,8 +156,12 @@ rd_L(n,w,len) uint *n; ftnlen len;
 		else if(v==-1) return(errno=F_ERLOGIF);
 	}
 	if(v==-1) return(errno=F_ERLOGIF);
+#ifdef	SHORT_LOGICAL
+	n->is = v;
+#else
 	if(len==sizeof(short)) n->is=v;
 	else n->il=v;
+#endif
 	return(OK);
 }
 

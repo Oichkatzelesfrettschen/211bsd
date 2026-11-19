@@ -1,4 +1,3 @@
-/* $Header: /home/hyperion/mu/christos/src/sys/tcsh-6.00/RCS/tw.help.c,v 3.0 1991/07/04 21:49:28 christos Exp $ */
 /* tw.help.c: actually look up and print documentation on a file.
  *	      Look down the path for an appropriate file, then print it.
  *	      Note that the printing is NOT PAGED.  This is because the
@@ -38,9 +37,9 @@
  * SUCH DAMAGE.
  */
 #include "config.h"
-#if !defined(lint) && !defined(pdp11)
+#if !defined(lint) && defined(DOSCCS)
 static char *rcsid() 
-    { return "$Id: tw.help.c,v 3.0 1991/07/04 21:49:28 christos Exp $"; }
+    { return "$Id: tw.help.c,v 3.1 2026/6/1 21:49:28 (2.11BSD) Exp $"; }
 #endif
 
 #include "sh.h"
@@ -48,7 +47,7 @@ static char *rcsid()
 
 
 static int f = -1;
-static	sigret_t	 cleanf		__P((int));
+static	void	 cleanf();
 static	Char    	*skipslist	__P((Char *));
 static	void		 nextslist 	__P((Char *, Char *));
 
@@ -64,7 +63,7 @@ do_help(command)
     Char   *cmd_p, *ep;
     char  **sp;
 
-    sigret_t(*orig_intr) ();
+    sig_t orig_intr;
     Char    curdir[MAXPATHLEN];	/* Cur_ directory being looked at */
     register Char *hpath;	/* The environment parameter */
     Char    full[MAXPATHLEN];
@@ -139,17 +138,13 @@ do_help(command)
     }
 }
 
-static  sigret_t
+static  void
 /*ARGSUSED*/
-cleanf(snum)
-int snum;
+cleanf()
 {
     if (f != -1)
 	(void) close(f);
     f = -1;
-#ifndef SIGVOID
-    return (snum);
-#endif
 }
 
 /* these next two are stolen from CMU's man(1) command for looking down

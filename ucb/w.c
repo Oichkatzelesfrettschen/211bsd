@@ -1,12 +1,12 @@
 /*
- *	w.c	(2.11BSD)	2.0	1996/11/17
+ *	w.c	(2.11BSD)	2.1	2026/5/30
  *
  * w - print system status (who and what)
  *
  * Rewritten using sysctl, no nlist used  - 1/19/94 - sms.
  *
  * This program is similar to the systat command on Tenex/Tops 10/20
- * It needs read permission on /dev/mem and /dev/swap.
+ * It needs read permission on /dev/mem and the swap device.
  */
 #include <sys/param.h>
 #include <sys/sysctl.h>
@@ -41,7 +41,7 @@ int	swmem;
 int	swap;			/* /dev/mem, mem, and swap */
 int	file;
 dev_t	tty;
-char	doing[520];		/* process attached to terminal */
+char	doing[128];		/* process attached to terminal */
 time_t	proctime;		/* cpu time of process in doing */
 double	avenrun[3];
 extern	int errno, optind;
@@ -126,6 +126,11 @@ main(argc, argv)
 		readpr();
 
 	ut = fopen(_PATH_UTMP, "r");
+	if	(ut == NULL)
+		{
+		perror(_PATH_UTMP);
+		exit(1);
+		}
 	if (header) {
 		/* Print time of day */
 		time(&now);
@@ -364,8 +369,9 @@ register struct smproc *smp;
 		perror("/dev/mem");
 		exit(1);
 	}
-	if ((swap = open("/dev/swap", 0)) < 0) {
-		perror("/dev/swap");
+	swapdevname(doing, sizeof doing);	/* use 'doing' */
+	if ((swap = open(doing, 0)) < 0) {
+		perror(doing);
 		exit(1);
 	}
 	mib[0] = CTL_KERN;

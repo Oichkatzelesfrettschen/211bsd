@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)il.4	6.4 (Berkeley) 8/20/87
+.\"	@(#)il.4	6.5 (2.11BSD) 2026/9/26
 .\"
 .TH IL 4 "August 20, 1987"
 .UC 2
@@ -17,7 +17,7 @@ il \- Interlan NI1010 10 Mb/s Ethernet interface
 .ft R
 .SH DESCRIPTION
 The
-.I il
+.B il
 interface provides access to a 10 Mb/s Ethernet network through
 an Interlan 1010 or 1010A controller.
 .PP
@@ -26,16 +26,9 @@ is specified at boot time with an SIOCSIFADDR
 ioctl.  The
 .I il
 interface employs the address resolution protocol described in
-.IR arp (4P)
+.BR arp (4)
 to dynamically map between Internet and Ethernet addresses on the local
 network.
-.PP
-The interface normally tries to use a ``trailer'' encapsulation
-to minimize copying data on input and output.
-The use of trailers is negotiated with ARP.
-This negotiation may be disabled, on a per-interface basis,
-by setting the IFF_NOTRAILERS
-flag with an SIOCSIFFLAGS ioctl.
 .SH DIAGNOSTICS
 \fBil%d: input error\fP.  The hardware indicated an error
 in reading a packet off the cable or an illegally sized packet.
@@ -69,4 +62,4 @@ See the hardware manual for details.
 .PP
 \fBil%d: can't initialize\fP.
 .SH SEE ALSO
-intro(4N), inet(4F), arp(4P)
+intro(4), inet(4), arp(4)

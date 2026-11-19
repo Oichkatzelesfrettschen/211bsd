@@ -17,9 +17,9 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)tftpsubs.c	5.5 (Berkeley) 6/1/90";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)tftpsubs.c	5.6 (2.11BSD) 2026/5/9";
+#endif
 
 /* Simple minded read-ahead/write-behind subroutines for tftp user and
    server.  Written originally with multiple buffers in mind, but current

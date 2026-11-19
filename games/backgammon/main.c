@@ -9,10 +9,11 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)main.c	5.1 (2.11BSD) 2022/10/3";
+static char sccsid[] = "@(#)main.c	5.2 (2.11BSD) 2026/7/21";
 #endif
 
 #include <stdio.h>
+#include <time.h>
 #include "back.h"
 
 #define MVPAUSE	5				/* time to sleep when stuck */
@@ -67,12 +68,11 @@ static char	pbuf[10];
 main (argc,argv)
 int	argc;
 char	**argv;
-
 {
 	register int	i;		/* non-descript index */
 	register int	l;		/* non-descript index */
 	register char	c;		/* non-descript character storage */
-	long	t,time();		/* time for random num generator */
+	time_t	t;			/* time for random num generator */
 
 	/* initialization */
 	bflag = 2;					/* default no board */
@@ -96,7 +96,6 @@ char	**argv;
 		getout();
 	}
 # endif
-
 							/* get terminal
 							 * capabilities, and
 					   		 * decide if it can
@@ -106,7 +105,7 @@ char	**argv;
 							 * for text */
 	if (tflag)
 		begscr = 0;
-	t = time(0);
+	t = time((time_t *)0);
 	srandom(t);					/* 'random' seed */
 
 #ifdef V7
@@ -149,7 +148,7 @@ char	**argv;
 
 				tflag = 0;		/* error! */
 				writel (noteach);
-				exit();
+				exit(1);
 			} else  {			/* if not rules, then
 							 * instructions */
 				writel (need);

@@ -1,4 +1,4 @@
-#	#(@)	Makefile	1.4 (2.11BSD)	2025/11/25
+#	#(@)	Makefile	1.5 (2.11BSD)	2026/8/26
 #
 # on some systems the termcap library is in -ltermcap
 TERMLIB = -ltermlib
@@ -132,14 +132,6 @@ makedefs:	makedefs.c
 
 hack.onames.h:	makedefs def.objects.h
 	./makedefs > hack.onames.h
-
-lint:
-# lint cannot have -p here because (i) capitals are meaningful:
-# [Ww]izard, (ii) identifiers may coincide in the first six places:
-# doweararm() versus dowearring().
-# _flsbuf comes from <stdio.h>, a bug in the system libraries.
-	@echo lint -axbh -DLINT ...
-	@lint -axbh -DLINT $(HACKCSRC) | sed '/_flsbuf/d'
 
 install: $(GAME)
 	install -o $(GAMEUID) -m 4711 $(GAME) $(BINDIR)/$(GAME)

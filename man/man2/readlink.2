@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)readlink.2	6.4 (Berkeley) 8/26/85
+.\"	@(#)readlink.2	6.5 (2.11BSD) 2026/9/20
 .\"
 .TH READLINK 2 "August 26, 1985"
 .UC 5
@@ -11,14 +11,14 @@ readlink \- read value of a symbolic link
 .SH SYNOPSIS
 .nf
 .ft B
-cc = readlink(path, buf, bufsiz)
-int cc;
-char *path, *buf;
-int bufsiz;
-.fi
+#include <unistd.h>
+
+ssize_t
+readlink(\fIconst char *restrict path\fP, \fIchar *restrict buf\fP, \fIsize_t bufsiz\fP);
 .ft R
+.fi
 .SH DESCRIPTION
-.I Readlink
+.B readlink
 places the contents of the symbolic link
 .I name
 in the buffer
@@ -31,7 +31,7 @@ The call returns the count of characters placed in the buffer
 if it succeeds, or a \-1 if an error occurs, placing the error
 code in the global variable \fIerrno\fP.
 .SH "ERRORS
-.I Readlink
+.B readlink
 will fail and the file mode will be unchanged if:
 .TP 15
 [ENOTDIR]
@@ -60,7 +60,7 @@ The named file is not a symbolic link.
 An I/O error occurred while reading from the file system.
 .TP 15
 [EFAULT]
-.I Buf
+.I buf
 extends outside the process's allocated address space.
 .SH SEE ALSO
 stat(2), lstat(2), symlink(2)

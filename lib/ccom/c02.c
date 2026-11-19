@@ -2,7 +2,7 @@
  * C compiler
  */
 #if	!defined(lint) && defined(DOSCCS)
-static	char	sccsid[] = "@(#)c02.c	2.0 (2.11BSD) 2020/1/7";
+static	char	sccsid[] = "@(#)c02.c	2.1 (2.11BSD) 2026/1/26";
 #endif
 
 #include "c0.h"
@@ -329,7 +329,13 @@ stmt:
 				return;
 			}
 			peeksym = o;
-			statement();
+			if ((o == KEYW && cval <= STRTAG) ||
+			    (o == NAME && csym->hclass == TYPEDEF)) {
+				/* declaration in middle of statement */
+				blklev--; /* blockhead() will increase */
+				blockhead();
+			} else
+				statement();
 		}
 		error("Missing '}'");
 		return;

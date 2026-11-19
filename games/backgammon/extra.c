@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)extra.c	5.1 (Berkeley) 5/29/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)extra.c	5.2 (2.11BSD) 2026/5/11";
+#endif
 
 #include "back.h"
 
@@ -73,7 +73,7 @@ dble ()  {
 		return;
 	}
 }
-
+
 /*
  * dblgood ()
  *	Returns 1 if the computer would double in this position.  This
@@ -159,7 +159,7 @@ dblgood ()  {
 		return(1);
 	return (0);
 }
-
+
 freemen (b)
 int	b;
 
@@ -178,7 +178,7 @@ int	b;
 		return ((36-count())/5);
 	return (count()/5);
 }
-
+
 trapped (n,inc)
 int	n, inc;
 
@@ -205,7 +205,7 @@ int	n, inc;
 	}
 	return (ct/5);
 }
-
+
 eval ()  {
 
 	register int	i, j;

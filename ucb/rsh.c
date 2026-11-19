@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)rsh.c	5.5 (2.11BSD) 2025/12/26";
+static char sccsid[] = "@(#)rsh.c	5.6 (2.11BSD) 2026/9/21";
 #endif
 
 #include <sys/types.h>
@@ -35,7 +35,7 @@ int	error();
 int	errno;
 int	options;
 int	rfd2;
-int	sendsig();
+void	sendsig();
 
 #define	mask(s)	(1L << ((s) - 1))
 
@@ -234,6 +234,7 @@ usage:
 	exit(1);
 }
 
+void
 sendsig(signo)
 	char signo;
 {

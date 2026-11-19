@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)wwspawn.c	3.11 4/24/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)wwspawn.c	3.12 (2.11BSD) 2026/5/9";
 #endif
 
 /*
@@ -9,7 +9,7 @@ static char sccsid[] = "@(#)wwspawn.c	3.11 4/24/85";
  */
 
 #include "ww.h"
-#include <sys/signal.h>
+#include <signal.h>
 
 /*
  * There is a dead lock with vfork and closing of pseudo-ports.

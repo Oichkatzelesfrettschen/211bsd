@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)wwbox.c	3.4 4/24/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)wwbox.c	3.5 (2.11BSD) 2026/5/9";
 #endif
 
 /*
@@ -12,9 +12,8 @@ static char sccsid[] = "@(#)wwbox.c	3.4 4/24/85";
 #include "tt.h"
 
 wwbox(w, r, c, nr, nc)
-register struct ww *w;
-register r, c;
-int nr, nc;
+	struct ww *w;
+	int r, c, nr, nc;
 {
 	register r1, c1;
 	register i;

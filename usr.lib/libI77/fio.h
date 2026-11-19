@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)fio.h	5.1.1 (2.11BSD) 1999/10/24
+ *	@(#)fio.h	5.1.2 (2.11BSD) 2026/8/4
  */
 
 /*
@@ -18,7 +18,6 @@
 #define GET(x)		if((x=(*getn)())<0) return(x)
 #define VAL(x)		(x!='\n'?x:' ')
 #define PUT(x)		{if(n=(*putn)(x)) return(n);}
-#define lcase(s)	((s >= 'A') && (s <= 'Z') ? s+('a'-'A') : s)
 
 #define MAXINTLENGTH	32	/* to accomodate binary format */
 

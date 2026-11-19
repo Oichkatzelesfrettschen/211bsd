@@ -1,4 +1,4 @@
-.\"	@(#)system.3	6.1 (Berkeley) 5/15/85
+.\"	@(#)system.3	6.2 (2.11BSD) 2026/9/27
 .\"
 .TH SYSTEM 3 "May 15, 1985"
 .AT 3
@@ -10,17 +10,17 @@ system \- issue a shell command
 .B char *string;
 .fi
 .SH DESCRIPTION
-.I System
+.B system
 causes the
 .I string
 to be given to
-.IR  sh (1)
+.BR  sh (1)
 as input as if the string had been typed as a command
 at a terminal.
 The current process waits until the shell has
 completed, then returns the exit status of the shell.
 .SH "SEE ALSO"
-popen(3S),
+popen(3),
 execve(2),
 wait(2)
 .SH DIAGNOSTICS

@@ -16,7 +16,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)cmdtab.c	5.9.2 (2.11BSD) 2025/3/21";
+static char sccsid[] = "@(#)cmdtab.c	5.9.3 (2.11BSD) 2026/2/2";
 #endif
 
 #include "ftp_var.h"
@@ -25,7 +25,7 @@ static char sccsid[] = "@(#)cmdtab.c	5.9.2 (2.11BSD) 2025/3/21";
  * User FTP -- Command Tables.
  */
 int	setascii(), setbell(), setbinary(), setdebug(), setform();
-int	setglob(), sethash(), setmode(), setpeer(), setport();
+int	setglob(), sethash(), xsetmode(), setpeer(), setport();
 int	setprompt(), setstruct(), setpassive();
 int	settenex(), settrace(), settype(), setverbose();
 int	disconnect(), restart(), reget(), syst();
@@ -140,7 +140,7 @@ struct cmd cmdtab[] = {
 	{ "mget",	mgethelp,	1,	1,	1,	mget },
 	{ "mkdir",	mkdirhelp,	0,	1,	1,	makedir },
 	{ "mls",	mlshelp,	1,	1,	1,	mls },
-	{ "mode",	modehelp,	0,	1,	1,	setmode },
+	{ "mode",	modehelp,	0,	1,	1,	xsetmode },
 	{ "modtime",	modtimehelp,	0,	1,	1,	modtime },
 	{ "mput",	mputhelp,	1,	1,	1,	mput },
 	{ "newer",	newerhelp,	1,	1,	1,	newer },

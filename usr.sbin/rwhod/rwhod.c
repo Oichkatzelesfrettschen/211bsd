@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)rwhod.c	5.9.4 (2.11BSD) 2019/11/21";
+static char sccsid[] = "@(#)rwhod.c	5.9.5 (2.11BSD) 2026/9/22";
 #endif
 
 #include <sys/param.h>
@@ -66,7 +66,7 @@ int	s, utmpf;
 #define	WHDRSIZE	(sizeof (mywd) - sizeof (mywd.wd_we))
 #define	RWHODIR		"/usr/spool/rwho"
 
-int	onalrm(), getboottime();
+void	onalrm(), getboottime();
 	char	*Utmp = _PATH_UTMP;
 
 main()
@@ -234,6 +234,7 @@ int	utmpsize = 0;
 struct	utmp *utmp;
 int	alarmcount=9;
 
+void
 onalrm()
 {
 	register int i;
@@ -317,6 +318,7 @@ done:
 	(void) alarm(AL_INTERVAL);
 }
 
+void
 getboottime(signo)
 	int	signo;
 {

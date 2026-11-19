@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)subr_rmap.c	1.2 (2.11BSD GTE) 12/24/92
+ *	@(#)subr_rmap.c	1.3 (2.11BSD) 2026/7/16
  */
 
 #include "param.h"
@@ -54,7 +54,7 @@ malloc(mp, size)
 	int retry;
 
 	if (!size)
-		panic("malloc: size = 0");
+		panic("malloc(0)");
 	/*
 	 * Search for a piece of the resource map which has enough
 	 * free space to accomodate the request.
@@ -85,7 +85,7 @@ again:
 	/* no entries big enough */
 	if (!retry++) {
 		if (mp == swapmap) {
-			printf("short of swap\n");
+			printf("lo swap\n");
 			xumount(NODEV);
 			goto again;
 		}
@@ -113,7 +113,7 @@ mfree(mp, size, addr)
 		return;
 	/* the address must not be 0, or the protocol has broken down. */
 	if (!addr)
-		panic("mfree: addr = 0");
+		panic("mfree(0)");
 	if (mp == coremap) {
 		if (runin) {
 			runin = 0;
@@ -180,7 +180,7 @@ mfree(mp, size, addr)
 		 * use the above "for" loop to find the smallest entry
 		 * and toss it.
 		 */
-		printf("%s: overflow, lost %u clicks at 0%o\n",
+		printf("%s overfl lost %u clicks @0%o\n",
 		    mp->m_name, size, addr);
 	else {
 		for (ep = bp - 1; ep >= start; *bp-- = *ep--);
@@ -233,7 +233,7 @@ again:
 			madd[next]->m_size += sizes[next];
 	if (!retry++)
 		if (mp == swapmap) {
-			printf("short of swap\n");
+			printf("lo swap\n");
 			xumount(NODEV);
 			goto again;
 		}

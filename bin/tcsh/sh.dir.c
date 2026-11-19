@@ -36,7 +36,7 @@
 #include "config.h"
 #if !defined(lint) && !defined(pdp11)
 static char *rcsid() 
-    { return "$Id: sh.dir.c,v 3.0.1 1996/04/04 21:49:28 sms Exp $"; }
+    { return "$Id: sh.dir.c,v 3.0.2 2026/07/23 21:49:28 sms Exp $"; }
 #endif
 
 
@@ -51,6 +51,7 @@ static	void 	 	 	 printdirs	__P((void));
 static	Char 			*dgoto		__P((Char *));
 static	void 	 	 	 dnewcwd	__P((struct directory *));
 static	void 	 	 	 dset		__P((Char *));
+static	void 	 	 	 dextract	__P((struct directory *));
 
 struct directory dhead;		/* "head" of loop */
 int     printd;			/* force name to be printed */
@@ -97,7 +98,6 @@ dinit(hp)
 	}
     }
     else {
-#ifdef S_IFLNK
 	struct stat swd, shp;
 
 	/*
@@ -120,9 +120,6 @@ dinit(hp)
 	    }
 	    cp = dcanon(str2short(tcp), STRNULL);
 	}
-#else				/* S_IFLNK */
-	cp = dcanon(str2short(tcp), STRNULL);
-#endif				/* S_IFLNK */
     }
 
     dp = (struct directory *) xcalloc(sizeof(struct directory), 1);
@@ -275,20 +272,13 @@ dnormalize(cp)
     if ((unsigned char) cp[0] == '/')
 	return (Strsave(cp));
 
-#ifdef S_IFLNK
     if (adrof(STRig__symlinks)) {
 	int     dotdot = 0;
 	register Char   *dp, *cwd;
-#ifdef apollo
-	bool slashslash;
-#endif
 
 	cwd = (Char *) xmalloc((size_t) ((Strlen(dcwd->di_name) + 3) *
 					 sizeof(Char)));
 	(void) Strcpy(cwd, dcwd->di_name);
-#ifdef apollo
-	slashslash = cwd[0] == '/' && cwd[1] == '/';
-#endif
 
 	/*
 	 * Ignore . and count ..'s
@@ -309,10 +299,6 @@ dnormalize(cp)
 	}
 	while (dotdot > 0) 
 	    if ((dp = Strrchr(cwd, '/'))) {
-#ifdef apollo
-		if (dp == &cwd[1]) 
-		    slashslash = 1;
-#endif
 		*dp = '\0';
 		dotdot--;
 	    }
@@ -330,23 +316,11 @@ dnormalize(cp)
 	else {
 	    if (!*cwd) {
 		cwd[0] = '/';
-#ifdef apollo
-		cwd[1] = '/';
-		cwd[2] = '\0';
-#else
 		cwd[1] = '\0';
-#endif
 	    }
-#ifdef apollo
-	    else if (slashslash && cwd[1] == '\0') {
-		cwd[1] = '/';
-		cwd[2] = '\0';
-	    }
-#endif
 	    return cwd;
 	}
     }
-#endif
     return Strsave(cp);
 }
 
@@ -444,21 +418,7 @@ dfollow(cp)
     int serrno;
 
     cp = globone(cp, G_ERROR);
-#ifdef apollo
-    if (Strchr(cp, '`')) {
-	char *dptr, *ptr;
-	if (chdir(dptr = short2str(cp)) < 0) 
-	    stderror(ERR_SYSTEM, dptr, strerror(errno));
-	else if ((ptr = getwd(ebuf)) && *ptr != '\0') {
-		xfree((ptr_t) cp);
-		cp = Strsave(str2short(ptr));
-		return dgoto(cp);
-	}
-	else 
-	    stderror(ERR_SYSTEM, dptr, ebuf);
-    }
-#endif
-	    
+
     /*
      * if we are ignoring symlinks, try to fix relatives now.
      */
@@ -695,16 +655,10 @@ dcanon(cp, p)
     register Char *sp;
     register Char *p1, *p2;	/* general purpose */
     bool    slash;
-#ifdef apollo
-    bool    slashslash;
-#endif
-
-#ifdef S_IFLNK			/* if we have symlinks */
     Char    link[MAXPATHLEN];
     char    tlink[MAXPATHLEN];
     int     cc;
     Char   *newcp;
-#endif				/* S_IFLNK */
 
     /*
      * christos: if the path given does not start with a slash prepend cwd. If
@@ -730,10 +684,6 @@ dcanon(cp, p)
 	abort();
 #endif
 
-#ifdef apollo
-    slashslash = (cp[0] == '/' && cp[1] == '/');
-#endif
-
     while (*p) {		/* for each component */
 	sp = p;			/* save slash address */
 	while (*++p == '/')	/* flush extra slashes */
@@ -749,10 +699,6 @@ dcanon(cp, p)
 		break;
 	    }
 
-#ifdef apollo
-	if (&cp[1] == sp && sp[0] == '.' && sp[1] == '.' && sp[2] == '\0')
-	    slashslash = 1;
-#endif
 	if (*sp == '\0')	/* if component is null */
 	    if (--sp == cp)	/* if path is one char (i.e. /) */ 
 		break;
@@ -774,7 +720,6 @@ dcanon(cp, p)
 	     * symbolic link.
 	     */
 	    *--sp = 0;		/* form the pathname for readlink */
-#ifdef S_IFLNK			/* if we have symlinks */
 	    if (sp != cp && !adrof(STRig__symlinks) &&
 		(cc = readlink(short2str(cp), tlink,
 			       sizeof tlink)) >= 0) {
@@ -836,7 +781,6 @@ dcanon(cp, p)
 		cp = newcp;
 		continue;	/* canonicalize the link */
 	    }
-#endif				/* S_IFLNK */
 	    *sp = '/';
 	    if (sp != cp)
 		while (*--sp != '/');
@@ -851,7 +795,6 @@ dcanon(cp, p)
 	}
 	else {			/* normal dir name (not . or .. or nothing) */
 
-#ifdef S_IFLNK			/* if we have symlinks */
 	    if (sp != cp && adrof(STRchase_symlinks) &&
 		!adrof(STRig__symlinks) &&
 		(cc = readlink(short2str(cp), tlink,
@@ -920,7 +863,6 @@ dcanon(cp, p)
 		cp = newcp;
 		continue;	/* canonicalize the link */
 	    }
-#endif				/* S_IFLNK */
 	    if (slash)
 		*p = '/';
 	}
@@ -929,7 +871,6 @@ dcanon(cp, p)
     /*
      * fix home...
      */
-#ifdef S_IFLNK
     p1 = value(STRhome);
     cc = Strlen(p1);
     /*
@@ -983,24 +924,8 @@ dcanon(cp, p)
 	    cp = newcp;
 	}
     }
-#endif				/* S_IFLNK */
-
-#ifdef apollo
-    if (slashslash) {
-	if (cp[1] != '/') {
-	    p = (Char *) xmalloc((size_t) (Strlen(cp) + 2) * sizeof(Char));
-	    *p = '/';
-	    (void) Strcpy(&p[1], cp);
-	    xfree((ptr_t) cp);
-	    cp = p;
-	}
-    }
-    if (cp[1] == '/' && cp[2] == '/') 
-	(void) Strcpy(&cp[1], &cp[2]);
-#endif
     return cp;
 }
-
 
 /*
  * dnewcwd - make a new directory in the loop the current one
@@ -1058,7 +983,7 @@ getstakd(s, cnt)
  * lets the user have the nth dir extracted from its current
  * position, and pushes it onto the top.
  */
-void
+void static
 dextract(dp)
     register struct directory *dp;
 {

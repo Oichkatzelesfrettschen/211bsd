@@ -1,5 +1,5 @@
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)pk1.c	5.9.2 (2.11BSD) 1997/10/2";
+static char sccsid[] = "@(#)pk1.c	5.9.3 (2.11BSD) 2026/5/9";
 #endif
 
 #include <signal.h>
@@ -11,13 +11,6 @@ static char sccsid[] = "@(#)pk1.c	5.9.2 (2.11BSD) 1997/10/2";
 #ifdef BSD4_2
 #include <sys/time.h>
 #endif BSD4_2
-
-#ifdef VMS
-#include <eunice/eunice.h>
-#include <vms/iodef.h>
-#include <vms/ssdef.h>
-int iomask[2];
-#endif VMS
 
 #define PKMAXSTMSG 40
 #define	MAXPKTIME 32	/* was 16 */
@@ -347,6 +340,8 @@ int count, flag;
  */
 
 jmp_buf Getjbuf;
+
+void
 cgalarm()
 {
 	longjmp(Getjbuf, 1);
@@ -364,10 +359,6 @@ register int n;
 				    last read the line */
 	struct timeval tv;
 #endif BSD4_2
-#ifdef VMS
-	short iosb[4];
-	int SYS$QioW();	/* use this for long reads on vms */
-#endif VMS
 
 	if (setjmp(Getjbuf)) {
 		Ntimeout++;
@@ -399,20 +390,8 @@ register int n;
 			}
 		}
 #endif BSD4_2
-#ifndef VMS
+
 		ret = read(fn, b, n);
-#else VMS
-		_$Cancel_IO_On_Signal = FD_FAB_Pointer[fn];
-		ret = SYS$QioW(_$EFN,(FD_FAB_Pointer[fn]->fab).fab$l_stv,
-				IO$_READVBLK|IO$M_NOFILTR|IO$M_NOECHO,
-				iosb,0,0,b,n,0,
-				iomask,0,0);
-		_$Cancel_IO_On_Signal = 0;
-		if (ret == SS$_NORMAL)
-			ret = iosb[1]+iosb[3];   /* get length of transfer */
-		else
-			ret = 0;
-#endif VMS
 		if (ret == 0) {
 			alarm(0);
 			return FAIL;

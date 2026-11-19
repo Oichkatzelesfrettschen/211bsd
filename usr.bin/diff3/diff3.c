@@ -1,8 +1,9 @@
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)diff3.c	4.4.1 (2.11BSD GTE) 1/1/94";
+static char sccsid[] = "@(#)diff3.c	4.4.2 (2.11BSD) 2026/9/24";
 #endif
 
 #include <stdio.h>
+#include <ctype.h>
 
 /* diff3 - 3-way differential file comparison*/
 
@@ -157,21 +158,16 @@ char **lc;
 {
 	register nn;
 	nn = 0;
-	while(digit(**lc))
+	while (isdigit(**lc))
 		nn = nn*10 + *(*lc)++ - '0';
 	return(nn);
-}
-
-digit(c)
-{
-	return(c>='0'&&c<='9');
 }
 
 getchange(b)
 FILE *b;
 {
 	while(getline(b))
-		if(digit(line[0]))
+		if (isdigit(line[0]))
 			return(1);
 	return(0);
 }

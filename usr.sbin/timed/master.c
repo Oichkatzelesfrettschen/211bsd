@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)master.c	2.14 (Berkeley) 6/5/86";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)master.c	2.15 (2.11BSD) 2026/5/10";
+#endif
 
 #include "globals.h"
 #include <protocols/timed.h>

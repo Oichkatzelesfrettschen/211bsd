@@ -1,6 +1,6 @@
-.\"	@(#)gets.3s	6.1 (Berkeley) 5/15/85
+.\"	@(#)gets.3	6.2 (2.11BSD) 2026/9/27
 .\"
-.TH GETS 3S  "May 15, 1985"
+.TH GETS 3  "May 15, 1985"
 .AT 3
 .SH NAME
 gets, fgets \- get a string from a stream
@@ -19,7 +19,7 @@ gets, fgets \- get a string from a stream
 .B FILE
 .B *stream;
 .SH DESCRIPTION
-.I Gets
+.B gets
 reads a string into
 .I s
 from the standard input stream
@@ -28,10 +28,10 @@ The string is terminated by a newline
 character, which is replaced in
 .I s
 by a null character.
-.I Gets
+.B gets
 returns its argument.
 .PP
-.I Fgets
+.B fgets
 reads 
 .IR n \-1
 characters, or up through a newline
@@ -43,25 +43,25 @@ into the string
 The last character read into
 .I s
 is followed by a null character.
-.I Fgets
+.B fgets
 returns its first argument.
 .SH "SEE ALSO"
-puts(3S),
-getc(3S),
-scanf(3S),
-fread(3S),
-ferror(3S)
+puts(3),
+getc(3),
+scanf(3),
+fread(3),
+ferror(3)
 .SH DIAGNOSTICS
-.I Gets
+.B gets
 and
-.I fgets
+.B fgets
 return the constant pointer 
 .SM
 .B NULL
 upon end of file or error.
 .SH BUGS
-.I Gets
+.B gets
 deletes a newline,
-.I fgets
+.B fgets
 keeps it,
 all in the name of backward compatibility.

@@ -18,8 +18,8 @@
   * Author: Wietse Venema, Eindhoven University of Technology, The Netherlands.
   */
 
-#ifndef lint
-static char sccsid[] = "@(#) eval.c 1.3 95/01/30 19:51:45";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#) eval.c 1.4 (2.11BSD) 2026/5/11";
 #endif
 
 /* System libraries. */

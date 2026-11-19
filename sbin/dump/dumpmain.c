@@ -1,5 +1,5 @@
 #if	!defined(lint) && defined(DOSCCS)
-static	char *sccsid = "@(#)dumpmain.c	1.5 (2.11BSD) 2025/12/1";
+static	char *sccsid = "@(#)dumpmain.c	1.6 (2.11BSD) 2026/9/21";
 #endif
 
 #include "dump.h"
@@ -10,6 +10,14 @@ static	long	numarg();
 static	void	missingarg();
 
 char	*host = NULL;
+
+void	sighup(){	msg("SIGHUP()  try rewriting\n"); sigAbort();}
+void	sigtrap(){	msg("SIGTRAP()  try rewriting\n"); sigAbort();}
+void	sigfpe(){	msg("SIGFPE()  try rewriting\n"); sigAbort();}
+void	sigbus(){	msg("SIGBUS()  try rewriting\n"); sigAbort();}
+void	sigsegv(){	msg("SIGSEGV()  ABORTING!\n"); abort();}
+void	sigalrm(){	msg("SIGALRM()  try rewriting\n"); sigAbort();}
+void	sigterm(){	msg("SIGTERM()  try rewriting\n"); sigAbort();}
 
 main(argc, argv)
 	int	argc;
@@ -351,14 +359,6 @@ missingarg(letter, meaning)
 	    letter, meaning);
 	exit(X_ABORT);
 }
-
-int	sighup(){	msg("SIGHUP()  try rewriting\n"); sigAbort();}
-int	sigtrap(){	msg("SIGTRAP()  try rewriting\n"); sigAbort();}
-int	sigfpe(){	msg("SIGFPE()  try rewriting\n"); sigAbort();}
-int	sigbus(){	msg("SIGBUS()  try rewriting\n"); sigAbort();}
-int	sigsegv(){	msg("SIGSEGV()  ABORTING!\n"); abort();}
-int	sigalrm(){	msg("SIGALRM()  try rewriting\n"); sigAbort();}
-int	sigterm(){	msg("SIGTERM()  try rewriting\n"); sigAbort();}
 
 sigAbort()
 {

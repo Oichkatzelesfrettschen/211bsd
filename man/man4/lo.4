@@ -2,22 +2,22 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)lo.4	6.3 (Berkeley) 8/1/87
+.\"	@(#)lo.4	6.4 (2.11BSD) 2026/9/28
 .\"
 .TH LO 4 "August 1, 1987"
 .UC 2
 .SH NAME
 lo \- software loopback network interface
 .SH SYNOPSIS
-.ft B
 .nf
+.ft B
 /sys/conf/SYSTEM:
 	NLOOP	\fI1\fP	# loop-back pseudo-device
-.fi
 .ft R
+.fi
 .SH DESCRIPTION
 The
-.I loop
+.B loop
 interface is a software loopback mechanism which may be
 used for performance analysis, software testing, and/or local
 communication.
@@ -34,7 +34,7 @@ interfaces exist.
 a message with addresses formatted in an unsuitable address
 family; the packet was dropped.
 .SH SEE ALSO
-intro(4N), inet(4F), ns(4F)
+intro(4), inet(4), ns(4)
 .SH BUGS
 Previous versions of the system enabled the loopback interface
 automatically, using a nonstandard Internet address (127.1).

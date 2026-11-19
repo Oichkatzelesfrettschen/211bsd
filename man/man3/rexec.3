@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)rexec.3	6.5 (Berkeley) 5/14/86
+.\"	@(#)rexec.3	6.6 (2.11BSD) 2026/9/27
 .\"
 .TH REXEC 3 "May 14, 1986"
 .UC 5
@@ -10,19 +10,18 @@
 rexec \- return stream to a remote command
 .SH SYNOPSIS
 .nf
-.PP
-.B "rem = rexec(ahost, inport, user, passwd, cmd, fd2p);"
-.B char **ahost;
-.B int inport;
-.B "char *user, *passwd, *cmd;"
-.B int *fd2p;
+.ft B
+int
+rexec(\fIchar **ahost\fP, \fIint inport\fP, \fIchar *user\fP, \fIchar *passwd\fP,
+        \fIchar *cmd\fP, \fIint *fd2p\fP);
+.ft R
 .fi
 .SH DESCRIPTION
-.I Rexec
+.B rexec
 looks up the host
 .I *ahost
 using
-.IR gethostbyname (3N),
+.BR gethostbyname (3),
 returning \-1 if the host does not exist.
 Otherwise
 .I *ahost
@@ -30,7 +29,7 @@ is set to the standard name of the host.
 If a username and password are both specified, then these
 are used to authenticate to the foreign host; otherwise
 the environment and then the user's
-.I .netrc
+.B .netrc
 file in his
 home directory are searched for appropriate information.
 If all this fails, the user is prompted for the information.
@@ -39,11 +38,11 @@ The port
 .I inport
 specifies which well-known DARPA Internet port to use for
 the connection; the call ``getservbyname("exec", "tcp")'' (see 
-.IR getservent (3N))
+.BR getservent (3))
 will return a pointer to a structure, which contains the
 necessary port.
 The protocol for connection is described in detail in
-.IR rexecd (8C).
+.BR rexecd (8).
 .PP
 If the connection succeeds,
 a socket in the Internet domain of type SOCK_STREAM is returned to
@@ -75,4 +74,4 @@ and no
 provision is made for sending arbitrary signals to the remote process,
 although you may be able to get its attention by using out-of-band data.
 .SH SEE ALSO
-rcmd(3), rexecd(8C)
+rcmd(3), rexecd(8)

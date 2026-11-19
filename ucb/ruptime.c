@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)ruptime.c	5.3.2 (2.11BSD) 2025/12/26";
+static char sccsid[] = "@(#)ruptime.c	5.3.3 (2.11BSD) 2026/8/19";
 #endif
 
 #include <sys/param.h>
@@ -143,7 +143,7 @@ main(argc, argv)
 		        hsp->hs_wd->wd_loadav[1] / 100.0,
 		    maxloadav >= 1000 ? 5 : 4,
 		        hsp->hs_wd->wd_loadav[2] / 100.0);
-		cfree(hsp->hs_wd);
+		free(hsp->hs_wd);
 	}
 	exit(0);
 }

@@ -33,7 +33,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)sysctl.h	8.1.3 (2.11BSD) 1999/4/29
+ *	@(#)sysctl.h	8.1.4 (2.11BSD) 2026/10/22
  */
 
 #ifndef _SYS_SYSCTL_H_
@@ -136,7 +136,8 @@ struct ctlname {
 #define	KERN_MAXTEXTS		22	/* int: # of text entries */
 #define	KERN_TEXT		23	/* struct: text entries */
 #define	KERN_ACCTTHRESH		24	/* int: accounting daemon threshold */
-#define	KERN_MAXID		25	/* number of valid kern ids */
+#define	KERN_LINEHZ		25	/* int: get/set _hz */
+#define	KERN_MAXID		26	/* number of valid kern ids */
 
 #ifndef	KERNEL
 #define CTL_KERN_NAMES { \
@@ -165,6 +166,7 @@ struct ctlname {
 	{ "maxtexts", CTLTYPE_INT }, \
 	{ "text", CTLTYPE_STRUCT }, \
 	{ "acctthresh", CTLTYPE_INT }, \
+	{ "linehz", CTLTYPE_INT }, \
 }
 #endif
 
@@ -227,8 +229,9 @@ struct	kinfo_file {
 #define	HW_USERMEM	 6		/* int: non-kernel memory */
 #define	HW_PAGESIZE	 7		/* int: software page size */
 #define	HW_DISKNAMES	 8		/* strings: disk drive names */
-#define	HW_DISKSTATS	 9		/* struct: diskstats[] */
-#define	HW_MAXID	10		/* number of valid hw ids */
+#define	HW_DISKSTATS	 9		/* struct: long diskstats[] */
+#define	HW_TRACEBUF	10		/* struct: long tracebuf[] */
+#define	HW_MAXID	11		/* number of valid hw ids */
 
 #ifndef	KERNEL
 #define CTL_HW_NAMES { \
@@ -242,6 +245,7 @@ struct	kinfo_file {
 	{ "pagesize", CTLTYPE_INT }, \
 	{ "disknames", CTLTYPE_STRUCT }, \
 	{ "diskstats", CTLTYPE_STRUCT }, \
+	{ "tracebuf", CTLTYPE_STRUCT }, \
 }
 #endif
 
@@ -316,7 +320,7 @@ struct	kinfo_file {
  * variable. The loader prevents multiple use by issuing errors
  * if a variable is initialized in more than one place. They are
  * aggregated into an array in debug_sysctl(), so that it can
- * conveniently locate them when querried. If more debugging
+ * conveniently locate them when queried. If more debugging
  * variables are added, they must also be declared here and also
  * entered into the array.
  */

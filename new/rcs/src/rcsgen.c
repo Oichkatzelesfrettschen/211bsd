@@ -1,9 +1,9 @@
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)rcsgen.c 3.7 (2.11BSD) 2026/5/11";
+#endif
 /*
  *                     RCS revision generation
  */
-#ifndef lint
-static char rcsid[]= "$Id: rcsgen.c,v 3.6 88/04/24 17:32:22 bostic Exp $ Purdue CS";
-#endif
 /*********************************************************************************
  *********************************************************************************
  *

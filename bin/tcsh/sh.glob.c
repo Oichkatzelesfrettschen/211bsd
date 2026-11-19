@@ -33,7 +33,7 @@
 #include "config.h"
 
 #if !defined(lint) && defined(DOSCCS)
-    static char *sccsid = "@(#)sh.glob.c 3.2 (2.11BSD) 2020/1/7";
+    static char *sccsid = "@(#)sh.glob.c 3.3 (2.11BSD) 2026/7/23";
 #endif
 
 #include "sh.h"
@@ -59,13 +59,9 @@ static int pargsiz, gargsiz;
 
 Char  **gargv = NULL;
 Char  **pargv = NULL;
-#ifdef	notdef
+
 int    gargc = 0;
 int    pargc = 0;
-#else
-long    gargc = 0;
-long    pargc = 0;
-#endif	/* pdp11 */
 
 /*
  * globbing is now done in two stages. In the first pass we expand
@@ -90,9 +86,6 @@ globtilde(nv, s)
     Char  **nv, *s;
 {
     Char    gbuf[MAXPATHLEN], *gstart, *b, *u, *e;
-#ifdef apollo
-    int slash;
-#endif
 
     gstart = gbuf;
     *gstart++ = *s++;
@@ -108,18 +101,11 @@ globtilde(nv, s)
 	    stderror(ERR_NOHOME);
     }
     b = &gstart[Strlen(gstart)];
-#ifdef apollo
-    slash = gstart[0] == '/' && gstart[1] == '\0';
-#endif
     while (*s)
 	*b++ = *s++;
     *b = EOS;
     --u;
     xfree((ptr_t) u);
-#ifdef apollo
-    if (slash && gstart[1] == '/')
-	gstart++;
-#endif
     return (Strsave(gstart));
 }
 
@@ -781,9 +767,6 @@ Gmatch(string, pattern)
 
     for (;; ++string) {
 	stringc = *string & TRIM;
-	/*
-	 * apollo comp_r bug: switch (pat_c = *pattern++) { dies
-	 */
 	pat_c = *pattern++;
 	switch (pat_c) {
 	case 0:

@@ -4,19 +4,14 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-char copyright[] =
-"@(#) Copyright (c) 1980 Regents of the University of California.\n\
- All rights reserved.\n";
-#endif not lint
-
-#ifndef lint
-static char sccsid[] = "@(#)main.c	5.1 (Berkeley) 5/30/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)main.c     5.2 (2.11BSD) 2026/5/12";
+#endif
 
 # include	"robots.h"
 # include	<signal.h>
 # include	<ctype.h>
+#include <strings.h>
 
 main(ac, av)
 int	ac;
@@ -27,7 +22,6 @@ char	**av;
 	register bool	show_only;
 	extern char	*Scorefile;
 	extern int	Max_per_uid;
-	extern char	*rindex();
 
 	show_only = FALSE;
 	if (ac > 1) {
@@ -123,6 +117,7 @@ char	**av;
  * quit:
  *	Leave the program elegantly.
  */
+void
 quit()
 {
 	extern int	_putchar();

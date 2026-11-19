@@ -2,9 +2,9 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)getnetent.3n	6.3 (Berkeley) 5/19/86
+.\"	@(#)getnetent.3	6.4 (2.11BSD) 2026/9/27
 .\"
-.TH GETNETENT 3N "May 19, 1986"
+.TH GETNETENT 3 "May 19, 1986"
 .UC 5
 .SH NAME
 getnetent, getnetbyaddr, getnetbyname, setnetent, endnetent \- get network entry
@@ -14,34 +14,32 @@ getnetent, getnetbyaddr, getnetbyname, setnetent, endnetent \- get network entry
 #include <netdb.h>
 .PP
 .ft B
-struct netent *getnetent()
-.PP
-.ft B
-struct netent *getnetbyname(name)
-char *name;
-.PP
-.ft B
-struct netent *getnetbyaddr(net, type)
-long net;
-int type;
-.PP
-.ft B
-setnetent(stayopen)
-int stayopen;
-.PP
-.ft B
-endnetent()
+struct netent *
+getnetent(\fIvoid\fP)
+
+struct netent *
+getnetbyname(\fIchar *name\fP)
+
+struct netent *
+getnetbyaddr(\fIlong net\fP, \fIint type\fP)
+
+void
+setnetent(\fIint stayopen\fP)
+
+void
+endnetent(\fIvoid\fP)
+.ft R
 .fi
 .SH DESCRIPTION
-.IR Getnetent ,
-.IR getnetbyname ,
+.BR getnetent ,
+.BR getnetbyname ,
 and
-.I getnetbyaddr
+.B getnetbyaddr
 each return a pointer to an object with the
 following structure
 containing the broken-out
 fields of a line in the network data base,
-.IR /etc/networks .
+.BR /etc/networks .
 .RS
 .PP
 .nf
@@ -71,24 +69,24 @@ n_net
 The network number.  Network numbers are returned in machine byte
 order.
 .PP
-.I Getnetent
+.B getnetent
 reads the next line of the file, opening the file if necessary.
 .PP
-.I Setnetent
+.B setnetent
 opens and rewinds the file.  If the
 .I stayopen
 flag is non-zero,
 the net data base will not be closed after each call to 
-.I getnetbyname
+.B getnetbyname
 or
-.IR getnetbyaddr .
+.BR getnetbyaddr .
 .PP
-.I Endnetent
+.B endnetent
 closes the file.
 .PP
-.I Getnetbyname
+.B getnetbyname
 and
-.I getnetbyaddr
+.B getnetbyaddr
 sequentially search from the beginning
 of the file until a matching
 net name or

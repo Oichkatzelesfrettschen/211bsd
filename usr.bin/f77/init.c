@@ -1,13 +1,15 @@
+/* "@(#)init.c 1.1 (2.11BSD) 2026/6/28"; */
+
 #include "defs"
 #include "string_defs"
 
 
-FILEP infile	= { stdin };
-FILEP diagfile	= { stderr };
+FILE *infile	= { stdin };
+FILE *diagfile	= { stderr };
 
-FILEP textfile;
-FILEP asmfile;
-FILEP initfile;
+FILE *textfile;
+FILE *asmfile;
+FILE *initfile;
 long int headoffset;
 
 char token[200];
@@ -22,7 +24,6 @@ flag profileflag	= NO;
 flag optimflag	= NO;
 flag shiftcase	= YES;
 flag undeftype	= NO;
-flag shortsubs	= YES;
 flag onetripflag	= NO;
 flag checksubs	= NO;
 flag debugflag	= NO;
@@ -39,8 +40,12 @@ int impltype[26];
 int implleng[26];
 int implstg[26];
 
-int tyint	= TYLONG ;       /* Changed from TYSHORT CFS 7/83  */
-int tylogical	= TYLONG;
+int tyint	= TYLONG;	/* Changed from TYSHORT CFS 7/83  */
+/*
+ * See patch #500 for the reason tylogical was changed from TYLONG to TYSHORT
+ * and typesize[TYLOGICAL] remains SZLONG.
+*/
+int tylogical	= TYSHORT;	/* Changed from TYLONG sms 2026/7/30 */
 ftnint typesize[NTYPES]
 	= { 1, SZADDR, SZSHORT, SZLONG, SZLONG, 2*SZLONG,
 	    2*SZLONG, 4*SZLONG, SZLONG, 1, 1, 1};
@@ -110,8 +115,6 @@ int nextnames	= 0;
 struct literal litpool[MAXLITERALS];
 int nliterals;
 
-
-
 fileinit()
 {
 procno = 0;
@@ -123,23 +126,16 @@ nerr = 0;
 ndata = 0;
 }
 
-
-
-
-
 procinit()
 {
 register struct nameblock *p;
 register struct dimblock *q;
 register struct hashentry *hp;
-register struct labelblock *lp;
+	struct labelblock *lp;
 chainp cp;
 int i;
 
-pruse(asmfile, USECONST);
-#if FAMILY == SCJ
-	p2pass(USETEXT);
-#endif
+fprintf(asmfile, "%s\n", USECONST);
 parstate = OUTSIDE;
 headerdone = NO;
 blklevel = 1;
@@ -163,11 +159,7 @@ chlgslot = -1;
 procleng = 0;
 blklevel = 1;
 lastargslot = 0;
-#if TARGET==PDP11
-	autoleng = 6;
-#else
-	autoleng = 0;
-#endif
+autoleng = 6;
 
 for(lp = labeltab ; lp < labtabend ; ++lp)
 	lp->stateno = 0;
@@ -223,15 +215,12 @@ setimpl(-STGBSS, (ftnint) 0, 'a', 'z');	/* set class */
 setlog();
 }
 
-
-
-
 setimpl(type, length, c1, c2)
 int type;
 ftnint length;
 int c1, c2;
 {
-int i;
+register int i;
 char buff[100];
 
 if(c1==0 || c2==0)

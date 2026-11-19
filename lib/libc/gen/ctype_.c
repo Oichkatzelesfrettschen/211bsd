@@ -1,6 +1,6 @@
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)ctype_.c	5.4 (Berkeley) 3/9/86";
-#endif LIBC_SCCS and not lint
+static char sccsid[] = "@(#)ctype_.c	5.5 (2.11BSD) 2026/1/26";
+#endif
 
 #include	<ctype.h>
 
@@ -23,3 +23,21 @@ char _ctype_[1 + 256] = {
 	_L,	_L,	_L,	_L,	_L,	_L,	_L,	_L,
 	_L,	_L,	_L,	_P,	_P,	_P,	_P,	_C
 };
+
+int
+isblank(int c)
+{
+	return c == ' ' || c == '\t';
+}
+
+int
+tolower(int c)
+{
+	return (isupper(c) ? ((c)-'A'+'a') : c);
+}
+
+int
+toupper(int c)
+{
+	return (islower(c) ? ((c)-'a'+'A') : c);
+}

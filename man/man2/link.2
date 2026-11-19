@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)link.2	6.3 (Berkeley) 8/26/85
+.\"	@(#)link.2	6.4 (2.11BSD) 2026/9/23
 .\"
 .TH LINK 2 "August 26, 1985"
 .UC 4
@@ -11,8 +11,10 @@ link \- make a hard link to a file
 .SH SYNOPSIS
 .nf
 .ft B
-link(name1, name2)
-char *name1, *name2;
+#include <unistd.h>
+
+int
+link(\fIconst char *name1\fP, \fIconst char *name2\fP)
 .fi
 .ft R
 .SH DESCRIPTION
@@ -22,7 +24,7 @@ to
 is created;
 the link has the name
 .IR name2 .
-.I Name1
+.I name1
 must exist.
 .PP
 With hard links,
@@ -35,16 +37,16 @@ Unless the caller is the super-user,
 .I name1
 must not be a directory.
 Both the old and the new
-.I link
+.B link
 share equal access and rights to
 the underlying object.
 .SH "RETURN VALUE
 Upon successful completion, a value of 0 is returned.  Otherwise,
 a value of \-1 is returned and
-.I errno
+.B errno
 is set to indicate the error.
 .SH "ERRORS
-.I Link
+.B link
 will fail and no link will be created if one or more of the following
 are true:
 .TP 15

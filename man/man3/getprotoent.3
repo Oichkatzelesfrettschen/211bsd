@@ -2,45 +2,43 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)getprotoent.3n	6.3 (Berkeley) 5/19/86
+.\"	@(#)getprotoent.3	6.4 (2.11BSD) 2026/9/27
 .\"
-.TH GETPROTOENT 3N "May 19, 1986"
+.TH GETPROTOENT 3 "May 19, 1986"
 .UC 5
 .SH NAME
 getprotoent, getprotobynumber, getprotobyname, setprotoent, endprotoent \- get protocol entry
 .SH SYNOPSIS
 .nf
 .ft B
-.B #include <netdb.h>
-.PP
-.ft B
-struct protoent *getprotoent()
-.PP
-.ft B
-struct protoent *getprotobyname(name)
-char *name;
-.PP
-.ft B
-struct protoent *getprotobynumber(proto)
-int proto;
-.PP
-.ft B
-setprotoent(stayopen)
-int stayopen
-.PP
-.ft B
-endprotoent()
+#include <netdb.h>
+
+struct protoent *
+getprotoent(\fIvoid\fP)
+
+struct protoent *
+getprotobyname(\fIchar *name\fP)
+
+struct protoent *
+getprotobynumber(\fIint proto\fP)
+
+void
+setprotoent(\fIint stayopen\fP)
+
+void
+endprotoent(\fIvoid\fP)
+.ft R
 .fi
 .SH DESCRIPTION
-.IR Getprotoent ,
-.IR getprotobyname ,
+.BR getprotoent ,
+.BR getprotobyname ,
 and
-.I getprotobynumber
+.B getprotobynumber
 each return a pointer to an object with the
 following structure
 containing the broken-out
 fields of a line in the network protocol data base,
-.IR /etc/protocols .
+.BR /etc/protocols .
 .RS
 .PP
 .nf
@@ -65,22 +63,22 @@ A zero terminated list of alternate names for the protocol.
 p_proto
 The protocol number.
 .PP
-.I Getprotoent
+.B getprotoent
 reads the next line of the file, opening the file if necessary.
 .PP
-.I Setprotoent
+.B setprotoent
 opens and rewinds the file.  If the
 .I stayopen
 flag is non-zero,
 the net data base will not be closed after each call to 
-.I getprotobyname
+.B getprotobyname
 or
-.IR getprotobynumber .
+.BR getprotobynumber .
 .PP
-.I Endprotoent
+.B endprotoent
 closes the file.
 .PP
-.I Getprotobyname
+.B getprotobyname
 and
 .I getprotobynumber
 sequentially search from the beginning

@@ -1,3 +1,4 @@
+.. @(#)zdump.8	3.3 (2.11BSD) 2026/10/27
 .TH ZDUMP 8
 .SH NAME
 zdump \- time zone dumper
@@ -9,7 +10,7 @@ zdump \- time zone dumper
 .B \-c
 cutoffyear ] [ zonename ... ]
 .SH DESCRIPTION
-.I Zdump
+.B zdump
 prints the current time in each
 .I zonename
 named on the command line.
@@ -18,7 +19,7 @@ These options are available:
 .TP
 .B \-v
 For each
-.I zonename
+.B zonename
 on the command line,
 print the current time,
 the time at the lowest possible time value,
@@ -38,5 +39,4 @@ Cut off the verbose output near the start of the given year.
 .SH FILES
 /usr/share/zoneinfo	standard zone information directory
 .SH "SEE ALSO"
-newctime(3), tzfile(5), zic(8)
-.. @(#)zdump.8	3.2
+ctime(3), tzfile(5), zic(8)

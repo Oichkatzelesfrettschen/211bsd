@@ -35,7 +35,7 @@
 char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
-static char sccsid[] = "@(#)main.c	5.28.1 (2.11BSD) 1996/10/23";
+static char sccsid[] = "@(#)main.c	5.28.2 (2.11BSD) 2026/9/16";
 #endif
 
 #include "rcv.h"
@@ -59,8 +59,6 @@ main(argc, argv)
 	char nosrc = 0;
 	void hdrstop();
 	sig_t prevint;
-	extern int getopt(), optind, opterr;
-	extern char *optarg;
 	void sigchild();
 
 	/*

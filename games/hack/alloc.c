@@ -1,25 +1,6 @@
-/* alloc.c - version 1.0.2 */
-#ifdef LINT
+/* alloc.c - version 1.0.3 (2.11BSD) 2026/8/26 */
 
-/*
-   a ridiculous definition, suppressing
-	"possible pointer alignment problem" for (long *) malloc()
-	"enlarg defined but never used"
-	"ftell defined (in <stdio.h>) but never used"
-   from lint
-*/
-#include <stdio.h>
-long *
-alloc(n) unsigned n; {
-long dummy = ftell(stderr);
-	if(n) dummy = 0;	/* make sure arg is used */
-	return(&dummy);
-}
-
-#else
-
-extern char *malloc();
-extern char *realloc();
+#include <stdlib.h>
 
 long *
 alloc(lth)
@@ -43,5 +24,3 @@ register unsigned lth;
 		panic("Cannot reallocate %d bytes", lth);
 	return((long *) nptr);
 }
-
-#endif LINT

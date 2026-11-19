@@ -1,6 +1,6 @@
-#ifndef lint
-static char mkfont1sccsid[] = "@(#)mkfont1.c	4.3 2/16/88";
-#endif lint
+#if	!defined(lint) && defined(DOSCCS)
+static char mkfont1sccsid[] = "@(#)mkfont1.c	4.4 (2.11BSD) 2026/5/11";
+#endif
 
 #define BYTE 8
 #define PAIR(a,b) ((a)|((b)<<BYTE))

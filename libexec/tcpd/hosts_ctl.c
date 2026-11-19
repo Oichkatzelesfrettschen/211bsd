@@ -11,8 +11,8 @@
   * Author: Wietse Venema, Eindhoven University of Technology, The Netherlands.
   */
 
-#ifndef lint
-static char sccsid[] = "@(#) hosts_ctl.c 1.4 94/12/28 17:42:27";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#) hosts_ctl.c 1.5 (2.11BSD) 2026/5/11";
 #endif
 
 #include <stdio.h>

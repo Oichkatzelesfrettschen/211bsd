@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)talkd.c	5.2.1 (2.11BSD GTE) 1/1/94";
+static char sccsid[] = "@(#)talkd.c	5.2.2 (2.11BSD) 2026/7/21";
 #endif
 
 /*
@@ -22,6 +22,7 @@ static char sccsid[] = "@(#)talkd.c	5.2.1 (2.11BSD GTE) 1/1/94";
 #include <errno.h>
 #include <signal.h>
 #include <syslog.h>
+#include <time.h>
 
 #include <protocols/talkd.h>
 
@@ -30,9 +31,8 @@ CTL_RESPONSE	response;
 
 int	sockt;
 int	debug = 0;
-int	timeout();
-long	time();
-long	lastmsgtime;
+void	timeout();
+time_t	lastmsgtime;
 
 char	hostname[32];
 
@@ -64,7 +64,6 @@ main(argc, argv)
 	signal(SIGALRM, timeout);
 	alarm(TIMEOUT);
 	for (;;) {
-		extern int errno;
 
 		cc = recv(0, (char *)mp, sizeof (*mp), 0);
 		if (cc != sizeof (*mp)) {
@@ -82,6 +81,7 @@ main(argc, argv)
 	}
 }
 
+void
 timeout()
 {
 

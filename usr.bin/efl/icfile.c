@@ -1,3 +1,7 @@
+/*
+ * "@(#)icfile.c 2.0 (2.11BSD) 2026/7/15";
+*/
+
 #include "defs"
 
 struct { char chars[ 10 ]; };
@@ -6,20 +10,10 @@ struct { char chars[ 10 ]; };
 crii()	/* create names for intermediate files */
 {
 
-#ifdef unix
 sprintf(icfile->filename, "eflc.%d", getpid());
 sprintf(idfile->filename, "efld.%d", getpid());
 sprintf(iefile->filename, "efle.%d", getpid());
-#endif
-
-#ifdef gcos
-sprintf(icfile->filename, "code.efl");
-sprintf(idfile->filename, "data.efl");
-sprintf(iefile->filename, "equv.efl");
-#endif
 }
-
-
 
 rmiis()
 {
@@ -28,26 +22,15 @@ rmii(idfile);
 rmii(iefile);
 }
 
-
-
-
 rmii(p)		/* discard the intermediate file */
 struct fileblock *p;
 {
-#ifdef unix
 if(p)
 	{
 	fclose(p->fileptr);
 	unlink(p->filename);
 	}
-#endif
-
-#ifdef gcos
-if(p)
-	fclose(p->fileptr, "d");
-#endif
 }
-
 
 opiis()
 {
@@ -56,34 +39,19 @@ opii(idfile);
 opii(iefile);
 }
 
-
-
-
 opii(p)	/* open the intermediate file for writing */
 struct fileblock *p;
 {
 
-#ifdef unix
 if( (p->fileptr = fopen(p->filename, "w")) == NULL)
 	fatal("cannot open intermediate file");
-#endif
-
-#ifdef gcos
-if( (p->fileptr = fopen(p->filename, "wi")) == NULL)
-	fatal("cannot open intermediate file");
-#endif
-
 }
-
-
 
 swii(p)
 struct fileblock *p;
 {
 iifilep = p;
 }
-
-
 
 putii(w,n)
 int *w, n;
@@ -92,17 +60,12 @@ if( fwrite(w,sizeof(int),n, iifilep->fileptr) != n)
 	fatal("write error");
 }
 
-
-
 getii(w, n)
 int *w, n;
 {
 if( fread(w,sizeof(int), n, iifilep->fileptr) != n)
 	fatal("read error");
 }
-
-
-
 
 cliis()
 {
@@ -111,22 +74,11 @@ clii(idfile);
 clii(iefile);
 }
 
-
-
-
 clii(p)	/* close the intermediate file */
 struct fileblock *p;
 {
-#ifdef unix
 fclose(p->fileptr);
-#endif
-
-#ifdef gcos
-fclose(p->fileptr, "rl");
-#endif
 }
-
-
 
 rewii(p)	/* close and rewind the intermediate file for reading */
 struct fileblock *p;
@@ -135,18 +87,9 @@ swii(p);
 putic(ICEOF,0);
 clii(p);
 
-#ifdef unix
 if( (p->fileptr = fopen(p->filename, "r")) == NULL)
 	fatal("cannot open intermediate file");
-#endif
-
-#ifdef gcos
-if( (p->fileptr = fopen(p->filename, "ri")) == NULL)
-	fatal("cannot open intermediate file");
-#endif
 }
-
-
 
 putic(c,p)
 int c;
@@ -159,7 +102,6 @@ w[1] = p;
 putii(w,2);
 }
 
-
 getic(p)
 int *p;
 {
@@ -169,8 +111,6 @@ getii(w,2);
 *p = w[1];
 return( w[0] );
 }
-
-
 
 putsii(l, p)
 int l;
@@ -196,9 +136,6 @@ if(n > 0)
 	putii(&word,1);
 	}
 }
-
-
-
 
 ptr getsii(n)
 int n;

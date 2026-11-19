@@ -1,23 +1,22 @@
-/***************************************************************************
- * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
- * is provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is    *
- * included in all the files.                                              *
- ***************************************************************************/
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)iproc.c 2.0 (2.11BSD) 2026/9/17";
+#endif
 
+/*
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE
+ * is provided to you without charge, and with no warranty.  You may give
+ * away copies of JOVE, including sources, provided that this notice is
+ * included in all the files.
+ */
+
+#include <stdlib.h>
 #include "jove.h"
 #include "re.h"
 #include <varargs.h>
 
-#ifdef IPROCS
-
 int	proc_child();
 
-#ifdef PIPEPROCS
-#   include "iproc-pipes.c"
-#else
-#   include "iproc-ptys.c"
-#endif
+#include "iproc-ptys.c"
 
 char	proc_prompt[128] = "% ";
 
@@ -134,8 +133,8 @@ Process	*child;
 		DelMark(child->p_mark);
 		SetBuf(old);
 	}
-	free((char *) child->p_name);
-	free((char *) child);
+	free((void *) child->p_name);
+	free((void *) child);
 }
 
 ProcList()
@@ -292,11 +291,7 @@ proc_child()
 	register int	pid;
 
 	for (;;) {
-#ifndef BSD4_2
-		pid = wait2(&w.w_status, (WNOHANG | WUNTRACED));
-#else
 		pid = wait3(&w, (WNOHANG | WUNTRACED), (struct rusage *) 0);
-#endif
 		if (pid <= 0)
 			break;
 		kill_off(pid, w);
@@ -369,7 +364,6 @@ PushPBs()
 		p->pb_map[p->pb_key] = p->pb_cmd;
 	}
 }
-/* VARARGS0 */
 
 ProcBind()
 {
@@ -418,6 +412,3 @@ data_obj	**map,
 		}
 	}
 }
-
-#endif /* IPROCS */
-

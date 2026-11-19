@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)v3451.c	5.1 (Berkeley) 4/30/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)v3451.c	5.2 (2.11BSD) 2026/5/9";
+#endif
 
 /*
  * Routines for calling up on a Vadic 3451 Modem
@@ -19,7 +19,8 @@ v3451_dialer(num, acu)
 	register char *num;
 	char *acu;
 {
-	int ok, (*func)();
+	int ok;
+	sig_t func;
 	int slow = number(value(BAUDRATE)) < 1200, rw = 2;
 	char phone[50];
 #ifdef ACULOG
@@ -118,7 +119,8 @@ expect(cp)
 {
 	char buf[300];
 	register char *rp = buf;
-	int alarmtr(), timeout = 30, online = 0;
+	void alarmtr();
+	int timeout = 30, online = 0;
 
 	if (strcmp(cp, "\"\"") == 0)
 		return (1);
@@ -151,7 +153,7 @@ expect(cp)
 	return (1);
 }
 
-static
+static void
 alarmtr()
 {
 

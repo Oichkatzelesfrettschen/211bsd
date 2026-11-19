@@ -1,9 +1,12 @@
-static char *sccsid = "@(#)sleep.c	4.1 (Berkeley) 10/1/80";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)sleep.c	4.2 (2.11BSD) 2026/5/8";
+#endif
+
 main(argc, argv)
 char **argv;
 {
-	int c, n;
-	char *s;
+	register int c, n;
+	register char *s;
 
 	n = 0;
 	if(argc < 2) {

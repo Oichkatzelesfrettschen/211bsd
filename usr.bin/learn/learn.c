@@ -1,5 +1,5 @@
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)learn.c	4.4.2	(2.11BSD)	1997/10/2";
+static char sccsid[] = "@(#)learn.c	4.4.3	(2.11BSD) 2026/9/21";
 #endif
 
 #include "stdio.h"
@@ -28,20 +28,15 @@ int	again;
 int	skip;
 int	teed;
 int	total;
+void	hangup(), intrpt();
 
 main(argc,argv)
 int argc;
 char *argv[];
 {
-	extern hangup(), intrpt();
-
 	speed = 0;
 	more = 1;
 	pwline = getlogin();
-#ifndef BSD4_2
-	setbuf(stdout, malloc(BUFSIZ));
-	setbuf(stderr, malloc(BUFSIZ));
-#endif
 	selsub(argc, argv);
 	chgenv();
 	signal(SIGHUP, hangup);
@@ -54,11 +49,13 @@ char *argv[];
 	wrapup(0);
 }
 
+void
 hangup()
 {
 	wrapup(1);
 }
 
+void
 intrpt()
 {
 	char response[20], *p;

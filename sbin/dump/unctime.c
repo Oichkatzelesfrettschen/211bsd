@@ -1,3 +1,7 @@
+#if     !defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)unctime.c   1.1 (2.11BSD) 2026/5/7";
+#endif
+
 #include <sys/types.h>
 #include <time.h>
 #include <stdio.h>
@@ -20,7 +24,7 @@
 #define	E_YEAR		20
 
 time_t unctime(str)
-	char *str;
+	register char *str;
 {
 	struct tm then;
 	char dbuf[30];

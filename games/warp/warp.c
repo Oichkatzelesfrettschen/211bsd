@@ -1,4 +1,4 @@
-char rcsid[] = "@(#)$Header: warp.c,v 7.0.1.3 86/12/12 17:07:44 lwall Exp $";
+char rcsid[] = "@(#)$Header: warp.c,v 7.0.1.4 (2.11BSD) 2026/5/11 17:07:44 sms Exp $";
 
 /*	warp -- a real-time space war program
  *	author: Larry Wall
@@ -160,15 +160,6 @@ char *argv[];
 #endif
 rand_ok:
 
-#ifdef lint  /* to suppress "defined but never used" */
-# ifdef SIGTSTP
-    (void)stop_catcher();
-# endif
-# ifdef SIGCONT
-    (void)cont_catcher();
-# endif
-#endif
-
     while (--argc > 0 && (*++argv)[0] == '-')
 	for (s = argv[0]+1; *s != '\0'; s++)
 	    switch (*s) {
@@ -291,11 +282,9 @@ rand_ok:
     }
     bang_init();
     move_init();
-    object_init();
     play_init();
     them_init();
     us_init();
-    util_init();
     weapon_init();
 
     tcbuf = malloc(1024);

@@ -29,9 +29,9 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"	@(#)sysctl.8	8.1.5 (2.11BSD) 1999/4/29
+.\"	@(#)sysctl.8	8.1.6 (2.11BSD) 2026/6/3
 .\"
-.TH SYSCTL 8 "April 24, 1999"
+.TH SYSCTL 8 "June 3, 2026"
 .UC 4
 .SH NAME
 sysctl \- get or set kernel state
@@ -109,7 +109,6 @@ privilege can change the value.
 .ta 0.5i 3.0i 4.0i
 .nf
 	Name	Type	Changeable
-	kern.acctthresh	int	yes
 	kern.ostype	string	no
 	kern.osrelease	string	no
 	kern.osrevision	long	no
@@ -117,27 +116,30 @@ privilege can change the value.
 	kern.maxinodes	integer	no
 	kern.maxproc	integer	no
 	kern.maxfiles	integer	no
-	kern.maxtext	integer	no
 	kern.argmax	integer	no
 	kern.securelevel	integer	raise only
 	kern.hostname	string	yes
 	kern.hostid	long	yes
 	kern.clockrate	struct	no
+	kern.inode	struct	no
+	kern.proc	struct	no
+	kern.file	struct	no
 	kern.posix1version	integer	no
 	kern.ngroups	integer	no
 	kern.job_control	integer	no
 	kern.saved_ids	integer	no
-.\"	kern.link_max	integer	no
-.\"	kern.max_canon	integer	no
-.\"	kern.max_input	integer	no
-.\"	kern.name_max	integer	no
-.\"	kern.path_max	integer	no
-.\"	kern.pipe_buf	integer	no
-.\"	kern.chown_restricted	integer	no
-.\"	kern.no_trunc	integer	no
-.\"	kern.vdisable	integer	no
 	kern.boottime	struct	no
+	kern.maxtext	integer	no
+	kern.text	struct	no
+	kern.acctthresh	int	yes
+	kern.linehz	int	yes
+	vm.vmmeter	struct	no
 	vm.loadavg	struct	no
+	vm.swapmap	struct	no
+	vm.coremap	struct	no
+	vm.nswap	integer	no
+	vm.swapdev	integer	no
+	vm.cp_time	struct	no
 	machdep.console_device	dev_t	no
 	machdep.mscp.printf	integer	yes
 	machdep.tmscp.cache	integer	yes
@@ -145,6 +147,8 @@ privilege can change the value.
 	net.inet.ip.forwarding	integer	yes
 	net.inet.ip.redirect	integer	yes
 	net.inet.ip.ttl	integer	yes
+	net.inet.ip.forwsrcrt	integer	yes
+	net.inet.ip.tcp_fw2timeout integer yes
 	net.inet.icmp.maskrepl	integer	yes
 	net.inet.udp.checksum	integer	yes
 	hw.machine	string	no
@@ -154,6 +158,7 @@ privilege can change the value.
 	hw.physmem	long	no
 	hw.usermem	long	no
 	hw.pagesize	integer	no
+	hw.tracebuf	struct	no
 	user.cs_path	string	no
 	user.bc_base_max	integer	no
 	user.bc_dim_max	integer	no
@@ -198,6 +203,25 @@ sysctl kern.clockrate
 .br
 .in -1.0i
 .PP
+The number of process accouting records buffered before the accounting
+daemon \fBacctd\fP is notified can be changed from the default value of 10
+with:
+.sp
+.in +1.0i
+sysctl -w kern.acctthresh=20
+.br
+.in -1.0i
+.br
+.PP
+The system clock frequency can be modified. This is useful if the kernel
+was compiled with a different LINEHZ value than the local power grid.
+Only values 50 and 60 are allowed.  Set the kernel \fBhz\fP value with:
+.sp
+.in +1.0i
+sysctl -w kern.linehz=50
+.br
+.in -1.0i
+.PP
 Information about the load average history may be obtained with
 .sp
 .in +1.0i
@@ -212,9 +236,6 @@ identifiers, and user level identifiers
 .TP 15
 <sys/socket.h>
 definitions for second level network identifiers
-.TP 15
-<sys/gmon.h>
-definitions for third level profiling identifiers
 .TP 15
 <machine/cpu.h>
 definitions for second and third level machine dependent identifiers

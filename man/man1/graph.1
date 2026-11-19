@@ -1,6 +1,6 @@
-.\"	@(#)graph.1g	6.1 (Berkeley) 4/29/85
+.\"	@(#)graph.1	6.2 (2.11BSD) 2026/9/28
 .\"
-.TH GRAPH 1G "April 29, 1985"
+.TH GRAPH 1 "April 29, 1985"
 .AT 3
 .SH NAME
 graph \- draw a graph
@@ -8,14 +8,14 @@ graph \- draw a graph
 .B graph
 [ option ] ...
 .SH DESCRIPTION
-.I Graph
+.B graph
 with no options takes pairs of numbers from the
 standard input as abscissas and
 ordinates of a graph.
 Successive points are connected by straight lines.
 The graph is encoded on the standard output
 for display by the
-.IR  plot (1G)
+.BR  plot (1)
 filters.
 .PP
 If the coordinates of a point are followed by
@@ -104,12 +104,12 @@ If a specified lower limit exceeds the upper limit,
 the axis
 is reversed.
 .SH "SEE ALSO"
-spline(1G), plot(1G)
+spline(1), plot(1)
 .SH BUGS
-.I Graph
+.B graph
 stores all points internally and drops those for which
 there isn't room.
-.br
+.sp
 Segments that run out of bounds are dropped, not windowed.
-.br
+.sp
 Logarithmic axes may not be reversed.

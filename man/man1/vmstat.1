@@ -2,9 +2,9 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)vmstat.1	6.4 (2.11BSD) 2024/9/20
+.\"	@(#)vmstat.1	6.5 (2.11BSD) 2026/2/6
 .\"
-.TH VMSTAT 1 "Sep 20, 2024"
+.TH VMSTAT 1 "Feb 6, 2026"
 .UC 4
 .de s1
 .if n .sp
@@ -42,11 +42,6 @@ of the
 .I sum
 structure, giving the total number of several kinds of paging related
 events which have occurred since boot.
-If given a
-.B \-i
-argument, it instead reports on the number of
-.I interrupts
-taken by each device since system startup.
 .PP
 If none of these options are given,
 .I vmstat
@@ -153,5 +148,4 @@ the command line.
 .SH FILES
 /dev/kmem, /unix
 .SH SEE ALSO
-.IR systat (1),
 .IR iostat (1)

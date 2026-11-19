@@ -6,14 +6,14 @@ kept as immutable content in the titor-labs archive under
 `archives/bsd/2bsd/patches/` and hashed in its
 `provenance/CHECKSUMS-2bsd-patches.tsv`; the SHA-256 here is of the individual
 patch text (a bundle member for 430-459, the numbered file for 460 onward).
-Patch 437 is upstream's placeholder and has no commit. Patch 500 is, as of
-its 2026-09-15 text, an announcement that the 35th Anniversary Edition is
-close, not a patch.
+Patch 437 is upstream's placeholder and has no commit. Patch 500 is the
+35th Anniversary Edition, one 4 MB patch.
 
-This repository holds one deliberate deviation from upstream, in
-`lib/libc/stdio/findfp.c`: `_fwalk` advances its dynamic-stream cursor and
-tests `_flags != 0`, where patch 499 as published discards `g->next` and
-tests `== 0`. The commit carrying it says so.
+Between patches 499 and 500 this repository carried one deviation from
+upstream, in `lib/libc/stdio/findfp.c`: `_fwalk` advanced its
+dynamic-stream cursor and tested `_flags != 0`, where patch 499 as
+published discarded `g->next` and tested `== 0`. Patch 500 makes the same
+correction upstream, so the file matches upstream again.
 
 | Patch | Commit | Original | SHA-256 of the patch text | Subject |
 | ---: | --- | --- | --- | --- |
@@ -85,3 +85,4 @@ tests `== 0`. The commit carrying it says so.
 | 497 | 0bd957b | file | `6399206c77b72c5c7bb25090da86f7753da34ba1785d92d3a94698c0c51bb48e` | efl (Extended Fortran Language) manpage installed but no executable (#497) |
 | 498 | 4200bce | file | `2e52770a764447e7a0c583d3b0a165848855cf47ed03ab0fa8cdd283225fee00` | remove trailer support, fix savecore(8) bug, delete obsolete files/directories (#498) |
 | 499 | ab5dc1d | file | `139439fdea8615e3b543011fdb9b71291f96b25e8ea8b3713b14e6103ded6189` | massive cleanup, restor pipe input, ANSI compliant stdio,  inconsistent LDFLAGS/CFLAGS use, |
+| 500 | 106bc64 | file | `d52e80258543dfc08298ca3d60212b0d4bb7b6b4d95b579eedd4c42a3d7f6b16` | 35th Anniversary Edition (#500) |

@@ -1,10 +1,9 @@
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)rlog.c 4.6 (2.11BSD) 2026/5/11";
+#endif
 /*
  *                       RLOG    operation
  */
-#ifndef lint
-static char rcsid[]=
-"$Header: /usr/src/local/bin/rcs/src/RCS/rlog.c,v 4.5 87/12/18 11:46:38 narten Exp $ Purdue CS";
-#endif
 /*****************************************************************************
  *                       print contents of RCS files
  *****************************************************************************
@@ -19,7 +18,6 @@ static char rcsid[]=
  * author.
  * Report problems and direct all inquiries to Tichy@purdue (ARPA net).
  */
-
 
 /* $Log:	rlog.c,v $
  * Revision 4.5  87/12/18  11:46:38  narten
@@ -75,19 +73,11 @@ static char rcsid[]=
  * fixed type of variables receiving from getc() (char -> int).
  */
 
-
-
 #include "time.h"
 #include "rcsbase.h"
-#ifndef lint
-static char rcsbaseid[] = RCSBASE;
-#endif
 
 extern char * partialno();
-extern FILE * fopen();
 extern char * getcaller();          /*get login of caller                   */
-extern char * malloc();
-extern        free();
 extern struct hshentry * genrevs(); /*generate delta numbers                */
 extern int    countnumflds();
 extern int    compartial();
@@ -96,8 +86,6 @@ extern char * getfullRCSname();     /*get full path name of RCS file        */
 extern int nextc;                   /*next input character                  */
 extern char * Klog;
 extern char * Ktext;
-extern int  partime();
-extern long maketime();             /*convert parsed time to unix time.     */
 extern struct tm * localtime();     /*convert unixtime into a tm-structure  */
 extern int  pairfilenames();
 extern struct hshentry  * getnum();
@@ -155,8 +143,6 @@ int                     branchflag; /* set on -b */
 struct  lockers         * lockerlist;
 struct  stateattri      * statelist;
 struct  authors         * authorlist;
-
-
 
 main (argc, argv)
 int argc;
@@ -355,11 +341,8 @@ char * argv[];
         exit(nerror!=0);
 }
 
-
-
 putrunk()
 /*  function:  print revisions chosen, which are in trunk      */
-
 {
         struct  hshentry        * ptr, * pre;
 
@@ -375,23 +358,16 @@ putrunk()
         putadelta(pre,ptr,true);
 }
 
-
-
 putree(root)
 struct  hshentry  *root;
 /*   function: print delta tree( not include trunck) in reversed calender
                order on each branch                                        */
-
 {
         if ( root == nil ) return;
 
         putree(root->next);
-
         putforest(root->branches);
 }
-
-
-
 
 putforest(branchroot)
 struct   branchhead     * branchroot;
@@ -406,25 +382,16 @@ struct   branchhead     * branchroot;
         putree(branchroot->hsh);
 }
 
-
-
-
 putabranch(root)
 struct      hshentry   *root;
 /*   function  :  print one branch     */
-
 {
 
         if ( root == nil) return;
 
         putabranch(root->next);
-
         putadelta(root, root, false);
 }
-
-
-
-
 
 putadelta(node,editscript,trunk)
 register  struct   hshentry    * node;
@@ -476,10 +443,6 @@ int                              trunk;
 
         VOID fputs(node->log,stdout);
 }
-
-
-
-
 
 readdeltalog()
 /*  Function : get the log message and skip the text of a deltatext node.
@@ -562,12 +525,6 @@ struct    hshentry   * Delta;
         nextc = getc(finptr);
 }
 
-
-
-
-
-
-
 exttree(root)
 struct hshentry  *root;
 /*  function: select revisions , starting with root             */
@@ -586,9 +543,6 @@ struct hshentry  *root;
             newbranch = newbranch->nextbranch;
         }
 }
-
-
-
 
 getlocker(argv)
 char    * argv;
@@ -619,8 +573,6 @@ char    * argv;
                      c == '\n' || c == ';')  ;
         }
 }
-
-
 
 getauthor(argv)
 char   *argv;
@@ -655,9 +607,6 @@ char   *argv;
         }
 }
 
-
-
-
 getstate(argv)
 char   * argv;
 /*   function :  get the states of revisions from command line  */
@@ -689,8 +638,6 @@ char   * argv;
         }
 }
 
-
-
 trunclocks()
 /*  Function:  Truncate the list of locks to those that are held by the  */
 /*             id's on lockerlist. Do not truncate if lockerlist empty.  */
@@ -717,8 +664,6 @@ trunclocks()
         }
 }
 
-
-
 recentdate(root, pd)
 struct 	hshentry	* root;
 struct	Datepairs	* pd;
@@ -743,11 +688,6 @@ struct	Datepairs	* pd;
            newbranch = newbranch->nextbranch;
 	}
 }
-
-
-
-
-
 
 extdate(root)
 struct  hshentry        * root;
@@ -790,8 +730,6 @@ struct  hshentry        * root;
            newbranch = newbranch->nextbranch;
         }
 }
-
-
 
 extractdelta(pdelta)
 struct  hshentry        * pdelta;
@@ -858,8 +796,6 @@ struct  hshentry        * pdelta;
         }
 }
 
-
-
 char * procdate(target, source)
 char * target, * source;
 /* Function: Parses a free-format date in target, converts it
@@ -867,7 +803,7 @@ char * target, * source;
  * Returns target on success, nil otherwise.
  */
 {
-	long            unixtime;
+	time_t            unixtime;
 	struct     tm   parseddate,  *ftm;
 
 	if ( partime(source, &parseddate) == 0) {
@@ -881,12 +817,10 @@ char * target, * source;
 	    return nil;
 	}
 	ftm = localtime(&unixtime);
-	VOID sprintf(target,DATEFORM,
+	sprintf(target,DATEFORM,
 	ftm->tm_year,ftm->tm_mon+1,ftm->tm_mday,ftm->tm_hour,ftm->tm_min,ftm->tm_sec);
 	return target;
 }
-
-
 
 getdatepair(argv)
    char   * argv;
@@ -962,10 +896,6 @@ getdatepair(argv)
             while( (c = *++argv) == ';' || c == ' ' || c == '\t' || c =='\n');
         }
 }
-
-
-
-
 
 getnumericrev()
 /*  function:  get the numeric name of revisions which stored in revlist  */
@@ -1068,8 +998,6 @@ getnumericrev()
 
 }
 
-
-
 checkrevpair(num1,num2)
 char    *num1,  *num2;
 /*  function:  check whether num1, num2 are legal pair,i.e.
@@ -1091,8 +1019,6 @@ char    *num1,  *num2;
 
         return true;
 }
-
-
 
 getrevpairs(argv)
 register     char    * argv;
@@ -1168,8 +1094,6 @@ register     char    * argv;
         }
 }
 
-
-
 choptail(strhead)
 char     * strhead;
 /*   function : chop off the last field of a branch or a revision number  */
@@ -1180,4 +1104,3 @@ char     * strhead;
         for(pt = Nextdotstring-1; pt != strhead && *pt != '.'; pt--) ;
         for(sp = strhead; sp < pt; sp++) *Nextdotstring++ = *sp;
 }
-

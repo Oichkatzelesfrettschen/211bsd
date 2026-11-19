@@ -32,13 +32,13 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)creat.c	8.1.1 (2.11BSD) 1997/8/28";
+static char sccsid[] = "@(#)creat.c	8.1.2 (2.11BSD) 2026/5/8";
 #endif /* LIBC_SCCS and not lint */
 
 #include <fcntl.h>
 
 creat(path, mode)
-	char *path;
+	const char *path;
 	mode_t mode;
 {
 	return(open(path, O_WRONLY|O_CREAT|O_TRUNC, mode));

@@ -1,15 +1,9 @@
-#ifndef lint
-static char sccsid[] = "@(#)gnamef.c	5.4 (Berkeley) 6/20/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)gnamef.c	5.5 (2.11BSD) 2026/5/9";
 #endif
 
 #include "uucp.h"
-#ifdef	NDIR
-#include "ndir.h"
-#else
 #include <sys/dir.h>
-#endif
-
-/*LINTLIBRARY*/
 
 /*
  *	get next file name from directory

@@ -2,9 +2,9 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)ls.1	6.4.2 (2.11BSD GTE) 1996/12/23
+.\"	@(#)ls.1	6.4.3 (2.11BSD) 2026/1/22
 .\"
-.TH LS 1 "December 20, 1994"
+.TH LS 1 "January 22, 2026"
 .UC
 .SH NAME
 ls \- list contents of directory
@@ -34,7 +34,11 @@ There are a large number of options:
 List in long format, giving mode, number of links, owner,
 size in bytes, and time of last modification
 for each file.
-(See below.)
+.sp
+If the modification time of the file is more than 6 months in the past or
+is in the future, and the \fB\-T\fP is not specified, then the year of the last
+modification is displayed in place of the hour and minute fields.
+.sp
 If the file is a special file the size field will instead contain
 the major and minor device numbers.
 If the file is a symbolic link the pathname of
@@ -96,6 +100,10 @@ files with a trailing `*'.
 .TP
 .B \-R
 recursively list subdirectories encountered.
+.TP
+.B \-T
+When printing in the long (\fB\-l\fP) format display complete time
+information for the file including month, day, hour, minute, second, and year.
 .TP
 .B \-1
 force one entry per line output format; this is the default when

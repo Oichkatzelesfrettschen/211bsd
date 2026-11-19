@@ -1,9 +1,12 @@
-static char *sccsid = "@(#)tty.c	4.1 (Berkeley) 10/1/80";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)tty.c	4.2 (2.11BSD) 2026/5/8";
+#endif
+
+#include <unistd.h>
+
 /*
  * Type tty name
  */
-
-char	*ttyname();
 
 main(argc, argv)
 char **argv;

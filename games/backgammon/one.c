@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)one.c	5.1 (Berkeley) 5/29/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)one.c	5.2 (2.11BSD) 2026/5/11";
+#endif
 
 #include "back.h"
 
@@ -63,7 +63,7 @@ register int	i;
 	}
 	return (0);
 }
-
+
 moverr (i)
 register int	i;
 
@@ -103,7 +103,7 @@ last ()  {
 		if (board[i]*cturn > 0)
 			return (abs(home-i));
 }
-
+
 movback (i)
 register int	i;
 

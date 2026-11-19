@@ -4,17 +4,14 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)init.c	5.1 (Berkeley) 5/29/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)init.c	5.2 (2.11BSD) 2026/5/11";
 #endif not lint
-
-#include <sgtty.h>
 
 /*
  * variable initialization.
  */
 
-				/* name of executable object programs */
 char	EXEC[] = "/usr/games/backgammon";
 char	TEACH[] = "/usr/games/teachgammon";
 

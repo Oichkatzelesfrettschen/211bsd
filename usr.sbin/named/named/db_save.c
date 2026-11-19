@@ -11,7 +11,7 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)db_save.c	4.13.1 (2.11BSD GTE) 1/1/94";
+static char sccsid[] = "@(#)db_save.c	4.13.2 (2.11BSD) 2026/9/17";
 #endif
 
 /*
@@ -21,6 +21,7 @@ static char sccsid[] = "@(#)db_save.c	4.13.1 (2.11BSD GTE) 1/1/94";
 #include <sys/types.h>
 #include <stdio.h>
 #include <syslog.h>
+#include <stdlib.h>
 #include <arpa/nameser.h>
 #include "db.h"
 

@@ -1,6 +1,6 @@
-#ifndef	lint
-static char *RCSid = "$Source: /usr/users/louie/ntp/RCS/ntpsubs.c,v $ $Revision: 3.4.1.3 $ $Date: 89/05/18 18:33:50 $";
-#endif	lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ntpsubs.c 3.4.1.4 (2.11BSD) 2026/5/10"
+#endif
 
 /*
  *  $Log:	ntpsubs.c,v $
@@ -54,8 +54,6 @@ static char *RCSid = "$Source: /usr/users/louie/ntp/RCS/ntpsubs.c,v $ $Revision:
 #include <syslog.h>
 
 #include "ntp.h"
-
-extern int errno;
 
 #define	TRUE	1
 #define	FALSE	0

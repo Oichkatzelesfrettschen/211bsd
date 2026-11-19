@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)aliases.5	6.1.1 (2.11BSD) 1996/10/22
+.\"	@(#)aliases.5	6.1.2 (2.11BSD) 2026/9/28
 .\"
 .TH ALIASES 5 "October 22, 1996"
 .UC 4
@@ -12,7 +12,7 @@ aliases \- aliases file for sendmail
 .B /etc/aliases
 .SH DESCRIPTION
 This file describes user id aliases used by
-.I /usr/sbin/sendmail.
+.B /usr/sbin/sendmail.
 It is formatted as a series of lines of the form
 .in +0.5i
 name: name_1, name2, name_3, . . .
@@ -38,20 +38,20 @@ placed into a binary format in the files
 and
 .I /etc/aliases.pag
 using the program
-.IR newaliases (1).
+.BR newaliases (1).
 A
 .I newaliases
 command should be executed each time the aliases file is changed for the
 change to take effect.
 .SH "SEE  ALSO"
-newaliases(1), dbm(3X), sendmail(8)
+newaliases(1), dbm(3), sendmail(8)
 .br
 SENDMAIL Installation and Operation Guide.
 .br
 SENDMAIL An Internetwork Mail Router.
 .SH BUGS
 Because of restrictions in
-.IR dbm (3X)
+.BR dbm (3)
 a single alias cannot contain more than about 1000 bytes of information.
 You can get longer aliases by ``chaining''; that is, make the last name in
 the alias be a dummy name which is a continuation alias.

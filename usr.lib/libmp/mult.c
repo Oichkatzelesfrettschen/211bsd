@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)mult.c	5.1 (Berkeley) 4/30/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)mult.c     5.2 (2.11BSD) 2026/5/11";
+#endif
 
 #include <mp.h>
 mult(a,b,c) struct mint *a,*b,*c;

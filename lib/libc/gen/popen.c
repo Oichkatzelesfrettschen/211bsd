@@ -35,14 +35,14 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)popen.c	5.15.1 (2.11BSD) 1999/10/24";
-#endif /* LIBC_SCCS and not lint */
+static char sccsid[] = "@(#)popen.c	5.15.2 (2.11BSD) 2026/9/21";
+#endif
 
+#include <stdio.h>
 #include <errno.h>
-#include <sys/signal.h>
+#include <signal.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <stdio.h>
 
 static int *pids;
 

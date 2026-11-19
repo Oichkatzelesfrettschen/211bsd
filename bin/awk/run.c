@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)run.c	4.5 12/4/84";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)run.c	4.6 (2.11BSD) 2026/5/10";
 #endif
 
 #include "awk.def"
@@ -15,7 +15,6 @@ struct
 	int type;
 	char *fname;
 } files[FILENUM];
-FILE *popen();
 
 extern obj execute(), nodetoobj(), fieldel(), dopa2(), gettemp();
 #define PA2NUM	29

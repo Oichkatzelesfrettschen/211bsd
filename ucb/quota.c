@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)quota.c	5.4.3 (2.11BSD GTE) 1996/2/7";
+static char sccsid[] = "@(#)quota.c	5.4.4 (2.11BSD) 2026/9/14";
 #endif
 
 /*
@@ -153,11 +153,9 @@ showquotas(uid, name)
 				break;
 
 			case sizeof dqblk:	/* OK */
-#ifdef pdp11
 				dqblk.dqb_curblocks= btodb(dqblk.dqb_curblocks);
 				dqblk.dqb_bsoftlimit = btodb(dqblk.dqb_bsoftlimit);
 				dqblk.dqb_bhardlimit = btodb(dqblk.dqb_bhardlimit);
-#endif
 				break;
 
 			default:		/* ERROR */
@@ -207,21 +205,12 @@ showquotas(uid, name)
 		}
 		if (vflag || dqblk.dqb_curblocks || dqblk.dqb_curinodes) {
 			heading(uid, name);
-#ifdef pdp11
 			printf("%10s%8ld%c%7ld%8ld%8s%8d%c%7u%8u%8s\n"
 				, fs->fs_file
 				, dqblk.dqb_curblocks
 				, (msgb == (char *)0) ? ' ' : '*'
 				, dqblk.dqb_bsoftlimit
 				, dqblk.dqb_bhardlimit
-#else
-			printf("%10s%8d%c%7d%8d%8s%8d%c%7d%8d%8s\n"
-				, fs->fs_file
-				, dbtob(dqblk.dqb_curblocks) / 1024
-				, (msgb == (char *)0) ? ' ' : '*'
-				, dbtob(dqblk.dqb_bsoftlimit) / 1024
-				, dbtob(dqblk.dqb_bhardlimit) / 1024
-#endif
 				, dwarn
 				, dqblk.dqb_curinodes
 				, (msgi == (char *)0) ? ' ' : '*'

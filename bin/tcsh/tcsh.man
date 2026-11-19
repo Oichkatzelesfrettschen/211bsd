@@ -1,5 +1,5 @@
-.\" $Id: tcsh.man,v 3.0 1991/07/04 21:54:11 christos Exp $
-.TH TCSH 1 "27 November 1996"
+.\" @(#)tcsh.man 3.1 (2.11BSD) 2026/8/20
+.TH TCSH 1 "20 August 2026"
 .SH NAME
 tcsh \- C shell with file name completion and command line editing
 .SH SYNOPSIS
@@ -11,7 +11,7 @@ tcsh \- C shell with file name completion and command line editing
 .I argument .\|.\|.  
 ]
 .SH DESCRIPTION
-.I Tcsh
+.I tcsh
 is an enhanced version of the Berkeley UNIX C shell
 .IR csh (1).
 It behaves exactly like the C shell,
@@ -131,7 +131,7 @@ manual page.
 Commands that the user types in may be edited using the same control
 characters that Gnu Emacs or vi uses.  Arrow and function key sequences are
 also allowed.
-.I Tcsh
+.I tcsh
 allows this by setting the terminal to `CBREAK' mode and reading the input
 one character at a time.
 .PP
@@ -207,7 +207,7 @@ In all other cases \e escapes the following character. Needed for
 escaping the special meaning of \e and ^.
 Delete is written as "^?" (caret-question mark).
 .PP
-.I Tcsh 
+.I tcsh 
 always binds the arrow keys as defined by the termcap entry to:
 .RS +.6i
 .nf
@@ -545,7 +545,7 @@ does a check and reset of the terminal mode bits.  If the speed has
 been changed, then
 .I tcsh
 will change to using that speed.
-.I Tcsh
+.I tcsh
 will also obey changes in the padding needed by the tty.
 Some changes to the command keys will be obeyed, however if a command key
 is unset,
@@ -868,7 +868,7 @@ the user has typed:
 > cd /uxr/spol/news[ESC s]
 .RE
 .sp
-.I Tcsh
+.I tcsh
 will check the path for spelling, correct the mistakes, and redraw the
 line as
 .sp
@@ -927,7 +927,7 @@ is meant to be used to look up short help files,
 not manual pages (although it can do manual pages also).
 .PP
 .SH "8. ENHANCED HISTORY MECHANISM"
-.I Tcsh
+.I tcsh
 will save the history list between login sessions.  It does this by
 writing the current list to the file "~/.history" on logout, and
 reading it in on login.  For example, placing the line
@@ -969,7 +969,7 @@ Modifier failed.
 .fi
 .RE
 .sp
-.I Tcsh
+.I tcsh
 also supports the history escape 
 .I !#.
 This undocumented 
@@ -1027,7 +1027,7 @@ autologout (for instance in a window system), unset the shell variable
 .I autologout.
 .PP
 .SH "10. EXECUTION OF A COMMAND PRIOR TO EACH PROMPT"
-.I Tcsh
+.I tcsh
 supports a special alias,
 .I precmd,
 which if set holds a command that will be executed before printing
@@ -1044,7 +1044,7 @@ no limitations on what precmd can be set to do, although discretion
 should be used.
 .PP
 .SH "11. PERIODIC COMMAND EXECUTION"
-.I Tcsh
+.I tcsh
 is now capable of providing periodic command execution
 through the use of the shell variable
 .I tperiod
@@ -1192,7 +1192,7 @@ The time stamp printouts can be omitted from the history list by adding the
 -t switch to the \fIhistory\fR command.
 .PP
 .SH "14. DIRECTORY ACCESS"
-.I Tcsh 
+.I tcsh 
 supports three new flags to control directory style printing for
 cd, pushd, popd, and dirs:
 .TP 4
@@ -1208,7 +1208,7 @@ Print the stack entries one in each line, preceeded by the stack number.
 Note that popd +n can be used to pop out stack entries of directories that
 do not exist any more.
 .PP
-.I Tcsh
+.I tcsh
 will now allow the user to access all elements in the directory stack directly.
 The syntax "=<digit>" is recognized by 
 .I tcsh
@@ -1241,7 +1241,7 @@ Not that many dir stack entries.
 .RE
 .sp
 .fi
-.I Tcsh 
+.I tcsh 
 will complain if you ask for a directory stack item
 which does not exist.
 .PP
@@ -1326,7 +1326,7 @@ will override
 .I chase_symlinks.
 .PP
 .SH "15. WATCHING FOR LOGINS AND LOGOUTS"
-.I Tcsh
+.I tcsh
 has a mechanism so that the user can watch for login and logout
 activity of any user or terminal in the system.
 This is accomplished using the new special shell variable
@@ -1443,7 +1443,7 @@ is not set, the format defaults to "%n has %a %l from %m.", or
 "%n has %a %l." on systems that don't store the hostname.
 .PP
 .SH "16. TIMED EVENT LIST"
-.I Tcsh
+.I tcsh
 now supports a scheduled-event list through the use of the command
 .I sched.
 This command gives the user a mechanism by which to arrange for other
@@ -1661,82 +1661,14 @@ system call, and setting
 .I HOST
 to the result.
 .PP
-.I Tcsh
+.I tcsh
 also initializes the environment variable
 .I HOSTTYPE
 to a symbolic name for the type of computer that it is running on.
-This is useful when sharing a single
-physical directory between several types of machines (running NFS, for
-instance).  For example, if the following is in
-.I .login:
-.sp
-.RS +.3i
-set path = (~/bin.$HOSTTYPE /usr/ucb /bin /usr/bin /usr/games .)
-.RE
-.sp
-and the user has directories named "bin.\fImachine\fR" (where
-.I machine
-is a name from the above list), then the user can have the same
-programs compiled for different machines in the appropriate
-"bin.\fImachine\fR" directories and
-.I tcsh
-will run the binary for the correct machine.
-.sp
-The current possible values are:
-.sp
-.ta 1.5i
-.nf
-\fIaix370\fR		an IBM 370, running aix
-\fIalliant\fR		an Alliant FX series
-\fIapollo\fR		an Apollo running DomainOS
-\fIatt3b15\fR		an AT&T 3b15
-\fIatt3b20\fR		an AT&T 3b20
-\fIatt3b2\fR		an AT&T 3b2
-\fIatt3b5\fR		an AT&T 3b5
-\fIbalance\fR		a Sequent Balance (32000 based)
-\fIbutterfly\fR		a BBN Computer Butterfly 1000
-\fIconvex\fR		a Convex
-\fIdecstation\fR	a DecStation XXXX
-\fIgould-np1\fR		a Gould NP1
-\fIhp300\fR		an HP 9000, series 300, running mtXinu
-\fIhp800\fR		an HP 9000, series 800, running mtXinu
-\fIhp9000s300\fR	an HP 9000, series 300, running hpux
-\fIhp9000s700\fR	an HP 9000, series 700, running hpux
-\fIhp9000s800\fR	an HP 9000, series 800, running hpux
-\fIhp\fR			an HP, running hpux
-\fIi386-mach\fR		an Intel 386, running mach
-\fIiris4d\fR		a Silicon Graphics Iris 4D
-\fIm88k\fR			an mc88000 CPU machine
-\fImac2\fR			an Apple Computer Macintosh II, running AUX
-\fImasscomp\fR			a Concurrent (Masscomp), running RTU
-\fImips\fR			another mips CPU
-\fImultimax\fR		an Encore Computer Corp. Multimax (32000 based)
-\fInext\fR			a NeXT computer
-\fInews\fR			a Sony NEWS 800 or 1700 workstation
-\fInews_mips\fR		a NeWS machine with mips CPU
-\fIns32000\fR		an NS32000 CPU machine
-\fIpfa50\fR			a PFU/Fujitsu A-xx computer
-\fIps2\fR			an IBM PS/2, running aix
-\fIptx\fR			a Sequent Symmetry running DYNIX/ptx (386/486 based)
-\fIpyramid\fR		a Pyramid Technology computer (of any flavor)
-\fIrs6000\fR		an IBM RS6000, running aix 
-\fIrt\fR			an IBM PC/RT, running BSD (AOS 4.3) or mach
-\fIrtpc\fR			an IBM PC/RT, running aix
-\fIsun2\fR			a Sun Microsystems series 2 workstation (68010 based)
-\fIsun386i\fR		a Sun Microsystems 386i workstation (386 based)
-\fIsun3\fR			a Sun Microsystems series 3 workstation (68020 based)
-\fIsun4\fR			a Sun Microsystems series 4 workstation (SPARC based)
-\fIsun\fR			a Sun workstation of none of the above types
-\fIsymmetry\fR		a Sequent Symmetry running DYNIX 3 (386/486 based)
-\fItitan\fR		an Stardent Titan
-\fIvax\fR			a Digital Equipment Corp. Vax (of any flavor)
-.DT
-.fi
-.sp
-(The names of the machines are usually trade marks of the
-corresponding companies.)
+This is useful when sharing a single \.tcshrc
+file between several types of machines.
 .PP
-.I Tcsh
+.I tcsh
 also initializes the shell variables
 .I uid
 and
@@ -1818,7 +1750,7 @@ the shell easily.  Some people bind this function to \fI^Z\fR so they
 can do this even more easily.
 .PP
 .SH "24. STATUS LINE SUPPORT
-.I Tcsh
+.I tcsh
 has a new builtin called 
 .I echotc
 that allows the user to access the terminal capabilities from the command
@@ -1901,7 +1833,7 @@ found.
 
 .PP
 .SH "25. EXECUTION OF A COMMAND AFTER CHANGING THE CURRENT WORKING DIRECTORY"
-.I Tcsh
+.I tcsh
 now supports a special alias,
 .I cwdcmd,
 which if set holds a command that will be executed after changing the
@@ -1926,7 +1858,7 @@ command, an infinite loop may result.  In this case, it is the
 author's opinion that said user will get what he deserves.
 .PP
 .SH "26. NATIVE LANGUAGE SYSTEM"
-.I Tcsh
+.I tcsh
 is eight bit clean (if so compiled, see the description of the
 .I version
 shell variable below), and will thus support character sets needing this
@@ -1973,7 +1905,7 @@ Unknown characters (i.e. those that are neither printable nor control
 characters) will be printed using the \ennn format.
 If the tty is not in 8 bit mode, other 8 bit characters will be printed by
 converting them to ascii and using standout mode.
-.I Tcsh
+.I tcsh
 will never change the 7/8 bit mode of the tty, and will track user-initiated
 settings for this - i.e. it may be necessary for NLS users
 (or, for that matter, those that want to use a Meta key) to explicitly set
@@ -2041,138 +1973,17 @@ BSD resource limit functions.
 .sp
 The default time format is "%Uu %Ss %E %P %X+%Dk %I+%Oio %Fpf+%Ww" for
 systems that support resource usage reporting and "%Uu %Ss %E %P" for
-systems that do not. On 2BSD the default is "%Uu %Ss %E %P %I+%Oio %Vov %Wsw".
-.PP
-For Sequent's DYNIX/ptx %X, %D, %K, %r and %s are not supported.
-However, the following additional sequences are available.
+systems that do not.
 .sp
-.RS +.6i
-.ta 1.2i 1.7i
-.nf
-%Y	The number of system calls performed.
-%Z	The number of pages which are zero-filled
-	on demand.
-%i	The number of times a process' resident
-	set size was increased by the kernel.
-%d	The number of times a process' resident
-	set size was decreased by the kernel.
-%l	The number of read system calls performed.
-%m	The number of write system calls performed.
-%p	the number of reads from raw disk devices.
-%q	the number of writes to raw disk devices.
-.RE
-.DT
-.fi
-.sp
-The default time format for Sequent's DYNIX/ptx is
-"%Uu %Ss $E %P %I+%Oio %Fpf+%Ww". Also note that the
-CPU percentage can be higher than 100% on multi-processors.
-.PP
-.SH "28. OS/DEPENDENT BUILTIN SUPPORT"
-.sp
-.br
-.I "TRANSPARENT COMPUTING FACILITY"
-.PP
-On systems that support TCF (aix-ibm370, aix-ps2) the following builtins
-have been added:
-.TP 10
-.B getspath
-Print the current system execution path.
-.TP 10
-.B setspath LOCAL|<site>|<cpu> ...
-Set the current execution path.
-.sp
-.TP 
-.B getxvers
-Print the current experimental version prefix.
-.sp
-.TP 
-.B setxvers [<string>]
-If the optional string is ommited, any experimental version prefix is removed.
-Otherwise the experimental version prefix is set to string.
-.sp
-.TP 
-.B migrate [-<site>] <pid>|%<jobid> ...
-.PD 0
-.TP
-.B migrate -<site> 
-.PD
-The first form migrates the process or job to the site specified or the
-default site determined by the system path.
-The second form, is equivalent to 'migrate -<site> $$', i.e. migrates the
-current process to the site specified. Note: migrating 
-.I tcsh
-itself can cause unexpected behavior, since the shell
-does not like to lose its tty.
-.sp
-.PP
-In addition, jobs will print the site the job is executing.
-.PP
-.sp
-.br
-.I "Domain/OS Support"
-.PP
-.TP 
-.B inlib <shared-library> ...
-Inlib adds shared libraries to the current enviroment. There is no way
-to remove them...
-.TP
-.B rootnode //<nodename>
-Change the name of the current rootnode. From now on, 
-.I / 
-will resolve to
-.I //<rootnode>
-.TP
-.B ver [<systype>] [<command>]
-Without arguments, print 
-.I $SYSTYPE;
-with the 
-.I <systype> 
-provided, set 
-.I SYSTYPE
-to the one provided. Valid systypes are bsd4.3 and sys5.3. If a
-.I <command>
-is
-argument is given, then 
-.I <command> 
-is executed under the 
-.I <systype> 
-specified.
-.PP
-.sp
-.br
-.I "Mach"
-.PP
-.TP 
-.B setpath <path-spec> ...
-XXX: What does it do?
-.PP
-.sp
-.br
-.I "Masscomp/RTU"
-.PP
-.TP 
-.B universe <universe-spec> ...
-Sets the current universe to the specified parameter.
-.PP
-.sp
-.br
-.I "Convex/OS"
-.PP
-.TP 
-.B warp [<universe-spec>] ...
-Without arguments prints the current value of the universe. With a universe
-argument it sets the current universe to the value of the argument.
-.sp
-.SH "29. WINDOW SIZE TRACKING"
+On 2BSD the default is "%Uu %Ss %E %P %I+%Oio %Vov %Wsw".
+.SH "28. WINDOW SIZE TRACKING"
 On systems that support SIGWINCH or SIGWINDOW,
 .I tcsh
 adapts to window resizing automatically and adjusts the environment
 variables LINES and COLUMNS if set. Also if the environment variable
 TERMCAP contains li#, and co# fields, these will be adjusted also to
 reflect the new window size.
-
-.SH "30. INPUT FILES"
+.SH "29. INPUT FILES"
 On startup 
 .I tcsh
 will try to source 
@@ -2195,23 +2006,7 @@ will source first
 and then 
 .I "$HOME/.logout"
 if the shell was a login shell.
-.sp
-Note: On 
-.I convexos
-the names of the system default files are
-.I "/etc/cshrc",
-.I "/etc/login"
-and
-.I "/etc/logout"
-respectively and on
-.I irix
-or
-.I A/UX
-only the file
-.I "/etc/cshrc"
-is executed if the shell is a login shell. 
-
-.SH "31. COMMAND LINE OPTIONS"
+.SH "30. COMMAND LINE OPTIONS"
 This section describes options that are either undocumented in 
 .I csh
 (*)
@@ -2269,8 +2064,6 @@ LINES -- Number of lines in terminal (see WINDOW SIZE)
 COLUMNS -- Number of columns in terminal (see WINDOW SIZE)
 .br
 TERMCAP -- Terminal capability string (see WINDOW SIZE)
-.br
-SYSTYPE -- The current system type (Domain OS only)
 .PP
 .SH "NEW SHELL VARIABLES"
 .br

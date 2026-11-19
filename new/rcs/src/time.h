@@ -5,9 +5,9 @@
  *	libcx: partime, maketime (may not be installed yet)
  */
 
-#define TIMEID "$Id: time.h,v 1.1 84/01/23 14:50:50 kcs Exp $"
-
-/* $Log:	time.h,v $
+/* 
+ * @(#)time.h      1.2 (2.11BSD) 2026/7/21
+ *
  * Revision 1.1  84/01/23  14:50:50  kcs
  * Initial revision
  * 
@@ -15,6 +15,8 @@
  * Initial revision
  * 
  */
+
+#include <sys/types.h>
 
 struct tm {     /* See defines below for allowable ranges */
 	int tm_sec;
@@ -50,3 +52,6 @@ struct tm {     /* See defines below for allowable ranges */
 	/* New stuff */
 #define TM_ZON 9	/* 0-(24*60) minutes west of Greenwich */
 #define TM_AMPM 10	/* 1 AM, 2 PM		*/
+
+time_t	maketime(struct tm *);
+time_t	time();

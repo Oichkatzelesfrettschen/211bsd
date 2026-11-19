@@ -1,4 +1,4 @@
-#define VERSION "sz 3.08 (2.11BSD) 2025/12/27"
+#define VERSION "sz 3.09 (2.11BSD) 2026/9/22" 
 #define PUBDIR "/usr/spool/uucppublic"
 
 /****************************************************************************
@@ -325,6 +325,7 @@ register char *s;
 
 
 /* called by signal interrupt or terminate to clean things up */
+void
 bibi(n)
 {
 	canit(); fflush(stdout); mode(0);
@@ -339,6 +340,7 @@ bibi(n)
 	exit(128+n);
 }
 /* Called when ZMODEM gets an interrupt (^X) */
+void
 onintr()
 {
 	signal(SIGINT, SIG_IGN);
@@ -1190,6 +1192,7 @@ long a, b, c, d;
 }
 
 
+void
 alrm()
 {
 	longjmp(tohere, -1);

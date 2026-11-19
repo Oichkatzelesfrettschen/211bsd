@@ -15,13 +15,11 @@
  * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
  */
 
-#if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: env.c,v 2.7 1994/01/26 02:25:50 vixie Exp vixie $";
+#if !defined(lint) && defined(DOSCCS)
+char sccsid[] = "@(#)env.c 2.8 (2.11BSD) 2026/5/10"
 #endif
 
-
 #include "cron.h"
-
 
 char **
 env_init()
@@ -31,7 +29,6 @@ env_init()
 	p[0] = NULL;
 	return (p);
 }
-
 
 void
 env_free(envp)
@@ -43,7 +40,6 @@ env_free(envp)
 		free(*p);
 	free(envp);
 }
-
 
 char **
 env_copy(envp)
@@ -60,7 +56,6 @@ env_copy(envp)
 	p[count] = NULL;
 	return (p);
 }
-
 
 char **
 env_set(envp, envstr)
@@ -102,7 +97,6 @@ env_set(envp, envstr)
 	p[count-1] = strdup(envstr);
 	return (p);
 }
-
 
 /* return	ERR = end of file
  *		FALSE = not an env setting (file was repositioned)
@@ -158,7 +152,6 @@ load_env(envstr, f)
 	Debug(DPARS, ("load_env, <%s> <%s> -> <%s>\n", name, val, envstr))
 	return (TRUE);
 }
-
 
 char *
 env_get(name, envp)

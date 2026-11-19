@@ -32,12 +32,12 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)system.c	5.10.1 (2.11BSD) 1999/10/24";
-#endif /* LIBC_SCCS and not lint */
+static char sccsid[] = "@(#)system.c	5.10.2 (2.11BSD) 2026/9/21";
+#endif
 
 #include <stdio.h>
+#include <signal.h>
 #include <sys/types.h>
-#include <sys/signal.h>
 #include <sys/wait.h>
 
 system(command)
@@ -46,7 +46,7 @@ system(command)
 	union wait pstat;
 	register int pid;
 	sigset_t omask, nmask;
-	int (*intsave)(), (*quitsave)();
+	sig_t intsave, quitsave;
 
 	if (!command)		/* just checking... */
 		return(1);

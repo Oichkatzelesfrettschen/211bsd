@@ -587,8 +587,8 @@ vgetcnt()
  */
 fastpeekkey()
 {
-	int trapalarm();
-	int (*Oint)();
+	void trapalarm();
+	sig_t Oint;
 	register int c;
 
 	/*
@@ -639,6 +639,7 @@ fastpeekkey()
 	return(c);
 }
 
+void
 trapalarm() {
 	alarm(0);
 	if (vcatch)

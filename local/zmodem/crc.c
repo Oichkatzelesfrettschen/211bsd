@@ -1,8 +1,7 @@
-/*% cc -O -K -dos % -o crc.exe
-*/
-
 /*
  *  Crc - 32 BIT ANSI X3.66 CRC checksum files
+ *
+ *  crc.c 1.1 (2.11BSD) 2026/6/17
  */
 #include <stdio.h>
 #define OK 0
@@ -124,18 +123,14 @@ crc32file(name)
 char *name;
 {
 	register FILE *fin;
-	register unsigned long oldcrc32;
-	register unsigned long crc32;
-	register unsigned long oldcrc;
-	register c;
-	register long charcnt;
+	unsigned long oldcrc32;
+	unsigned long crc32;
+	unsigned long oldcrc;
+	register int c;
+	long charcnt;
 
 	oldcrc32 = 0xFFFFFFFF; charcnt = 0;
-#ifdef M_I86SM
-	if ((fin=fopen(name, "rb"))==NULL)
-#else
 	if ((fin=fopen(name, "r"))==NULL)
-#endif
 	{
 		perror(name);
 		return ERROR;
@@ -153,8 +148,7 @@ char *name;
 
 	crc32 = oldcrc32;  oldcrc = oldcrc32 = ~oldcrc32;
 
-	printf("%08lX %7ld %s\n", oldcrc, charcnt, name);
+	printf("%8lX %7ld %s\n", oldcrc, charcnt, name);
 
 	return OK;
 }
-

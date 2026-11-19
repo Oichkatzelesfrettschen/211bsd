@@ -2,37 +2,40 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)udp.4p	6.2 (Berkeley) 5/16/86
+.\"	@(#)udp.4	6.3 (2.11BSD) 2026/9/28
 .\"
-.TH UDP 4P "May 16, 1986"
+.TH UDP 4 "May 16, 1986"
 .UC 5
 .SH NAME
 udp \- Internet User Datagram Protocol
 .SH SYNOPSIS
-.B #include <sys/socket.h>
-.br
-.B #include <netinet/in.h>
-.PP
-.B s = socket(AF_INET, SOCK_DGRAM, 0);
+.nf
+.ft B
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+socket(AF_INET, SOCK_DGRAM, 0);
+.ft R
+.fi
 .SH DESCRIPTION
 UDP is a simple, unreliable datagram protocol which is used
 to support the SOCK_DGRAM abstraction for the Internet
 protocol family.  UDP sockets are connectionless, and are
 normally used with the
-.I sendto 
+.B sendto 
 and
-.IR recvfrom 
+.BR recvfrom 
 calls, though the
-.IR connect (2)
+.BR connect (2)
 call may also be used to fix the destination for future
 packets (in which case the 
-.IR recv (2)
+.BR recv (2)
 or
-.IR read (2)
+.BR read (2)
 and 
-.IR send (2)
+.BR send (2)
 or
-.IR write(2)
+.BR write(2)
 system calls may be used).
 .PP
 UDP address formats are identical to those used by
@@ -45,7 +48,7 @@ this) by using a reserved \*(lqbroadcast address\*(rq; this address
 is network interface dependent.
 .PP
 Options at the IP transport level may be used with UDP; see
-.IR ip (4P).
+.BR ip (4).
 .SH DIAGNOSTICS
 A socket operation may fail with one of the following errors returned:
 .TP 15
@@ -73,4 +76,4 @@ when an attempt is made to create a
 socket with a network address for which no network interface
 exists.
 .SH SEE ALSO
-getsockopt(2), recv(2), send(2), socket(2), intro(4N), inet(4F), ip(4P)
+getsockopt(2), recv(2), send(2), socket(2), intro(4), inet(4), ip(4)

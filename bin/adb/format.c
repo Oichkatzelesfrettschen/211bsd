@@ -1,3 +1,7 @@
+#if     !defined(lint) && defined(DOSCCS)
+static  char    sccsid[] = "@(#)format.c 2.0 (2.11BSD) 2026/9/21";
+#endif
+
 #include "defs.h"
 #include <ctype.h>
 
@@ -9,8 +13,8 @@ extern	struct	SYMbol	*symbol;
 	char	*lp;
 	char	*printptr, printbuf[];
 	int	maxoff;
-	int	sigint;
-	int	sigqit;
+extern	sig_t	sigint;
+extern	sig_t	sigqit;
 	char	*errflg;
 	char	lastc;
 	long	dot;
@@ -237,7 +241,7 @@ unox()
 		exit(16);
 	ELIF unixpid == -1
 	THEN	error(NOFORK);
-	ELSE	signal(SIGINT,SIG_IGN);
+	ELSE	signal(SIGINT, SIG_IGN);
 		WHILE (rc = wait(&status)) != unixpid ANDF rc != -1 DONE
 		signal(SIGINT,sigint);
 		printc('!'); lp--;

@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)server.c	5.3.3 (2.11BSD) 2025/12/26";
+static char sccsid[] = "@(#)server.c	5.3.4 (2.11BSD) 2026/9/21";
 #endif
 
 #include "defs.h"
@@ -30,7 +30,7 @@ int	oumask;			/* old umask for creating files */
 
 extern	FILE *lfp;		/* log file for mailing changes */
 
-int	cleanup();
+void	cleanup();
 struct	linkbuf *savelink();
 
 /*
@@ -1479,6 +1479,7 @@ response()
 /*
  * Remove temporary files and do any cleanup operations before exiting.
  */
+void
 cleanup()
 {
 	(void) unlink(tempfile);

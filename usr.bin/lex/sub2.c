@@ -1,5 +1,5 @@
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)sub2.c	4.2 (2.11BSD) 2022/9/17";
+static char sccsid[] = "@(#)sub2.c	4.3 (2.11BSD) 2026/8/19";
 #endif
 
 # include "ldefs.c"
@@ -865,7 +865,7 @@ layout(){
 					fprintf(fout, "0%-3o,",fbarr[i+j]);
 				putc('\n',fout);
 				}
-			cfree(fbarr, 2*NCH, 1);
+			free(fbarr);
 			}
 		fprintf(fout,"0};\n");
 		}

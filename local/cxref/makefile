@@ -1,4 +1,4 @@
-# makefile for cxref -- C cross referencing program
+#       @(#)Makefile    1.1 (2.11BSD) 2026/2/2
 #
 # Arnold Robbins, Information and Computer Science, Georgia Tech
 #	gatech!arnold
@@ -10,9 +10,6 @@
 # some files are system dependant, e.g. where sort is.
 # change the appropriate macro definitions and recompile.
 
-
-### definitions of files to compile and load, and other targets for make
-
 SCANOBJS= docxref.o cscan.o
 SCANSRCS= docxref.c cscan.l
 
@@ -22,10 +19,8 @@ PROGS= docxref fmtxref cxrfilt $(CXREF)
 SRCS=  $(SCANSRCS) fmtxref.c cxrfilt.c $(CXREF).c
 DOCS=  README makefile cxref.1
 
-PRINTS= $(INCLS) $(SRCS) $(DOCS)
-
 CFLAGS= -O
-LFLAGS=
+LDFLAGS=-i
 
 ### system dependant definitions, change when you install cxref
 
@@ -38,35 +33,21 @@ LEXLIB= -ll
 # may be /bin/sort on some systems
 SORT=/usr/bin/sort
 
-# printer program, prt is for me, use pr on other systems
-P=pr
-
 all: $(PROGS) cxref.0
-	@echo "	all" done
 
 docxref: $(SCANOBJS)
-	$(CC) $(LFLAGS) $(SCANOBJS) $(LEXLIB) -o $@
+	$(CC) $(LDFLAGS) $(SCANOBJS) $(LEXLIB) -o $@
 
 cscan.o docxref.o cxrfilt.o: $(INCLS)
 
 fmtxref: fmtxref.c
-	$(CC) $(LFLAGS) $(CFLAGS) $@.c $(LDFLAGS) -o $@
+	$(CC) $(LDFLAGS) $(CFLAGS) $@.c $(LDFLAGS) -o $@
 
 cxrfilt: cxrfilt.c
-	$(CC) $(LFLAGS) $(CFLAGS) $@.c $(LDFLAGS) -o $@
+	$(CC) $(LDFLAGS) $(CFLAGS) $@.c $(LDFLAGS) -o $@
 
 $(CXREF): $(CXREF).c
-	$(CC) $(LFLAGS) $(CFLAGS) -DSRCDIR='"$(LIB)"' -DSORT='"$(SORT)"' $@.c $(LDFLAGS) -o $@
-
-print:
-	$(P) $(PRINTS) | lpr -b 'Cxref Source'
-	touch print2
-
-print2: $(PRINTS)
-	$(P) $? | lpr -b 'Cxref New Source'
-	touch print2
-
-### edit this before installing!!
+	$(CC) $(LDFLAGS) $(CFLAGS) -DSRCDIR='"$(LIB)"' -DSORT='"$(SORT)"' $@.c $(LDFLAGS) -o $@
 
 install: $(PROGS) cxref.0
 # don't remove my bin!
@@ -82,7 +63,4 @@ cxref.0:	cxref.1
 	/usr/man/manroff cxref.1 > cxref.0
 
 clean:
-	rm -f $(SCANOBJS) cxref.0
-
-clobber: clean
-	rm -f $(PROGS) print2
+	rm -f $(PROGS) $(SCANOBJS) cxref.0

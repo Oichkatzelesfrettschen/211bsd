@@ -10,9 +10,9 @@
  *
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)machdep.c	5.2 (Berkeley) 11/25/87";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)machdep.c	5.3 (2.11BSD) 2026/5/12";
+#endif
 
 /* Included in this file are all system dependent routines.  Extensive use
  * of #ifdef's will be used to compile the appropriate code on each system:
@@ -88,21 +88,7 @@ static char sccsid[] = "@(#)machdep.c	5.2 (Berkeley) 11/25/87";
 
 md_slurp()
 {
-	long ln = 0;
-
-#ifdef UNIX_BSD4_2
-	ioctl(0, FIONREAD, &ln);
-#endif
-#ifdef UNIX_SYSV
-	ioctl(0, TCFLSH, &ln);
-	ln = 0;
-#endif
-
-	ln += stdin->_cnt;
-
-	for (; ln > 0; ln--) {
-		(void) getchar();
-	}
+	fpurge(stdin);
 }
 
 /* md_control_keyboard():

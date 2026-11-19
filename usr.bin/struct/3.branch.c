@@ -1,6 +1,6 @@
-#ifndef lint
-static char sccsid[] = "@(#)3.branch.c	4.1	(Berkeley)	2/11/83";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)3.branch.c	4.2	(2.11BSD)	2026/5/9";
+#endif
 
 #include <stdio.h>
 #include "def.h"
@@ -24,7 +24,8 @@ chkbranch(v,head)
 VERT v,*head;
 	{
 	VERT  w;
-	int i;
+	register int i;
+
 	switch(NTYPE(v))
 		{
 		case GOVX:

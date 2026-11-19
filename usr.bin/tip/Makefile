@@ -3,16 +3,10 @@
 # All rights reserved.  The Berkeley software License Agreement
 # specifies the terms and conditions for redistribution.
 #
-#	@(#)Makefile	5.4.2	(2.11BSD)	2025/11/27
+#	@(#)Makefile	5.4.3	(2.11BSD)	2026/6/24
 #
 # make file for intermachine communications package
 #
-# Files are:
-#	/etc/remote		remote host description file
-#	/etc/phones		phone number file, owned by ${OWNER} and
-#				  mode 6??
-#	${ADM}/aculog		ACU accounting file, owned by ${OWNER} and
-#				  mode 6?? {if ACULOG defined}
 # Presently supports:
 #	BIZCOMP
 #	DEC DF02-AC, DF03-AC
@@ -83,7 +77,6 @@ install: aculib tip
 	touch ${ADM}/aculog
 	chown ${OWNER}.${GROUP} ${ADM}/aculog
 	chmod 600 ${ADM}/aculog
-	@echo "create /etc/remote and /etc/phones"
 
 lint: FRC
 	lint ${CFLAGS} ${SRCS}
@@ -95,82 +88,3 @@ FRC:
 
 # DO NOT DELETE THIS LINE -- mkdep uses it.
 # DO NOT PUT ANYTHING AFTER THIS LINE, IT WILL GO AWAY.
-
-acu.o: acu.c tip.h /usr/include/sys/types.h /usr/include/sys/file.h
-acu.o: /usr/include/sgtty.h /usr/include/sys/ioctl.h
-acu.o: /usr/include/sys/ttychars.h /usr/include/sys/ttydefaults.h
-acu.o: /usr/include/sys/ttydev.h /usr/include/signal.h
-acu.o: /usr/include/machine/trap.h /usr/include/stdio.h /usr/include/pwd.h
-acu.o: /usr/include/ctype.h /usr/include/setjmp.h /usr/include/errno.h
-acutab.o: acutab.c tip.h /usr/include/sys/types.h /usr/include/sys/file.h
-acutab.o: /usr/include/sgtty.h /usr/include/sys/ioctl.h
-acutab.o: /usr/include/sys/ttychars.h /usr/include/sys/ttydefaults.h
-acutab.o: /usr/include/sys/ttydev.h /usr/include/signal.h
-acutab.o: /usr/include/machine/trap.h /usr/include/stdio.h /usr/include/pwd.h
-acutab.o: /usr/include/ctype.h /usr/include/setjmp.h /usr/include/errno.h
-cmds.o: cmds.c tip.h /usr/include/sys/types.h /usr/include/sys/file.h
-cmds.o: /usr/include/sgtty.h /usr/include/sys/ioctl.h
-cmds.o: /usr/include/sys/ttychars.h /usr/include/sys/ttydefaults.h
-cmds.o: /usr/include/sys/ttydev.h /usr/include/signal.h
-cmds.o: /usr/include/machine/trap.h /usr/include/stdio.h /usr/include/pwd.h
-cmds.o: /usr/include/ctype.h /usr/include/setjmp.h /usr/include/errno.h
-cmdtab.o: cmdtab.c tip.h /usr/include/sys/types.h /usr/include/sys/file.h
-cmdtab.o: /usr/include/sgtty.h /usr/include/sys/ioctl.h
-cmdtab.o: /usr/include/sys/ttychars.h /usr/include/sys/ttydefaults.h
-cmdtab.o: /usr/include/sys/ttydev.h /usr/include/signal.h
-cmdtab.o: /usr/include/machine/trap.h /usr/include/stdio.h /usr/include/pwd.h
-cmdtab.o: /usr/include/ctype.h /usr/include/setjmp.h /usr/include/errno.h
-cu.o: cu.c tip.h /usr/include/sys/types.h /usr/include/sys/file.h
-cu.o: /usr/include/sgtty.h /usr/include/sys/ioctl.h /usr/include/sys/ttychars.h
-cu.o: /usr/include/sys/ttydefaults.h /usr/include/sys/ttydev.h
-cu.o: /usr/include/signal.h /usr/include/machine/trap.h /usr/include/stdio.h
-cu.o: /usr/include/pwd.h /usr/include/ctype.h /usr/include/setjmp.h
-cu.o: /usr/include/errno.h
-hunt.o: hunt.c tip.h /usr/include/sys/types.h /usr/include/sys/file.h
-hunt.o: /usr/include/sgtty.h /usr/include/sys/ioctl.h
-hunt.o: /usr/include/sys/ttychars.h /usr/include/sys/ttydefaults.h
-hunt.o: /usr/include/sys/ttydev.h /usr/include/signal.h
-hunt.o: /usr/include/machine/trap.h /usr/include/stdio.h /usr/include/pwd.h
-hunt.o: /usr/include/ctype.h /usr/include/setjmp.h /usr/include/errno.h
-log.o: log.c tip.h /usr/include/sys/types.h /usr/include/sys/file.h
-log.o: /usr/include/sgtty.h /usr/include/sys/ioctl.h
-log.o: /usr/include/sys/ttychars.h /usr/include/sys/ttydefaults.h
-log.o: /usr/include/sys/ttydev.h /usr/include/signal.h
-log.o: /usr/include/machine/trap.h /usr/include/stdio.h /usr/include/pwd.h
-log.o: /usr/include/ctype.h /usr/include/setjmp.h /usr/include/errno.h
-partab.o: partab.c
-remcap.o: remcap.c /usr/include/sys/file.h /usr/include/ctype.h
-remote.o: remote.c tip.h /usr/include/sys/types.h /usr/include/sys/file.h
-remote.o: /usr/include/sgtty.h /usr/include/sys/ioctl.h
-remote.o: /usr/include/sys/ttychars.h /usr/include/sys/ttydefaults.h
-remote.o: /usr/include/sys/ttydev.h /usr/include/signal.h
-remote.o: /usr/include/machine/trap.h /usr/include/stdio.h /usr/include/pwd.h
-remote.o: /usr/include/ctype.h /usr/include/setjmp.h /usr/include/errno.h
-tip.o: tip.c tip.h /usr/include/sys/types.h /usr/include/sys/file.h
-tip.o: /usr/include/sgtty.h /usr/include/sys/ioctl.h
-tip.o: /usr/include/sys/ttychars.h /usr/include/sys/ttydefaults.h
-tip.o: /usr/include/sys/ttydev.h /usr/include/signal.h
-tip.o: /usr/include/machine/trap.h /usr/include/stdio.h /usr/include/pwd.h
-tip.o: /usr/include/ctype.h /usr/include/setjmp.h /usr/include/errno.h
-tipout.o: tipout.c tip.h /usr/include/sys/types.h /usr/include/sys/file.h
-tipout.o: /usr/include/sgtty.h /usr/include/sys/ioctl.h
-tipout.o: /usr/include/sys/ttychars.h /usr/include/sys/ttydefaults.h
-tipout.o: /usr/include/sys/ttydev.h /usr/include/signal.h
-tipout.o: /usr/include/machine/trap.h /usr/include/stdio.h /usr/include/pwd.h
-tipout.o: /usr/include/ctype.h /usr/include/setjmp.h /usr/include/errno.h
-uucplock.o: uucplock.c /usr/include/sys/types.h /usr/include/sys/stat.h
-uucplock.o: /usr/include/stdio.h
-value.o: value.c tip.h /usr/include/sys/types.h /usr/include/sys/file.h
-value.o: /usr/include/sgtty.h /usr/include/sys/ioctl.h
-value.o: /usr/include/sys/ttychars.h /usr/include/sys/ttydefaults.h
-value.o: /usr/include/sys/ttydev.h /usr/include/signal.h
-value.o: /usr/include/machine/trap.h /usr/include/stdio.h /usr/include/pwd.h
-value.o: /usr/include/ctype.h /usr/include/setjmp.h /usr/include/errno.h
-vars.o: vars.c tip.h /usr/include/sys/types.h /usr/include/sys/file.h
-vars.o: /usr/include/sgtty.h /usr/include/sys/ioctl.h
-vars.o: /usr/include/sys/ttychars.h /usr/include/sys/ttydefaults.h
-vars.o: /usr/include/sys/ttydev.h /usr/include/signal.h
-vars.o: /usr/include/machine/trap.h /usr/include/stdio.h /usr/include/pwd.h
-vars.o: /usr/include/ctype.h /usr/include/setjmp.h /usr/include/errno.h
-
-# IF YOU PUT ANYTHING HERE IT WILL GO AWAY

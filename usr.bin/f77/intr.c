@@ -1,3 +1,5 @@
+/* "@(#)intr.c 1.1 (2.11BSD) 2026/7/4"; */
+
 #include "defs"
 #include "string_defs"
 
@@ -34,7 +36,6 @@ f3 and going for intrtab.intrval.f2 lines.
 PLWard, Menlo  4/8/80                    */
 
 #define BITFUNC
-
 
 union
 	{
@@ -190,20 +191,32 @@ LOCAL struct intrblock
 "llt",		{ INTRSPEC, TYLOGICAL, 79},
 
 #ifdef BITFUNC
-
-"igetbt",	{ INTRGEN,2, 81},
+"igetbt",	{ INTRGEN, 2, 81},
 "iand",		{ INTRGEN, 2, 83},
 "ieor",		{ INTRGEN, 2, 85},
 "inot",		{ INTRGEN, 2, 87},
 "ior",		{ INTRGEN, 2, 89},
 "ishft",	{ INTRGEN, 2, 91},
 "iputbt",	{ INTRGEN, 2, 93},
-
 #endif
 
 "" };
-
 
+/*
+ * Read carefully the  block of comments at the beginning of the file!
+ *
+ * DO NOT remove/reorder entries in spectab[] without updating intrtab[]
+ *
+ * Entries without an entry in the intrno comment column have no matching
+ * entry in intrtab[].  The comments say the scan starts at f2 for f3 entries.
+ *
+ * NOTE: rtype='TYSHORT' entry must preceed rtype='TYLONG' entry in order for
+
+ *                 if	(tyint==TYLONG && sp->rtype==TYSHORT)
+ *			++sp;
+ *
+ *       in intrcall() to work.
+*/
 LOCAL struct specblock
 	{
 	char atype;
@@ -212,144 +225,144 @@ LOCAL struct specblock
 	char spxname[XL];
 	char othername;	/* index into callbyvalue table */
 	} spectab[ ] =
-{
-	{ TYREAL,TYREAL,1,"r_int" },
-	{ TYDREAL,TYDREAL,1,"d_int" },
+{						/* intrno */
+	{ TYREAL,TYREAL,1,"r_int" },		/* 0 */
 
-	{ TYREAL,TYREAL,1,"r_nint" },
-	{ TYDREAL,TYDREAL,1,"d_nint" },
+	{ TYDREAL,TYDREAL,1,"d_int" },		/* 1 */
 
-	{ TYREAL,TYSHORT,1,"h_nint" },
+	{ TYREAL,TYREAL,1,"r_nint" },		/* 2 */
+
+	{ TYDREAL,TYDREAL,1,"d_nint" },		/* 3 */
+
+	{ TYREAL,TYSHORT,1,"h_nint" },		/* 4 */
 	{ TYREAL,TYLONG,1,"i_nint" },
 
-	{ TYDREAL,TYSHORT,1,"h_dnnt" },
+	{ TYDREAL,TYSHORT,1,"h_dnnt" },		/* 6 */
 	{ TYDREAL,TYLONG,1,"i_dnnt" },
 
-	{ TYREAL,TYREAL,1,"r_abs" },
-	{ TYSHORT,TYSHORT,1,"h_abs" },
+	{ TYREAL,TYREAL,1,"r_abs" },		/* 8 */
+	{ TYSHORT,TYSHORT,1,"h_abs" },		/* 9 */
 	{ TYLONG,TYLONG,1,"i_abs" },
-	{ TYDREAL,TYDREAL,1,"d_abs" },
-	{ TYCOMPLEX,TYREAL,1,"c_abs" },
-	{ TYDCOMPLEX,TYDREAL,1,"z_abs" },
+	{ TYDREAL,TYDREAL,1,"d_abs" },		/* 11 */
+	{ TYCOMPLEX,TYREAL,1,"c_abs" },		/* 12 */
+	{ TYDCOMPLEX,TYDREAL,1,"z_abs" },	/* 13 */
 
-	{ TYSHORT,TYSHORT,2,"h_mod" },
+	{ TYSHORT,TYSHORT,2,"h_mod" },		/* 14 */
 	{ TYLONG,TYLONG,2,"i_mod" },
-	{ TYREAL,TYREAL,2,"r_mod" },
-	{ TYDREAL,TYDREAL,2,"d_mod" },
+	{ TYREAL,TYREAL,2,"r_mod" },		/* 16 */
+	{ TYDREAL,TYDREAL,2,"d_mod" },		/* 17 */
 
-	{ TYREAL,TYREAL,2,"r_sign" },
-	{ TYSHORT,TYSHORT,2,"h_sign" },
+	{ TYREAL,TYREAL,2,"r_sign" },		/* 18 */
+	{ TYSHORT,TYSHORT,2,"h_sign" },		/* 19 */
 	{ TYLONG,TYLONG,2,"i_sign" },
-	{ TYDREAL,TYDREAL,2,"d_sign" },
+	{ TYDREAL,TYDREAL,2,"d_sign" },		/* 21 */
 
-	{ TYREAL,TYREAL,2,"r_dim" },
-	{ TYSHORT,TYSHORT,2,"h_dim" },
+	{ TYREAL,TYREAL,2,"r_dim" },		/* 22 */
+	{ TYSHORT,TYSHORT,2,"h_dim" },		/* 23 */
 	{ TYLONG,TYLONG,2,"i_dim" },
-	{ TYDREAL,TYDREAL,2,"d_dim" },
+	{ TYDREAL,TYDREAL,2,"d_dim" },		/* 25 */
 
-	{ TYREAL,TYDREAL,2,"d_prod" },
+	{ TYREAL,TYDREAL,2,"d_prod" },		/* 26 */
 
-	{ TYCHAR,TYSHORT,1,"h_len" },
+	{ TYCHAR,TYSHORT,1,"h_len" },		/* 27 */
 	{ TYCHAR,TYLONG,1,"i_len" },
 
-	{ TYCHAR,TYSHORT,2,"h_indx" },
+	{ TYCHAR,TYSHORT,2,"h_indx" },		/* 29 */
 	{ TYCHAR,TYLONG,2,"i_indx" },
 
-	{ TYCOMPLEX,TYREAL,1,"r_imag" },
-	{ TYDCOMPLEX,TYDREAL,1,"d_imag" },
-	{ TYCOMPLEX,TYCOMPLEX,1,"r_cnjg" },
-	{ TYDCOMPLEX,TYDCOMPLEX,1,"d_cnjg" },
+	{ TYCOMPLEX,TYREAL,1,"r_imag" },	/* 31 */
+	{ TYDCOMPLEX,TYDREAL,1,"d_imag" },	/* 32 */
 
-	{ TYREAL,TYREAL,1,"r_sqrt", 1 },
-	{ TYDREAL,TYDREAL,1,"d_sqrt", 1 },
-	{ TYCOMPLEX,TYCOMPLEX,1,"c_sqrt" },
-	{ TYDCOMPLEX,TYDCOMPLEX,1,"z_sqrt" },
+	{ TYCOMPLEX,TYCOMPLEX,1,"r_cnjg" },	/* 33 */
+	{ TYDCOMPLEX,TYDCOMPLEX,1,"d_cnjg" },	/* 34 */
 
-	{ TYREAL,TYREAL,1,"r_exp", 2 },
-	{ TYDREAL,TYDREAL,1,"d_exp", 2 },
-	{ TYCOMPLEX,TYCOMPLEX,1,"c_exp" },
-	{ TYDCOMPLEX,TYDCOMPLEX,1,"z_exp" },
+	{ TYREAL,TYREAL,1,"r_sqrt", 1 },	/* 35 */
+	{ TYDREAL,TYDREAL,1,"d_sqrt", 1 },	/* 36 */
+	{ TYCOMPLEX,TYCOMPLEX,1,"c_sqrt" },	/* 37 */
+	{ TYDCOMPLEX,TYDCOMPLEX,1,"z_sqrt" },	/* 38 */
 
-	{ TYREAL,TYREAL,1,"r_log", 3 },
-	{ TYDREAL,TYDREAL,1,"d_log", 3 },
-	{ TYCOMPLEX,TYCOMPLEX,1,"c_log" },
-	{ TYDCOMPLEX,TYDCOMPLEX,1,"z_log" },
+	{ TYREAL,TYREAL,1,"r_exp", 2 },		/* 39 */
+	{ TYDREAL,TYDREAL,1,"d_exp", 2 },	/* 40 */
+	{ TYCOMPLEX,TYCOMPLEX,1,"c_exp" },	/* 41 */
+	{ TYDCOMPLEX,TYDCOMPLEX,1,"z_exp" },	/* 42 */
 
-	{ TYREAL,TYREAL,1,"r_lg10" },
-	{ TYDREAL,TYDREAL,1,"d_lg10" },
+	{ TYREAL,TYREAL,1,"r_log", 3 },		/* 43 */
+	{ TYDREAL,TYDREAL,1,"d_log", 3 },	/* 44 */
+	{ TYCOMPLEX,TYCOMPLEX,1,"c_log" },	/* 45 */
+	{ TYDCOMPLEX,TYDCOMPLEX,1,"z_log" },	/* 46 */
 
-	{ TYREAL,TYREAL,1,"r_sin", 4 },
-	{ TYDREAL,TYDREAL,1,"d_sin", 4 },
-	{ TYCOMPLEX,TYCOMPLEX,1,"c_sin" },
-	{ TYDCOMPLEX,TYDCOMPLEX,1,"z_sin" },
+	{ TYREAL,TYREAL,1,"r_lg10" },		/* 47 */
+	{ TYDREAL,TYDREAL,1,"d_lg10" },		/* 48 */
 
-	{ TYREAL,TYREAL,1,"r_cos", 5 },
-	{ TYDREAL,TYDREAL,1,"d_cos", 5 },
-	{ TYCOMPLEX,TYCOMPLEX,1,"c_cos" },
-	{ TYDCOMPLEX,TYDCOMPLEX,1,"z_cos" },
+	{ TYREAL,TYREAL,1,"r_sin", 4 },		/* 49 */
+	{ TYDREAL,TYDREAL,1,"d_sin", 4 },	/* 50 */
+	{ TYCOMPLEX,TYCOMPLEX,1,"c_sin" },	/* 51 */
+	{ TYDCOMPLEX,TYDCOMPLEX,1,"z_sin" },	/* 52 */
 
-	{ TYREAL,TYREAL,1,"r_tan", 6 },
-	{ TYDREAL,TYDREAL,1,"d_tan", 6 },
+	{ TYREAL,TYREAL,1,"r_cos", 5 },		/* 53 */
+	{ TYDREAL,TYDREAL,1,"d_cos", 5 },	/* 54 */
+	{ TYCOMPLEX,TYCOMPLEX,1,"c_cos" },	/* 55 */
+	{ TYDCOMPLEX,TYDCOMPLEX,1,"z_cos" },	/* 56 */
 
-	{ TYREAL,TYREAL,1,"r_asin", 7 },
-	{ TYDREAL,TYDREAL,1,"d_asin", 7 },
+	{ TYREAL,TYREAL,1,"r_tan", 6 },		/* 57 */
+	{ TYDREAL,TYDREAL,1,"d_tan", 6 },	/* 58 */
 
-	{ TYREAL,TYREAL,1,"r_acos", 8 },
-	{ TYDREAL,TYDREAL,1,"d_acos", 8 },
+	{ TYREAL,TYREAL,1,"r_asin", 7 },	/* 59 */
+	{ TYDREAL,TYDREAL,1,"d_asin", 7 },	/* 60 */
 
-	{ TYREAL,TYREAL,1,"r_atan", 9 },
-	{ TYDREAL,TYDREAL,1,"d_atan", 9 },
+	{ TYREAL,TYREAL,1,"r_acos", 8 },	/* 61 */
+	{ TYDREAL,TYDREAL,1,"d_acos", 8 },	/* 62 */
 
-	{ TYREAL,TYREAL,2,"r_atn2", 10 },
-	{ TYDREAL,TYDREAL,2,"d_atn2", 10 },
+	{ TYREAL,TYREAL,1,"r_atan", 9 },	/* 63 */
+	{ TYDREAL,TYDREAL,1,"d_atan", 9 },	/* 64 */
 
-	{ TYREAL,TYREAL,1,"r_sinh", 11 },
-	{ TYDREAL,TYDREAL,1,"d_sinh", 11 },
+	{ TYREAL,TYREAL,2,"r_atn2", 10 },	/* 65 */
+	{ TYDREAL,TYDREAL,2,"d_atn2", 10 },	/* 66 */
 
-	{ TYREAL,TYREAL,1,"r_cosh", 12 },
-	{ TYDREAL,TYDREAL,1,"d_cosh", 12 },
+	{ TYREAL,TYREAL,1,"r_sinh", 11 },	/* 67 */
+	{ TYDREAL,TYDREAL,1,"d_sinh", 11 },	/* 68 */
 
-	{ TYREAL,TYREAL,1,"r_tanh", 13 },
-	{ TYDREAL,TYDREAL,1,"d_tanh", 13 },
+	{ TYREAL,TYREAL,1,"r_cosh", 12 },	/* 69 */
+	{ TYDREAL,TYDREAL,1,"d_cosh", 12 },	/* 70 */
 
-	{ TYCHAR,TYLOGICAL,2,"hl_ge" },
+	{ TYREAL,TYREAL,1,"r_tanh", 13 },	/* 71 */
+	{ TYDREAL,TYDREAL,1,"d_tanh", 13 },	/* 72 */
+
+	{ TYCHAR,TYLOGICAL,2,"hl_ge" },		/* 73 */
 	{ TYCHAR,TYLOGICAL,2,"l_ge" },
 
-	{ TYCHAR,TYLOGICAL,2,"hl_gt" },
+	{ TYCHAR,TYLOGICAL,2,"hl_gt" },		/* 75 */
 	{ TYCHAR,TYLOGICAL,2,"l_gt" },
 
-	{ TYCHAR,TYLOGICAL,2,"hl_le" },
+	{ TYCHAR,TYLOGICAL,2,"hl_le" },		/* 77 */
 	{ TYCHAR,TYLOGICAL,2,"l_le" },
 
-	{ TYCHAR,TYLOGICAL,2,"hl_lt" },
+	{ TYCHAR,TYLOGICAL,2,"hl_lt" },		/* 79 */
 	{ TYCHAR,TYLOGICAL,2,"l_lt" }
-
 #ifdef BITFUNC
 		,
-
-	{ TYSHORT,TYSHORT,3,"h_getbit" },
+	{ TYSHORT,TYSHORT,3,"h_getbit" },	/* 81 */
 	{ TYLONG,TYLONG,3,"i_getbit" },
-	{ TYSHORT,TYSHORT,2,"h_iand" },
+
+	{ TYSHORT,TYSHORT,2,"h_iand" },		/* 83 */
 	{ TYLONG,TYLONG,2,"i_iand" },
-	{ TYSHORT,TYSHORT,2,"h_ieor" },
+
+	{ TYSHORT,TYSHORT,2,"h_ieor" },		/* 85 */
 	{ TYLONG,TYLONG,2,"i_ieor" },
-	{ TYSHORT,TYSHORT,1,"h_not" },
+
+	{ TYSHORT,TYSHORT,1,"h_not" },		/* 87 */
 	{ TYLONG,TYLONG,1,"i_not" },
-	{ TYSHORT,TYSHORT,2,"h_ior" },
+
+	{ TYSHORT,TYSHORT,2,"h_ior" },		/* 89 */
 	{ TYLONG,TYLONG,2,"i_ior" },
-	{ TYSHORT,TYSHORT,2,"h_ishft" },
+
+	{ TYSHORT,TYSHORT,2,"h_ishft" },	/* 91 */
 	{ TYLONG,TYLONG,2,"i_ishft" },
-	{ TYSHORT,TYSHORT,4,"h_putbit" },
+
+	{ TYSHORT,TYSHORT,4,"h_putbit" },	/* 93 */
 	{ TYLONG,TYLONG,4,"i_putbit" }
-
 #endif
-
 } ;
-
-
-
-
-
 
 char callbyvalue[ ][XL] =
 	{
@@ -367,7 +380,7 @@ char callbyvalue[ ][XL] =
 	"cosh",
 	"tanh"
 	};
-
+
 struct exprblock *intrcall(np, argsp, nargs)
 struct nameblock *np;
 struct listblock *argsp;
@@ -447,7 +460,11 @@ switch(packed.bits.f1)
 		sp = spectab + packed.bits.f3;
 		for(i=0; i<packed.bits.f2 ; ++i)
 			if(sp->atype == mtype)
+				{
+				if	(tyint==TYLONG && sp->rtype==TYSHORT)
+					sp++;
 				goto specfunct;
+				}
 			else
 				++sp;
 		goto badtype;
@@ -514,9 +531,6 @@ bad:
 	return( errnode() );
 }
 
-
-
-
 intrfunct(s)
 char s[VL];
 {
@@ -540,10 +554,6 @@ for(p = intrtab; p->intrval.intrgroup!=INTREND ; ++p)
 
 return(0);
 }
-
-
-
-
 
 struct addrblock *intraddr(np)
 struct nameblock *np;
@@ -578,13 +588,9 @@ switch(packed.bits.f1)
 			varstr(VL,np->varname),0,ERR1);
 		return( errnode() );
 	}
-error("intraddr: impossible f1=%d\n", packed.bits.f1,0,FATAL1);
+error("intraddr: impossible f1=%d", packed.bits.f1,0,FATAL1);
 /* NOTREACHED */
 }
-
-
-
-
 
 struct exprblock *inline(fno, type, args)
 int fno;
@@ -605,7 +611,7 @@ switch(fno)
 			q = NULL;
 			}
 		else
-			t = mktemp(type);
+			t = mktmp(type);
 		t1 = mkexpr(OPQUEST,  mkexpr(OPLE, mkconv(type,ICON(0)), cpexpr(t)),
 			mkexpr(OPCOLON, cpexpr(t),
 				mkexpr(OPNEG, cpexpr(t), NULL) ));

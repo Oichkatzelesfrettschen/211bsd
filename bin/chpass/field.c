@@ -15,9 +15,9 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)field.c	5.8 (Berkeley) 3/16/89";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)field.c	5.9 (2.11BSD) 2026/5/10";
+#endif
 
 #include <sys/param.h>
 #include <pwd.h>
@@ -26,11 +26,11 @@ static char sccsid[] = "@(#)field.c	5.8 (Berkeley) 3/16/89";
 #include <stdio.h>
 #include <ctype.h>
 #include <chpass.h>
-#include "pathnames.h"
+#include <paths.h>
 
 /* ARGSUSED */
 p_login(p, pw, ep)
-	char *p;
+	register char *p;
 	struct passwd *pw;
 	struct entry *ep;
 {

@@ -1,6 +1,6 @@
-#ifndef lint
-static char sccsid[] = "@(#)2.dom.c	4.1	(Berkeley)	2/11/83";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)2.dom.c	4.2	(2.11BSD)	2026/5/9";
+#endif
 
 #include <stdio.h>
 #
@@ -20,8 +20,9 @@ struct list **inarc;
 VERT *dom;
 	{
 	VERT v;
-	int i;
-	struct list *ls;
+	register int i;
+	register struct list *ls;
+
 	for (v = 0; v < nodenum; ++v)
 		dom[v] = UNDEFINED;
 	for (i = 1; i < accessnum; ++i)

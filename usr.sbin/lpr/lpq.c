@@ -4,15 +4,13 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)lpq.c	5.2 (Berkeley) 11/17/85";
-#endif not lint
+static char sccsid[] = "@(#)lpq.c	5.3 (2.11BSD) 2026/5/10";
+#endif
 
 /*
  * Spool Queue examination program

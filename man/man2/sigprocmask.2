@@ -29,40 +29,30 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"	@(#)sigprocmask.2	8.1.1 (2.11BSD) 1997/9/3
+.\"	@(#)sigprocmask.2	8.1.2 (2.11BSD) 2026/9/22
 .\"
 .TH SIGPROCMASK 2 "September 3, 1997"
 .UC 7
 .SH NAME
 \fBsigprocmask\fP \- manipulate current signal mask
 .SH SYNOPSIS
-.B #include <signal.h>
-.sp
-.I int
-.br
-\fBsigprocmask\fP(how, set, oset)
-.br
-.I int how;
-.br
-.I sigset_t *set;
-.br
-.I sigset_t *oset;
-.sp
-.I sigset_t
-.br
-\fBsigmask\fP(signum)
-.br
-.I int signum;
+.nf
+.ft B
+ #include <signal.h>
+
+int
+sigprocmask(\fIint how\fP, \fIsigset_t *set\fP, \fIsigset_t *oset\fP);
+.ft R
+.fi
 .SH DESCRIPTION
-The
 .B sigprocmask
-function examines and/or changes the current signal mask (those signals
+examines and/or changes the current signal mask (those signals
 that are blocked from delivery).
 Signals are blocked if they are members of the current signal mask set.
 .PP
 If
 .I set
-is not null, the action of
+is not NULL, the action of
 .B sigprocmask
 depends on the value of the parameter
 .IR how .
@@ -72,7 +62,7 @@ and the current mask.
 The function is specified by
 .I how
 using one of the following values from
-.RI < signal.h >:
+.RB < signal.h >:
 .TP 20
 SIG_BLOCK
 The new mask is the union of the current mask and the specified
@@ -89,11 +79,11 @@ The current mask is replaced by the specified
 .PP
 If
 .I oset
-is not null, it is set to
+is not NULL, it is set to
 the previous value of the signal mask.
 When
 .I set
-is null,
+is NULL,
 the value of
 .I how
 is insignificant and the mask remains unset
@@ -108,7 +98,7 @@ to be blocked.
 .SH RETURN VALUES
 A 0 value indicated that the call succeeded.  A -1 return value
 indicates an error occurred and
-.I errno
+.B errno
 is set to indicated the reason.
 .SH ERRORS
 The

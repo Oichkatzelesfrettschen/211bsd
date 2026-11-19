@@ -15,7 +15,7 @@ char copyright[] =
 "@(#) Copyright (c) 1986 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)ns_main.c	4.30.1 (2.11BSD) 1996/11/16";
+static char sccsid[] = "@(#)ns_main.c	4.30.2 (2.11BSD) 2026/5/10";
 #endif /* not lint */
 
 /*
@@ -38,6 +38,7 @@ static char sccsid[] = "@(#)ns_main.c	4.30.1 (2.11BSD) 1996/11/16";
 #include <net/if.h>
 #include <stdio.h>
 #include <syslog.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <signal.h>
 #include <netdb.h>
@@ -156,9 +157,9 @@ main(argc, argv, envp)
 	struct netinfo *ntip;
 	struct netinfo *ontp;
 	struct netinfo *ontip;
-	extern int onintr(), maint_alarm(), reapchild(), setdumpflg(), onhup();
-	extern int setIncrDbgFlg(), setNoDbgFlg(), sigprof();
-	extern int setchkptflg(), setstatsflg();
+	extern void onintr(), maint_alarm(), reapchild(), setdumpflg(), onhup();
+	extern void setIncrDbgFlg(), setNoDbgFlg(), sigprof();
+	extern void setchkptflg(), setstatsflg();
 	extern struct qstream *sqadd();
 	extern struct qinfo *qhead; 
 	extern char Version[];
@@ -902,6 +903,7 @@ maint_alarm()
  * Signal handler to schedule shutdown.  Just set flag, to ensure a consistent
  * state during dump.
  */
+void
 onintr()
 {
         needToExit = 1;
@@ -1029,7 +1031,7 @@ setstatsflg()
 	needStatsDump = 1;
 }
 
-int setchkptflg()
+void setchkptflg()
 {
 #if defined(SYSV)
 	(void)signal(SIGQUIT, setchkptflg);
@@ -1044,6 +1046,7 @@ int setchkptflg()
 **   and keep the server running
 */
 
+void
 sigprof()
 {
 #if defined(SYSV)

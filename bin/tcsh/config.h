@@ -1,9 +1,9 @@
 /*
+ *       @(#)config.h 2.0 (2.11BSD) 2026/6/1
+ *
  * config.h -- configure various defines for tcsh
  *
  * All source files should #include this FIRST.
- *
- * Edit this to match your system type.
  */
 
 /****************** System dependant compilation flags ****************/
@@ -68,40 +68,10 @@
 #undef TERMIO
 
 /*
- * SVID		Your machine is SVID complient (Sys V, HPUX, A/UX)
- *		NOTE: don't do this if you are on a Pyramid -- tcsh is
- *		built in a BSD universe.
- *		Set SVID to 1, 2, or 3, depending the version of System V
- *		you are running. Or set it to 0 if you are not SVID based
- */
-#define SVID	0
-
-/*
- * YPBUGS	Work around Sun YP bugs that cause expansion of ~username
- *		to send command output to /dev/null
- */
-#undef YPBUGS
-
-/*
- * SIGVOID	Define this if your signal handlers return void.  On older
- *		systems, signal returns int, but on newer ones, it returns void.
- */
-#undef SIGVOID 
-
-/*
- * DUP2		Define this if your system supports dup2().
- */
-#define DUP2
-
-/*
  * UTHOST	Does the utmp file have a host field?
  */
 #define UTHOST
 
-/*
- * DIRENT	Your system has <dirent.h> instead of <sys/dir.h>
- */
-#undef DIRENT
 /****************** local defines *********************/
 /****************** configurable hacks ****************/
 /* have been moved to config_f.h */

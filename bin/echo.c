@@ -1,4 +1,7 @@
-static char *sccsid = "@(#)echo.c	4.2 (Berkeley) 5/27/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)echo.c	4.3 (2.11BSD) 2026/5/7";
+#endif
+
 #include <stdio.h>
 
 main(argc, argv)

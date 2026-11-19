@@ -1,4 +1,7 @@
-static char *sccsid = "@(#)sum.c	4.1 (Berkeley) 10/1/80";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)sum.c	4.2 (2.11BSD) 2026/5/8";
+#endif
+
 /*
  * Sum bytes in file mod 2^16
  */
@@ -11,7 +14,7 @@ char **argv;
 	register unsigned sum;
 	register i, c;
 	register FILE *f;
-	register long nbytes;
+	long nbytes;
 	int errflg = 0;
 
 	i = 1;

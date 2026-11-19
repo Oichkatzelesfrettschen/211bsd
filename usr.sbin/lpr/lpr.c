@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)lpr.c	5.2.1 (2.11BSD GTE) 12/31/93";
+static char sccsid[] = "@(#)lpr.c	5.2.2 (2.11BSD) 2026/9/22";
 #endif
 
 /*
@@ -69,7 +69,7 @@ short	SC;			/* suppress multiple copies */
 char	*getenv();
 char	*rindex();
 char	*linked();
-int	cleanup();
+void	cleanup();
 
 /*ARGSUSED*/
 main(argc, argv)
@@ -467,6 +467,7 @@ nfile(n)
 /*
  * Cleanup after interrupts and errors.
  */
+void
 cleanup()
 {
 	register i;

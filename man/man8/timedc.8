@@ -3,7 +3,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)timedc.8	6.1.1 (2.11BSD) 1996/11/17
+.\"	@(#)timedc.8	6.1.2 (2.11BSD) 2026/9/28
 .\"
 .TH TIMEDC 8 "November 17, 1996"
 .UC 6
@@ -14,7 +14,7 @@ timedc \- timed control program
 .B timedc
 [ command [ argument ... ] ]
 .SH DESCRIPTION
-.I Timedc
+.B timedc
 is used to control the operation of the \fItimed\fP program.
 It may be used to:
 .IP \(bu
@@ -27,14 +27,14 @@ enable or disable tracing of messages received by \fItimed\fP, and
 perform various debugging actions.
 .PP
 Without any arguments,
-.I timedc
+.B timedc
 will prompt for commands from the standard input.
 If arguments are supplied,
-.IR timedc
+.B timedc
 interprets the first argument as a command and the remaining
 arguments as parameters to the command.  The standard input
 may be redirected causing
-.I timedc
+.B timedc
 to read commands from a file.
 Commands may be abbreviated;
 recognized commands are:
@@ -61,7 +61,7 @@ quit
 Exit from timedc.
 .PP
 Other commands may be included for use in testing and debugging
-.IR timed ;
+.BR timed ;
 the help command and
 the program source may be consulted for details.
 .SH FILES
@@ -71,7 +71,7 @@ the program source may be consulted for details.
 /usr/adm/timed.masterlog	log file for master timed
 .fi
 .SH "SEE ALSO"
-date(1), adjtime(2), icmp(4P), timed(8), 
+date(1), adjtime(2), icmp(4), timed(8), 
 .br
 \fITSP: The Time Synchronization Protocol for UNIX 4.3BSD\fP, 
 R. Gusella and S. Zatti

@@ -2,31 +2,37 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)sync.2	6.2 (Berkeley) 6/30/85
+.\"	@(#)sync.2	6.3 (2.11BSD) 2026/9/23
 .\"
 .TH SYNC 2 "June 30, 1985"
 .UC 4
 .SH NAME
 sync \- update super-block
 .SH SYNOPSIS
-.B sync()
+.nf
+.ft B
+#include <unistd.h>
+
+void
+sync(\fIvoid\fP)
 .SH DESCRIPTION
-.I Sync
+.B sync
 causes all information in core
 memory that should be on disk to be written out.
 This includes modified super blocks,
 modified i-nodes, and delayed block I/O.
 .PP
-.I Sync
+.B sync
 should be used by programs that examine a file system,
 for example
-.I "fsck, df,"
-etc.
-.I Sync
-is mandatory before a boot.
+.BR fsck (8) .
+.PP
+.B sync
+is mandatory before 
+.BR halt (8) .
 .SH "SEE ALSO"
 fsync(2), sync(8), update(8)
 .SH BUGS
 The writing, although scheduled, is not necessarily
 complete upon return from 
-.IR sync .
+.BR sync .

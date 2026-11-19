@@ -1,6 +1,6 @@
-#ifndef lint
-static char sccsid[] = "@(#)1.node.c	4.1	(Berkeley)	2/11/83";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)1.node.c	4.2	(2.11BSD)	2026/5/9";
+#endif
 
 #include <stdio.h>
 #include "def.h"
@@ -11,7 +11,7 @@ LOGICAL addimp,addcom;
 int type, arctype[], arcnum;
 long arclab[], labe;
 	{
-	int i;
+	register int i;
 	VERT num;
 	
 	ASSERT(arcsper[type] < 0 || arcnum == arcsper[type], makenode);

@@ -1,14 +1,12 @@
-#ifndef lint
-static char sccsid[] = "@(#)cmd.c	4.2 8/11/83";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)cmd.c	4.3 (2.11BSD) 2026/5/11";
 #endif
 
-#
 /*
  * UNIX shell
  *
  * S. R. Bourne
  * Bell Telephone Laboratories
- *
  */
 
 #include	"defs.h"
@@ -26,11 +24,7 @@ PROC VOID	skipnl();
 PROC VOID	prsym();
 PROC VOID	synbad();
 
-
 /* ========	command line decoding	========*/
-
-
-
 
 TREPTR	makefork(flgs, i)
 	INT		flgs;
@@ -60,7 +54,7 @@ LOCAL TREPTR	makelist(type,i,r)
 
 /*
  * cmd
- *	empty
+  	empty
  *	list
  *	list & [ cmd ]
  *	list [ ; cmd ]

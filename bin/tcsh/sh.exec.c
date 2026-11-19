@@ -1,4 +1,3 @@
-/* $Header: /home/hyperion/mu/christos/src/sys/tcsh-6.00/RCS/sh.exec.c,v 3.0 1991/07/04 21:49:28 christos Exp $ */
 /*
  * sh.exec.c: Search, find, and execute a command!
  */
@@ -35,9 +34,9 @@
  * SUCH DAMAGE.
  */
 #include "config.h"
-#if !defined(lint) && !defined(pdp11)
+#if !defined(lint) && defined(DOSCCS)
 static char *rcsid() 
-    { return "$Id: sh.exec.c,v 3.0 1991/07/04 21:49:28 christos Exp $"; }
+    { return "$Id: sh.exec.c,v 3.1 2026/6/1 21:49:28 (2.11BSD) Exp $"; }
 #endif
 
 #include "sh.h"
@@ -189,12 +188,7 @@ doexec(t)
      * We must do this AFTER any possible forking (like `foo` in glob) so that
      * this shell can still do subprocesses.
      */
-#ifdef BSDSIGS
     (void) sigsetmask((sigmask_t) 0);
-#else				/* BSDSIGS */
-    (void) sigrelse(SIGINT);
-    (void) sigrelse(SIGCHLD);
-#endif				/* BSDSIGS */
 
     /*
      * If no path, no words in path, or a / in the filename then restrict the
@@ -301,18 +295,6 @@ texec(sf, st)
     Vt = t;
 #endif
     errno = 0;			/* don't use a previous error */
-#ifdef apollo
-    /*
-     * If we try to execute an nfs mounted directory on the apollo, we
-     * hang forever. So until apollo fixes that..
-     */
-    {
-	struct stat stb;
-	if (stat(f, &stb) == 0 && S_ISDIR(stb.st_mode))
-	    errno = EISDIR;
-    }
-    if (errno == 0)
-#endif
     (void) execv(f, t);
 #ifdef VFORK
     Vt = 0;
@@ -442,11 +424,8 @@ xechoit(t)
 void
 dohash()
 {
-#ifdef COMMENT
-    struct stat stb;
-#endif
     DIR    *dirp;
-    register struct dirent *dp;
+    register struct direct *dp;
     register int cnt;
     int     i = 0;
     struct varent *v = adrof(STRpath);
@@ -465,13 +444,6 @@ dohash()
 	dirp = opendir(short2str(*pv));
 	if (dirp == NULL)
 	    continue;
-#ifdef COMMENT			/* this isn't needed.  opendir won't open
-				 * non-dirs */
-	if (fstat(dirp->dd_fd, &stb) < 0 || !S_ISDIR(stb.st_mode)) {
-	    (void) closedir(dirp);
-	    continue;
-	}
-#endif
 	while ((dp = readdir(dirp)) != NULL) {
 	    if (dp->d_ino == 0)
 		continue;
@@ -518,7 +490,7 @@ hashname(cp)
     return ((int) h);
 }
 
-int
+static int
 iscommand(name)
     Char   *name;
 {

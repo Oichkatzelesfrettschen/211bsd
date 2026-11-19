@@ -100,6 +100,7 @@ tapsrec(blkno)
 
 int	nogripe = 0;
 
+void
 tperror() {
 	if (pipeout) {
 		msg("Tape write error on %s\n", tape);
@@ -120,6 +121,7 @@ tperror() {
 	Exit(X_REWRITE);
 }
 
+void
 sigpipe()
 {
 
@@ -202,7 +204,7 @@ otape()
 	int	childpid;
 	int	status;
 	int	waitpid;
-	int	(*interrupt)() = signal(SIGINT, SIG_IGN);
+	sig_t	interrupt = signal(SIGINT, SIG_IGN);
 
 	parentpid = getpid();
 
@@ -298,6 +300,7 @@ otape()
 	}
 }
 
+void
 dumpabort()
 {
 	if (master != 0 && master != getpid())

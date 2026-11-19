@@ -2,38 +2,40 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)dbm.3x	6.3 (Berkeley) 5/12/86
+.\"	@(#)dbm.3	6.4 (2.11BSD) 2026/9/27
 .\"
-.TH DBM 3X  "May 12, 1986"
+.TH DBM 3  "May 12, 1986"
 .UC 4
 .SH NAME
 dbminit, fetch, store, delete, firstkey, nextkey \- data base subroutines
 .SH SYNOPSIS
 .nf
-.PP
-.B "#include <dbm.h>"
-.PP
-.B typedef struct {
-.B "	char *dptr;"
-.B "	int dsize;"
-.B } datum;
-.PP
-.B dbminit(file)
-.B char *file;
-.PP
-.B datum fetch(key)
-.B datum key;
-.PP
-.B store(key, content)
-.B datum key, content;
-.PP
-.B delete(key)
-.B datum key;
-.PP
-.B datum firstkey()
-.PP
-.B datum nextkey(key)
-.B datum key;
+.ft B
+#include <dbm.h>
+
+typedef struct {
+	char *dptr;
+	int dsize;
+        } datum;
+
+dbminit(file)
+        char *file;
+
+datum fetch(key)
+      datum key;
+
+store(key, content)
+      datum key, content;
+
+delete(key)
+       datum key;
+
+datum firstkey()
+
+datum nextkey(key)
+      datum key;
+.ft R
+.fi
 .SH DESCRIPTION
 .ft B
 Note: the dbm library has been superceded by ndbm(3),
@@ -62,7 +64,7 @@ One file is a directory containing a bit map and has `.dir' as its suffix.
 The second file contains all data and has `.pag' as its suffix.
 .PP
 Before a database can be accessed, it must be opened by
-.I dbminit.
+.BR dbminit.
 At the time of this call, the files
 .IB file .dir
 and
@@ -72,19 +74,19 @@ must exist.
 `.dir' and `.pag' files.)
 .PP
 Once open, the data stored under a key is accessed by
-.I fetch
+.B fetch
 and data is placed under a key by
-.IR store .
+.BR store .
 A key (and its associated contents) is deleted by
-.IR delete .
+.BR delete .
 A linear pass through all keys in a database may be made,
 in an (apparently) random order, by use of
-.I firstkey
+.B firstkey
 and
-.IR nextkey .
-.I Firstkey
+.BR nextkey .
+.B firstkey
 will return the first key in the database.  With any key
-.I nextkey
+.B nextkey
 will return the next key in the database.
 This code will traverse the data base:
 .IP
@@ -106,22 +108,22 @@ four times its actual content.  Older UNIX systems may create real
 file blocks for these holes when touched.  These files cannot be copied
 by normal means (cp, cat, tp, tar, ar) without filling in the holes.
 .PP
-.I Dptr
+.I dptr
 pointers returned by these subroutines point into static storage
 that is changed by subsequent calls.
 .PP
 The sum of the sizes of a key/content pair must not exceed
 the internal block size (currently 1024 bytes).
 Moreover all key/content pairs that hash together must fit on a single block.
-.I Store
+.B store
 will return an error in the event that a disk block fills with inseparable data.
 .PP
-.I Delete
+.B delete
 does not physically reclaim file space,
 although it does make it available for reuse.
 .PP
 The order of keys presented by
-.I firstkey
+.B firstkey
 and
-.I nextkey
+.B nextkey
 depends on a hashing function, not on anything interesting.

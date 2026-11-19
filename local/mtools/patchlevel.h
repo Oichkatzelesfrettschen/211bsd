@@ -1,5 +1,5 @@
-#define VERSION	"2.0.5"
-#define DATE	"25 Aug 91"
+#define VERSION	"2.1"
+#define DATE	"21 Mar 2026"
 
 /*
  * Version 1.0		13 Oct 86
@@ -15,4 +15,5 @@
  *  patch #3		28 Nov 90
  *  patch #4		11 Apr 91
  *  patch #5		25 Aug 91
+ * Version 2.1          21 Mar 26
  */

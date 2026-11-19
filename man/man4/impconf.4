@@ -2,12 +2,12 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)imp.4	6.2 (Berkeley) 8/2/87
+.\"	@(#)impconf.4	6.3 (2.11BSD) 2026/9/28
 .\"
-.TH IMP 4 "August 2, 1987"
+.TH IMPCONF 4 "August 2, 1987"
 .UC 2
 .SH NAME
-imp \- 1822 network interface
+impconf \- 1822 network interface
 .SH SYNOPSIS
 .ft B
 .nf
@@ -17,7 +17,7 @@ imp \- 1822 network interface
 .ft R
 .SH DESCRIPTION
 The 
-.I imp
+.B imp
 interface, as described in BBN Report 1822, provides access to an
 intelligent message processor normally used when participating
 in the Department of Defense ARPA network.  The network interface
@@ -26,10 +26,8 @@ or a DEC IMP-11A, with the IMP.  The interface is \*(lqreliable\*(rq and
 \*(lqflow-controlled\*(rq by the host-IMP protocol.
 .PP
 To configure IMP support, at least one of 
-.IR acc (4),
-.IR css (4)
-or
-.IR hdh (4)
+.BR acc (4),
+.BR css (4)
 must be included.
 The
 .I count
@@ -105,10 +103,9 @@ NOOP messages, that it is back up.
 a message with addresses formatting in an unsuitable address
 family; the packet was dropped.
 .SH SEE ALSO
-intro(4N),
-inet(4F),
+intro(4),
+inet(4),
 acc(4),
 css(4),
-hdh(4),
 implog(8),
 implogd(8)

@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)alarm_.c	5.1	6/7/85
+ *	@(#)alarm_.c	5.2 (2.11BSD) 2026/9/22
  */
 
 /*
@@ -24,7 +24,7 @@
 
 long alarm_(sec, proc)
 long	*sec;
-int	(* proc)();
+sig_t proc;
 {
 	register long	lt;
 

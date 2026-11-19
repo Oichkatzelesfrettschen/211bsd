@@ -10,9 +10,9 @@
  * is provided ``as is'' without express or implied warranty.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)ns_req.c	4.32 (Berkeley) 3/31/88";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ns_req.c	4.33 (2.11BSD) 2026/5/10";
+#endif
 
 #include <stdio.h>
 #include <sys/param.h>
@@ -22,6 +22,7 @@ static char sccsid[] = "@(#)ns_req.c	4.32 (Berkeley) 3/31/88";
 #include <netinet/in.h>
 #include <syslog.h>
 #include <sys/file.h>
+#include <errno.h>
 #include <arpa/nameser.h>
 #include "ns.h"
 #include "db.h"
@@ -46,7 +47,7 @@ u_char	*dnptrs[20];		/* ptrs to dnames in message for dn_comp */
 extern time_t retrytime();
 extern struct qinfo *sysquery();
 extern char *localdomain;	/* XXX */
-extern int errno;
+
 /*
  * Process request using database; assemble and send response.
  */

@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)get_addrs.c	5.2 (Berkeley) 3/13/86";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)get_addrs.c	5.3 (2.11BSD) 2026/5/9";
+#endif
 
 #include "talk_ctl.h"
 #include <netdb.h>

@@ -9,7 +9,7 @@ char *copyright =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char *sccsid = "@(#)ex.c	7.5.1.1 (Berkeley) 8/12/86";
+static char *sccsid = "@(#)ex.c	7.5.1.2 (2.11BSD) 2026/9/22";
 #endif not lint
 
 #include "ex.h"
@@ -93,7 +93,7 @@ main(ac, av)
 	bool ivis;
 	bool itag = 0;
 	bool fast = 0;
-	extern int onemt();
+	extern void onemt();
 #ifdef TRACE
 	register char *tracef;
 #endif

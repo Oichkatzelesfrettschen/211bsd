@@ -2,10 +2,10 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)@(#)ualarm.3	6.4 (Berkeley) 8/26/88
+.\"	@(#)@(#)ualarm.3	6.5 (2.11BSD) 2026/9/19
 .\"
 .TH UALARM 3  "August 26, 1988"
-.UC 6
+.UC 2
 .SH NAME
 ualarm \- schedule signal after specified time
 .SH SYNOPSIS
@@ -19,9 +19,9 @@ ualarm \- schedule signal after specified time
 This is a simplified interface to setitimer(2).
 .ft R
 .PP
-.I Ualarm
+.B ualarm
 causes signal SIGALRM, see
-.IR signal (3C),
+.IR signal (3),
 to be sent to the invoking process
 in a number of microseconds given by the
 .I value
@@ -40,16 +40,15 @@ microseconds have passed).
 Because of scheduling delays,
 resumption of execution of when the signal is
 caught may be delayed an arbitrary amount.
-The longest specifiable delay time (on the vax) is 2147483647 microseconds.
+The longest specifiable delay time is 65535 microseconds which is about 3
+ticks of a 50 or 60Hz clock.
 .PP
 The return value is the amount of time previously remaining in the alarm clock.
 .SH "SEE ALSO"
-getitimer(2), setitimer(2), sigpause(2), sigvec(2), signal(3C), sleep(3),
-alarm(3), usleep(3)
-.SH "NOTES  (PDP-11)"
+getitimer(2), setitimer(2), signal(3), sleep(3), alarm(3), usleep(3)
+.SH NOTES
 On the PDP-11,
 .IR setitimer (2)
 rounds the number of microseconds up to seconds resolution, therefore
-.I ualarm
-doesn't give you any more resolution than
-.IR alarm (3).
+.B ualarm
+gives only 1 second of resolution.

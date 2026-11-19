@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)hayes.c	5.1 (Berkeley) 4/30/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)hayes.c	5.2 (2.11BSD) 2026/5/9";
+#endif
 
 /*
  * Routines for calling up on a Hayes Modem
@@ -35,7 +35,7 @@ static char sccsid[] = "@(#)hayes.c	5.1 (Berkeley) 4/30/85";
 
 #define	min(a,b)	((a < b) ? a : b)
 
-static	int sigALRM();
+static	void sigALRM();
 static	int timeout = 0;
 static	jmp_buf timeoutbuf;
 static 	char gobble();
@@ -123,7 +123,7 @@ hay_abort()
 	hay_disconnect();
 }
 
-static int
+static void
 sigALRM()
 {
 
@@ -137,7 +137,7 @@ gobble(match)
 	register char *match;
 {
 	char c;
-	int (*f)();
+	sig_t f;
 	int i, status = 0;
 
 	f = signal(SIGALRM, sigALRM);

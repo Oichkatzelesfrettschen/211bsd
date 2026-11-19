@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)ttoutput.c	3.4 9/19/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ttoutput.c	3.5 (2.11BSD) 2026/5/9";
 #endif
 
 /*
@@ -21,7 +21,6 @@ ttflush()
 {
 	register char *p;
 	register n;
-	extern errno;
 
 	wwnflush++;
 	for (p = tt_ob; p < tt_obp;) {

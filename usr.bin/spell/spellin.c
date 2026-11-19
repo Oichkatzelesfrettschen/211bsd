@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)spellin.c	4.1 12/18/82";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)spellin.c	4.2 (2.11BSD) 2026/5/8";
 #endif
 
 #include "spell.h"
@@ -32,9 +32,6 @@ char **argv;
 			set(h);
 		}
 	}
-#ifdef gcos
-	freopen((char *)NULL, "wi", stdout);
-#endif
 	if (fwrite((char *)tab, sizeof(*tab), TABSIZE, stdout) != TABSIZE) {
 		fprintf(stderr,
 		    "spellin: trouble writing hash table\n");

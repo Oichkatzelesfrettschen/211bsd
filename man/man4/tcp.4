@@ -2,18 +2,21 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)tcp.4p	6.2 (Berkeley) 5/16/86
+.\"	@(#)tcp.4	6.3 (2.11BSD) 2026/9/28
 .\"
-.TH TCP 4P "May 16, 1986"
+.TH TCP 4 "May 16, 1986"
 .UC 5
 .SH NAME
 tcp \- Internet Transmission Control Protocol
 .SH SYNOPSIS
-.B #include <sys/socket.h>
-.br
-.B #include <netinet/in.h>
-.PP
-.B s = socket(AF_INET, SOCK_STREAM, 0);
+.nf
+.ft B
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+socket(AF_INET, SOCK_STREAM, 0);
+.ft R
+.fi
 .SH DESCRIPTION
 The TCP protocol provides reliable, flow-controlled, two-way
 transmission of data.  It is a byte-stream protocol used to
@@ -27,16 +30,16 @@ Sockets utilizing the tcp protocol are either \*(lqactive\*(rq or
 \*(lqpassive\*(rq.  Active sockets initiate connections to passive
 sockets.  By default TCP sockets are created active; to create a
 passive socket the
-.IR listen (2)
+.BR listen (2)
 system call must be used
 after binding the socket with the
-.IR bind (2)
+.BR bind (2)
 system call.  Only
 passive sockets may use the 
-.IR accept (2)
+.BR accept (2)
 call to accept incoming connections.  Only active sockets may
 use the
-.IR connect (2)
+.BR connect (2)
 call to initiate connections.
 .PP
 Passive sockets may \*(lqunderspecify\*(rq their location to match
@@ -54,9 +57,9 @@ through which packets are being transmitted and received.  Normally
 this address corresponds to the peer entity's network.
 .PP
 TCP supports one socket option which is set with
-.IR setsockopt (2)
+.BR setsockopt (2)
 and tested with
-.IR getsockopt (2).
+.BR getsockopt (2).
 Under most circumstances, TCP sends data when it is presented;
 when outstanding data has not yet been acknowledged, it gathers
 small amounts of output to be sent in a single packet once
@@ -68,13 +71,13 @@ Therefore, TCP provides a boolean option, TCP_NODELAY (from
 .IR <netinet/tcp.h> ,
 to defeat this algorithm.
 The option level for the
-.I setsockopt
+.B setsockopt
 call is the protocol number for TCP,
 available from
-.IR getprotobyname (3N).
+.BR getprotobyname (3).
 .PP
 Options at the IP transport level may be used with TCP; see
-.IR ip (4P).
+.BR ip (4).
 Incoming connection requests that are source-routed are noted,
 and the reverse source route is used in responding.
 .SH DIAGNOSTICS
@@ -111,4 +114,4 @@ when an attempt is made to create a
 socket with a network address for which no network interface
 exists.
 .SH SEE ALSO
-getsockopt(2), socket(2), intro(4N), inet(4F), ip(4P)
+getsockopt(2), socket(2), intro(4), inet(4), ip(4)

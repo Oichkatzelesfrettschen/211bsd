@@ -1,10 +1,11 @@
-#ifndef lint
-static char sccsid[] = "@(#)mem.c	4.3	(Berkeley)	5/15/86";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)mem.c	4.4	(2.11BSD)	2026/5/8";
+#endif
 
-# include "stdio.h"
-# include "lrnref.h"
-# define SAME 0
+#include <stdio.h>
+#include "lrnref.h"
+
+#define SAME 0
 
 struct keys {
 	char *k_wd;

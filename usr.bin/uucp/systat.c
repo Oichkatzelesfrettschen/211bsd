@@ -1,13 +1,11 @@
-#ifndef lint
-static char sccsid[] = "@(#)systat.c	5.4 (Berkeley) 6/23/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)systat.c	5.5 (2.11BSD) 2026/5/9";
 #endif
 
 #include "uucp.h"
 
 #define STATNAME(f, n) sprintf(f, "%s/%s/%s", Spool, "STST", n)
 #define S_SIZE 100
-
-/*LINTLIBRARY*/
 
 /*
  *	make system status entry
@@ -55,9 +53,6 @@ int type;
 	}
 
 
-#ifdef VMS
-	unlink(filename);
-#endif VMS
 	fp = fopen(filename, "w");
 	ASSERT(fp != NULL, "SYSTAT OPEN FAIL", filename, 0);
 	fprintf(fp, "%d %d %ld %ld %s %s\n", type, count, prestime, rtry, text, name);

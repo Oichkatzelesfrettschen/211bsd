@@ -1,22 +1,17 @@
-#       Makefile        2.0 (2.11BSD) 2025/11/25
+#       Makefile        2.1 (2.11BSD) 2026/7/11
 
 DATFILES=brd.dat mon.dat prop.dat
 CFILES=	monop.c cards.c execute.c getinp.c houses.c jail.c misc.c morg.c \
 	print.c prop.c rent.c roll.c spec.c strcmp.c trade.c
 OBJS=	monop.o cards.o execute.o getinp.o houses.o jail.o misc.o morg.o \
 	print.o prop.o rent.o roll.o spec.o strcmp.o trade.o strings.o
-HEADERS=monop.h deck.h
 BINDIR=	/usr/games
 LIBDIR=	/usr/games/lib
-LIB=
 LDFLAGS= -i
 CFLAGS=	-O -w
 DAT=	brd.dat monop.dat prop.dat
 CC=	cc
 XSTR=	xstr
-ED=	ed
-AS=	as
-RM=	rm -f
 CTAGS=	ctags
 
 #
@@ -27,24 +22,20 @@ CTAGS=	ctags
 	${CC} -c ${CFLAGS} x.c
 	mv x.o $*.o
 
-it:	monop cards.pck
+all:	monop cards.pck
 
 monop:	${OBJS}
-	${CC} -o monop ${LDFLAGS} ${OBJS} ${LIB}
+	${CC} -o monop ${LDFLAGS} ${OBJS}
 
 install: monop cards.pck
-	${RM} ${BINDIR}/monop ${LIBDIR}/cards.pck
+	rm -f ${BINDIR}/monop ${LIBDIR}/cards.pck
 	install -c -s -m 755 monop ${BINDIR}
 	mv cards.pck ${LIBDIR}
 
-new:	clean ctags monop
-
 strings.o: strings
 	${XSTR}
-	${CC} -S xs.c
-	${ED} - < :rofix xs.s
-	${AS} -o strings.o xs.s
-	${RM} xs.s xs.c
+	${CC} -c -o strings.o xs.c
+	rm -f xs.c
 
 monop.o: ${DATFILES} monop.def
 	${CC} -E ${CFLAGS} monop.c | ${XSTR} -c -
@@ -56,9 +47,6 @@ cards.o: deck.h
 	${CC} -c ${CFLAGS} x.c
 	mv x.o cards.o
 
-newone:
-	${CC} ${LDFLAGS} -o monop ${CFLAGS} ${CFILES} ${LIB}
-
 ctags:
 	${CTAGS} ${CFILES} monop.h deck.h monop.def initdeck.c
 
@@ -66,18 +54,7 @@ cards.pck: initdeck cards.inp
 	./initdeck
 
 initdeck: initdeck.c deck.h
-	${CC} -o initdeck ${CFLAGS} initdeck.c ${LIB}
-
-monop.tar:
-	tar crvf monop.tar ${CFILES} ${DATFILES} ${HEADERS} :rofix Makefile cards.inp initdeck.c monop.def monop.ext
+	${CC} -o initdeck ${CFLAGS} initdeck.c
 
 clean:
-	${RM} ${OBJS} monop core tags x.c x.o monop.tar initdeck cards.pck errs
-	cp /dev/null strings
-
-printall:
-	-/usr/bin/eecs/pr monop.h deck.h monop.def monop.ext ${CFILES} ${DATFILES} | /usr/bin/lpr
-	-/usr/bin/lpq
-
-lint:
-	lint ${CFILES} > lint.out ;
+	rm -f ${OBJS} monop tags x.c x.o monop.tar initdeck cards.pck errs strings

@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)defs.h	5.3.2 (2.11BSD GTE) 1996/3/22
+ *	@(#)defs.h	5.3.3 (2.11BSD) 2026/9/22
  */
 
 /*
@@ -62,6 +62,6 @@ char	*malloc();
 int	exit();
 int	sendmsg();
 int	supply();
-int	timer();
+void	timer();
 int	cleanup();
 time_t	time();

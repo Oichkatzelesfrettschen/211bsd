@@ -16,15 +16,15 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)logwtmp.c	5.3 (Berkeley) 4/2/89";
-#endif /* LIBC_SCCS and not lint */
+static char sccsid[] = "@(#)logwtmp.c	5.4 (2.11BSD) 2026/5/30";
+#endif
 
 #include <sys/types.h>
 #include <sys/file.h>
 #include <sys/time.h>
 #include <sys/stat.h>
+#include <strings.h>
 #include <utmp.h>
-#include "pathnames.h"
 
 logwtmp(line, name, host)
 	char *line, *name, *host;
@@ -32,8 +32,6 @@ logwtmp(line, name, host)
 	struct utmp ut;
 	struct stat buf;
 	int fd;
-	time_t time();
-	char *strncpy();
 
 	if ((fd = open(_PATH_WTMP, O_WRONLY|O_APPEND, 0)) < 0)
 		return;

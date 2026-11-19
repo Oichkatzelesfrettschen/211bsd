@@ -4,8 +4,8 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)version.c	5.1 (Berkeley) 5/29/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)version.c     5.2 (2.11BSD) 2026/5/12";
+#endif
 
 char version[] = "Wooden Ships and Iron Men, Version 5.1 (85/05/29)";

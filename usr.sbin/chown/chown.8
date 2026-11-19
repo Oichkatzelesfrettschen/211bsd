@@ -2,9 +2,9 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)chown.8	6.2.1 (2.11BSD) 1996/11/17
+.\"	@(#)chown.8	6.2.2 (2.11BSD) 2026/2/1
 .\"
-.TH CHOWN 8 "May 22, 1986"
+.TH CHOWN 8 "February 2, 2026"
 .UC 4
 .SH NAME
 chown \- change owner
@@ -14,9 +14,9 @@ chown \- change owner
 .B \-f
 .B \-R
 ]
-owner[.group] file ...
+owner[:group] file ...
 .SH DESCRIPTION
-.I Chown
+.I chown
 changes the owner of the
 .I files
 to
@@ -27,8 +27,8 @@ An optional group may also be specified.
 The group may be either a decimal GID or
 a group name found in the group-ID file.
 .PP
-Only the super-user can change owner,
-in order to simplify accounting procedures.
+Only the super-user can change owner.
+.sp
 No errors are reported when the
 .B \-f
 (force) option is given.
@@ -41,6 +41,10 @@ recursively descends its directory arguments
 setting the specified owner.
 When symbolic links are encountered, their ownership is changed,
 but they are not traversed.
+.PP
+The old form "owner[.group] file ..." is supported for compatibility with 
+existing Makefiles and scripts.  Allowing \fB.\fP to be used this way
+precludes having \fB.\fP in a username.
 .SH FILES
 /etc/passwd
 .SH "SEE ALSO"

@@ -1,16 +1,12 @@
-#ifndef lint
-static char sccsid[] = "@(#)uuclean.c	5.6 (Berkeley) 10/9/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)uuclean.c	5.7 (2.11BSD) 2026/5/9";
 #endif
 
 #include <signal.h>
 #include "uucp.h"
 #include <pwd.h>
 #include <sys/stat.h>
-#ifdef	NDIR
-#include "ndir.h"
-#else
 #include <sys/dir.h>
-#endif
 
 /*
  *

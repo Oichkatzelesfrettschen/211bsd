@@ -1,6 +1,6 @@
-#ifndef lint
-static char sccsid[] = "@(#)3.flow.c	4.1	(Berkeley)	2/11/83";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)3.flow.c	4.2	(2.11BSD)	2026/5/9";
+#endif
 
 #include <stdio.h>
 #
@@ -27,7 +27,8 @@ VERT v;
 VERT autolex;		/* lexical successor of v */
 	{
 	VERT lex,chlex,z,x,w;
-	int i;
+	register int i;
+
 	lex = lexval(v,autolex);
 	if (HASLEX(NTYPE(v)) && NTYPE(v) != ICASVX)
 		if (DEFINED(REACH(v)) && REACH(v) != lex)

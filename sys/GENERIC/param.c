@@ -32,7 +32,7 @@
  *
  */
 
-#define	MAXUSERS 4
+#define	MAXUSERS 6
 #define	NBUF 32
 
 int	hz = 60;

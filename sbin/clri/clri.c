@@ -1,4 +1,6 @@
-char	*sccsid = "@(#)clri.c 2.3";
+#if	!defined(lint) && defined(DOSCCS)
+char	*sccsid = "@(#)clri.c 2.3 (2.11BSD) 2026/5/7";
+#endif
 
 /*
  * clri filsys inumber ...
@@ -24,14 +26,10 @@ main(argc, argv)
 int	argc;
 char	**argv;
 {
-	register int	i,
-			f;
+	register int	i, f;
 	u_int	n;
-	int	j,
-		k,
-		errors = 0;
-	long	off,
-		lseek();
+	int	j, k, errors = 0;
+	long	off;
 
 	if (argc < 3) {
 		fprintf(stderr,"usage: %s filsys inumber ...\n",*argv);
@@ -79,7 +77,7 @@ char	**argv;
 
 static
 isnumber(s)
-char	*s;
+register char	*s;
 {
 	for (;*s;++s)
 		if (!isdigit(*s))

@@ -18,15 +18,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1989 The Regents of the University of California.\n\
  All rights reserved.\n";
-#endif /* not lint */
 
-#ifndef lint
-static char sccsid[] = "@(#)finger.c	5.19 (Berkeley) 2/7/90";
-#endif /* not lint */
+static char sccsid[] = "@(#)finger.c	5.20 (2.11BSD) 2026/5/9";
+#endif
 
 /*
  * Finger prints out information about users.  It is not portable since
@@ -44,8 +42,10 @@ static char sccsid[] = "@(#)finger.c	5.19 (Berkeley) 2/7/90";
 #include <sys/param.h>
 #include <sys/file.h>
 #include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
 #include "finger.h"
-#include "pathnames.h"
+#include <paths.h>
 
 time_t now;
 int lflag, sflag, mflag, pplan;
@@ -55,9 +55,7 @@ main(argc, argv)
 	int argc;
 	char **argv;
 {
-	extern int optind;
 	int ch;
-	time_t time();
 
 	while ((ch = getopt(argc, argv, "lmps")) != EOF)
 		switch(ch) {

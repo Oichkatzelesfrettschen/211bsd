@@ -1,4 +1,4 @@
-/* $Header: init.c,v 7.0.1.4 86/12/12 16:58:03 lwall Exp $ */
+/* $Header: init.c,v 7.0.1.5 (2.11BSD) 2026/5/11 16:58:03 sms Exp $ */
 
 /* $Log:	init.c,v $
  * Revision 7.0.1.4  86/12/12  16:58:03  lwall
@@ -245,11 +245,9 @@ stars_again:
 		x = rand_mod(XSIZE);	/* pick from 0..39, uniform */
 		break;
 	    case 1: case 2: case 3:
-#ifndef lint
 		x = (int)((((double)(myrand()-HALFRAND)) *
 		           ((double)(myrand()-HALFRAND))/RANDRAND)
 			  * 20.0) + xoff;	/* pick from -20..20, clumped */
-#endif
 		break;
 	    case 4:
 		if (fscanf(mapfp,"%d %d\n",&ypred,&xpred) == EOF)
@@ -270,27 +268,21 @@ stars_again:
 		y = rand_mod(YSIZE);
 		break;
 	    case 1:
-#ifndef lint
 		y = (int)((((double)(myrand()-HALFRAND)) *
 		           ((double)(myrand()-HALFRAND))/RANDRAND)
 			  * 12.0) + yoff;	/* pick from -12..12, clumped */
-#endif
 		break;
 	    case 2:
-#ifndef lint
 		y = (int)((((double)(myrand()-HALFRAND)) *
 		           ((double)(myrand()-HALFRAND))/RANDRAND)
 			  * 12.0) + yoff + x*YSIZE/XSIZE;
 				 		/* clumped & skewed */
-#endif
 		break;
 	    case 3:
-#ifndef lint
 		y = (int)((((double)(myrand()-HALFRAND)) *
 		           ((double)(myrand()-HALFRAND))/RANDRAND)
 			  * 12.0) + yoff - x*YSIZE/XSIZE;
 						/* clumped & skewed */
-#endif
 		break;
 	    case 4:
 		y = ypred + yoff;
@@ -300,9 +292,6 @@ stars_again:
 		break;
 	    case 6:
 		y += rand_mod(3) - 1;
-#ifdef lint
-		walksplit = walksplit;
-#endif
 		if (!rand_mod(walksplit)) {
 		    y = rand_mod(YSIZE);
 		    x = rand_mod(XSIZE);
@@ -450,11 +439,9 @@ stars_again:
 	    e = (ENTBOUNDARY - possiblescore) / 5;
 	else
 	    e = 250 + (sm50-1) * 30 * 20 / numenemies+1;
-#ifndef lint
 	e = exdis((int)e) + e - exdis((int)e);
 	obj = make_object(Enemy,ch,y,x,0,0,
 	    e + rand_mod(super*200+2) + 10000*massacre,e/4,&root);
-#endif
 	e /= 4;
 	switch (ch) {
 	case 'K':
@@ -483,9 +470,7 @@ stars_again:
 	    y = rand_mod(YSIZE);
 	} while (occupant[y][x]);
 	e = 250 + (sm50-1) * 30 * 20 / numenemies+1;
-#ifndef lint
 	e = exdis((int)e) + e - exdis((int)e);
-#endif
 	{
 	    static char let[] = "QWYUISDHJLZVMFFFFFFFFF";
 

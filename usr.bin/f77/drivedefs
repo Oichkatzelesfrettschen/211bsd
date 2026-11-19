@@ -1,12 +1,10 @@
 /*
-  Driver for Fortran 77 Compiler
-  For the PDP11, Running on the PDP11, 
-  Using the Ritchie C compiler's second pass
+ * "@(#)drivedefs 1.1 (2.11BSD) 2026/6/28";
+ *
+ * Driver for Fortran 77 Compiler
+ * For the PDP11, Running on the PDP11, 
+ * Using the Ritchie C compiler's second pass
 */
-
-#if HERE!=PDP11 || TARGET!=PDP11 || FAMILY!=DMR
-	Wrong Definitions File!
-#endif
 
 #define PASS1NAME	"/usr/libexec/f77pass1"
 #define PASS2NAME	"/lib/c1"

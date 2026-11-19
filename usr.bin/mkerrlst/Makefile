@@ -1,7 +1,7 @@
 #
 # Public Domain.  1996/3/14 - Steven Schultz
 #
-#	@(#)Makefile	1.1 (2.11BSD) 2025/11/27
+#	@(#)Makefile	1.2 (2.11BSD) 2026/4/5
 #
 CFLAGS=	 -O
 LDFLAGS= -i
@@ -27,6 +27,7 @@ depend: ${SRCS}
 install: mkerrlst
 	install -c -o root -g staff -m 444 ${MAN} /usr/man/cat1
 	install -c -s -o root -g staff -m 755 mkerrlst /usr/bin/mkerrlst
+	/usr/bin/mkerrlst
 
 lint: ${SRCS}
 	lint -hax ${SRCS}

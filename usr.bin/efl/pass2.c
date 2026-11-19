@@ -1,3 +1,7 @@
+/*
+ * = "@(#)pass2.c 2.0 (2.11BSD) 2026/7/15";
+*/
+
 #include "defs"
 #include <ctype.h>
 
@@ -319,7 +323,6 @@ nftnch = 0;
 nftncont = 0;
 }
 
-
 p2com(n)		/* copy a comment */
 int n;
 {
@@ -329,9 +332,9 @@ register char *q;
 q = getsii(n);
 if(q[0] == '%')	/* a literal escape line */
 	{
-	putc('\n', codefile);
+	fputc('\n', codefile);
 	while(--n > 0)
-		putc(*++q, codefile);
+		fputc(*++q, codefile);
 	}
 else	 /* actually a comment line */
 	{
@@ -341,17 +344,14 @@ else	 /* actually a comment line */
 	do	{
 		k = (n>71 ? 71 : n);
 		fprintf(codefile, "\n");
-		putc( tailor.ftnsys==CRAY ? 'C' : 'c' , codefile);
+		fputc('c' , codefile);
 		while(k-- > 0)
-			putc(*q++, codefile);
+			fputc(*q++, codefile);
 		n -= 71;
 		}
 		   while(n > 0);
 	}
 }
-
-
-
 
 p2flush()
 {
@@ -362,22 +362,14 @@ if(nftnch > 0)
 	}
 }
 
-
-
-
 p2putc(c)
 char c;
 {
 if(nftnch >= LINESPACES)	/* end of line */
 	p2line(0);
-if(tailor.ftnsys == CRAY)
-	putc( islower(c) ? toupper(c) : c , codefile);
-else
-	putc(c, codefile);
+fputc(c, codefile);
 ++nftnch;
 }
-
-
 
 p2line(in)
 int in;
@@ -401,8 +393,6 @@ nftnch = 0;
 if(in > 0)
 	p2indent(in);
 }
-
-
 
 p2indent(n)
 register int n;

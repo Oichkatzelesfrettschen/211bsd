@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)sigblock.2	6.3.1 (2.11BSD) 97/9/2
+.\"	@(#)sigblock.2	6.3.2 (2.11BSD) 2026/9/22
 .\"
 .TH SIGBLOCK 2 "September 2, 1997"
 .UC 5
@@ -10,19 +10,20 @@
 sigblock \- block signals
 .SH SYNOPSIS
 .nf
-.B #include <signal.h>
+.ft B
+#include <signal.h>
 
-\fIomask\fP = \fBsigblock\fP(\fImask\fP);
-long \fIomask, mask\fP;
+\fImask\fP = sigmask(\fIint signum\fP);
 
-\fImask\fP = \fBsigmask\fP(\fIsignum\fP)
-long \fImask\fP;
-int \fIsignum\fP;
+long
+sigblock(\fIlong mask\fP);
+.ft R
+.fi
 .SH DESCRIPTION
 .B This interface is made obsolete by:
-sigprocmask(2).
+.BR sigprocmask (2) .
 .PP
-.B Sigblock
+.B sigblock
 causes the signals specified in
 .I mask
 to be added to the set of signals currently
@@ -45,3 +46,9 @@ kill(2), sigprocmask(2), sigaction(2), sigsetmask(2), sigsetops(2)
 .SH "HISTORY"
 The \fBsigblock\fP function call appeared in 4.2BSD and has been
 deprecated.
+.sp
+.B sigblock
+is no longer a system call but is implemented in a compatibilty routine
+using 
+.BR sigprocmask (2)
+in the C runtime library.

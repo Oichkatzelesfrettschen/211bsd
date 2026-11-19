@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)main.c	5.6 (2.11BSD) 2026/1/6";
+static char sccsid[] = "@(#)main.c	5.7 (2.11BSD) 2026/9/21";
 #endif
 
 #include <sys/param.h>
@@ -24,9 +24,8 @@ static char sccsid[] = "@(#)main.c	5.6 (2.11BSD) 2026/1/6";
 #include <stdio.h>
 
 char	*rawname(), *unrawname(), *blockcheck();
-int	catch(), catchquit(), voidquit();
+void	catch(), catchquit(), voidquit();
 int	returntosingle;
-int	(*signal())();
 
 main(argc, argv)
 	int	argc;

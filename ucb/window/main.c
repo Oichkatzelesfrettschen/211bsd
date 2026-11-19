@@ -1,5 +1,5 @@
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)main.c	3.31 1/1/94";
+static char sccsid[] = "@(#)main.c 3.32 (2.11BSD) 2026/9/14";
 #endif
 
 /*
@@ -9,14 +9,12 @@ static char sccsid[] = "@(#)main.c	3.31 1/1/94";
  */
 
 #include "defs.h"
-#include <sys/signal.h>
+#include <signal.h>
 #include <stdio.h>
 #include "string.h"
 #include "char.h"
 #include "local.h"
-#ifdef pdp11
 #include "tt.h"
-#endif
 
 #define next(a) (*++*(a) ? *(a) : (*++(a) ? *(a) : (char *)usage()))
 
@@ -30,7 +28,7 @@ char **argv;
 	char xflag = 0;
 	char *cmd = 0;
 	char tflag = 0;
-#ifdef pdp11
+
 	/* Move some buffers onto the stack to get at the memory */
 	/* The program really doesn't fit, but we make a valiant effort */
 	char inbuf[BUFSIZ];
@@ -44,7 +42,6 @@ char **argv;
 	wwwintermcap = ww_ibuf;
 	tt_strings = tt_sbuf;
 	tt_ob = tt_obuf;
-#endif
 
 	nbufline = NLINE;
 	escapec = ESCAPEC;	

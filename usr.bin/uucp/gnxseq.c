@@ -1,15 +1,9 @@
-#ifndef lint
-static char sccsid[] = "@(#)gnxseq.c	5.4 (Berkeley) 6/20/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)gnxseq.c	5.5 (2.11BSD) 2026/5/9";
 #endif
 
 #include "uucp.h"
-#ifdef BSD4_2
-#include <sys/time.h>
-#else sane
 #include <time.h>
-#endif sane
-
-/*LINTLIBRARY*/
 
 #ifdef GNXSEQ
 
@@ -24,7 +18,6 @@ char *rmtname;
 {
 	int count = 0, ct, ret, i;
 	register struct tm *tp;
-	extern struct tm *localtime();
 	time_t clock;
 	register FILE *fp0, *fp1;
 	char buf[BUFSIZ], name[NAMESIZE];
@@ -66,16 +59,9 @@ char *rmtname;
 		count = ++ct;
 		time(&clock);
 		tp = localtime(&clock);
-#ifdef USG
-		fprintf(fp1, "%s %d %d/%d-%2.2d:%2.2d\n", name, ct,
-		  tp->tm_mon + 1, tp->tm_mday, tp->tm_hour,
-		  tp->tm_min);
-#endif
-#ifndef USG
 		fprintf(fp1, "%s %d %d/%d-%02d:%02d\n", name, ct,
 		  tp->tm_mon + 1, tp->tm_mday, tp->tm_hour,
 		  tp->tm_min);
-#endif
 		while (fgets(buf, BUFSIZ, fp0) != NULL)
 			fputs(buf, fp1);
 	}

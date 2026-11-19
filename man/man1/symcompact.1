@@ -1,13 +1,13 @@
 .\" Public domain 1994 - Steven Schultz
 .\"
-.\"	@(#)symcompact.1	1.0 (2.11BSD GTE) 1/25/94
+.\"	@(#)symcompact.1	1.1 (2.11BSD) 2026/3/28
 .\"
-.TH symcompact 1 "January 25, 1994"
+.TH symcompact 1 "March 28, 2026"
 .UC 2
 .SH NAME
-symcompact \- string compaction for object files
+symcompact \- string compaction for executable files
 .SH SYNOPSIS
-symcompact [ \fBobject_name\fP ... ]
+symcompact [ \fBfilename\fP ... ]
 .SH DESCRIPTION
 symcompact
 reduces the symbol table size of an executable file.  This is done by
@@ -25,29 +25,45 @@ normal sequence is to run \fBsymcompact\fP first followed by \fBstrcompact\fP.
 If \fBsymcompact\fP runs out of memory it will be necessary to reverse the
 order and run \fBsymcompact\fP a second time - see the BUGS note below.
 .PP
-The user must have write permission to the object/executable file.
+The user must have write permission to the executable file.
 .PP
 .B
 symcompact
-writes to \fIstderr\fP the count of symbols removed from the symbol table.
+writes to \fIstderr\fP the initial number of symbols, number of excluded 
+symbols, number of removed symbols, current number of symbols,
+the initial and final string table size, and the maximum program (Data space)
+size.
 .PP
 .B
 symcompact
 exits 0 if successful, and >0 if an error occurred.
-.SH SEE ALSO
-symcompact(1), symorder(1)
-.SH BUGS
-This program can partially negate the benefits of \fBstrcompact\fP because
-multiple references to identical strings cause additional strings to be
-placed in the string table.  Running \fBstrcompact\fP again after running
-this program fixes this problem.
+.SH NOTES
+.B symcompact
+is usually used only with the kernel.
+Almost all executables in the system have been processed with
+.I strip(1)
+and do not have a symbol table.  Running
+.B symcompact
+on such files is silly.
 .PP
-The \fIregister\fP local symbol type is removed from the executable/object
-file.  Since the debugger really doesn't know how to deal with those symbols
+The \fIregister\fP local symbol type is removed from the executable
+file.  Since the debugger doesn't know how to deal with those symbols
 this is not much of a loss and saves quite a bit of space both in the
 symbol table and the string table.
+.PP
+The \fIfilename\fP symbol type is removed from the executable file. It
+is not useful to have the name of object files in the symbol table of an
+executable.  Nothing in the system except \fBnm(1)\fP knows what to do
+with the N_FN symbol type anyhow.
 .PP
 .B symcompact
 should not be run on .o files that will be passed to the linker.  The linker
 will need the tilde form of the symbol if an overlaid executable is being
 created.
+.SH BUGS
+This program can partially negate the benefits of \fBstrcompact\fP because
+multiple symbols that refer to the same string result in multiple strings
+being placed in the string table.  Running \fBstrcompact\fP again after running
+this program fixes this problem.
+.SH SEE ALSO
+strcompact(1), symorder(1)

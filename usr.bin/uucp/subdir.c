@@ -1,10 +1,8 @@
-#ifndef lint
-static char sccsid[] = "@(#)subdir.c	5.4 (Berkeley) 6/23/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)subdir.c	5.5 (2.11BSD) 2026/5/9[";
 #endif
 
 #include "uucp.h"
-
-/*LINTLIBRARY*/
 
 /*
  * By Tom Truscott, March 1983

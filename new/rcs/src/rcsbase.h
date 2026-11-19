@@ -2,19 +2,14 @@
  *                     RCS common definitions and data structures
  */
 #if     !defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)rcsbase.h    6.2.2 (2.11BSD) 2025/12/26";
+static char sccsid[] = "@(#)rcsbase.h    6.2.3 (2.11BSD) 2026/5/19";
 #endif
 
-#define RCSBASE "$Id: rcsbase.h,v 4.5 87/12/18 17:06:41 narten Exp $"
+#define RCSBASE "$Id: rcsbase.h,v 4.6 2026/5/19 17:06:41 (2.11BSD) Exp $"
 /*****************************************************************************
  * INSTRUCTIONS:
  * =============
  * The following should be handled in the Makefile:
- *     For USG Unix, define USG; for BSD Unix, don't (see ifdef USG).
- *     For 4.2 bsd, define V4_2BSD; this will replace the routines
- *     getwd() and rename() with the corresponding ones in the C-library.
- *     V4_2BSD also selects different definitions for the macros NCPFN and NCPPN
- *     (max. number of characters per filename, number of characters per path name).
  *     Define STRICT_LOCKING appropriately (see STRICT_LOCKING).
  * The following need be changed for porting to a different machine:
  *     Define SMALLOG for a machine with small memory (like the PDP11).
@@ -94,18 +89,12 @@ static char sccsid[] = "@(#)rcsbase.h    6.2.2 (2.11BSD) 2025/12/26";
  * added typdef int void to aid compiling
  */
 
-
-
 #include <stdio.h>
 #undef putc         /* will be redefined */
 
 
-#ifdef USG
-#       define rindex    strrchr
-#       define DATEFORM  "%.2d.%.2d.%.2d.%.2d.%.2d.%.2d"
-#else
 #       define DATEFORM  "%02d.%02d.%02d.%02d.%02d.%02d"
-#endif
+
 /* Make sure one of %02d or %.2d prints a number with a field width 2, with
  * leading zeroes. For example, 0, 1, and 22 must be printed as 00, 01, and
  * 22. Otherwise, there will be problems with the dates.
@@ -142,25 +131,22 @@ static char sccsid[] = "@(#)rcsbase.h    6.2.2 (2.11BSD) 2025/12/26";
 #define KDELIM            '$' /* delimiter for keywords                     */
 #define VDELIM            ':' /* separates keywords from values             */
 #define DEFAULTSTATE    "Exp" /* default state of revisions                 */
-#ifdef V4_2BSD
+#ifdef pdp11
+#  define NCPFN            64 /* number of characters per filename          */
+#  define NCPPN           256 /* number of characters per pathname          */
+#else
 #  define NCPFN           256 /* number of characters per filename          */
 #  define NCPPN          1024 /* number of characters per pathname          */
-#else
-#  define NCPFN            14 /* number of characters per filename          */
-#  define NCPPN       6*NCPFN /* number of characters per pathname          */
 #endif
 #define keylength          20 /* buffer length for expansion keywords       */
 #define keyvallength NCPPN+revlength+datelength+60
                               /* buffer length for keyword expansion        */
-
-
 
 #define true     1
 #define false    0
 #define nil      0
 #define elsif    else if
 #define elif     else if
-
 
 /* temporary file names */
 
@@ -171,7 +157,6 @@ static char sccsid[] = "@(#)rcsbase.h    6.2.2 (2.11BSD) 2025/12/26";
 #define TMPFILE3    ",RCSt3XXXXXX"
 #define JOINFIL2    ",RCSj2XXXXXX"
 #define JOINFIL3    ",RCSj3XXXXXX"
-
 
 #define putc(c, p) \
         (--(p)->_w < 0 ? \
@@ -234,13 +219,9 @@ enum tokens {
 #define UNDER    IDCHAR
 #define UPARR    IDCHAR
 
-
-
-
 /***************************************
  * Data structures for the symbol table
  ***************************************/
-
 
 /* Hash table entry */
 struct hshentry {
@@ -307,12 +288,7 @@ extern int               hshenter;
 extern char            * NextString;
 extern char            * cmdid;
 
-#if defined(USG) || defined(V4_2BSD)
 #define VOID	(void)
-#else
-typedef int void;
-#define VOID
-#endif
 
 /* common routines */
 extern int serror();
@@ -322,9 +298,9 @@ extern void ignoreints();
 extern void catchints();
 extern void restoreints();
 
-extern char *strcpy();
-extern char *strcat();
-extern char *strncpy();
+#include <strings.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 /*
  * Markers for keyword expansion (used in co and ident)
@@ -347,5 +323,3 @@ enum markers { Nomatch, Author, Date, Header, Id,
 /* used by putdtext and scanlogtext */
 #define DELETE          'D'
 /* set by rcs -o and used by puttree() in rcssyn */
-
-

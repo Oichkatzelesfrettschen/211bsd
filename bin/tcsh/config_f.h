@@ -1,4 +1,6 @@
-/* $Header: /home/hyperion/mu/christos/src/sys/tcsh-6.00/RCS/config_f.h,v 3.0 1991/07/04 21:54:11 christos Exp $ */
+#if defined(LIBC_SCCS) && !defined(lint)
+static char sccsid[] = "@(#)config_f.h      2.0 (2.11BSD) 2026/7/23";
+#endif
 /*
  * config_f.h -- configure various defines for tcsh
  *
@@ -69,21 +71,9 @@
 #undef VIDEFAULT
 
 /*
- * KAI          use "bye" command and rename "log" to "watchlog"
- */
-#undef KAI
-
-/*
  * CSHDIRS    save a history like stack of directories
  */
 #define CSHDIRS
-
-/*
- * TESLA	drops DTR on logout. Historical note:
- *		tesla.ee.cornell.edu was a vax11/780 with a develcon
- *		switch that sometimes would not hang up.
- */
-#undef TESLA
 
 /*
  * DOTLAST      put "." last in the default path, for security reasons
@@ -98,24 +88,11 @@
 #undef AUTOLOGOUT
 
 /*
- * SUSPENDED	Newer shells say 'Suspended' instead of 'Stopped'.
- *		Define to get the same type of messages.
- */
-#define SUSPENDED
-
-/*
  * KANJI	Ignore meta-next, and the ISO character set. Should
  *		be used with SHORT_STRINGS
  *
  */
 #undef KANJI
-
-/*
- * SYSMALLOC	Use the system provided version of malloc and friends.
- *		This can be much slower and no memory statistics will be
- *		provided.
- */
-#define SYSMALLOC
 
 /*
  * TCLONGNAME	print descriptive strings as well t_c_ names

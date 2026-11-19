@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)wwredrawwin.c	3.10 4/24/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)wwredrawwin.c	3.11 (2.11BSD) 2026/5/9";
 #endif
 
 /*
@@ -15,11 +15,11 @@ register struct ww *w;
 int row1, row2, offset;
 {
 	int row;
-	register col;
+	int col;
 	register char *smap;
-	register union ww_char *buf;
+	union ww_char *buf;
 	register char *win;
-	register union ww_char *ns;
+	union ww_char *ns;
 	int nchanged;
 
 	for (row = row1; row < row2; row++) {

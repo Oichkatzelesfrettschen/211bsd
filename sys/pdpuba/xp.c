@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)xp.c	2.8 (2.11BSD) 2025/12/16
+ *	@(#)xp.c	3.0 (2.11BSD) 2026/9/10
  */
 
 /*
@@ -86,7 +86,6 @@ struct xp_drive {
 struct xp_controller	xp_controller[NXPC];
 struct xp_drive	xp_drive[NXPD];
 
-struct	buf	xptab;
 struct	buf	xputab[NXPD];
 
 #ifdef BADSECT
@@ -366,7 +365,7 @@ xpgetinfo(xd, dev)
 	msg = readdisklabel((dev & ~7) | 0, xpstrategy, lp);	/* 'a' */
 	if	(msg != 0)
 		{
-		log(LOG_NOTICE, "xp%da using labelonly geometry: %s\n",
+		log(LOG_INFO, "xp%da using labelonly geometry: %s\n",
 			XPUNIT(dev), msg);
 		xpdfltlbl(xd, lp);
 		}
@@ -427,9 +426,9 @@ done:
 	}
 
 /*
- * Unit start routine.  Seek the drive to where the data are and then generate
+ * Unit start routine.  Seek the drive to where the data is and then generate
  * another interrupt to actually start the transfer.  If there is only one
- * drive or we are very close to the data, don't bother with the search.  If
+ * drive or we are very close to the data don't bother with the search.  If
  * called after searching once, don't bother to look where we are, just queue
  * for transfer (to avoid positioning forever without transferring).
  */
@@ -581,15 +580,18 @@ loop:
 /*
  * No more requests for this drive, remove from controller queue and
  * look at next drive.  We know we're at the head of the controller queue.
- * The drive may not need anything, in which case it might be shutting
- * down in xpclose() and a wakeup is done.
+ * The drive may not need anything in which case it might be in xpclose()
+ * waiting for the wakeup.
 */
 		dp->b_active = 0;
 		xc->xp_actf = dp->b_forw;
 		unit = dp - xputab;
 		xd = &xp_drive[unit];
-		if	(xd->xp_open == 0)
+		if	(xd->xp_flags & DKF_CLOSING)
+			{
+			log(LOG_DEBUG, "xpstart: xp%d CLOSE\n", unit);
 			wakeup(dp);	/* finish close protocol */
+			}
 		goto loop;
 	}
 	/*
@@ -706,7 +708,7 @@ int dev;
 			/*
 			 * Give up on write locked deviced immediately.
 			 */
-				log(LOG_NOTICE, "xp%d: write locked\n", unit);
+				log(LOG_ERR, "xp%d: write lock\n", unit);
 				bp->b_flags |= B_ERROR;
 #ifdef BADSECT
 			}
@@ -733,7 +735,7 @@ int dev;
 				if (++dp->b_errcnt > 28) {
 hard:
 					harderr(bp, "xp");
-					log(LOG_NOTICE,"cs2=%b er1=%b er2=%b\n",
+					log(LOG_ERR,"cs2=%b er1=%b er2=%b\n",
 						xpaddr->hpcs2.w, HPCS2_BITS,
 						xpaddr->hper1, HPER1_BITS,
 						xpaddr->rmer2, RMER2_BITS);
@@ -772,8 +774,26 @@ errdone:
 			bp->b_resid = - (xpaddr->hpwc << 1);
 			iodone(bp);
 			xpaddr->hpcs1.w = HP_IE;
-			if (dp->b_actf)
+			if	(dp->b_actf)
 				xpustart(unit);
+/*
+ * The wakeup in xpstart will not be done if "xc->actf = dp->b_forw" (above)
+ * is NULL because xpstart returns immediately on an empty controller queue.
+ * 
+ * That leaves the process sleeping forever and future xpopen calls will
+ * block because DKF_CLOSING is set.  IF the controller queue is empty 
+ * AND xputab[].b_actf (dp->b_actf above) is NULL AND the drive is sleeping 
+ * in xpclose THEN do the wakeup (below).
+*/
+			else
+				{
+    				if (xc->xp_actf == NULL && 
+				    (xp_drive[unit].xp_flags & DKF_CLOSING))
+       				   {
+       				   log(LOG_DEBUG, "xpintr: xp%d CLOSE\n", unit);
+       				   wakeup(dp);
+       				   }
+    				}
 		}
 		as &= ~(1 << xp_drive[unit].xp_unit);
 	}

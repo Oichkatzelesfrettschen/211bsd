@@ -1,18 +1,7 @@
 /*
- *
- *  Title:
- *	Backup
- *
- *  Decription:
- *	Program to read VMS backup tape
- *
  *  Author:
  *	John Douglas CAREY.
  *	Sven-Ove Westberg    (version 3.0)
- *
- *  Net-addess:
- *	john%monu1.oz@seismo.ARPA
- *	luthcad!sow@enea.UUCP
  *
  *  History:
  *	Version 1.0 - September 1984
@@ -63,7 +52,6 @@
  *		Flag to list the contents of the tape
  *		Distributed to mod.sources
  *
- *
  *  Installation:
  *
  *	Computer Centre
@@ -72,8 +60,12 @@
  *	Clayton
  *	Victoria	3168
  *	AUSTRALIA
- *
  */
+
+#if     !defined(LINT) && defined(DOSCCS)
+static char sccsid[] = "@(#)vmsbackup.c      1.1 (2.11BSD) 2026/2/2";
+#endif
+
 #include	<stdio.h>
 #include	<ctype.h>
 
@@ -85,54 +77,6 @@
 #endif
 #include	<sys/mtio.h>
 #include	<sys/file.h>
-
-#ifdef pyr
-#define SWAP
-#endif pyr
-
-#ifdef sun
-#define SWAP
-#endif
-
-#ifdef	pdp11
-#define	bbh_dol_w_size _bdwopsize
-#define	bbh_dol_w_opsys _bdwopsys
-#define	bbh_dol_w_subsys _bdwsubsys
-#define	bbh_dol_w_applic _bdwapplic
-#define	bbh_dol_l_number _bdlnumber
-#define	bbh_dol_t_spare_1 _bdtsp1
-#define	bbh_dol_w_struclev _bdwstruclev
-#define	bbh_dol_w_volnum _bdwvolnum
-#define	bbh_dol_l_crc _bdlcrc
-#define	bbh_dol_l_blocksize _bdlblocksize
-#define	bbh_dol_l_flags _bdlflags
-#define	bbh_dol_t_ssname _bdtssname
-#define	bbh_dol_w_fid _bdwfid
-#define	bbh_dol_w_did _bdwdid
-#define	bbh_dol_t_filename _bdtfilename
-#define	bbh_dol_b_rtype _bdbrtype
-#define	bbh_dol_b_rattrib _bdbrattrib
-#define	bbh_dol_w_rsize _bdwrsize
-#define	bbh_dol_b_bktsize _bdbbktsize
-#define	bbh_dol_b_vfcsize _bdbvfcsize
-#define	bbh_dol_w_maxrec _bdwmaxrec
-#define	bbh_dol_l_filesize _bdlfilesize
-#define	bbh_dol_t_spare_2 _bdtsp2
-#define	bbh_dol_w_checksum _bdwchecksum
-
-#define	brh_dol_w_rsize _bhdwrsize
-#define	brh_dol_w_rtype _bhwrtyppe
-#define	brh_dol_l_flags _bhlflags
-#define	brh_dol_l_address _bhladdress
-#define	brh_dol_l_spare _bhlspare
-
-#define	bsa_dol_w_size _bawsize
-#define	bsa_dol_w_type _bawtype
-#define	bsa_dol_t_text _battext
-
-#define	process_file __procf
-#define	process_vbn __procv
-#endif
 
 struct bbh {
 	short	bbh_dol_w_size;
@@ -301,7 +245,7 @@ char	*fn;
 	if(procf && wflag) {
 		printf("extract %s [ny]",filename);
 		fflush(stdout);
-		gets(ans);
+		fgets(ans, sizeof ans, stdin);
 		if(*ans != 'y') procf = NULL;
 	}
 	if(procf)

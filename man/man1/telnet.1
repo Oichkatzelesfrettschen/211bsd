@@ -2,21 +2,19 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)telnet.1c	6.5 (Berkeley) 5/10/86
+.\"	@(#)telnet.1	6.6 (2.11BSD) 2026/9/28
 .\"
-.TH TELNET 1C "May 10, 1986"
+.TH TELNET 1 "May 10, 1986"
 .UC 5
 .SH NAME
 telnet \- user interface to the \s-1TELNET\s0 protocol
 .SH SYNOPSIS
 telnet [ host [ port ] ]
 .SH DESCRIPTION
-.I Telnet
-is used to communicate with another host using the
-.B TELNET
-protocol.
+.B telnet
+is used to communicate with another host using the TELNET protocol.
 If 
-.I telnet
+.B telnet
 is invoked without arguments, it enters command mode,
 indicated by its prompt (\*(lqtelnet>\*(rq).
 In this mode, it accepts and executes the commands listed below.
@@ -25,7 +23,7 @@ If it is invoked with arguments, it performs an
 command (see below) with those arguments.
 .PP
 Once a connection has been opened,
-.I telnet
+.B telnet
 enters an input mode.
 The input mode entered will be either \*(lqcharacter at a time\*(rq
 or \*(lqline by line\*(rq
@@ -49,8 +47,7 @@ the user's
 .IR intr ,
 and
 .I flush
-characters are trapped locally, and sent as
-.B TELNET
+characters are trapped locally, and sent as TELNET
 protocol sequences to the remote side.
 There are options (see
 .B toggle
@@ -60,8 +57,7 @@ and
 .I autosynch
 below)
 which cause this action to flush subsequent output to the terminal
-(until the remote host acknowledges the
-.B TELNET
+(until the remote host acknowledges the TELNET
 sequence) and flush previous terminal input
 (in the case of
 .I quit
@@ -69,9 +65,9 @@ and
 .IR intr ).
 .PP
 While connected to a remote host,
-.I telnet
+.B telnet
 command mode may be entered by typing the
-.I telnet
+.B telnet
 \*(lqescape character\*(rq (initially \*(lq^]\*(rq).
 When in command mode, the normal terminal editing conventions are available.
 .PP
@@ -94,38 +90,35 @@ Open a connection to the named host.
 If no port number
 is specified, 
 .I telnet
-will attempt to contact a
-.B TELNET
+will attempt to contact a TELNET
 server at the default port.
 The host specification may be either a host name (see 
-.IR hosts (5))
+.BR hosts (5))
 or an Internet address specified in the \*(lqdot notation\*(rq (see
-.IR inet (3N)).
+.BR inet (3)).
 .TP
 .B close
 .br
-Close a
-.B TELNET
+Close a TELNET
 session and return to command mode.
 .TP
 .B quit
 .br
-Close any open
-.B TELNET
+Close any open TELNET
 session and exit 
-.IR telnet .
+.BR telnet .
 An end of file (in command mode) will also close a session and exit.
 .TP
 .B z
 .br
 Suspend
-.IR telnet .
+.BR telnet .
 This command only works when the user is using the 
-.IR csh (1).
+.BR csh (1).
 .TP
 .B mode \fItype\fP
 .br
-.I Type
+.I type
 is either
 .I line
 (for \*(lqline by line\*(rq mode)
@@ -139,7 +132,7 @@ mode will be entered.
 .B status
 .br
 Show the current status of 
-.IR telnet .
+.BR telnet .
 This includes the peer one is connected to, as well
 as the current mode.
 .TP
@@ -154,10 +147,10 @@ values (see below).
 .B ? \fR[\fP \fIcommand\fP \fR]\fP
 .br
 Get help.  With no arguments,
-.I telnet
+.B telnet
 prints a help summary.
 If a command is specified, 
-.I telnet
+.B telnet
 will print the help information for just that command.
 .TP
 .B send \fIarguments\fP
@@ -186,22 +179,19 @@ it doesn't work, a lower case \*(lqr\*(rq may be echoed on the terminal).
 .TP
 .I brk
 .br
-Sends the
-.B TELNET BRK
+Sends the  TELNET BRK
 (Break) sequence, which may have significance to the remote
 system.
 .TP
 .I ip
 .br
-Sends the
-.B TELNET IP
+Sends the TELNET IP
 (Interrupt Process) sequence, which should cause the remote
 system to abort the currently running process.
 .TP
 .I ao
 .br
-Sends the
-.B TELNET AO
+Sends the TELNET AO
 (Abort Output) sequence, which should cause the remote system to flush
 all output
 .B from
@@ -211,38 +201,33 @@ the user's terminal.
 .TP
 .I ayt
 .br
-Sends the
-.B TELNET AYT
+Sends the TELNET AYT
 (Are You There)
 sequence, to which the remote system may or may not choose to respond.
 .TP
 .I ec
 .br
-Sends the
-.B TELNET EC
+Sends the TELNET EC
 (Erase Character)
 sequence, which should cause the remote system to erase the last character
 entered.
 .TP
 .I el
 .br
-Sends the
-.B TELNET EL
+Sends the TELNET EL
 (Erase Line)
 sequence, which should cause the remote system to erase the line currently
 being entered.
 .TP
 .I ga
 .br
-Sends the
-.B TELNET GA
+Sends the TELNET GA
 (Go Ahead)
 sequence, which likely has no significance to the remote system.
 .TP
 .I nop
 .br
-Sends the
-.B TELNET NOP
+Sends the TELNET NOP
 (No OPeration)
 sequence.
 .TP
@@ -256,7 +241,7 @@ command.
 .B set \fIargument value\fP
 .br
 Set any one of a number of
-.I telnet
+.B telnet
 variables to a specific value.
 The special value \*(lqoff\*(rq turns off the function associated with
 the variable.
@@ -276,16 +261,16 @@ echoing of entered characters (for entering, say, a password).
 .I escape
 .br
 This is the
-.I telnet
+.B telnet
 escape character (initially \*(lq^[\*(rq) which causes entry
 into
-.I telnet
+.B telnet
 command mode (when connected to a remote system).
 .TP
 .I interrupt
 .br
 If
-.I telnet
+.B telnet
 is in
 .I localchars
 mode (see
@@ -294,8 +279,7 @@ mode (see
 below)
 and the
 .I interrupt
-character is typed, a
-.B TELNET IP
+character is typed, a TELNET IP
 sequence (see
 .B send
 .I ip
@@ -309,7 +293,7 @@ character.
 .I quit
 .br
 If
-.I telnet
+.B telnet
 is in
 .I localchars
 mode (see
@@ -318,8 +302,7 @@ mode (see
 below)
 and the
 .I quit
-character is typed, a
-.B TELNET BRK
+character is typed, a TELNET BRK
 sequence (see
 .B send
 .I brk
@@ -333,7 +316,7 @@ character.
 .I flushoutput
 .br
 If
-.I telnet
+.B telnet
 is in
 .I localchars
 mode (see
@@ -342,8 +325,7 @@ mode (see
 below)
 and the
 .I flushoutput
-character is typed, a
-.B TELNET AO
+character is typed, a TELNET AO
 sequence (see
 .B send
 .I ao
@@ -357,7 +339,7 @@ character.
 .I erase
 .br
 If
-.I telnet
+.B telnet
 is in
 .I localchars
 mode (see
@@ -366,10 +348,9 @@ mode (see
 below),
 .B and
 if
-.I telnet
+.B telnet
 is operating in \*(lqcharacter at a time\*(rq mode, then when this
-character is typed, a
-.B TELNET EC
+character is typed, a TELNET EC
 sequence (see
 .B send
 .I ec
@@ -383,7 +364,7 @@ character.
 .I kill
 .br
 If
-.I telnet
+.B telnet
 is in
 .I localchars
 mode (see
@@ -392,10 +373,9 @@ mode (see
 below),
 .B and
 if
-.I telnet
+.B telnet
 is operating in \*(lqcharacter at a time\*(rq mode, then when this
-character is typed, a
-.B TELNET EL
+character is typed, a TELNET EL
 sequence (see
 .B send
 .I el
@@ -409,7 +389,7 @@ character.
 .I eof
 .br
 If
-.I telnet
+.B telnet
 is operating in \*(lqline by line\*(rq mode, entering this character
 as the first character on a line will cause this character to be
 sent to the remote system.
@@ -425,7 +405,7 @@ TRUE
 and
 FALSE)
 various flags that control how
-.I telnet
+.B telnet
 responds to events.
 More than one argument may be specified.
 The state of these flags may be interrogated with the
@@ -448,7 +428,7 @@ and
 characters (see
 .B set
 above) are recognized locally, and transformed into (hopefully) appropriate
-.B TELNET
+TELNET
 control sequences
 (respectively
 .IR ao ,
@@ -476,23 +456,20 @@ then when the
 .IR intr ,
 or
 .I quit
-characters are recognized (and transformed into
-.B TELNET
+characters are recognized (and transformed into TELNET
 sequences; see
 .B set
 above for details),
 .I telnet
 refuses to display any data on the user's terminal
-until the remote system acknowledges (via a
-.B TELNET
+until the remote system acknowledges (via a TELNET
 .I Timing Mark
 option)
-that it has processed those
-.B TELNET
+that it has processed those TELNET
 sequences.
 The initial value for this toggle is TRUE if the terminal user had not
 done an "stty noflsh", otherwise FALSE (see
-.IR stty(1)).
+.BR stty (1)).
 .TP
 .I autosynch
 If
@@ -511,16 +488,13 @@ above for descriptions of the
 .I intr
 and
 .I quit
-characters), the resulting
-.B TELNET
+characters), the resulting TELNET
 sequence sent is followed by the
-.B TELNET SYNCH
+TELNET SYNCH
 sequence.
-This procedure
-.B should
+This procedure should
 cause the remote system to begin throwing away all previously
-typed input until both of the
-.B TELNET
+typed input until both of the TELNET
 sequences have been read and acted upon.
 The initial value of this toggle is FALSE.
 .TP
@@ -544,10 +518,8 @@ The initial value for this toggle is FALSE.
 .TP
 .I options
 .br
-Toggles the display of some internal
-.I telnet
-protocol processing (having to do with
-.B TELNET
+Toggles the display of some internal TELNET
+protocol processing (having to do with TELNET
 options).
 The initial value for this toggle is FALSE.
 .TP
@@ -570,11 +542,11 @@ On some remote systems, echo has to be turned off manually when in
 \*(lqline by line\*(rq mode.
 .PP
 There is enough settable state to justify a
-.RI . telnetrc
+.RB . telnetrc
 file.
 .PP
 No capability for a
-.RI . telnetrc
+.RB . telnetrc
 file is provided.
 .PP
 In \*(lqline by line\*(rq mode, the terminal's

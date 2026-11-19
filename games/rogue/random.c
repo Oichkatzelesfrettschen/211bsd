@@ -1,6 +1,6 @@
-#ifndef lint
-static char sccsid[] = "@(#)random.c	5.1 (Berkeley) 11/25/87";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)random.c	5.2 (2.11BSD) 2026/5/12";
+#endif
 
 static long rntb[32] = {
 	         3, 0x9a319039, 0x32d9c024, 0x9b663182, 0x5da1f342, 

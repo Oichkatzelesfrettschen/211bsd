@@ -20,7 +20,7 @@ char copyright[] =
 "@(#) Copyright (c) 1987 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)apropos.c	5.7 (2.11BSD) 2026/1/7";
+static char sccsid[] = "@(#)apropos.c	5.8 (2.11BSD) 2026/9/15";
 #endif
 
 #include <sys/param.h>
@@ -28,34 +28,31 @@ static char sccsid[] = "@(#)apropos.c	5.7 (2.11BSD) 2026/1/7";
 #include <ctype.h>
 #include <stdlib.h>
 #include <strings.h>
+#include <err.h>
 
 #define	DEF_PATH	"/usr/man:/usr/new/man:/usr/local/man"
 #define	MAXLINELEN	1000			/* max line handled */
 #define	WHATIS		"whatis"		/* database name */
 
-#define	NO	0				/* no/false */
-#define	YES	1				/* yes/true */
-
-static char *myname;
+extern char *__progname;
 
 main(argc, argv)
 	int argc;
 	char **argv;
 {
 	register char *beg, *end, **C;
-	int ch, foundman = NO, *found, isapropos;
+	int ch, foundman = 0, *found, isapropos;
 	int a_match(), w_match(), (*match)();
 	char *manpath = NULL, buf[MAXLINELEN + 1], fname[MAXPATHLEN + 1];
 	char wbuf[MAXLINELEN + 1];
 	char *cp;
 
-	myname = (beg = rindex(*argv, '/')) ? beg + 1 : *argv;
-	if (!strcmp(myname, "apropos")) {
-		isapropos = YES;
+	if (!strcmp(__progname, "apropos")) {
+		isapropos = 1;
 		match = a_match;
 	}
 	else {
-		isapropos = NO;
+		isapropos = 0;
 		match = w_match;
 	}
 	while ((ch = getopt(argc, argv, "M:P:")) != EOF)
@@ -76,11 +73,9 @@ main(argc, argv)
 	if (!(manpath = getenv("MANPATH")))
 		manpath = DEF_PATH;
 
-	/*NOSTRICT*/
-	if (!(found = (int *)malloc((u_int)(argc * sizeof(int))))) {
-		fprintf(stderr, "%s: out of space.\n", myname);
-		exit(1);
-	}
+	if (!(found = (int *)malloc((u_int)(argc * sizeof(int)))))
+		errx(1, "out of space");
+
 	bzero((char *)found, argc * sizeof(int));
 
 	if (isapropos)
@@ -102,7 +97,7 @@ main(argc, argv)
 			continue;
 
 						/* for each file found */
-		for (foundman = YES; fgets(buf, sizeof buf, stdin);) {
+		for (foundman = 1; fgets(buf, sizeof buf, stdin);) {
 			if (cp = index(buf, '\n')) *cp = '\0';
 			if (isapropos)
 				lowstr(buf, wbuf);
@@ -111,28 +106,26 @@ main(argc, argv)
 			for (C = argv; *C; ++C)
 				if ((*match)(wbuf, *C)) {
 					puts(buf);
-					found[C - argv] = YES;
+					found[C - argv] = 1;
 
 					/* only print line once */
 					while (*++C)
 						if ((*match)(wbuf, *C))
-							found[C - argv] = YES;
+							found[C - argv] = 1;
 					break;
 				}
 		}
 	}
-	if (!foundman) {
-		fprintf(stderr, "%s: no %s file found in %s.\n", myname, WHATIS, manpath);
-		exit(1);
-	}
+	if (!foundman)
+		errx(1,"no %s file found in %s", WHATIS, manpath);
+
 	for (C = argv; *C; ++C)
 		if (!found[C - argv])
 			printf("%s: %s\n", *C, isapropos ? "nothing appropriate" : "not found");
 }
 
 /*
- * a_match --
- *	match for apropos; anywhere the string appears
+ * a_match -- match for apropos; anywhere the string appears
  */
 static
 a_match(bp, str)
@@ -142,14 +135,14 @@ a_match(bp, str)
 	register char test;
 
 	if (!*bp)
-		return(NO);
+		return(0);
 	/* backward compatible: everything matches empty string */
 	if (!*str)
-		return(YES);
+		return(1);
 	for (test = *str++, len = strlen(str); *bp;)
 		if (test == *bp++ && !strncmp(bp, str, len))
-			return(YES);
-	return(NO);
+			return(1);
+	return(0);
 }
 
 /*
@@ -164,16 +157,16 @@ w_match(bp, str)
 	register char *start;
 
 	if (!*str || !*bp)
-		return(NO);
+		return(0);
 	for (len = strlen(str);;) {
 		for (; *bp && !isdigit(*bp) && !isalpha(*bp); ++bp);
 		if (!*bp)
 			break;
 		for (start = bp++; *bp && (isdigit(*bp) || isalpha(*bp)); ++bp);
 		if (bp - start == len && !strncasecmp(start, str, len))
-			return(YES);
+			return(1);
 	}
-	return(NO);
+	return(0);
 }
 
 /*
@@ -192,8 +185,7 @@ dashtrunc(from, to)
 }
 
 /*
- * lowstr --
- *	convert a string to lower case
+ * lowstr -- convert a string to lower case
  */
 static
 lowstr(from, to)
@@ -205,12 +197,10 @@ lowstr(from, to)
 }
 
 /*
- * usage --
- *	print usage message and die
+ * usage -- print usage message and die
  */
 static
 usage()
 {
-	fprintf(stderr, "usage: %s [-M path] string ...\n", myname);
-	exit(1);
+	errx(1, "usage: [-M path] string ...");
 }

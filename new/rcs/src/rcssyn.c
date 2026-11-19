@@ -1,9 +1,9 @@
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)rcssyn.c 4.4.2 (2.11BSD) 2026/5/11";
+#endif
 /*
  *                     RCS file input
  */
-#ifndef lint
-static char rcsid[]= "$Id: rcssyn.c,v 4.4.1 94/1/1 11:46:16 narten Exp $ Purdue CS";
-#endif
 /*********************************************************************************
  *                       Syntax Analysis.
  *                       Keyword table
@@ -66,8 +66,6 @@ static char rcsid[]= "$Id: rcssyn.c,v 4.4.1 94/1/1 11:46:16 narten Exp $ Purdue 
  * made sure getc() returns into an integer.
  */
 
-
-
 /*
 #define COMPAT2
 /* version COMPAT2 reads files of the format of release 2 and 3, but
@@ -91,7 +89,6 @@ extern char * getid();
 extern struct hshentry * getnum();
 extern int    getkey();
 extern int    getlex();
-extern char * malloc();
 extern        readstring();
 extern int    savestring();
 
@@ -133,8 +130,6 @@ struct hshentry * Head       =nil;
 struct hshentry * Dbranch    =nil;
 int               TotalDeltas=0;
 
-
-
 getadmin()
 /* Function: Reads an <admin> and initializes the globals
  * AccessList, LastAccess, Symbols, LastSymbol,
@@ -166,7 +161,6 @@ getadmin()
                 Dbranch=getnum();
                 if (!getlex(SEMI)) serror("Missing ';' after branch list");
         }
-
 
 #ifdef COMPAT2
         /* read suffix. Only in release 2 format */
@@ -249,8 +243,6 @@ getadmin()
         }
 }
 
-
-
 getdelta()
 /* Function: reads a delta block.
  * returns false if the current block does not start with a number.
@@ -304,7 +296,6 @@ getdelta()
         return (true);
 }
 
-
 gettree()
 /* Function: Reads in the delta tree with getdelta(), then
  * updates the lockedby fields.
@@ -317,7 +308,6 @@ gettree()
                 currlock = currlock->nextlock;
         }
 }
-
 
 getdesc(prdesc)
 int  prdesc;
@@ -332,11 +322,6 @@ int  prdesc;
                 printstring();  /*echo string*/
         else    readstring();   /*skip string*/
 }
-
-
-
-
-
 
 char * getkeyval(keyword, token, optional)
 enum tokens token; char * keyword; int optional;
@@ -364,9 +349,6 @@ enum tokens token; char * keyword; int optional;
         if (!getlex(SEMI)) serror("Missing ';' after %s",keyword);
         return(val);
 }
-
-
-
 
 putadmin(fout)
 register FILE * fout;
@@ -415,9 +397,6 @@ register FILE * fout;
         VOID fprintf(fout,"%c;\n\n",SDELIM);
 }
 
-
-
-
 putdelta(node,fout)
 register struct hshentry * node;
 register FILE * fout;
@@ -446,9 +425,6 @@ register FILE * fout;
 
 }
 
-
-
-
 puttree(root,fout)
 struct hshentry * root;
 register FILE * fout;
@@ -469,8 +445,6 @@ register FILE * fout;
              nextbranch = nextbranch->nextbranch;
         }
 }
-
-
 
 int putdtext(num,log,srcfilename,fout)
 char * num, * log, * srcfilename; FILE * fout;
@@ -506,8 +480,6 @@ char * num, * log, * srcfilename; FILE * fout;
         return true;
 }
 
-
-
 #ifdef SYNTEST
 
 main(argc,argv)
@@ -537,10 +509,7 @@ int argc; char * argv[];
         exit(0);
 }
 
-
 cleanup(){}
 /*dummy*/
 
-
 #endif
-

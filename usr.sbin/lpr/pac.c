@@ -4,15 +4,13 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)pac.c	5.2 (Berkeley) 10/30/85";
-#endif not lint
+static char sccsid[] = "@(#)pac.c	5.3 (2.11BSD) 2026/5/10";
+#endif
 
 /*
  * Do Printer accounting summary.
@@ -23,6 +21,9 @@ static char sccsid[] = "@(#)pac.c	5.2 (Berkeley) 10/30/85";
 
 #include <stdio.h>
 #include "lp.local.h"
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
 
 char	*printer;			/* printer name */
 char	*acctfile;			/* accounting file (input data) */
@@ -37,7 +38,6 @@ int	errs;
 int	mflag = 0;			/* disregard machine names */
 int	pflag = 0;			/* 1 if -p on cmd line */
 int	price100;			/* per-page cost in 100th of a cent */
-char	*index();
 int	pgetnum();
 
 /*
@@ -61,9 +61,7 @@ struct	hent	*lookup();
 
 #define	NIL	((struct hent *) 0)	/* The big zero */
 
-double	atof();
-char	*getenv();
-char	*pgetstr();
+extern char	*pgetstr();
 
 main(argc, argv)
 	char **argv;

@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)retest.c	5.1 (Berkeley) 6/5/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)retest.c	5.2 (2.11BSD) 2026/5/9";
+#endif
 
 #include <ctype.h>
 
@@ -15,12 +15,13 @@ char * _start;
 char * _escaped;
 char * convexp();
 char * expmatch();
+
 main()
 {
     char reg[132];
     char *ireg;
     char str[132];
-    char *match;
+    register char *match;
     char matstr[132];
     char c;
 

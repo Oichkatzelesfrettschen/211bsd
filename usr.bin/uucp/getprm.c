@@ -1,13 +1,11 @@
-#ifndef lint
-static char sccsid[] = "@(#)getprm.c	5.4 (Berkeley) 10/9/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)getprm.c	5.5 (2.11BSD) 2026/5/9";
 #endif
 
 #include "uucp.h"
 
 #define LQUOTE	'('
 #define RQUOTE ')'
-
-/*LINTLIBRARY*/
 
 /*
  *	get next parameter from s

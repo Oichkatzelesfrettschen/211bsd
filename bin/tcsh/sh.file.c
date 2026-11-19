@@ -1,4 +1,3 @@
-/* $Header: /home/hyperion/mu/christos/src/sys/tcsh-6.00/RCS/sh.file.c,v 3.0 1991/07/04 21:49:28 christos Exp $ */
 /*
  * sh.file.c: File completion for csh.
  */
@@ -36,9 +35,9 @@
  */
 #ifdef FILEC
 #include "config.h"
-#ifndef lint
+#if	!definec(lint) && defined(DOSCCS)
 static char *rcsid() 
-    { return "$Id: sh.file.c,v 3.0 1991/07/04 21:49:28 christos Exp $"; }
+    { return "$Id: sh.file.c,v 3.1 2026/6/1 21:49:28 (2.11BSD) Exp $"; }
 #endif
 
 #include "sh.h"
@@ -438,7 +437,7 @@ getentry(dir_fd, look_lognames)
     int     look_lognames;
 {
     register struct passwd *pw;
-    register struct dirent *dirp;
+    register struct direct *dirp;
 
     if (look_lognames) {
 	if ((pw = getpwent()) == NULL)

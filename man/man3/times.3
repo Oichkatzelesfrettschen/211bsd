@@ -2,26 +2,27 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)times.3c	6.1 (Berkeley) 5/9/85
+.\"	@(#)times.3	6.2 (2.11BSD) 2026/9/27
 .\"
-.TH TIMES 3C "May 9, 1985"
+.TH TIMES 3 "May 9, 1985"
 .UC 4
 .SH NAME
 times \- get process times
 .SH SYNOPSIS
 .nf
-.B "#include <sys/types.h>
-.B "#include <sys/times.h>
-.PP
-.B times(buffer)
-.B struct tms *buffer;
+.ft B
+#include <sys/types.h>
+#include <sys/times.h>
+.sp
+times(\fIstruct tms *buffer\fP)
+.ft R
 .fi
 .SH DESCRIPTION
 .ft B
-This interface is obsoleted by getrusage(2).
+This interface is obsoleted by and implemented using getrusage(2).
 .ft R
 .PP
-.I Times
+.B times
 returns time-accounting information
 for the current process
 and for the terminated child processes
@@ -29,7 +30,7 @@ of the current process.
 All times are in 1/HZ seconds, where HZ is 60.
 .PP
 This is the structure returned by
-.IR times :
+.BR times :
 .PP
 .nf
 .so /usr/include/sys/times.h

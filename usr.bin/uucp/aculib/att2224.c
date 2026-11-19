@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)att2224.c	1.1 (Berkeley) 2/12/86";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)att2224.c	1.2 (2.11BSD) 2026/5/9";
 #endif
 
 #include "../condevs.h"

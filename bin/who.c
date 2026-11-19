@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)who.c	5.1.3 (2.11BSD GTE) 1997/7/29";
+static char sccsid[] = "@(#)who.c	5.1.4 (2.11BSD) 2026/9/24";
 #endif
 
 #include <stdio.h>
@@ -37,7 +37,7 @@ main(argc, argv)
 	register FILE *fi;
 
 	s = _PATH_UTMP;
-	if(argc == 2)
+	if (argc == 2)
 		s = argv[1];
 	if (argc == 3) {
 		tp = ttyname(0);
@@ -61,7 +61,7 @@ main(argc, argv)
 			gethostname(hostname, sizeof (hostname));
 			if (strcmp(utmp.ut_line, tp))
 				continue;
-			printf("%s!", hostname);
+			printf("%s@", hostname);
 			putline();
 			exit(0);
 		}

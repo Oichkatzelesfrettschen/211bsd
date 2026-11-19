@@ -5,16 +5,13 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)print.c	5.2.1 (2.11BSD GTE) 1/1/94";
+static char sccsid[] = "@(#)print.c	5.2.2 (2.11BSD) 2026/9/15";
 #endif
-
-/* debug print routines */
 
 #include <stdio.h>
 #include <syslog.h>
 #include <sys/types.h>
 #include <netinet/in.h>
-
 #include <protocols/talkd.h>
 
 static	char *types[] =

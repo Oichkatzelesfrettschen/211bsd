@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)ttext1.c	5.1 (Berkeley) 5/29/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ttext1.c	5.2 (2.11BSD) 2026/5/11";
+#endif
 
 #include "back.h"
 
@@ -71,7 +71,7 @@ char	*intro2[] = {
     "have any pieces of either color.",
     "",
     0};
-
+
 char	*moves[] = {
     "\nMoves and Points:",
     "\n   Moves are made along the positions on the board according to",
@@ -126,7 +126,7 @@ char	*remove[] = {
     "many moves as possible.",
     "",
     0};
-
+
 char	*hits[] = {
     "\nHitting Blots:",
     "\n   Although two men on a position form an impenetrable point, a",
@@ -143,7 +143,7 @@ char	*hits[] = {
     "bar, as well as being set back the full distance of the board.",
     "",
     0};
-
+
 char	*endgame[] = {
     "\nEnding the Game and Scoring:",
     "\n   Winning a game usually wins one point, the normal value of a",

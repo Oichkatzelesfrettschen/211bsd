@@ -2,9 +2,9 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)getservent.3n	6.3 (Berkeley) 5/19/86
+.\"	@(#)getservent.3	6.4 (2.11BSD) 2026/9/27
 .\"
-.TH GETSERVENT 3N "May 19, 1986"
+.TH GETSERVENT 3 "May 19, 1986"
 .UC 5
 .SH NAME
 getservent, getservbyport, getservbyname, setservent, endservent \- get service entry
@@ -12,35 +12,33 @@ getservent, getservbyport, getservbyname, setservent, endservent \- get service 
 .nf
 .ft B
 #include <netdb.h>
-.PP
-.ft B
-struct servent *getservent()
-.PP
-.ft B
-struct servent *getservbyname(name, proto)
-char *name, *proto;
-.PP
-.ft B
-struct servent *getservbyport(port, proto)
-int port; char *proto;
-.PP
-.ft B
-setservent(stayopen)
-int stayopen
-.PP
-.ft B
-endservent()
+
+struct servent *
+getservent(\fIvoid\fP)
+
+struct servent *
+getservbyname(\fIchar *name\fP, \fIchar *proto\fP)
+
+struct servent *
+getservbyport(\fIint port\fP, \fIchar *proto\fP)
+
+void
+setservent(\fIint stayopen\fP)
+
+void
+endservent(\fIvoid\fP)
+.ft R
 .fi
 .SH DESCRIPTION
-.IR Getservent ,
-.IR getservbyname ,
+.BR getservent ,
+.BR getservbyname ,
 and
-.I getservbyport
+.B getservbyport
 each return a pointer to an object with the
 following structure
 containing the broken-out
 fields of a line in the network services data base,
-.IR /etc/services .
+.BR /etc/services .
 .RS
 .PP
 .nf
@@ -71,23 +69,24 @@ s_proto
 The name of the protocol to use when contacting the
 service.
 .PP
-.I Getservent
+.B getservent
 reads the next line of the file, opening the file if necessary.
 .PP
-.I Setservent
+.B setservent
 opens and rewinds the file.  If the
 .I stayopen
 flag is non-zero,
 the net data base will not be closed after each call to 
-.I getservbyname
-or .IR getservbyport .
+.B getservbyname
+or
+.BR getservbyport .
 .PP
-.I Endservent
+.B endservent
 closes the file.
 .PP
-.I Getservbyname
+.B getservbyname
 and
-.I getservbyport
+.B getservbyport
 sequentially search from the beginning
 of the file until a matching
 protocol name or
@@ -98,7 +97,7 @@ searches must also match the protocol.
 .SH FILES
 /etc/services
 .SH "SEE ALSO"
-getprotoent(3N), services(5)
+getprotoent(3), services(5)
 .SH DIAGNOSTICS
 Null pointer
 (0) returned on EOF or error.

@@ -15,7 +15,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)comsat.c	5.11.2 (2.11BSD) 1999/9/15";
+static char sccsid[] = "@(#)comsat.c	5.11.3 (2.11BSD) 2026/9/22";
 #endif
 
 #include <unistd.h>
@@ -58,7 +58,8 @@ main(argc, argv)
 	register int cc;
 	char msgbuf[100];
 	struct sockaddr_in from;
-	int fromlen, reapchildren(), onalrm();
+	int fromlen;
+	void onalrm(), reapchildren();
 	sigset_t set, oset;
 
 	/* verify proper invocation */
@@ -102,12 +103,14 @@ main(argc, argv)
 	}
 }
 
+void
 reapchildren()
 {
 	while (wait4(-1, NULL, WNOHANG, NULL) > 0)
 		;
 }
 
+void
 onalrm()
 {
 	static u_int utmpsize;		/* last malloced size for utmp */

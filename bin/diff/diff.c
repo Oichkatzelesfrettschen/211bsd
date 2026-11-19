@@ -1,5 +1,5 @@
 #if	!defined(lint) && defined(DOSCCS)
-static	char sccsid[] = "@(#)diff.c 4.6 4/3/86";
+static	char sccsid[] = "@(#)diff.c 4.7 (2.11BSD) 2026/9/21";
 #endif
 
 #include "diff.h"
@@ -176,6 +176,7 @@ max(a,b)
 	return (a > b ? a : b);
 }
 
+void
 done()
 {
 	if (tempfile)
@@ -198,7 +199,6 @@ ralloc(p,n)
 char *p;
 {
 	register char *q;
-	char *realloc();
 
 	if ((q = realloc(p, (unsigned)n)) == NULL)
 		noroom();

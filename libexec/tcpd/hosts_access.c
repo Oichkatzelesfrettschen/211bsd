@@ -17,8 +17,8 @@
   * Author: Wietse Venema, Eindhoven University of Technology, The Netherlands.
   */
 
-#ifndef lint
-static char sccsid[] = "@(#) hosts_access.c 1.19 95/01/30 19:51:47";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#) hosts_access.c 1.20 (2.11BSD) 2026/5/11";
 #endif
 
 /* System libraries. */
@@ -33,9 +33,6 @@ static char sccsid[] = "@(#) hosts_access.c 1.19 95/01/30 19:51:47";
 #include <errno.h>
 #include <setjmp.h>
 #include <string.h>
-
-extern char *fgets();
-extern int errno;
 
 #ifndef	INADDR_NONE
 #define	INADDR_NONE	(-1)		/* XXX should be 0xffffffff */

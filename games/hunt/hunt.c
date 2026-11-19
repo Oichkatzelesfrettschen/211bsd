@@ -9,7 +9,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)hunt.c      1.1 (2.11BSD) 2020/1/7";
+static char sccsid[] = "@(#)hunt.c      1.2 (2.11BSD) 2026/9/22";
 #endif
 
 # include	<errno.h>
@@ -58,7 +58,7 @@ char	**av;
 	char		*term;
 	extern int	errno;
 	extern int	Otto_mode;
-	int		dumpit(), intr(), sigterm(), sigemt(), tstp();
+	void		dumpit(), intr(), sigterm(), sigemt(), tstp();
 
 	for (ac--, av++; ac > 0 && av[0][0] == '-'; ac--, av++) {
 		switch (av[0][1]) {
@@ -282,7 +282,8 @@ FLAG	do_startup;
 	static			initial = TRUE;
 	static struct in_addr	local_address;
 	register struct hostent	*hp;
-	int			(*oldsigalrm)(), sigalrm();
+	sig_t			oldsigalrm;
+	void			sigalrm();
 	extern int		errno;
 # ifdef BROADCAST
 	static	int		brdc;
@@ -564,6 +565,7 @@ char	*s;
  * intr:
  *	Handle a interrupt signal
  */
+void
 intr()
 {
 	register int	ch;
@@ -635,6 +637,7 @@ char	*mesg;
  * tstp:
  *	Handle stop and start signals
  */
+void
 tstp()
 {
 	static struct sgttyb	tty;

@@ -1,6 +1,6 @@
-#ifndef	lint
-static char *rcsid = "$Source: /usr/users/louie/ntp/RCS/ntp.c,v $ $Revision: 3.4.1.6 $ $Date: 89/05/18 18:21:29 $";
-#endif	lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ntp.c 2.4.1.7 (2.11BSD) 2026/5/10"
+#endif
 
 /*
  *  $Log:	ntp.c,v $
@@ -99,6 +99,7 @@ static char *rcsid = "$Source: /usr/users/louie/ntp/RCS/ntp.c,v $ $Revision: 3.4
 #include <netdb.h>
 #include <strings.h>
 #include <errno.h>
+#include <stdlib.h>
 #include "ntp.h"
 
 char *modename[8] = {
@@ -120,10 +121,8 @@ struct sockaddr_in sin = {AF_INET};
 struct sockaddr_in dst = {AF_INET};
 struct servent *sp;
 extern double ul_fixed_to_double(), s_fixed_to_double();
-extern int errno;
 int set, verbose, force;
 int debug;
-extern int optind;
 
 main(argc, argv)
 	int argc;

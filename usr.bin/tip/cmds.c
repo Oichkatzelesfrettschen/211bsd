@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)cmds.c	5.7 (2.11BSD) 2020/1/7";
+static char sccsid[] = "@(#)cmds.c	5.8 (2.11BSD) 2026/9/22";
 #endif
 
 #include "tip.h"
@@ -21,10 +21,10 @@ char	null = '\0';
 char	*sep[] = { "second", "minute", "hour" };
 static char *argv[10];		/* argument vector for take and put */
 
-int	timeout();		/* timeout function called on alarm */
-int	stopsnd();		/* SIGINT handler during file transfers */
-int	intprompt();		/* used in handling SIG_INT during prompt */
-int	intcopy();		/* interrupt routine for file transfers */
+void	timeout();		/* timeout function called on alarm */
+void	stopsnd();		/* SIGINT handler during file transfers */
+void	intprompt();		/* used in handling SIG_INT during prompt */
+void	intcopy();		/* interrupt routine for file transfers */
 
 /*
  * FTP - remote ==> local
@@ -96,7 +96,7 @@ transfer(buf, fd, eofchars)
 	register char *p = buffer;
 	register int cnt, eof;
 	time_t start;
-	int (*f)();
+	sig_t f;
 
 	pwrite(FD, buf, size(buf));
 	quit = 0;
@@ -200,6 +200,7 @@ pipefile()
 /*
  * Interrupt service routine for FTP
  */
+void
 stopsnd()
 {
 
@@ -254,7 +255,7 @@ transmit(fd, eofchars, command)
 	char *pc, lastc;
 	int c, ccount, lcount;
 	time_t start_t, stop_t;
-	int (*f)();
+	sig_t f;
 
 	kill(pid, SIGIOT);	/* put TIPOUT into a wait state */
 	stop = 0;
@@ -411,6 +412,7 @@ tryagain:
 	}
 }
 
+void
 timeout()
 {
 	signal(SIGALRM, timeout);
@@ -621,6 +623,7 @@ finish()
 	abort(NOSTR);
 }
 
+void
 intcopy()
 {
 

@@ -1,4 +1,7 @@
-static char *sccsid = "@(#)tr.c	4.2 (Berkeley) 4/22/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)tr.c	4.3 (2.11BSD) 2026/5/8";
+#endif
+
 #include <stdio.h>
 
 /* tr - transliterate data stream */

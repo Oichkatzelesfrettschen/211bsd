@@ -1,22 +1,18 @@
-#ifndef lint
-static char sccsid[] = "@(#)expand.c	4.5 8/11/83";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)expand.c	4.6 (2.11BSD) 2026/5/11";
 #endif
 
-#
 /*
  *	UNIX shell
  *
  *	S. R. Bourne
  *	Bell Telephone Laboratories
- *
  */
 
 #include	"defs.h"
 #include	<sys/param.h>
 #include	<sys/stat.h>
 #include	<sys/dir.h>
-
-
 
 /* globals (file name generation)
  *

@@ -1,11 +1,12 @@
 /*
- *	Program Name:   strdump.c
- *	Date: January 21, 1994
+ *	Program Name:   symdump.c
+ *	Date: Febuary 04, 2026
  *	Author: S.M. Schultz
  *
  *	-----------------   Modification History   ---------------
  *      Version Date            Reason For Modification
- *      1.0     12Feb94         1. Initial release into the public domain.
+ *	1.0     12Feb1994	1. Initial release into the public domain.
+ *	1.1	04Feb2026	2. Cleanup.
 */
 
 /*
@@ -18,8 +19,8 @@
  *
  *    "sort +0 -1 +1n -2 +2n -3 +3n -4 -u"
  *
- * This program is used by 'strcompact' to compress the string (and
- * symbol) tables of an executable. 
+ * This program is used by 'strcompact' to compress the string and
+ * symbol tables of an executable. 
 */
 
 #include <sys/types.h>
@@ -30,11 +31,11 @@
 #include <sys/file.h>
 #include <string.h>
 
+extern	char	*__progname;
+
 	char	**xargv;	/* global copy of argv */
 	char	*strp;		/* pointer to in-memory string table */
 	struct	xexec xhdr;	/* the extended a.out header */
-
-extern	char	*malloc();
 
 main(argc, argv)
 	int	argc;
@@ -43,7 +44,7 @@ main(argc, argv)
 
 	if	(argc != 2)
 		{
-		fprintf(stderr, "%s:  need a file name\n", argv[0]);
+		fprintf(stderr, "%s: need a file name\n", __progname);
 		exit(1);
 		}
 	xargv = ++argv;
@@ -111,6 +112,6 @@ dumpsyms(fi, nsyms)
 error(s)
 	char *s;
 	{
-	fprintf(stderr, "syms: %s: %s\n", *xargv, s);
+	fprintf(stderr, "%s: %s: %s\n", __progname, *xargv, s);
 	exit(1);
 	}

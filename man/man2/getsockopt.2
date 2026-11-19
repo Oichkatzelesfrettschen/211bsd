@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)getsockopt.2	6.4 (Berkeley) 5/23/86
+.\"	@(#)getsockopt.2	6.5 (2.11BSD) 2026/9/28
 .\"
 .TH GETSOCKOPT 2 "May 23, 1986"
 .UC 5
@@ -13,22 +13,16 @@ getsockopt, setsockopt \- get and set options on sockets
 .ft B
 #include <sys/types.h>
 #include <sys/socket.h>
-.PP
-.ft B
-getsockopt(s, level, optname, optval, optlen)
-int s, level, optname;
-char *optval;
-int *optlen;
-.sp
-setsockopt(s, level, optname, optval, optlen)
-int s, level, optname;
-char *optval;
-int optlen;
+
+getsockopt(\fIint s\fP, \fIint level\fP, \fIint optname\fP, \fIchar *optval\fP, \fIint *optlen\fP)
+
+setsockopt(\fIint s\fP, \fIint level\fP, \fIint optname\fP, \fIchar *optval\fP, \fIint optlen\fP)
+.ft R
 .fi
 .SH DESCRIPTION
-.I Getsockopt
+.B getsockopt
 and
-.I setsockopt
+.B setsockopt
 manipulate
 .I options
 associated with a socket.  Options may exist at multiple
@@ -45,19 +39,19 @@ controlling the option is supplied.  For example,
 to indicate that an option is to be interpreted by the TCP protocol,
 .I level
 should be set to the protocol number of TCP; see
-.IR getprotoent (3N).
+.BR getprotoent (3).
 .PP
 The parameters
 .I optval
 and
 .I optlen
 are used to access option values for
-.IR setsockopt .
+.BR setsockopt .
 For
-.I getsockopt
+.B getsockopt
 they identify a buffer in which the value for the
 requested option(s) are to be returned.  For
-.IR getsockopt ,
+.BR getsockopt ,
 .I optlen
 is a value-result parameter, initially containing the
 size of the buffer pointed to by
@@ -68,21 +62,21 @@ to be supplied or returned,
 .I optval
 may be supplied as 0.
 .PP
-.I Optname
+.I optname
 and any specified options are passed uninterpreted to the appropriate
 protocol module for interpretation.
 The include file
 .RI < sys/socket.h >
 contains definitions for ``socket'' level options, described below.
 Options at other protocol levels vary in format and
-name; consult the appropriate entries in section (4P).
+name; consult the appropriate entries in section (4).
 .PP
 Most socket-level options take an
 .I int
 parameter for
 .IR optval .
 For
-.IR setsockopt ,
+.BR setsockopt ,
 the parameter should non-zero to enable a boolean option,
 or zero if the option is to be disabled.
 SO_LINGER uses a
@@ -94,9 +88,9 @@ linger interval (see below).
 .PP
 The following options are recognized at the socket level.
 Except as noted, each may be examined with
-.I getsockopt
+.B getsockopt
 and set with
-.IR setsockopt .
+.BR setsockopt .
 .PP
 .RS
 .ta \w'SO_BROADCAST\ \ \ \ 'u
@@ -118,7 +112,7 @@ SO_ERROR	get and clear error on the socket (get only)
 SO_DEBUG enables debugging in the underlying protocol modules.
 SO_REUSEADDR indicates that the rules used in validating addresses supplied
 in a
-.IR bind (2)
+.BR bind (2)
 call should allow reuse of local addresses.  SO_KEEPALIVE enables the
 periodic transmission of messages on a connected socket.  Should the
 connected party fail to respond to these messages, the connection is
@@ -130,18 +124,18 @@ of the destination address.
 .PP
 SO_LINGER controls the action taken when unsent messags
 are queued on socket and a 
-.IR close (2)
+.BR close (2)
 is performed.
 If the socket promises reliable delivery of data and SO_LINGER is set,
 the system will block the process on the 
-.I close
+.B close
 attempt until it is able to transmit the data or until it decides it
 is unable to deliver the information (a timeout period, termed the
 linger interval, is specified in the
-.IR setsockopt 
+.BR setsockopt 
 call when SO_LINGER is requested). 
 If SO_LINGER is disabled and a 
-.I close
+.B close
 is issued, the system will process the close in a manner that allows
 the process to continue as quickly as possible.
 .PP
@@ -151,9 +145,9 @@ Broadcast was a privileged operation in earlier versions of the system.
 With protocols that support out-of-band data, the SO_OOBINLINE option
 requests that out-of-band data be placed in the normal data input queue
 as received; it will then be accessible with
-.I recv
+.B recv
 or
-.I read
+.B read
 calls without the MSG_OOB flag.
 SO_SNDBUF and SO_RCVBUF are options to adjust the normal
 buffer sizes allocated for output and input buffers, respectively.
@@ -161,7 +155,7 @@ The buffer size may be increased for high-volume connections,
 or may be decreased to limit the possible backlog of incoming data.
 The system places an absolute limit on these values.
 Finally, SO_TYPE and SO_ERROR are options used only with
-.IR setsockopt .
+.BR setsockopt .
 SO_TYPE returns the type of the socket, such as SOCK_STREAM;
 it is useful for servers that inherit sockets on startup.
 SO_ERROR returns any pending error on the socket and clears
@@ -187,11 +181,11 @@ The address pointed to by
 .I optval
 is not in a valid part of the process address space.
 For
-.IR getsockopt ,
+.BR getsockopt ,
 this error may also be returned if
 .I optlen
 is not in a valid part of the process address space.
 .SH "SEE ALSO"
-ioctl(2), socket(2), getprotoent(3N)
+ioctl(2), socket(2), getprotoent(3)
 .SH BUGS
 Several of the socket options should be handled at lower levels of the system.

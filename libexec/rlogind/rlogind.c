@@ -20,7 +20,7 @@ char copyright[] =
 "@(#) Copyright (c) 1983, 1988 The Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)rlogind.c	5.22.1.8 (2.11BSD) 1996/3/22";
+static char sccsid[] = "@(#)rlogind.c	5.22.1.9 (2.11BSD) 2026/9/16";
 #endif
 
 /*
@@ -42,16 +42,12 @@ static char sccsid[] = "@(#)rlogind.c	5.22.1.8 (2.11BSD) 1996/3/22";
 #include <sys/wait.h>
 #include <sys/file.h>
 #include <sys/ioctl.h>
-#ifdef	FOURdotFOUR
-#include <sys/termios.h>
-#endif
 
 #include <netinet/in.h>
 
 #include <errno.h>
 #include <pwd.h>
 #include <signal.h>
-#include <stdio.h>
 #include <netdb.h>
 #include <syslog.h>
 #include <strings.h>
@@ -118,7 +114,7 @@ main(argc, argv)
 }
 
 int	child;
-int	cleanup();
+void	cleanup();
 int	netf;
 char	*line;
 extern	char	*inet_ntoa();
@@ -475,6 +471,7 @@ protocol(f, p)
 	}
 }
 
+void
 cleanup()
 {
 	char *p;

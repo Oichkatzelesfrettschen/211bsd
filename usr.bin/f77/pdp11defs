@@ -1,16 +1,4 @@
-#ifndef TARGET
-TARGET NOT DEFINED !!!
-#endif
-#if TARGET!=PDP11
-Target= TARGET OUT OF RANGE!!
-#endif
-
-#ifndef FAMILY
-FAMILY NOT DEFINED!!!
-#endif
-#if FAMILY!=SCJ && FAMILY!=DMR
-Family = FAMILY OUT OF RANGE
-#endif
+/* "@(#)pdp11defs 1.1 (2.11BSD) 2026/6/28"; */
 
 #define TYLENG	TYLONG
 

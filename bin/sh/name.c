@@ -1,20 +1,17 @@
-#ifndef lint
-static char sccsid[] = "@(#)name.c	4.4 10/31/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)name.c	4.5 (2.11BSD) 2026/5/11";
 #endif
 
-#
 /*
  * UNIX shell
  *
  * S. R. Bourne
  * Bell Telephone Laboratories
- *
  */
 
 #include	"defs.h"
 
 PROC BOOL	chkid();
-
 
 NAMNOD	ps2nod	= {	NIL,		NIL,		ps2name},
 	fngnod	= {	NIL,		NIL,		fngname},
@@ -25,7 +22,6 @@ NAMNOD	ps2nod	= {	NIL,		NIL,		ps2name},
 	mailnod = {	&homenod,	&ps1nod,	mailname};
 
 NAMPTR		namep = &mailnod;
-
 
 /* ========	variable and string handling	======== */
 

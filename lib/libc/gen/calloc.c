@@ -1,27 +1,21 @@
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)calloc.c	5.2 (Berkeley) 3/9/86";
+static char sccsid[] = "@(#)calloc.c	5.3 (2.11BSD) 2026/8/19";
 #endif LIBC_SCCS and not lint
+
+#include <unistd.h>
+#include <stdlib.h>
 
 /*
  * Calloc - allocate and clear memory block
  */
-char *
+void *
 calloc(num, size)
 	register unsigned num, size;
 {
-	extern char *malloc();
 	register char *p;
 
 	size *= num;
 	if (p = malloc(size))
 		bzero(p, size);
 	return (p);
-}
-
-cfree(p, num, size)
-	char *p;
-	unsigned num;
-	unsigned size;
-{
-	free(p);
 }

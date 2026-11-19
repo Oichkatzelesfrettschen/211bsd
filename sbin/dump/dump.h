@@ -1,11 +1,13 @@
 /*
- * "@(#)dump.h	1.3 (2.11BSD) 2024/9/18"
+ * "@(#)dump.h	1.4 (2.11BSD) 2026/5/14
  */
 #define	NI	4	/* number of blocks of inodes per read */
 
 #include <stdio.h>
 #include <ctype.h>
 #include <strings.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <grp.h>
 #include <sys/param.h>
 #include <sys/stat.h>
@@ -57,11 +59,7 @@ long	blockswritten;	/* number of blocks written on current tape */
 int	tapeno;		/* current tape number */
 time_t	tstart_writing;	/* when started writing the first tape block */
 
-time_t	time();
-off_t	lseek();
-char	*ctime();
 char	*prdate();
-long	atol();
 int	mark();
 int	add();
 int	dump();
@@ -70,8 +68,6 @@ int	dmpspc();
 int	dsrch();
 int	nullf();
 char	*rawname();
-
-int	interrupt();		/* in case operator bangs on console */
 
 #define	HOUR	(60L*60L)
 #define	DAY	(24L*HOUR)
@@ -85,10 +81,8 @@ int	interrupt();		/* in case operator bangs on console */
 #define	X_ABORT		3	/* abort all of dump; don't attempt checkpointing*/
 
 #ifdef DEBUG
-#define	OINCREM	"./ddate"		/*old format incremental info*/
 #define	NINCREM	"./dumpdates"		/*new format incremental info*/
-#else not DEBUG
-#define	OINCREM	"/etc/ddate"		/*old format incremental info*/
+#else
 #define	NINCREM	"/etc/dumpdates"	/*new format incremental info*/
 #endif
 
@@ -111,17 +105,7 @@ int	idates_in;		/* we have read the increment file */
 struct	idates	**idatev;	/* the arrayfied version */
 #define	ITITERATE(i, ip) for (i = 0,ip = idatev[0]; i < nidates; i++, ip = idatev[i])
 
-/*
- *	We catch these interrupts
- */
-int	sighup();
-int	sigquit();
-int	sigill();
-int	sigtrap();
-int	sigfpe();
-int	sigkill();
-int	sigbus();
-int	sigsegv();
-int	sigsys();
-int	sigalrm();
-int	sigterm();
+void sigalrm();
+void tperror();
+void dumpabort();
+void interrupt();		/* in case operator bangs on console */

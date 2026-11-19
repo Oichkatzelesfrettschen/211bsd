@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)cat.c	5.2 (Berkeley) 12/6/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)cat.c	5.3 (2.11BSD) 2026/5/7";
+#endif
 
 /*
  * Concatenate files.
@@ -15,8 +15,6 @@ static char sccsid[] = "@(#)cat.c	5.2 (Berkeley) 12/6/85";
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
-/* #define OPTSIZE BUFSIZ	/* define this only if not 4.2 BSD or beyond */
 
 int	bflg, eflg, nflg, sflg, tflg, uflg, vflg;
 int	spaced, col, lno, inline, ibsize, obsize;
@@ -70,9 +68,7 @@ char **argv;
 			dev = statb.st_dev;
 			ino = statb.st_ino;
 		}
-#ifndef	OPTSIZE
 		obsize = statb.st_blksize;
-#endif
 	}
 	else
 		obsize = 0;
@@ -99,9 +95,7 @@ char **argv;
 				retval = 1;
 				continue;
 			}
-#ifndef	OPTSIZE
 			ibsize = statb.st_blksize;
-#endif
 		}
 		else
 			ibsize = 0;
@@ -173,25 +167,21 @@ top:
 }
 
 fastcat(fd)
-register int fd;
+	int fd;
 {
-	register int	buffsize, n, nwritten, offset;
+	int	buffsize, n;
+	register int	nwritten, offset;
 	register char	*buff;
 	struct stat	statbuff;
-	char		*malloc();
 
-#ifndef	OPTSIZE
 	if (obsize)
 		buffsize = obsize;	/* common case, use output blksize */
 	else if (ibsize)
 		buffsize = ibsize;
 	else
 		buffsize = BUFSIZ;
-#else
-	buffsize = OPTSIZE;
-#endif
 
-	if ((buff = malloc(buffsize)) == NULL) {
+	if ((buff = (char *)malloc(buffsize)) == NULL) {
 		perror("cat: no memory");
 		return (1);
 	}

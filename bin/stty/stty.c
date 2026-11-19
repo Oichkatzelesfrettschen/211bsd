@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)stty.c	5.5 (2.11BSD) 2020/1/7";
+static char sccsid[] = "@(#)stty.c	5.6 (2.11BSD) 2026/5/19";
 #endif
 
 /*
@@ -391,9 +391,7 @@ prmodes(all)
 	int any, i;
 	register struct special *sp;
 
-	if(ldisc==NETLDISC)
-		fprintf(stderr, "net discipline, ");
-	else if (ldisc==NTTYDISC)
+	if 	(ldisc==NTTYDISC)
 		fprintf(stderr, "new tty, ");
 	else if (ldisc == 0)
 		fprintf(stderr, "old tty, ");

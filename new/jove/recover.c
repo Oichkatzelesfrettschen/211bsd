@@ -1,11 +1,12 @@
-/***************************************************************************
- * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
- * is provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is    *
- * included in all the files.                                              *
- ***************************************************************************/
+/*
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE
+ * is provided to you without charge, and with no warranty.  You may give
+ * away copies of JOVE, including sources, provided that this notice is
+ * included in all the files.
+ */
+
 #if     !defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)recover.c    1.1 (2.11BSD) 2025/12/26";
+static char sccsid[] = "@(#)recover.c    1.2 (2.11BSD) 2026/7/28";
 #endif
 
 /* Recovers JOVE files after a system/editor crash.
@@ -27,6 +28,7 @@ static char sccsid[] = "@(#)recover.c    1.1 (2.11BSD) 2025/12/26";
 
 #define STDIO
 
+#include <stdlib.h>
 #include "jove.h"
 #include "temp.h"
 #include "rec.h"
@@ -148,7 +150,7 @@ disk_line	atl;
 
 	if (bno != curblock) {
 		lseek(data_fd, (long) bno * BUFSIZ, L_SET);
-		read(data_fd, blk_buf, BUFSIZ);
+		read(data_fd, (void *)blk_buf, BUFSIZ);
 		curblock = bno;
 	}
 	return blk_buf + off;
@@ -160,7 +162,7 @@ char	*s;
 {
 	char	*str;
 
-	str = malloc(strlen(s) + 1);
+	str = (char *)malloc(strlen(s) + 1);
 	strcpy(str, s);
 
 	return str;
@@ -173,7 +175,7 @@ scandir(dir, nmptr, qualify, sorter)
 char	*dir;
 struct direct	***nmptr;
 int	(*qualify)();
-struct direct	*(*sorter)();
+int (*sorter)();
 {
 	DIR	*dirp;
 	struct direct	*entry,
@@ -188,7 +190,7 @@ struct direct	*(*sorter)();
 		if (qualify != 0 && (*qualify)(entry) == 0)
 			continue;
 		if (nentries == nalloc) {
-			ourarray = (struct direct **) realloc(ourarray, (nalloc += 10) * sizeof (struct direct));
+			ourarray = (struct direct **) realloc((void *)ourarray, (nalloc += 10) * sizeof (struct direct));
 			if (ourarray == NULL)
 				return -1;
 		}
@@ -198,10 +200,10 @@ struct direct	*(*sorter)();
 	}
 	closedir(dirp);
 	if (nentries != nalloc)
-		ourarray = (struct direct **) realloc(ourarray,
+		ourarray = (struct direct **) realloc((void *)ourarray,
 					(nentries * sizeof (struct direct)));
 	if (sorter != 0)
-		qsort(ourarray, nentries, sizeof (struct direct **), sorter);
+		qsort((void *)ourarray, nentries, sizeof (struct direct **), sorter);
 	*nmptr = ourarray;
 
 	return nentries;
@@ -248,7 +250,7 @@ struct direct	*dp;
 	(void) sprintf(rfile, "%s/%s", CurDir, dp->d_name);
 	(void) sprintf(dfile, "%s/jove%s", CurDir, dp->d_name + 4);
 	if ((fd = open(rfile, 0)) != -1) {
-		if ((read(fd, (char *) &header, sizeof header) != sizeof header)) {
+		if ((read(fd, (void *) &header, sizeof header) != sizeof header)) {
 			close(fd);
 		    	return 0;
 		} else
@@ -468,7 +470,7 @@ makblist()
 		read_rec(buflist[i]);
 	}
 	while (buflist[i]) {
-		free((char *) buflist[i]);
+		free((void *) buflist[i]);
 		buflist[i] = 0;
 		i += 1;
 	}

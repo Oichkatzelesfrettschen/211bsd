@@ -1,0 +1,33 @@
+.\"
+.\"	@(#)qt.4	1.0 (2.11BSD) 2026/9/26
+.\"
+.TH QT 4 "September 26, 2026"
+.UC 2
+.SH NAME
+qt \- DEC DELQA and DELQA-T Q-BUS 10 Mb/s Ethernet interfaces
+.SH SYNOPSIS
+.ft B
+.nf
+/sys/conf/SYSTEM:
+	NQT	\fIqt_controllers\fP	# DELQA
+.fi
+.ft R
+.SH DESCRIPTION
+The
+.B qt
+interface provides access to a 10 Mb/s Ethernet network through
+the DEC DELQA Q-BUS controller.  The DELQA-YM is also supported.
+.PP
+Each of the host's network addresses
+is specified at boot time with an SIOCSIFADDR
+ioctl.  The
+.B qt
+interface employs the address resolution protocol described in
+arp(4)
+to map dynamically  between Internet and Ethernet addresses on the local
+network.
+.SH NOTES
+The DELQA-T is also known as the DELQA-PLUS.
+.SH DIAGNOSTICS
+.SH SEE ALSO
+inet(4), intro(4), arp(4), qe(4)

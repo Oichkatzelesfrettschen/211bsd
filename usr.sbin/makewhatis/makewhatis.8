@@ -1,0 +1,19 @@
+.TH MAKEWHATIS 8 "September 16, 2026"
+.UC 2
+.SH NAME
+makewhatis \- remake the database for the whatis and apropos commands
+.SH SYNOPSIS
+.B makewhatis
+.SH DESCRIPTION
+.B makewhatis
+is a shell script that uses the \fBsed\fP(1) program 
+\fI/usr/man/makewhatis.sed\fP to create the whatis database in /usr/man
+from the manual sections in /usr/man/cat*.
+The relevant text is extracted extracted from each manpage and sorted
+.sp
+The database is used by whatis(8) and apropos(8).
+.SH FILES
+.DT
+/usr/man/whatis		constructed data base
+.SH SEE ALSO
+sed(1), whatis(1), apropos(1)

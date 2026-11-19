@@ -1,4 +1,4 @@
-/* $Header: util.c,v 7.0.1.2 86/10/20 12:07:46 lwall Exp $ */
+/* $Header: util.c,v 7.0.1.3 (2.11BSD) 2026/5/11 12:07:46 sms Exp $ */
 
 /* $Log:	util.c,v $
  * Revision 7.0.1.2  86/10/20  12:07:46  lwall
@@ -22,20 +22,7 @@
 #include "util.h"
 
 void
-util_init()
-{
-    ;
-}
-
-void
 movc3(len,src,dest)
-#ifdef vax
-char *dest, *src;
-int len;
-{
-    asm("movc3 4(ap),*8(ap),*12(ap)");
-}
-#else
 Reg1 char *dest;
 Reg2 char *src;
 Reg3 int len;
@@ -53,7 +40,6 @@ Reg3 int len;
 	}
     }
 }
-#endif
 
 void
 no_can_do(what)
@@ -72,11 +58,7 @@ int maxnum;
     double log();
 
     temp = (double) maxnum;
-#ifndef lint
     temp2 = (double) myrand();
-#else
-    temp2 = 0.0;
-#endif
 #if RANDBITS == 15
     return (int) exp(temp2 * log(temp)/0x7fff);
 #else

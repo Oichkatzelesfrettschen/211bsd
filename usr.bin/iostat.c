@@ -1,5 +1,5 @@
 #if	!defined(lint) && defined(DOSCCS)
-static	char *sccsid = "@(#)iostat.c	4.17 (2.11BSD) 2024/9/20";
+static	char *sccsid = "@(#)iostat.c	4.18 (2.11BSD) 2026/9/21";
 #endif
 
 /*
@@ -70,7 +70,7 @@ int	mf;
 int	hz;
 double	etime;
 int	tohdr = 1;
-int	printhdr();
+void	printhdr();
 
 main(argc, argv)
 	char *argv[];
@@ -221,6 +221,7 @@ contin:
 	}
 }
 
+void
 printhdr()
 {
 	register int i;

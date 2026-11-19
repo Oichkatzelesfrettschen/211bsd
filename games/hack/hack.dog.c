@@ -1,5 +1,5 @@
 /* Copyright (c) Stichting Mathematisch Centrum, Amsterdam, 1985. */
-/* hack.dog.c - version 1.0.3 */
+/* hack.dog.c - version 1.0.4 (2.11BSD) 2026/8/26 */
 
 #include	"hack.h"
 #include	"hack.mfndpos.h"
@@ -179,9 +179,6 @@ int info[9];
 
 	/* first we look for food */
 	gtyp = UNDEF;	/* no goal as yet */
-#ifdef LINT
-	gx = gy = 0;	/* suppress 'used before set' message */
-#endif LINT
 	for(obj = fobj; obj; obj = obj->nobj) {
 		otyp = dogfood(obj);
 		if(otyp > gtyp || otyp == UNDEF) continue;

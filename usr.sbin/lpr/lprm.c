@@ -4,15 +4,13 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)lprm.c	5.2 (Berkeley) 11/17/85";
-#endif not lint
+static char sccsid[] = "@(#)lprm.c	5.3 (2.11BSD) 2026/5/10";
+#endif
 
 /*
  * lprm - remove the current user's spool entry
@@ -37,8 +35,6 @@ int	requests;		/* # of spool requests */
 char	*person;		/* name of person doing lprm */
 
 static char	luser[16];	/* buffer for person */
-
-struct passwd *getpwuid();
 
 main(argc, argv)
 	char *argv[];

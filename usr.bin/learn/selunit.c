@@ -1,9 +1,10 @@
-#ifndef lint
-static char sccsid[] = "@(#)selunit.c	4.3	(Berkeley)	5/15/86";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)selunit.c	4.4	(2.11BSD)	2026/1/27";
 #endif not lint
 
 #include "stdio.h"
 #include "lrnref.h"
+#include <strings.h>
 
 int	nsave	= 0;
 int	review	= 0;
@@ -14,6 +15,7 @@ selunit()
 	static char saved[20];
 	char fnam[80], s[80], zb[200];
 	char posslev[20][20];
+	register char *cp;
 	int diff[20], i, k, m, n, best, alts;
 	char *getlesson();
 	FILE *f;
@@ -29,8 +31,12 @@ selunit()
 	}
 	while (ask) {
 		printf("What lesson? ");
-		fflush(stdout);
-		gets(dobuff);
+
+		dobuff[0] = '\0';
+		fgets(dobuff, sizeof dobuff, stdin);
+		cp = index(dobuff, '\n');
+		if (cp) *cp = '\0';
+
 		if (strcmp(dobuff, "bye") == 0)
 			wrapup(1);
 		level = dobuff;

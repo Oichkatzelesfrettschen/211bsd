@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)penril.c	5.1 (Berkeley) 4/30/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)penril.c	5.2 (2.11BSD) 2026/5/9";
+#endif
 
 /*
  * Routines for calling up on a Penril Modem
@@ -14,9 +14,11 @@ static char sccsid[] = "@(#)penril.c	5.1 (Berkeley) 4/30/85";
  */
 #include "tip.h"
 
+#include <strings.h>
+
 #define	MAXRETRY	5
 
-static	int sigALRM();
+static	void sigALRM();
 static	int timeout = 0;
 static	jmp_buf buftimeout;
 
@@ -36,7 +38,7 @@ pen_dialer(num, acu)
 {
 	register char *cp;
 	register int connected = 0;
-	char *msg, *index(), line[80];
+	char *msg, line[80];
 
 	/*
 	 * Get in synch with a couple of carriage returns
@@ -132,7 +134,7 @@ echo(s)
 	}
 }
 
-static int
+static void
 sigALRM()
 {
 
@@ -148,7 +150,7 @@ gobble(match, response)
 {
 	register char *cp = response;
 	char c;
-	int (*f)();
+	sig_t f;
 
 	signal(SIGALRM, sigALRM);
 	timeout = 0;

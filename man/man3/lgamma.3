@@ -2,41 +2,44 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)lgamma.3m	6.2 (Berkeley) 5/12/86
+.\"	@(#)lgamma.3	6.3 (2.11BSD) 2026/9/27
 .\"
-.TH LGAMMA 3M  "May 12, 1986"
+.TH LGAMMA 3  "May 12, 1986"
 .UC 6
 .SH NAME
 lgamma \- log gamma function
 .SH SYNOPSIS
 .nf
-.B #include <math.h>
-.PP
-.B double lgamma(x)
-.B double x;
+.ft B
+#include <math.h>
+
+double
+lgamma(\fIdouble x\fP)
+.ft R
 .fi
 .SH DESCRIPTION
 .nf
-.ta \w'Lgamma returns ln\||\(*G(x)| where'u+1n +1.7i
+.ta \w'\fBlgamma\fP returns ln\||\(*G(x)| where'u+1n +1.7i
 .if t \{\
-Lgamma returns ln\||\(*G(x)| where	\(*G(x) = \(is\d\s8\z0\s10\u\u\s8\(if\s10\d t\u\s8x\-1\s10\d e\u\s8\-t\s10\d dt	for x > 0 and
+\fBlgamma\fP returns ln\||\(*G(x)| where	\(*G(x) = \(is\d\s8\z0\s10\u\u\s8\(if\s10\d t\u\s8x\-1\s10\d e\u\s8\-t\s10\d dt	for x > 0 and
 .br
 	\(*G(x) = \(*p/(\(*G(1\-x)\|sin(\(*px))	for x < 1.  \}
 .if n \
-Lgamma returns ln\||\(*G(x)|.
+\fBlgamma\fP returns ln\||\(*G(x)|.
 .ta
 .fi
 .PP
-The external integer signgam returns the sign of
+The external integer \fBsigngam\fP returns the sign of
 \(*G(x) .
 .SH IDIOSYNCRASIES
-Do \fBnot\fR use the expression signgam\(**exp(lgamma(x))
+Do \fBnot\fR use the expression \fBsigngam\fP\(**\fBexp\fP(\fBlgamma\fP(x))
 to compute g := \(*G(x).  Instead use a program like this (in C):
+.sp
 .RS
-lg = lgamma(x); g = signgam\(**exp(lg);
+lg = \fBlgamma\f{(x); g = \fBsigngam\fP\(**\fBexp\fP(lg);
 .RE
 .PP
-Only after lgamma has returned can signgam be correct.
+Only after \fBlgamma\fP has returned can \fBsigngam\fP be correct.
 Note too that \(*G(x) must overflow when x is large enough,
 underflow when \-x is large enough, and spawn a division by zero
 when x is a nonpositive integer.
@@ -55,14 +58,14 @@ negative integer, and lets \(*G(x) be computed without
 conditional expressions.  Programmers should not assume that
 lgamma has settled down.
 .PP
-At some time in the future, the name \fIgamma\fR will be rehabilitated
+At some time in the future, the name \fBgamma\fR will be rehabilitated
 and used for the gamma function, just as is done in FORTRAN.
 The reason for this is not so much compatibility with FORTRAN as a
 desire to achieve greater speed for smaller values of |x| and greater
 accuracy for larger values.
 .PP
-Meanwhile, programmers who have to use the name \fIgamma\fR in its former
-sense, for what is now \fIlgamma\fR, have two choices:
+Meanwhile, programmers who have to use the name \fBgamma\fR in its former
+sense, for what is now \fBlgamma\fR, have two choices:
 .IP 1) \w'1)\0'u
 Use the old math library, \fIlibom\fR.
 .IP 2) \w'1)\0'u
@@ -79,9 +82,5 @@ double x;
 }\fR
 .RE
 .fi
-.SH DIAGNOSTICS
-The reserved operand is returned on a VAX for negative integer arguments,
-\fIerrno\fR is set to ERANGE; for very large arguments over/underflows will
-occur inside the \fIlgamma\fP routine.
 .SH SEE ALSO
-math(3M), infnan(3M)
+math(3)

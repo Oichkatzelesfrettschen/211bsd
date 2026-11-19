@@ -1,5 +1,5 @@
 #if	!defined(lint) && defined(DOSCCS)
-static	char *sccsid = "@(#)dumpoptr.c	1.6 (2.11BSD GTE) 1996/11/16";
+static	char *sccsid = "@(#)dumpoptr.c	1.7 (2.11BSD) 2026/5/7";
 #endif
 
 #include "dump.h"
@@ -24,7 +24,7 @@ query(question)
 {
 	char	replybuffer[64];
 	int	back;
-	FILE	*mytty;
+	register FILE	*mytty;
 
 	if ( (mytty = fopen("/dev/tty", "r")) == NULL){
 		msg("fopen on /dev/tty fails\n");
@@ -66,6 +66,7 @@ query(question)
  *	Alert the console operator, and enable the alarm clock to
  *	sleep for 2 minutes in case nobody comes to satisfy dump
  */
+void
 alarmcatch()
 {
 	if (timeout)
@@ -79,6 +80,7 @@ alarmcatch()
 /*
  *	Here if an inquisitive operator interrupts the dump program
  */
+void
 interrupt()
 {
 	msg("Interrupt received.\n");

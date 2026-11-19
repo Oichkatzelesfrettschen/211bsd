@@ -1,20 +1,13 @@
-#       Makefile        2.0 (2.11BSD) 2025/11/25
+#       Makefile        2.1 (2.11BSD) 2026/3/21
 
 # check the Configure file for some examples of device-specific setups
-# Berkeley flavors of Unix should include -DBSD in the CFLAGS
 
-CFLAGS	= -O -DBSD
+CFLAGS	= -O
 LDFLAGS	= -i
 LD	= cc
 LINT	= lint
-SHLIB	= 
-SHAR	= shar -a
 BINDIR	= /usr/local
 MANDIR	= /usr/local/man/cat1
-#
-# for AT&T Unix PC 7300/3b1 style shared libraries.
-#SHOBJ	= /lib/crt0s.o /lib/shlib.ifile
-#LD	= ld
 
 PROGS	= mattrib mcd mcopy mdel mdir mformat mlabel mmd mrd mread mren \
 	mtype mwrite mkmanifest
@@ -55,46 +48,46 @@ MKMANIFEST = mkmanifest.o
 all:	$(PROGS) $(MANPAGES)
 
 mattrib: $(MATTRIB)
-	$(LD) $(LDFLAGS) $(MATTRIB) $(SHOBJ) -o mattrib $(SHLIB)
+	$(LD) $(LDFLAGS) $(MATTRIB) -o mattrib
 
 mcd:	$(MCD)
-	$(LD) $(LDFLAGS) $(MCD) $(SHOBJ) -o mcd $(SHLIB)
+	$(LD) $(LDFLAGS) $(MCD) -o mcd
 
 mcopy:	$(MCOPY)
-	$(LD) $(LDFLAGS) $(MCOPY) $(SHOBJ) -o mcopy $(SHLIB)
+	$(LD) $(LDFLAGS) $(MCOPY) -o mcopy
 
 mdel:	$(MDEL)
-	$(LD) $(LDFLAGS) $(MDEL) $(SHOBJ) -o mdel $(SHLIB)
+	$(LD) $(LDFLAGS) $(MDEL) -o mdel
 
 mdir:	$(MDIR)
-	$(LD) $(LDFLAGS) $(MDIR) $(SHOBJ) -o mdir $(SHLIB)
+	$(LD) $(LDFLAGS) $(MDIR) -o mdir
 
 mformat: $(MFORMAT)
-	$(LD) $(LDFLAGS) $(MFORMAT) $(SHOBJ) -o mformat $(SHLIB)
+	$(LD) $(LDFLAGS) $(MFORMAT) -o mformat
 
 mlabel:	$(MLABEL)
-	$(LD) $(LDFLAGS) $(MLABEL) $(SHOBJ) -o mlabel $(SHLIB)
+	$(LD) $(LDFLAGS) $(MLABEL) -o mlabel
 
 mmd:	$(MMD)
-	$(LD) $(LDFLAGS) $(MMD) $(SHOBJ) -o mmd $(SHLIB)
+	$(LD) $(LDFLAGS) $(MMD) -o mmd
 
 mrd:	$(MRD)
-	$(LD) $(LDFLAGS) $(MRD) $(SHOBJ) -o mrd $(SHLIB)
+	$(LD) $(LDFLAGS) $(MRD) -o mrd
 
 mread:	$(MREAD)
-	$(LD) $(LDFLAGS) $(MREAD) $(SHOBJ) -o mread $(SHLIB)
+	$(LD) $(LDFLAGS) $(MREAD) -o mread
 
 mren:	$(MREN)
-	$(LD) $(LDFLAGS) $(MREN) $(SHOBJ) -o mren $(SHLIB)
+	$(LD) $(LDFLAGS) $(MREN) -o mren
 
 mtype:	$(MTYPE)
-	$(LD) $(LDFLAGS) $(MTYPE) $(SHOBJ) -o mtype $(SHLIB)
+	$(LD) $(LDFLAGS) $(MTYPE) -o mtype
 
 mwrite:	$(MWRITE)
-	$(LD) $(LDFLAGS) $(MWRITE) $(SHOBJ) -o mwrite $(SHLIB)
+	$(LD) $(LDFLAGS) $(MWRITE) -o mwrite
 
 mkmanifest:	$(MKMANIFEST)
-	$(LD) $(LDFLAGS) $(MKMANIFEST) $(SHOBJ) -o mkmanifest $(SHLIB)
+	$(LD) $(LDFLAGS) $(MKMANIFEST) -o mkmanifest
 
 mattrib.0: Mattrib.1
 	 nroff -man Mattrib.1  >  mattrib.0
@@ -164,19 +157,6 @@ lint:
 	dir_read.c dir_write.c expand.c fat_free.c fat_read.c fat_write.c \
 	file_write.c init.c is_dir.c match.c parse.c subdir.c
 	$(LINT) mkmanifest.c
-
-shar:
-	$(SHAR) Configure Makefile *.1 Readme Release.notes buf_read.c \
-	buf_write.c devices.c dir_make.c dir_read.c dir_write.c expand.c \
-	fat_free.c > mtools_sh.1
-	$(SHAR) fat_read.c fat_write.c file_read.c file_write.c init.c \
-	is_dir.c match.c mattrib.c mcd.c mcopy.c mdel.c mdir.c mformat.c \
-	mkmanifest.c mlabel.c mmd.c > mtools_sh.2
-	$(SHAR) mrd.c mread.c mren.c msdos.h mtype.c mwrite.c parse.c \
-	patchlevel.h subdir.c > mtools_sh.3
-	$(SHAR) Mattrib.out Mcd.out Mcopy.out Mdel.out Mdir.out Mformat.out \
-	Mkmanifest.out Mlabel.out Mmd.out Mrd.out Mread.out Mren.out \
-	Mtools.out Mtype.out Mwrite.out > mtools_sh.4
 
 buf_read.o:	msdos.h
 buf_write.o:	msdos.h

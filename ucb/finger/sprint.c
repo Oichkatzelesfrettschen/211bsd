@@ -18,14 +18,15 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)sprint.c	5.6 (Berkeley) 2/7/90";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)sprint.c	5.7 (2.11BSD) 2026/5/9";
+#endif
 
 #include <sys/types.h>
-#include <sys/time.h>
+#include <time.h>
 #include <tzfile.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "finger.h"
 
 extern int entries;
@@ -38,8 +39,7 @@ sflag_print()
 	register int cnt;
 	register char *p;
 	PERSON **list, **sort();
-	time_t time();
-	char *ctime(), *prphone();
+	char *prphone();
 
 	list = sort();
 	/*
@@ -105,7 +105,6 @@ sort()
 	register PERSON *pn, **lp;
 	PERSON **list;
 	int psort();
-	char *malloc();
 
 	if (!(list = (PERSON **)malloc((u_int)(entries * sizeof(PERSON *))))) {
 		(void)fprintf(stderr, "finger: out of space.\n");

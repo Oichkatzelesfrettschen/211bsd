@@ -1,5 +1,5 @@
 #
-#	@(#)Makefile	1.0 (2.11BSD) 2025/11/29
+#	@(#)Makefile	1.1 (2.11BSD) 2026/1/26
 #
 # This is the Makefile for 'stdlib'.  New routines ported from 4.4BSD's
 # libc/stdlib directory go here but existing libc/gen files are being left
@@ -10,8 +10,10 @@ DEFS=
 CFLAGS=	 -O ${DEFS}
 CC=	cc
 
-SRCS=	getopt.c getsubopt.c strtol.c strtoul.c
-OBJS=	getopt.o getsubopt.o strtol.o strtoul.o
+SRCS=	getopt.c getsubopt.c strtol.c strtoul.c imaxabs.c imaxdiv.c lconv.c \
+	localeconv.c setlocale.c strtomax.c
+OBJS=	getopt.o getsubopt.o strtol.o strtoul.o imaxabs.o imaxdiv.o lconv.o \
+	localeconv.o setlocale.o strtomax.o
 
 .c.o:
 	${CC} -p ${CFLAGS} -c $*.c

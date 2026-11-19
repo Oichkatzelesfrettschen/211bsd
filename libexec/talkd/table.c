@@ -5,7 +5,7 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)table.c	5.2.1 (2.11BSD GTE) 1/1/94";
+static char sccsid[] = "@(#)table.c	5.2.2 (2.11BSD) 2026/9/15";
 #endif
 
 /*
@@ -20,8 +20,8 @@ static char sccsid[] = "@(#)table.c	5.2.1 (2.11BSD GTE) 1/1/94";
 #include <sys/time.h>
 #include <syslog.h>
 #include <sys/types.h>
+#include <stdlib.h>
 #include <netinet/in.h>
-
 #include <protocols/talkd.h>
 
 #define MAX_ID 16000	/* << 2^15 so I don't have sign troubles */
@@ -44,7 +44,6 @@ struct table_entry {
 TABLE_ENTRY *table = NIL;
 CTL_MSG *find_request();
 CTL_MSG *find_match();
-char	*malloc();
 
 /*
  * Look in the table for an invitation that matches the current

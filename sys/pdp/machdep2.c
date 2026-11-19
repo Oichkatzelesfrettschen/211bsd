@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)machdep2.c	2.11 (2.11BSD) 2020/1/20
+ *	@(#)machdep2.c	2.12 (2.11BSD) 2026/5/16
  */
 
 #include "param.h"
@@ -161,16 +161,12 @@ startup()
 */
 
 #ifdef	SOFUB_MAP
-#define	B	(10240+64)
-
-	sofub_size = (unsigned) B;
-
-	if	((sofub_base = malloc(coremap, btoc(B))) == 0)
+	if	((sofub_base = malloc(coremap, btoc(sofub_size))) == 0)
 		panic("sofmap");			/* Paranoia */
-	else if	(((sofub_base + btoc(B)) >> 10) > 3)	/* > 256kb! */
+	else if	(((sofub_base + btoc(sofub_size)) >> 10) > 3)	/* > 256kb! */
 		{
 		printf("sofmap > 256kb\n");
-		mfree(coremap, btoc(B), sofub_base);	/* give it back */
+		mfree(coremap, btoc(sofub_size), sofub_base);	/* give it back */
 		sofub_base = 0;
 		}
 	else
@@ -178,7 +174,6 @@ startup()
 		sofub_addr = sofub_base;
 		sofub_off = (sofub_base>>10)&3;
 		}
-#undef	B
 #endif /* SOFUB_MAP */
 
 #ifdef EXTERNALITIMES

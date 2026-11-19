@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)dr_main.c	5.2 (Berkeley) 1/21/86";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)dr_main.c     5.3 (2.11BSD) 2026/5/12";
+#endif
 
 #include "driver.h"
 

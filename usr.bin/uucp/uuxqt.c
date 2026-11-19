@@ -1,14 +1,10 @@
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)uuxqt.c	5.9 (2.11BSD) 2022/1/21";
+static char sccsid[] = "@(#)uuxqt.c	5.10 (2.11BSD) 2026/5/9";
 #endif
 
 #include "uucp.h"
 #include <sys/stat.h>
-#ifdef	NDIR
-#include "ndir.h"
-#else
 #include <sys/dir.h>
-#endif
 #include <signal.h>
 
 #define BADCHARS	"&^|(`\\<>;\"{}\n'"
@@ -180,12 +176,7 @@ doprocess:
 	time(&xstart);
 	while (gtxfile(xfile) > 0) {
 		/* if /etc/nologin exists, exit cleanly */
-#if defined(BSD4_2) || defined(USG)
 		if (access(NOLOGIN, F_OK) == 0) {
-#else !BSD4_2 && ! USG
-		ultouch();
-		if (nologinflag) {
-#endif !BSD4_2 && !USG
 			logent(NOLOGIN, "UUXQT SHUTDOWN");
 			if (Debug)
 				logent("debugging", "continuing anyway");
@@ -384,14 +375,6 @@ int code;
 {
 	logcls();
 	rmlock(CNULL);
-#ifdef	VMS
-	/*
-	 *	Since we run as a BATCH job we must wait for all processes to
-	 *	to finish
-	 */
-	while(wait(0) != -1)
-		;
-#endif VMS
 	exit(code);
 }
 

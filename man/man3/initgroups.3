@@ -2,23 +2,26 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)initgroups.3	6.2 (Berkeley) 5/12/86
+.\"	@(#)initgroups.3	6.3 (2.11BSD) 2026/9/20
 .\"
 .TH INITGROUPS 3 "May 12, 1986"
 .UC 5
 .SH NAME
 initgroups \- initialize group access list
 .SH SYNOPSIS
-.B initgroups(name, basegid)
-.br
-.B char *name;
-.br
-.B int basegid;
+.nf
+.ft B
+#include <unistd.h>
+
+int
+initgroups(\fIconst char *name\fP, \fIgid_t basegid\fP)
+.ft R
+.fi
 .SH DESCRIPTION
-.I Initgroups
+.B initgroups
 reads through the group file and sets up,
 using the
-.IR setgroups (2)
+.BR setgroups (2)
 call, the group access list for the user
 specified in
 .IR name .
@@ -32,13 +35,13 @@ the group number from the password file.
 .SH SEE ALSO
 setgroups(2)
 .SH DIAGNOSTICS
-.I Initgroups
+.B initgroups
 returns \-1 if it was not invoked by the super-user.
 .SH BUGS
-.I Initgroups
+.B initgroups
 uses the routines based on
-.IR getgrent (3).
+.BR getgrent (3).
 If the invoking program uses any of these routines,
 the group structure will
 be overwritten in the call to
-.IR initgroups .
+.BR initgroups .

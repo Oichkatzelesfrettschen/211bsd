@@ -1,4 +1,4 @@
-#       Makefile        2.0 (2.11BSD) 2025/11/25
+#       Makefile        2.1 (2.11BSD) 2026/5/14
 
 DEFS = -DBSD
 CFLAGS = -O $(DEFS)
@@ -11,7 +11,6 @@ SRC = ddd.c
 OBJ = ddd.o
 HEAD =
 BIN = ddd
-SHAR = ddd.shar
 
 BINDIR = /usr/local
 
@@ -36,7 +35,4 @@ $(MAN): $(MANSRC)
 	/usr/man/manroff $(MANSRC) > $(MAN)
 
 clean:
-	-$(RM) $(BIN) $(OBJ) all lint a.out core *~ #* $(SHAR) $(MAN)
-
-shar: lint README $(MAN) Makefile $(HEAD $(SRC)
-	shar README $(MAN) Makefile $(HEAD) $(SRC) > $(SHAR)
+	-$(RM) $(BIN) $(OBJ) all lint a.out core *~ $(MAN)

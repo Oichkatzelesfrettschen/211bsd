@@ -9,7 +9,7 @@
  * software without specific prior written permission. This software
  * is provided ``as is'' without express or implied warranty.
  *
- *	@(#)ip_input.c	7.10 (2.11BSD) 2022/1/21
+ *	@(#)ip_input.c	7.11 (2.11BSD) 2026/7/10
  */
 
 #include "param.h"
@@ -35,6 +35,8 @@
 #include "tcp.h"
 
 extern	int	ipforwarding, ipsendredirects, ipforward_srcrt, ip_defttl;
+extern	int	tcp_fw2timeout;
+
 u_char	ip_protox[IPPROTO_MAX];
 int	ipqmaxlen = IFQ_MAXLEN;
 int	ipprintfs = 0;
@@ -748,7 +750,7 @@ save_rte(option, dst)
 	olen = option[IPOPT_OLEN];
 	if (olen > sizeof(ip_srcrt) - 1) {
 		if (ipprintfs)
-			printf("save_rte: olen %d\n", olen);
+			printf("save_rte %d\n", olen);
 		return;
 	}
 	bcopy((caddr_t)option, (caddr_t)ip_srcrt.srcopt, olen);
@@ -863,7 +865,7 @@ ip_forward(ip, ifp, srcrt)
 
 	dest.s_addr = 0;
 	if (ipprintfs)
-		printf("forward: src %lx dst %lx ttl %x\n", ntohl(ip->ip_src),
+		printf("fw src %lx dst %lx ttl %x\n", ntohl(ip->ip_src),
 			ntohl(ip->ip_dst), ip->ip_ttl);
 	ip->ip_id = htons(ip->ip_id);
 	if (in_canforward(ip->ip_dst) == 0) {
@@ -942,7 +944,7 @@ ip_forward(ip, ifp, srcrt)
 			    break;
 			}
 		    if (ipprintfs)
-		        printf("redirect (%d) to %x\n", code, dest);
+		        printf("redir (%d) to %x\n", code, dest);
 		}
 	}
 
@@ -1025,8 +1027,9 @@ ip_sysctl(name, namelen, oldp, oldlenp, newp, newlen)
 		return (sysctl_int(oldp, oldlenp, newp, newlen, &ip_mtu));
 #endif
 	case IPCTL_FORWSRCRT:
-		return (sysctl_int(oldp, oldlenp, newp, newlen,
-		    &ipforward_srcrt));
+		return (sysctl_int(oldp, oldlenp, newp, newlen, &ipforward_srcrt));
+	case IPCTL_FW2TIMEOUT:
+		return (sysctl_int(oldp, oldlenp, newp, newlen, &tcp_fw2timeout));
 	default:
 		return (EOPNOTSUPP);
 	}

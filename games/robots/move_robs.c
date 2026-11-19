@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)move_robs.c	5.1 (Berkeley) 5/30/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)move_robs.c     5.2 (2.11BSD) 2026/5/12";
+#endif
 
 # include	"robots.h"
 # include	<signal.h>
@@ -15,6 +15,7 @@ static char sccsid[] = "@(#)move_robs.c	5.1 (Berkeley) 5/30/85";
  * move_robots:
  *	Move the robots around
  */
+void
 move_robots(was_sig)
 bool	was_sig;
 {

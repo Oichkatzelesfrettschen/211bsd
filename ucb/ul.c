@@ -4,17 +4,17 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)ul.c	5.1 (Berkeley) 5/31/85";
-#endif not lint
+static char sccsid[] = "@(#)ul.c	5.2 (2.11BSD) 2026/5/8";
+#endif
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #define	IESC	'\033'
 #define	SO	'\016'
@@ -56,9 +56,6 @@ main(argc, argv)
 	char *cp, *termtype;
 	FILE *f;
 	char termcap[1024];
-	char *getenv();
-	extern int optind;
-	extern char *optarg;
 
 	termtype = getenv("TERM");
 	if (termtype == NULL || (argv[0][0] == 'c' && !isatty(1)))
@@ -233,7 +230,7 @@ flushln()
 	for (i=0; i<maxcol; i++) {
 		if (obuf[i].c_mode != lastmode) {
 			hadmodes++;
-			setmode(obuf[i].c_mode);
+			xsetmode(obuf[i].c_mode);
 			lastmode = obuf[i].c_mode;
 		}
 		if (obuf[i].c_char == '\0') {
@@ -245,7 +242,7 @@ flushln()
 			outc(obuf[i].c_char);
 	}
 	if (lastmode != NORMAL) {
-		setmode(0);
+		xsetmode(0);
 	}
 	if (must_overstrike && hadmodes)
 		overstrike();
@@ -429,13 +426,18 @@ char c;
 	}
 }
 
-setmode(newmode)
+/*
+ * Bad coding practice to use system function names.  Renamed to avoid
+ * conflict with the libc routine prototyped in unistd.h
+ *
+*/
+xsetmode(newmode)
 int newmode;
 {
 	if (!iflag)
 	{
 		if (curmode != NORMAL && newmode != NORMAL)
-			setmode(NORMAL);
+			xsetmode(NORMAL);
 		switch (newmode) {
 		case NORMAL:
 			switch(curmode) {
@@ -480,62 +482,4 @@ int newmode;
 		}
 	}
 	curmode = newmode;
-}
-/*	@(#)getopt.c	3.2	*/
-#define	ERR(s, c)	if(opterr){\
-	fputs(argv[0], stderr);\
-	fputs(s, stderr);\
-	fputc(c, stderr);\
-	fputc('\n', stderr);}
-
-int	opterr = 1;
-int	optind = 1;
-char	*optarg;
-char	*index();
-
-int
-getopt (argc, argv, opts)
-	char **argv, *opts;
-{
-	static int sp = 1;
-	char c;
-	char *cp;
-
-	if (sp == 1)
-		if (optind >= argc ||
-		   argv[optind][0] != '-' || argv[optind][1] == '\0')
-			return EOF;
-		else if (strcmp(argv[optind], "--") == NULL) {
-			optind++;
-			return EOF;
-		}
-		else if (strcmp(argv[optind], "-?") == NULL) {
-			optind++;
-			return '?';
-		}
-	c = argv[optind][sp];
-	if (c == ':' || (cp=index(opts, c)) == NULL) {
-		ERR (": illegal option -- ", c);
-		if (argv[optind][++sp] == '\0') {
-			optind++;
-			sp = 1;
-		}
-		return '?';
-	}
-	if (*++cp == ':') {
-		if (argv[optind][2] != '\0')
-			optarg = &argv[optind++][sp+1];
-		else if (++optind >= argc) {
-			ERR (": option requires an argument -- ", c);
-			sp = 1;
-			return '?';
-		} else
-			optarg = argv[optind++];
-		sp = 1;
-	}
-	else if (argv[optind][++sp] == '\0') {
-		sp = 1;
-		optind++;
-	}
-	return c;
 }

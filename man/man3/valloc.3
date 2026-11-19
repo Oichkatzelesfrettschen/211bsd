@@ -2,36 +2,37 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)valloc.3c	6.2 (Berkeley) 5/12/86
+.\"	@(#)valloc.3	6.3 (2.11BSD) 2026/9/27
 .\"
-.TH VALLOC 3C "May 12, 1986"
+.TH VALLOC 3 "May 12, 1986"
 .UC 3
 .SH NAME
 valloc \- aligned memory allocator
 .SH SYNOPSIS
 .nf
-.B char *valloc(size)
-.B unsigned size;
+.ft B
+char *
+valloc(\fIunsigned int size\fP)
+.ft R
 .fi
 .SH DESCRIPTION
 .ft B
-Valloc is obsoleted by the current version of malloc,
-which aligns page-sized and larger allocations.
+valloc is obsoleted by the current version of malloc.
 .ft R
 .PP
-.I Valloc
-allocates
+.B valloc
+on 2.11BSD simply calls
+.BR malloc (3)
+with
 .I size
-bytes aligned on a page boundary.
-It is implemented by calling
-.IR malloc (3)
-with a slightly larger request, saving the true beginning of the block
-allocated, and returning a properly aligned pointer.
+as the argument.
 .SH DIAGNOSTICS
-.I Valloc
+.B valloc
 returns a null pointer (0) if there is no available memory
 or if the arena has been detectably corrupted by storing outside the bounds
 of a block.
-.SH BUGS
-.I Vfree
-isn't implemented.
+.SH NOTES
+Memory allocated by
+.B valloc
+should be released by calling
+.B free

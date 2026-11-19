@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)snake.c	5.3 (2.11BSD) 2025/12/25";
+static char sccsid[] = "@(#)snake.c	5.4 (2.11BSD) 2026/7/21";
 #endif
 
 /*
@@ -21,6 +21,7 @@ static char sccsid[] = "@(#)snake.c	5.3 (2.11BSD) 2025/12/25";
 
 #include "snake.h"
 #include <pwd.h>
+#include <time.h>
 
 	/*
 	 * If CHECKBUSY is defined, the file BUSY must be executable
@@ -86,8 +87,7 @@ char **argv;
 {
 	int i,k;
 	int j;
-	long time();
-	int stop();
+	void stop();
 	char stdbuf[BUFSIZ];
 
 	argcount = argc;
@@ -865,8 +865,9 @@ int won;
 	}
 }
 
+void
 stop(){
-	signal(SIGINT,1);
+	signal(SIGINT, SIG_IGN);
 	ll();
 	length(moves);
 	done();
@@ -900,7 +901,7 @@ logit(msg)
 char *msg;
 {
 	FILE *logfile;
-	long t;
+	time_t t;
 
 	if ((logfile=fopen(LOGFILE, "a")) != NULL) {
 		time(&t);

@@ -1,3 +1,7 @@
+#if     !defined(lint) && defined(DOSCCS)
+static  char    sccsid[] = "@(#)runpcs.c 2.0 (2.11BSD) 2026/9/21";
+#endif
+
 #include "defs.h"
 #include <sys/file.h>
 
@@ -5,8 +9,8 @@
 	MSG	ENDPCS;
 	MSG     BADWAIT;
 	char    *lp;
-	int	sigint;
-	int	sigqit;
+extern	sig_t	sigint;
+extern	sig_t	sigqit;
 	BKPTR   bkpthead;
 	REGLIST reglist[];
 	char	lastc;

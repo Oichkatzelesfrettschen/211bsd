@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)execve.2	6.7 (Berkeley) 5/22/86
+.\"	@(#)execve.2	6.8 (2.11BSD) 2026/9/20
 .\"
 .TH EXECVE 2 "May 22, 1986"
 .UC 4
@@ -10,12 +10,14 @@
 execve \- execute a file
 .SH SYNOPSIS
 .ft B
-execve(name, argv, envp)
-.br
-char *name, *argv[], *envp[];
+#include <unistd.h>
+.sp
+int
+execve(\fIconst char *name\fP, \fIchar *const argv[]\fP, \fIchar *const envp[]\fP)
 .fi
+.ft R
 .SH DESCRIPTION
-.I Execve
+.B execve
 transforms the calling process into a new process.
 The new process is constructed from an ordinary file
 called the \fInew process file\fP.
@@ -29,12 +31,12 @@ by the header to be initialized with zero data.  See
 .PP
 An interpreter file begins with a line of the form ``#! \fIinterpreter\fP''.
 When an interpreter file is
-.IR execve\| 'd,
-the system \fIexecve\fP\|'s the specified \fIinterpreter\fP, giving
+.BR execve\| 'd,
+the system \fBexecve\fP\|'s the specified \fIinterpreter\fP, giving
 it the name of the originally exec'd file as an argument and
 shifting over the rest of the original arguments.
 .PP
-There can be no return from a successful \fIexecve\fP because the calling
+There can be no return from a successful \fBexecve\fP because the calling
 core image is lost.
 This is the mechanism whereby different process images become active.
 .PP
@@ -48,21 +50,21 @@ the name of the executed program (i.e., the last component of \fIname\fP).
 The argument \fIenvp\fP is also a null-terminated array of character pointers
 to null-terminated strings.  These strings pass information to the
 new process that is not directly an argument to the command (see
-.IR environ (7)).
+.BR environ (7)).
 .PP
 Descriptors open in the calling process remain open in
 the new process, except for those for which the close-on-exec
 flag is set (see
-.IR close (2)).
+.BR close (2)).
 Descriptors that remain open are unaffected by
-.IR execve .
+.BR execve .
 .PP
 Ignored signals remain ignored across an
-.IR execve ,
+.BR execve ,
 but signals that are caught are reset to their default values.
 Blocked signals remain blocked regardless of changes to the signal action.
 The signal stack is reset to be undefined (see
-.IR sigvec (2) 
+.BR sigvec (2) 
 for more information).
 .PP
 Each process has
@@ -74,7 +76,7 @@ user and group IDs.  The
 ID identifies the person using the system; the
 .I effective
 ID determines his access privileges.
-.I Execve
+.B execve
 changes the effective user and group ID to
 the owner of the executed file if the file has the \*(lqset-user-ID\*(rq
 or \*(lqset-group-ID\*(rq modes.  The
@@ -87,18 +89,18 @@ the calling process:
 .in +5n
 .nf
 .ta +2i
-process ID	see \fIgetpid\fP\|(2)
-parent process ID	see \fIgetppid\fP\|(2)
-process group ID	see \fIgetpgrp\fP\|(2)
-access groups	see \fIgetgroups\fP\|(2)
-working directory	see \fIchdir\fP\|(2)
-root directory	see \fIchroot\fP\|(2)
-control terminal	see \fItty\fP\|(4)
-resource usages	see \fIgetrusage\fP\|(2)
-interval timers	see \fIgetitimer\fP\|(2)
-resource limits	see \fIgetrlimit\fP\|(2)
-file mode mask	see \fIumask\fP\|(2)
-signal mask	see \fIsigvec\fP\|(2), \fIsigmask\fP\|(2)
+process ID	see \fBgetpid\fP\|(2)
+parent process ID	see \fBgetppid\fP\|(2)
+process group ID	see \fBgetpgrp\fP\|(2)
+access groups	see \fBgetgroups\fP\|(2)
+working directory	see \fBchdir\fP\|(2)
+root directory	see \fBchroot\fP\|(2)
+control terminal	see \fBtty\fP\|(4)
+resource usages	see \fBgetrusage\fP\|(2)
+interval timers	see \fBgetitimer\fP\|(2)
+resource limits	see \fBgetrlimit\fP\|(2)
+file mode mask	see \fBumask\fP\|(2)
+signal mask	see \fBsigvec\fP\|(2), \fBsigmask\fP\|(2)
 .in -5n
 .fi
 .PP
@@ -120,7 +122,7 @@ and
 is the array of character pointers
 to the arguments themselves.
 .PP
-.I Envp
+.I envp
 is a pointer to an array of strings that constitute
 the
 .I environment
@@ -129,22 +131,22 @@ A pointer to this array is also stored in the global variable ``environ''.
 Each string consists of a name, an \*(lq=\*(rq, and a null-terminated value.
 The array of pointers is terminated by a null pointer.
 The shell
-.IR sh (1)
+.BR sh (1)
 passes an environment entry for each global shell variable
 defined when the program is called.
 See
-.IR environ (7)
+.BR environ (7)
 for some conventionally
 used names.
 .SH "RETURN VALUE
 If
-.I execve
+.B execve
 returns to the calling process an error has occurred; the
 return value will be \-1 and the global variable
-.I errno
+.B errno
 will contain an error code.
 .SH ERRORS
-.I Execve
+.B execve
 will fail and return to the calling process if one or more
 of the following are true:
 .TP 15
@@ -184,28 +186,28 @@ file that is currently open for writing or reading by some process.
 [ENOMEM]
 The new process requires more virtual memory than
 is allowed by the imposed maximum
-.RI ( getrlimit (2)).
+.RB ( getrlimit (2)).
 .TP 15
 [E2BIG]
 The number of bytes in the new process's argument list
 is larger than the system-imposed limit.
-The limit in the system as released is 20480 bytes
+The limit in the system as released is 5120 bytes
 (NCARGS in
-.IR <sys/param.h> .
+.BR <sys/param.h> .
 .TP 15
 [EFAULT]
 The new process file is not as long as indicated by
 the size values in its header.
 .TP 15
 [EFAULT]
-\fIPath\fP\|, \fIargv\fP\|, or \fIenvp\fP point
+\fIpath\fP\|, \fIargv\fP\|, or \fIenvp\fP point
 to an illegal address.
 .TP 15
 [EIO]
 An I/O error occurred while reading from the file system.
 .SH CAVEATS
 If a program is
-.I setuid
+.B setuid
 to a non-super-user, but is executed when
 the real \fIuid\fP is ``root'', then the program has some of the powers
 of a super-user as well.

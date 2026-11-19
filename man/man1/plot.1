@@ -1,6 +1,6 @@
-.\"	@(#)plot.1g	6.3 (Berkeley) 9/21/85
+.\"	@(#)plot.1	6.4 (2.11BSD) 2026/9/28
 .\"
-.TH PLOT 1G "September 21, 1985"
+.TH PLOT 1 "September 21, 1985"
 .AT 3
 .SH NAME
 plot \- graphics filters
@@ -14,7 +14,7 @@ plot \- graphics filters
 [ files... ]
 .SH DESCRIPTION
 These commands read plotting instructions (see
-.IR  plot (5))
+.BR  plot (5))
 from the standard input or the specified
 .IR files ,
 and in general
@@ -31,7 +31,7 @@ If no
 .I terminal
 type is specified, the environment parameter $TERM
 (see
-.IR environ (7))
+.BR environ (7))
 is used.
 Known
 .I terminals
@@ -64,7 +64,7 @@ Imagen laser printer (default 240 dots-per-inch resolution).
 .TP
 .B crt
 Any crt terminal capable of running
-.IR vi (1).
+.BR vi (1).
 .TP
 .B dumb
 Dumb terminals without cursor addressing or line printers.
@@ -82,11 +82,11 @@ Versatec D1200A printer-plotter.
 Benson Varian printer-plotter.
 .IP
 These versions of
-.I plot
+.B plot
 use the
 .B \-g
 option of
-.IR lpr (1)
+.BR lpr (1)
 to send the result directly to the plotter device rather than to
 the standard output.
 .SH FILES
@@ -116,4 +116,4 @@ the standard output.
 .br
 /usr/ucb/lpr
 .SH "SEE ALSO"
-plot(3X), plot(3F), plot(5), lpr(1)
+plot(3), plot(3F), plot(5), lpr(1)

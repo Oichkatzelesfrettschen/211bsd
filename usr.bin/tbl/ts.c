@@ -1,10 +1,10 @@
-#ifndef lint
-static char sccsid[] = "@(#)ts.c	4.2 8/11/83";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ts.c	4.3 (2.11BSD) 2026/5/9";
 #endif
 
  /* ts.c: minor string processing subroutines */
 match (s1, s2)
-	char *s1, *s2;
+	register char *s1, *s2;
 {
 	while (*s1 == *s2)
 		if (*s1++ == '\0')
@@ -14,7 +14,7 @@ match (s1, s2)
 	return(0);
 }
 prefix(small, big)
-	char *small, *big;
+	register char *small, *big;
 {
 int c;
 while ((c= *small++) == *big++)
@@ -30,10 +30,11 @@ letter (ch)
 	return(0);
 	}
 numb(str)
-	char *str;
+	register char *str;
 	{
 	/* convert to integer */
-	int k;
+	register int k;
+
 	for (k=0; *str >= '0' && *str <= '9'; str++)
 		k = k*10 + *str - '0';
 	return(k);
@@ -47,7 +48,7 @@ max(a,b)
 return( a>b ? a : b);
 }
 tcopy (s,t)
-	char *s, *t;
+	register char *s, *t;
 {
 	while (*s++ = *t++);
 }

@@ -36,7 +36,7 @@ static char copyright[] =
 "@(#) Copyright (c) 1983, 1991, 1993, 1994\n\
 	The Regents of the University of California.  All rights reserved.\n";
 
-static char sccsid[] = "@(#)inetd.c	8.4.2 (2.11BSD) 2022/9/17";
+static char sccsid[] = "@(#)inetd.c	8.4.3 (2.11BSD) 2026/9/13";
 #endif
 
 /*
@@ -110,7 +110,7 @@ static char sccsid[] = "@(#)inetd.c	8.4.2 (2.11BSD) 2022/9/17";
 #include <syslog.h>
 #include <unistd.h>
 
-#include "pathnames.h"
+#define _PATH_INETDCONF "/etc/inetd.conf"
 
 #define	TOOMANY		40		/* don't start more than TOOMANY */
 #define	CNT_INTVL	60		/* servers in CNT_INTVL sec. */
@@ -166,7 +166,7 @@ struct	servtab {
 void		chargen_dg __P((int, struct servtab *));
 void		chargen_stream __P((int, struct servtab *));
 void		close_sep __P((struct servtab *));
-int		config __P((int));
+void		config __P((int));
 void		daytime_dg __P((int, struct servtab *));
 void		daytime_stream __P((int, struct servtab *));
 void		discard_dg __P((int, struct servtab *));
@@ -182,8 +182,8 @@ void		machtime_stream __P((int, struct servtab *));
 char	       *newstr __P((char *));
 char	       *nextline __P((FILE *));
 void		print_service __P((char *, struct servtab *));
-int		reapchild __P((int));
-int		retry __P((int));
+void		reapchild __P((int));
+void		retry __P((int));
 int		setconfig __P((void));
 void		setup __P((struct servtab *));
 char	       *sskip __P((char **));
@@ -398,10 +398,6 @@ main(argc, argv, envp)
 		    }
 		    sigsetmask(0L);
 		    if (pid == 0) {
-#ifndef	pdp11
-			    if (debug && dofork)
-				setsid();
-#endif
 			    if (dofork) {
 				if (debug)
 					fprintf(stderr, "+ Closing from %d\n",
@@ -459,7 +455,7 @@ main(argc, argv, envp)
 	}
 }
 
-int
+void
 reapchild(signo)
 	int signo;
 {
@@ -490,7 +486,7 @@ reapchild(signo)
 	}
 }
 
-int
+void
 config(signo)
 	int signo;
 {
@@ -587,7 +583,7 @@ config(signo)
 	(void) sigsetmask(omask);
 }
 
-int
+void
 retry(signo)
 	int signo;
 {
@@ -703,7 +699,7 @@ setconfig()
 
 	if (fconfig != NULL) {
 		fseek(fconfig, 0L, SEEK_SET);
-		return (1);
+		return(1);
 	}
 	fconfig = fopen(CONFIG, "r");
 	return (fconfig != NULL);

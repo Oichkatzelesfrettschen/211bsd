@@ -29,30 +29,30 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"	@(#)sigaction.2	8.2.1 (2.11BSD) 1997/9/3
+.\"	@(#)sigaction.2	8.2.2 (2.11BSD) 2026/9/21
 .\"
 .TH SIGACTION 2 "September 3, 1997"
 .UC 7
 .SH NAME
 \fBsigaction\fP \- software signal facilities
 .SH SYNOPSIS
-.B #include <signal.h>
-.sp
 .nf
-struct sigaction {
-	int     (*sa_handler)();
-	sigset_t sa_mask;
-	int	 sa_flags;
-};
+.ft B
+#include <signal.h>
+
+typedef void (*sig_t)(int);
+
+struct sigaction
+        {
+        sig_t    sa_handler;
+        sigset_t sa_mask;
+        int	 sa_flags;
+        };
+
+sigaction(\fIint sig\fP, \fIstruct sigaction *restrict act\fP,
+    \fIstruct sigaction *restrict oact\fP)
+.ft R
 .fi
-.sp
-\fBsigaction\fP(sig, act, oact)
-.br
-.I int sig;
-.br
-.I struct sigaction *act;
-.br
-.I struct sigaction *oact;
 .SH DESCRIPTION
 The system defines a set of signals that may be delivered to a process.
 Signal delivery resembles the occurrence of a hardware interrupt:
@@ -69,7 +69,7 @@ in which case its delivery is postponed until it is
 .IR unblocked .
 The action to be taken on delivery is determined at the time
 of delivery.
-Normally, signal handlers execute on the current stack
+Normally signal handlers execute on the current stack
 of the process.  This may be changed, on a per-handler basis,
 so that signals are taken on a special
 .IR "signal stack" .
@@ -122,7 +122,7 @@ This mask is formed by taking the union of the current signal mask set,
 the signal to be delivered, and 
 the signal mask associated with the handler to be invoked.
 .PP
-.B Sigaction
+.B sigaction
 assigns an action for a specific signal.
 If
 .I act
@@ -222,7 +222,7 @@ or
 all signals, the signal mask, the signal stack,
 and the restart/interrupt flags are inherited by the child.
 .PP
-.BR Execve (2)
+.BR execve (2)
 reinstates the default
 action for all signals which were caught and
 resets all signals to be caught on the user stack.
@@ -329,18 +329,18 @@ Here
 .I sig
 is the signal number, into which the hardware faults and traps are
 mapped.
-.I Code
+.I code
 is a parameter that is either a constant
 or the code provided by
 the hardware.
-.I Scp
+.I scp
 is a pointer to the
 .I sigcontext
 structure (defined in
 .RI < signal.h >,
 used to restore the context from before the signal.
 .SH ERRORS
-.B Sigaction
+.B sigaction
 will fail and no new signal handler will be installed if one
 of the following occurs:
 .TP 20
@@ -353,7 +353,7 @@ points to memory that is not a valid part of the process
 address space.
 .TP 20
 EINVAL
-.I Sig
+.I sig
 is not a valid signal number.
 .TP 20
 EINVAL

@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)ctags.c	5.1.1 (2.11BSD) 2/16/94";
+static char sccsid[] = "@(#)ctags.c	5.1.2 (2.11BSD) 2026/8/19";
 #endif
 
 #include <stdio.h>
@@ -657,7 +657,7 @@ NODE	*node;
 
 	while (node) {
 		free_tree(node->right);
-		cfree(node);
+		free(node);
 		node = node->left;
 	}
 }

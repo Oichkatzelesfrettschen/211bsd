@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)fio.c	5.3 (Berkeley) 10/9/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)fio.c	5.4 (2.11BSD) 2026/5/9";
 #endif
 
 /*
@@ -45,11 +45,7 @@ static char sccsid[] = "@(#)fio.c	5.3 (Berkeley) 10/9/85";
 
 #include "uucp.h"
 #include <signal.h>
-#ifdef USG
-#include <termio.h>
-#else !USG
 #include <sgtty.h>
-#endif !USG
 #include <setjmp.h>
 
 #define FIBUFSIZ	256	/* for X.25 interfaces: set equal to packet size,
@@ -68,20 +64,18 @@ static char sccsid[] = "@(#)fio.c	5.3 (Berkeley) 10/9/85";
 static int fchksum;
 static jmp_buf Ffailbuf;
 
-static
+static void
 falarm()
 {
 	signal(SIGALRM, falarm);
 	longjmp(Ffailbuf, 1);
 }
 
-static int (*fsig)();
+static sig_t fsig;
 
-#ifndef USG
 #define TCGETA	TIOCGETP
 #define TCSETA	TIOCSETP
 #define termio	sgttyb
-#endif USG
 
 fturnon()
 {
@@ -90,13 +84,7 @@ fturnon()
 
 	if (!IsTcpIp) {
 		ioctl(Ifn, TCGETA, &ttbuf);
-#ifdef USG
-		ttbuf.c_iflag = IXOFF|IXON|ISTRIP;
-		ttbuf.c_cc[VMIN] = FIBUFSIZ > 64 ? 64 : FIBUFSIZ;
-		ttbuf.c_cc[VTIME] = 5;
-#else !USG
 		ttbuf.sg_flags = ANYP|CBREAK|TANDEM;
-#endif USG
 		ret = ioctl(Ifn, TCSETA, &ttbuf);
 		ASSERT(ret >= 0, "STTY FAILED", "", ret);
 	}
@@ -181,12 +169,7 @@ retry:
 	fchksum = 0xffff;
 	abytes = fbytes = 0L;
 	ack = '\0';
-#ifdef USG
-	time(&t1.time);
-	t1.millitm = 0;
-#else !USG
 	ftime(&t1);
-#endif !USG
 	do {
 		alen = fwrblk(fn, fp1, &flen);
 		fbytes += flen;
@@ -203,12 +186,7 @@ retry:
 		DEBUG(4, "ack - '%c'\n", ack);
 	}
 acct:
-#ifdef USG
-	time(&t2.time);
-	t2.millitm = 0;
-#else !USG
 	ftime(&t2);
-#endif !USG
 	Now = t2;
 	t2.time -= t1.time;
 	mil = t2.millitm - t1.millitm;
@@ -218,7 +196,6 @@ acct:
 	}
 	sprintf(ibuf, "sent data %ld bytes %ld.%02d secs",
 		fbytes, (long)t2.time, mil / 10);
-	sysacct(abytes, t2.time);
 	if (retries > 0)
 		sprintf(&ibuf[strlen(ibuf)], ", %d retries", retries);
 	DEBUG(1, "%s\n", ibuf);
@@ -254,12 +231,7 @@ register FILE *fp2;
 retry:
 	fchksum = 0xffff;
 	abytes = fbytes = 0L;
-#ifdef USG
-	time(&t1.time);
-	t1.millitm = 0;
-#else !USG
 	ftime(&t1);
-#endif !USG
 	do {
 		flen = frdblk(ibuf, fn, &alen);
 		abytes += alen;
@@ -273,12 +245,7 @@ retry:
 	} while (!eof);
 	ret = SUCCESS;
 acct:
-#ifdef USG
-	time(&t2.time);
-	t2.millitm = 0;
-#else !USG
 	ftime(&t2);
-#endif !USG
 	Now = t2;
 	t2.time -= t1.time;
 	mil = t2.millitm - t1.millitm;
@@ -290,7 +257,6 @@ acct:
 		fbytes, (long)t2.time, mil/10);
 	if (retries > 0) 
 		sprintf(&ibuf[strlen(ibuf)]," %d retries", retries);
-	sysacct(abytes, t2.time);
 	DEBUG(1, "%s\n", ibuf);
 	syslog(ibuf);
 	if (ret == FAIL) {
@@ -330,12 +296,6 @@ register int fn;
 	return ret <= 0 ? FAIL : ret;
 }
 
-#if !defined(BSD4_2) && !defined(USG)
-/* call ultouch every TC calls to either frdblk or fwrblk  */
-#define TC	20
-static int tc = TC;
-#endif !defined(BSD4_2) && !defined(USG)
-
 /* Byte conversion:
  *
  *   from	 pre	   to
@@ -358,13 +318,6 @@ int *lenp;
 	char obuf[FOBUFSIZ + 8];
 	int ret;
 
-#if !defined(BSD4_2) && !defined(USG)
-	/* call ultouch occasionally */
-	if (--tc < 0) {
-		tc = TC;
-		ultouch();
-	}
-#endif !defined(BSD4_2) && !defined(USG)
 	op = obuf;
 	nl = 0;
 	len = 0;
@@ -446,13 +399,6 @@ long *rlen;
 	int i;
 	static char special = 0;
 
-#if !defined(BSD4_2) && !defined(USG)
-	/* call ultouch occasionally */
-	if (--tc < 0) {
-		tc = TC;
-		ultouch();
-	}
-#endif !defined(BSD4_2) && !defined(USG)
 	if ((len = frdbuf(ip, FIBUFSIZ, fn)) == FAIL) {
 		*rlen = 0;
 		goto dcorr;

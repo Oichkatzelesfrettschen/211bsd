@@ -2,34 +2,33 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)sinh.3m	6.5 (Berkeley) 5/12/86
+.\"	@(#)sinh.3	6.6 (2.11BSD) 2026/9/27
 .\"
-.TH SINH 3M  "May 12, 1986"
+.TH SINH 3  "May 12, 1986"
 .UC 4
 .SH NAME
 sinh, cosh, tanh \- hyperbolic functions
 .SH SYNOPSIS
 .nf
-.B #include <math.h>
-.PP
-.B double sinh(x)
-.B double x;
-.PP
-.B double cosh(x)
-.B double x;
-.PP
-.B double tanh(x)
-.B double x;
+.ft B
+#include <math.h>
+
+double
+sinh(\fIdouble x\fP)
+
+double
+cosh(\fIdouble x\fP)
+
+double
+tanh(\fIdouble x\fP)
+.ft R
 .fi
 .SH DESCRIPTION
 These functions compute the designated hyperbolic functions for real arguments.
-.SH ERROR (due to Roundoff etc.)
+.SH ERROR (due to roundoff etc.)
 Below 2.4 \fIulp\fRs; an \fIulp\fR is one \fIU\fRnit in the \fIL\fRast
 \fIP\fRlace.
-.SH DIAGNOSTICS
-Sinh and cosh return the reserved operand on a VAX if
-the correct value would overflow.
 .SH SEE ALSO
-math(3M), infnan(3M)
+math(3)
 .SH AUTHOR
 W. Kahan, Kwok\-Choi Ng

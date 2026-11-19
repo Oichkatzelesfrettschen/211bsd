@@ -1,0 +1,40 @@
+.\" Public domain 2026 - Steven Schultz
+.\"
+.\"	@(#)symdump.1	1.0 (2.11BSD) 2026/2/4
+.\"
+.TH symdump 1 "February 4, 2026"
+.UC 2
+.SH NAME
+symdump \- dump symbol table of a program.
+.SH SYNOPSIS
+.B symdump
+[ executable ]
+.SH DESCRIPTION
+.B symdump
+dumps the symbol table of a program to stdout one symbol per line in the form:
+.sp
+symbol_string type overlay value
+.PP
+The primary use of \fBsymdump\fP
+is by \fBstrcompact\fP(1) when compacting the symbol table of the kernel but
+nothing precludes more general use.
+.SH DIAGNOSTICS
+need a file name: an executable's name is required.
+.sp
+cannot open: read permission to the file not granted
+.sp
+bad format: magic number of file is not valid for an executable
+.sp
+no name list: symbol table has been removed by \fBstrip\fP(1)
+.sp
+no string table: there is no string information for the name list to point to
+.sp
+no memory for strings: malloc failed to obtain memory to hold the string table
+.sp
+error reading strings: I/O error loading string table into memory
+.PP
+\fBsymdump\fP exits 0 if successful, and >0 if an error occurred.
+.SH SEE ALSO
+strcompact(1), symcompact(1), symorder(1)
+.PP
+/usr/include/nlist.h for symbol \fBtype\fP values.

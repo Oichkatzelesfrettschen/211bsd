@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)wall.c	5.3.2 (2.11BSD GTE) 1996/11/16";
+static char sccsid[] = "@(#)wall.c	5.3.3 (2.11BSD) 2026/7/21";
 #endif
 
 /*
@@ -23,10 +23,12 @@ static char sccsid[] = "@(#)wall.c	5.3.2 (2.11BSD GTE) 1996/11/16";
 #include <utmp.h>
 #include <errno.h>
 #include <signal.h>
+#include <stdlib.h>
+#include <time.h>
 #include <sys/time.h>
 #include <fcntl.h>
-#include <sys/types.h>
 #include <sys/stat.h>
+#include <strings.h>
 
 #define IGNOREUSER	"sleeper"
 
@@ -34,15 +36,9 @@ char	hostname[32];
 char	mesg[3000];
 int	msize,sline;
 struct	utmp *utmp;
-char	*strcpy();
-char	*strcat();
-char	*malloc();
 char	who[UT_NAMESIZE + 1] = "???";
-long	clock, time();
-struct tm *localtime();
+time_t	clock;
 struct tm *localclock;
-
-extern	errno;
 
 main(argc, argv)
 char *argv[];

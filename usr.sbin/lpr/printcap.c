@@ -4,15 +4,17 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)printcap.c	5.1 (Berkeley) 6/6/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)printcap.c	5.2 (2.11BSD) 2026/5/10";
+#endif
 
 #define	BUFSIZ	1024
 #define MAXHOP	32	/* max number of tc= indirections */
 
 #include <ctype.h>
 #include <stdio.h>
+#include <stdlib.h>
+
 /*
  * termcap - routines for dealing with the terminal capability data base
  *
@@ -50,7 +52,6 @@ static	int hopcount;		/* detect infinite loops in termcap, init 0 */
 char	*tskip();
 char	*tgetstr();
 char	*tdecode();
-char	*getenv();
 
 /*
  * Similar to tgetent except it returns the next enrty instead of

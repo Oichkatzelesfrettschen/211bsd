@@ -1,9 +1,12 @@
-/***************************************************************************
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)wind.c 2.0 (2.11BSD) 2026/9/17";
+#endif
+/*
  * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
  * is provided to you without charge, and with no warranty.  You may give  *
  * away copies of JOVE, including sources, provided that this notice is    *
  * included in all the files.                                              *
- ***************************************************************************/
+ */
 
 /* This creates/deletes/divides/grows/shrinks windows.  */
 
@@ -68,7 +71,7 @@ register Window	*wp;
 	RemoveScrollBar(wp);
 	Windchange++;
 #endif
-	free((char *) wp);
+	free((void *) wp);
 }
 
 /* Divide the window WP N times, or at least once.  Complains if WP is too

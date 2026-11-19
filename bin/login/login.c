@@ -20,7 +20,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980, 1987, 1988 The Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)login.c	5.43 (2.11BSD) 2025/3/26";
+static char sccsid[] = "@(#)login.c	5.44 (2.11BSD) 2026/9/19";
 #endif
 
 /*
@@ -46,11 +46,12 @@ static char sccsid[] = "@(#)login.c	5.43 (2.11BSD) 2025/3/26";
 #include <pwd.h>
 #include <setjmp.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <strings.h>
 #include <netdb.h>
 #include <tzfile.h>
 #include <lastlog.h>
-#include "pathnames.h"
 #include "../../libexec/getty/gettytab.h"
 
 #ifdef	KERBEROS
@@ -59,6 +60,13 @@ static char sccsid[] = "@(#)login.c	5.43 (2.11BSD) 2025/3/26";
 char	realm[REALM_SZ];
 int	kerror = KSUCCESS, notickets = 1;
 #endif
+
+#include <paths.h>
+
+#define	_PATH_DEFPATH	"/bin:/usr/ucb:/usr/bin:/usr/games:"
+#define	_PATH_HUSHLOGIN	".hushlogin"
+#define	_PATH_MAILDIR	"/usr/spool/mail"
+#define	_PATH_MOTDFILE	"/etc/motd"
 
 #define	TTYGRPNAME	"tty"		/* name of group to own ttys */
 
@@ -101,20 +109,18 @@ main(argc, argv)
 	int argc;
 	char **argv;
 {
-	extern int errno, optind;
-	extern char *optarg, **environ;
+	extern char **environ;
 	struct timeval tp;
 	struct tm *ttp;
 	struct group *gr;
 	register int ch;
 	register char *p;
 	int ask, fflag, hflag, pflag, cnt;
-	int quietlog, passwd_req, ioctlval, oldioctlval, timedout();
+	int quietlog, passwd_req, ioctlval, oldioctlval;
+	void timedout();
 	char *domain, *salt, *envinit[1], *ttyn, *pp;
 	char tbuf[MAXPATHLEN + 2], tname[sizeof(_PATH_TTY) + 10];
-	char *ctime(), *ttyname(), *stypeof(), *crypt(), *getpass();
-	time_t time();
-	off_t lseek();
+	char *stypeof();
 	long allflags;
 	int someflags;
 
@@ -319,12 +325,12 @@ main(argc, argv)
 				(void)ioctl(0, TIOCHPCL, (struct sgttyb *)NULL);
 				sleepexit(1);
 			}
-			sleep((u_int)((cnt - 3) * 5));
+			sleep(((cnt - 3) * 5));
 		}
 	}
 
 	/* committed to login -- turn off timeout */
-	(void)alarm((u_int)0);
+	(void)alarm(0);
 
 	/* paranoia... */
 	endpwent();
@@ -521,7 +527,8 @@ jmp_buf motdinterrupt;
 motd()
 {
 	register int fd, nchars;
-	int (*oldint)(), sigint();
+	sig_t oldint;
+	void  sigint();
 	char tbuf[BUFSIZ];
 
 	if ((fd = open(_PATH_MOTDFILE, O_RDONLY, 0)) < 0)
@@ -534,6 +541,7 @@ motd()
 	(void)close(fd);
 }
 
+void
 sigint()
 {
 	longjmp(motdinterrupt, 1);
@@ -612,6 +620,6 @@ stypeof(ttyid)
 sleepexit(eval)
 	int eval;
 {
-	sleep((u_int)5);
+	sleep(5);
 	exit(eval);
 }

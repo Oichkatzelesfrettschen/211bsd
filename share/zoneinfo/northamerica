@@ -1,4 +1,4 @@
-# @(#)northamerica	4.0 (2.11BSD 2020/4/3)
+# @(#)northamerica	4.1 (2.11BSD) 2026/10/27
 
 # Despite the performance of existing (4.[123]BSD, System V Release 2.0) code,
 # US Daylight Saving Time ended on the last Sunday of *October* in 1974.
@@ -19,7 +19,7 @@ Rule	US	1918	1919	-	Mar	lastSun	2:00	1:00	D
 Rule	US	1918	1919	-	Oct	lastSun	2:00	0	S
 Rule	US	1942	only	-	Feb	9	2:00	1:00	W # War
 Rule	US	1945	only	-	Sep	30	2:00	0	S
-Rule	US	1967	max	-	Oct	lastSun	2:00	0	S
+Rule	US	1967	1973	-	Oct	lastSun	2:00	0	S
 Rule	US	1967	1973	-	Apr	lastSun	2:00	1:00	D
 Rule	US	1974	only	-	Jan	6	2:00	1:00	D
 Rule	US	1975	only	-	Feb	23	2:00	1:00	D

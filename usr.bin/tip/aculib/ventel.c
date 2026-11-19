@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)ventel.c	5.1 (Berkeley) 4/30/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ventel.c	5.2 (2.11BSD) 2026/5/9";
+#endif
 
 /*
  * Routines for calling up on a Ventel Modem
@@ -16,7 +16,7 @@ static char sccsid[] = "@(#)ventel.c	5.1 (Berkeley) 4/30/85";
 
 #define	MAXRETRY	5
 
-static	int sigALRM();
+static	void sigALRM();
 static	int timeout = 0;
 static	jmp_buf timeoutbuf;
 
@@ -132,7 +132,7 @@ echo(s)
 	}
 }
 
-static int
+static void
 sigALRM()
 {
 
@@ -148,7 +148,7 @@ gobble(match, response)
 {
 	register char *cp = response;
 	char c;
-	int (*f)();
+	sig_t f;
 
 	signal(SIGALRM, sigALRM);
 	timeout = 0;

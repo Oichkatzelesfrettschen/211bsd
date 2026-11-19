@@ -1,11 +1,13 @@
-#ifndef lint
-static char sccsid[] = "@(#)selsub.c	4.3	(Berkeley)	5/15/86";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)selsub.c	4.4	(2.11BSD)	2026/1/27";
+#endif
 
 #include "stdio.h"
 #include "sys/types.h"
 #include "sys/stat.h"
 #include "lrnref.h"
+#include <stdlib.h>
+#include <strings.h>
 
 char learnrc[100];
 
@@ -17,8 +19,8 @@ char *argv[];
 	static char dirname[40];
 	static char subname[40];
 	FILE *fp;
-	char *getenv();
 	char *home;
+	register char *cp;
 
 	if (argc > 1 && argv[1][0] == '-') {
 		direct = argv[1]+1;
@@ -72,14 +74,28 @@ char *argv[];
 		printf("or if you have never used 'learn' before,\n");
 		printf("press RETURN; otherwise type the name of\n");
 		printf("the course you want, followed by RETURN.\n");
-		fflush(stdout);
-		gets(sname=subname);
+
+		sname = subname;
+		if	(fgets(sname, sizeof subname, stdin) == NULL)
+			{
+			printf("Bye.\n");
+			exit(0);
+			}
+		cp = index(sname, '\n');
+		if (cp) *cp = '\0';
+
 		if (sname[0] == '\0') {
 			list("Xinfo");
 			do {
 				printf("\nWhich subject?  ");
-				fflush(stdout);
-				gets(sname=subname);
+				sname = subname;
+				if (fgets(sname, sizeof subname, stdin) == NULL)
+				    {
+				    printf("Bye.\n");
+				    exit(0);
+				    }
+				cp = index(sname, '\n');
+				if (cp) *cp = '\0';
 			} while (sname[0] == '\0');
 		}
 	}
@@ -93,8 +109,12 @@ char *argv[];
 		printf("you think might appear in the lesson you want,\n");
 		printf("and I will look for the first lesson containing it.\n");
 		printf("To start at the beginning, just hit RETURN.\n");
-		fflush(stdout);
-		gets(ans2);
+
+		ans2[0] = '\0';
+		(void)fgets(ans2, sizeof ans2, stdin);
+		cp = index(ans2, '\n');
+		if (cp) *cp = '\0';
+
 		if (ans2[0]==0)
 			strcpy(ans2,"0");
 		else
@@ -119,10 +139,14 @@ char *argv[];
 	}
 	/* after this point, we have a working directory. */
 	/* have to call wrapup to clean up */
-	if (access(sprintf(ans1, "%s/%s/Init", direct, sname), 04)==0)
-		if (system(sprintf(ans1, "%s/%s/Init %s", direct, sname, level)) != 0) {
+	sprintf(ans1, "%s/%s/Init", direct, sname);
+	if (access(ans1, 04)==0)
+		{
+		sprintf(ans1, "%s/%s/Init %s", direct, sname, level);
+		if (system(ans1) != 0) {
 			printf("Leaving learn.\n");
 			wrapup(1);
+			}
 		}
 }
 

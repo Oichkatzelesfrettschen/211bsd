@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)truncate.2	6.6 (Berkeley) 3/29/86
+.\"	@(#)truncate.2	6.7 (2.11BSD) 2026/9/20
 .\"
 .TH TRUNCATE 2 "March 29, 1986"
 .UC 5
@@ -11,17 +11,17 @@ truncate \- truncate a file to a specified length
 .SH SYNOPSIS
 .nf
 .ft B
-truncate(path, length)
-char *path;
-off_t length;
-.PP
-.ft B
-ftruncate(fd, length)
-int fd;
-off_t length;
+#include <unistd.h>
+
+int
+truncate(\fIconst char *path\fP, \fIoff_t length\fP)
+
+int
+ftruncate(\fIint fd\fP, \fIoff_t length\fP)
+.ft R
 .fi
 .SH DESCRIPTION
-.I Truncate
+.B truncate
 causes the file named by
 .I path
 or referenced by
@@ -32,14 +32,14 @@ bytes in size.  If the file previously
 was larger than this size, the extra data
 is lost.
 With
-.IR ftruncate ,
+.BR ftruncate ,
 the file must be open for writing.
 .SH "RETURN VALUES
 A value of 0 is returned if the call succeeds.  If the call
 fails a \-1 is returned, and the global variable \fIerrno\fP
 specifies the error.
 .SH "ERRORS
-.I Truncate
+.B truncate
 succeeds unless:
 .TP 15
 [ENOTDIR]
@@ -80,7 +80,7 @@ An I/O error occurred updating the inode.
 .I Path
 points outside the process's allocated address space.
 .PP
-.I Ftruncate
+.B ftruncate
 succeeds unless:
 .TP 15
 [EBADF]
@@ -99,6 +99,3 @@ The
 is not open for writing.
 .SH "SEE ALSO"
 open(2)
-.SH BUGS
-These calls should be generalized to allow ranges
-of bytes in a file to be discarded.

@@ -4,31 +4,28 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)clear.c	5.1 (Berkeley) 5/31/85";
-#endif not lint
+static char sccsid[] = "@(#)clear.c	5.2 (2.11BSD) 2026/5/8";
+#endif
 
-/* load me with -ltermlib */
-/* #include <retrofit.h> on version 6 */
 /*
  * clear - clear the screen
  */
 
 #include <stdio.h>
 #include <sgtty.h>
+#include <stdlib.h>
 
-char	*getenv();
-char	*tgetstr();
-char	PC;
-short	ospeed;
+extern	char	*tgetstr();
+	char	PC;
+	short	ospeed;
+
 #undef	putchar
-int	putchar();
+extern	int	putchar();
 
 main()
 {

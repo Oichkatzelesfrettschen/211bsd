@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980,1986 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)reboot.c	5.5.4 (2.11BSD) 1997/10/3";
+static char sccsid[] = "@(#)reboot.c	5.5.5 (2.11BSD) 2026/9/21";
 #endif
 
 /*
@@ -24,7 +24,8 @@ static char sccsid[] = "@(#)reboot.c	5.5.4 (2.11BSD) 1997/10/3";
 #include <sys/syslog.h>
 #include <sys/file.h>
 #include <sys/reboot.h>
-#include <sys/signal.h>
+#include <signal.h>
+#include <strings.h>
 
 #define	OPTS	"lqnhdarsfRD"
 
@@ -38,7 +39,6 @@ main(argc, argv)
 	char *myname;		/* name we were invoked as */
 	char args[20], *ap;	/* collected arguments for syslog */
 	int i;
-	char *rindex();
 
 	if (myname = rindex(argv[0], '/'))
 		myname++;

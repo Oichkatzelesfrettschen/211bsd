@@ -1,8 +1,10 @@
 #!/bin/csh -f
 #
-# Once a week, produce a report and mail to people
+#       @(#)clean.weekly    1.1 (2.11BSD) 2026/6/24
 #
-set people=( sms )
+# Once a week, produce a report and mail to people
+
+set people=( root )
 set spooldir=/usr/spool/uucp
 set archdir=uucplog.archives
 

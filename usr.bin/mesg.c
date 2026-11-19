@@ -1,4 +1,7 @@
-static char *sccsid = "@(#)mesg.c	4.3 (Berkeley) 3/13/86";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)mesg.c	4.4 (2.11BSD) 2026/5/8";
+#endif
+
 /*
  * mesg -- set current tty to accept or
  *	forbid write permission.
@@ -9,13 +12,12 @@ static char *sccsid = "@(#)mesg.c	4.3 (Berkeley) 3/13/86";
  */
 
 #include <stdio.h>
-#include <sys/types.h>
+#include <unistd.h>
 #include <sys/stat.h>
 
 struct stat sbuf;
 
 char *tty;
-char *ttyname();
 
 main(argc, argv)
 char *argv[];

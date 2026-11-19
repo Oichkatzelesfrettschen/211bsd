@@ -2,18 +2,18 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)ns.4f	1.4 (2.11BSD) 1996/1/27
+.\"	@(#)ns.4	1.5 (2.11BSD) 2026/9/28
 .\"
-.TH NS 4F "January 27, 1996"
+.TH NS 4 "January 27, 1996"
 .UC 2
 .SH NAME
 ns \- Xerox Network Systems(tm) protocol family
 .SH SYNOPSIS
-.ft B
 .nf
+.ft B
 Not currently supported under 2.11BSD
-.fi
 .ft R
+.fi
 .SH DESCRIPTION
 .IX  "ns device"  ""  "\fLns\fP \(em Xerox NS protocol family"
 The NS protocol family is a collection of protocols
@@ -29,8 +29,7 @@ host.
 NS addresses are 12 byte quantities, consisting of a 
 4 byte Network number, a 6 byte Host number and a 2 byte port number,
 all stored in network standard format.
-(on the VAX these are word and byte reversed; on the Sun they are not
-reversed).  The include file
+The include file
 .RI < netns/ns.h >
 defines the NS address as a structure containing unions (for quicker
 comparisons).
@@ -67,7 +66,7 @@ struct ns_addr {
 Sockets may be created with an address of all zeroes to effect
 ``wildcard'' matching on incoming messages.
 The local port address specified in a
-.IR bind (2)
+.BR bind (2)
 call is restricted to be greater than NSPORT_RESERVED
 (=3000, in <netns/ns.h>) unless the creating process is running
 as the super-user, providing a space of protected port numbers.
@@ -75,11 +74,11 @@ as the super-user, providing a space of protected port numbers.
 The NS protocol family supported by the operating system
 is comprised of
 the Internet Datagram Protocol (IDP)
-.IR idp (4P),
+.BR idp (4),
 Error Protocol (available through IDP),
 and
 Sequenced Packet Protocol (SPP)
-.IR spp (4P).
+.BR spp (4).
 .LP
 SPP is used to support the SOCK_STREAM and SOCK_SEQPACKET abstraction,
 while IDP is used to support the SOCK_DGRAM abstraction.
@@ -88,10 +87,10 @@ to handle and report errors in protocol processing;
 it is, however,
 only accessible to user programs through heroic actions.
 .SH SEE ALSO
-intro(3), byteorder(3N), gethostbyname(3N), getnetent(3N),
-getprotoent(3N), getservent(3N), ns(3N),
-intro(4N), spp(4P), idp(4P), nsip(4)
-.br
+intro(3), gethostbyname(3), getnetent(3),
+getprotoent(3), getservent(3), ns(3),
+intro(4), spp(4), idp(4), nsip(4)
+.sp
 Internet Transport Protocols, Xerox Corporation document XSIS-028112
-.br
+.sp
 An Advanced 4.3BSD Interprocess Communication Tutorial

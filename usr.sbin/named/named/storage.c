@@ -7,7 +7,7 @@
  *	rt_malloc	Allocate storage, with visibility & checking
  *	rt_free		Similarly, free storage
  *	rt_prmem	When debugging, print memory map
- *	calloc, cfree	Which call rt_malloc, rt_free
+ *	calloc		calls rt_malloc
  *
  *  Author -
  *	Michael John Muuss
@@ -22,7 +22,7 @@
  *	All rights reserved.
  */
 #if	defined(DOSCCS) && !defined(lint)
-static char RCSstorage[] = "@(#)$Header: /us1/cr/work/named/named/RCS/storage.c,v 1.1 94/01/01 03:13:33 cr Exp Locker: cr $";
+static char sccsid[] = "@(#)storage.c 1.2 (2.11BSD) 2026/8/20";
 #endif
 
 #include <sys/param.h>
@@ -143,14 +143,6 @@ calloc(num, size)
 	if (p = rt_malloc(size))
 		bzero(p, size);
 	return (p);
-}
-
-cfree(p, num, size)
-	char *p;
-	unsigned num;
-	unsigned size;
-{
-	rt_free(p);
 }
 
 #if BSD < 43

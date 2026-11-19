@@ -1,10 +1,12 @@
-#ifndef lint
-static char sccsid[] = "@(#)graph.c	4.2 3/30/83";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)graph.c	4.3  (2.11BSD) 2026/5/8";
 #endif
 
 #include <stdio.h>
 #include <ctype.h>
 #include <math.h>
+#include <stdlib.h>
+
 #define	INF	HUGE
 #define	F	.25
 
@@ -44,7 +46,6 @@ int	brkf;
 float	dx;
 char	*plotsymb;
 
-double	atof();
 #define BSIZ 80
 char	labbuf[BSIZ];
 char	titlebuf[BSIZ];
@@ -58,8 +59,6 @@ char *modes[] = {
 	"longdashed"
 };
 int mode = 1;
-char *realloc();
-char *malloc();
 
 double ident(x)
 double x;

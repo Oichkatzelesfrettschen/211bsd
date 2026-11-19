@@ -1,4 +1,4 @@
-/* $Header: common.h,v 2.0.1.2 88/06/22 20:44:53 lwall Locked $
+/* $Header: common.h 2.1 (2.11BSD) 2026/6/18 20:47:18 sms $
  *
  * $Log:	common.h,v $
  * Revision 2.0.1.2  88/06/22  20:44:53  lwall
@@ -9,28 +9,9 @@
  * 
  * Revision 2.0  86/09/17  15:36:39  lwall
  * Baseline for netwide release.
- * 
  */
 
 #define DEBUGGING
-
-#include "config.h"
-
-/* shut lint up about the following when return value ignored */
-
-#define Signal (void)signal
-#define Unlink (void)unlink
-#define Lseek (void)lseek
-#define Fseek (void)fseek
-#define Fstat (void)fstat
-#define Pclose (void)pclose
-#define Close (void)close
-#define Fclose (void)fclose
-#define Fflush (void)fflush
-#define Sprintf (void)sprintf
-#define Mktemp (void)mktemp
-#define Strcpy (void)strcpy
-#define Strcat (void)strcat
 
 #include <stdio.h>
 #include <assert.h>
@@ -38,8 +19,8 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include <signal.h>
-
-/* constants */
+#include <stdlib.h>
+#include <strings.h>
 
 #define TRUE (1)
 #define FALSE (0)
@@ -48,10 +29,6 @@
 #define INITHUNKMAX 125			/* initial dynamic allocation size */
 #define MAXLINELEN 1024
 #define BUFFERSIZE 1024
-#define SCCSPREFIX "s."
-#define GET "get -e %s"
-#define RCSSUFFIX ",v"
-#define CHECKOUT "co -l %s"
 
 #ifdef FLEXFILENAMES
 #define ORIGEXT ".orig"
@@ -143,16 +120,3 @@ EXT char else_defined[] INIT("#else\n");/* #else */
 EXT char end_defined[128];		/* #endif xyzzy */
 
 EXT char *revision INIT(Nullch);	/* prerequisite revision, if any */
-
-char *malloc();
-char *realloc();
-char *strcpy();
-char *strcat();
-long atol();
-long lseek();
-char *mktemp();
-#ifdef CHARSPRINTF
-char *sprintf();
-#else
-int sprintf();
-#endif

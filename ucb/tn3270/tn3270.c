@@ -21,7 +21,7 @@
 
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)tn3270.c	2.9 2020/1/7";
+static char sccsid[] = "@(#)tn3270.c	2.10 2026/1/27";
 #endif
 
 /*
@@ -43,19 +43,16 @@ static char sccsid[] = "@(#)tn3270.c	2.9 2020/1/7";
 #include <errno.h>
 #include <signal.h>
 #include <setjmp.h>
+#include <strings.h>
 #include <netdb.h>
 
 #define	strip(x)	((x)&0177)
 #define min(x,y)	((x<y)? x:y)
 
-#ifndef pdp11
-#define IBUFSIZ	8*BUFSIZ
-static char	Ibuf[IBUFSIZ], *Ifrontp = Ibuf, *Ibackp = Ibuf;
-#else
 	/* Move Ibuf onto stack to use last segment. */
 #define IBUFSIZ	3*BUFSIZ
 static char	*Ibuf, *Ifrontp, *Ibackp;
-#endif
+
 static char	ttyobuf[BUFSIZ], *tfrontp = ttyobuf, *tbackp = ttyobuf;
 static char	netobuf[BUFSIZ], *nfrontp = netobuf, *nbackp = netobuf;
 
@@ -106,8 +103,6 @@ static char	*margv[20];
 static jmp_buf	toplevel;
 static jmp_buf	peerdied;
 
-extern	int errno;
-
 int	quit(), suspend();
 static int	tn(), bye(), help();
 static int	setescape(), status(), toggle(), setoptions();
@@ -153,7 +148,7 @@ static struct cmd cmdtab[] = {
 
 static struct sockaddr_in sin;
 
-static int	intr(), deadpeer(), inputAvailable();
+static void	intr(), deadpeer(), inputAvailable();
 static char	*control();
 static struct	cmd *getcmd();
 static struct	servent *sp;
@@ -162,16 +157,28 @@ static struct	tchars otc;
 static struct	ltchars oltc;
 static struct	sgttyb ottyb;
 
+/* This works because the buffer is global */
+int cmdgets()
+	{
+	register int s = strlen(line);
+	register char *cp;
+
+	if	(fgets(&line[s], sizeof (line) - s, stdin) == 0)
+		return(0);
+	if      (cp = index(line, '\n'))
+		*cp = '\0';
+	return(1);
+	}
+
 main(argc, argv)
 	int argc;
 	char *argv[];
 {
-#ifdef pdp11
 	char	SIbuf[IBUFSIZ];
 
 	Ibuf = Ifrontp = Ibackp = SIbuf;
 	setbuf(stdout, NULL);
-#endif
+
 	ioctl(0, TIOCGETP, (char *)&ottyb);
 	ioctl(0, TIOCGETC, (char *)&otc);
 	ioctl(0, TIOCGLTC, (char *)&oltc);
@@ -224,7 +231,7 @@ tn(argc, argv)
 	if (argc < 2) {
 		(void) strcpy(line, "Connect ");
 		printf("(to) ");
-		gets(&line[strlen(line)]);
+		(void)cmdgets();
 		makeargv();
 		argc = margc;
 		argv = margv;
@@ -686,7 +693,8 @@ command(top)
 		signal(SIGINT, SIG_DFL);
 	for (;;) {
 		printf("%s> ", prompt);
-		if (gets(line) == 0) {
+		line[0] = '\0';
+		if (cmdgets() == 0) {
 			if (feof(stdin)) {
 				clearerr(stdin);
 				putchar('\n');
@@ -1046,14 +1054,14 @@ setescape(argc, argv)
 	char *argv[];
 {
 	register char *arg;
-	char buf[50];
 
 	if (argc > 2)
 		arg = argv[1];
 	else {
 		printf("new escape character: ");
-		gets(buf);
-		arg = buf;
+		line[0] = '\0';
+		(void)cmdgets();
+		arg = line;
 	}
 	if (arg[0] != '\0')
 		escape = arg[0];
@@ -1156,21 +1164,21 @@ getcmd(name)
 	return (found);
 }
 
-static
+static void
 deadpeer()
 {
 	(void) mode(0);
 	longjmp(peerdied, -1);
 }
 
-static
+static void
 intr()
 {
 	(void) mode(0);
 	longjmp(toplevel, -1);
 }
 
-static
+static void
 inputAvailable()
 {
     HaveInput = 1;

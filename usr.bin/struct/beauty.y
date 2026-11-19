@@ -262,7 +262,7 @@ main()
 	{
 	int exit();
 	if ( signal(SIGINT, SIG_IGN) != SIG_IGN)
-		signal(SIGINT, exit);
+		signal(SIGINT, (sig_t)exit);
 	yyinit();
 	yyparse();
 	}

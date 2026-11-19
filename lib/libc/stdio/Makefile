@@ -3,7 +3,7 @@
 # All rights reserved.  The Berkeley software License Agreement
 # specifies the terms and conditions for redistribution.
 #
-#	@(#)Makefile	5.4.2 (2.11BSD) 2025/11/29
+#	@(#)Makefile	5.4.3 (2.11BSD) 2026/7/29
 
 CFLAGS=	-O ${DEFS}
 
@@ -14,7 +14,7 @@ SRCS=	clrerr.c exit.c fclose.c fdopen.c findfp.c fflush.c fopen.c \
 	setvbuf.c snprintf.c sscanf.c stdio.c tmpfile.c tmpnam.c tempnam.c \
 	sprintf.c ungetc.c vfprintf.c vfscanf.c vprintf.c vscanf.c fpfcom.c \
 	vsnprintf.c vsprintf.c wbuf.c flags.c refill.c wsetup.c pfcom.c acvt.c \
-	puts.c fputs.c fgetc.c fgets.c gets.c
+	puts.c fputs.c fgetc.c fgets.c gets.c fgetln.c
 OBJS=	clrerr.o exit.o fclose.o fdopen.o findfp.o fflush.o fopen.o \
 	fprintf.o fpurge.o fread.o freopen.o fseek.o ftell.o fwrite.o fscanf.o \
 	fvwrite.o getc.o getchar.o getw.o makebuf.o rget.o fputc.o \
@@ -22,7 +22,8 @@ OBJS=	clrerr.o exit.o fclose.o fdopen.o findfp.o fflush.o fopen.o \
 	setvbuf.o snprintf.o sscanf.o stdio.o tmpfile.o tmpnam.o tempnam.o \
 	sprintf.o ungetc.o vfprintf.o vfscanf.o vprintf.o vscanf.o fpfcom.o \
 	vsnprintf.o vsprintf.o wbuf.o flags.o refill.o wsetup.o pfcom.o acvt.o \
-	puts.o fputs.o fgetc.o fgets.o gets.o
+	puts.o fputs.o fgetc.o fgets.o gets.o fgetln.o
+
 TAGSFILE=tags
 
 .c.o:
@@ -70,8 +71,8 @@ fdopen.o: local.h
 findfp.o: findfp.c /usr/include/sys/param.h /usr/include/sys/localopts.h
 findfp.o: /usr/include/sys/stddef.h /usr/include/machine/machparam.h
 findfp.o: /usr/include/sys/types.h /usr/include/sys/select.h
-findfp.o: /usr/include/sys/types.h /usr/include/signal.h
-findfp.o: /usr/include/sys/types.h /usr/include/unistd.h
+findfp.o: /usr/include/sys/types.h /usr/include/machine/limits.h
+findfp.o: /usr/include/signal.h /usr/include/sys/types.h /usr/include/unistd.h
 findfp.o: /usr/include/sys/types.h /usr/include/stdint.h /usr/include/stdio.h
 findfp.o: /usr/include/sys/types.h /usr/include/stdarg.h /usr/include/errno.h
 findfp.o: /usr/include/stdlib.h /usr/include/string.h /usr/include/sys/types.h
@@ -187,11 +188,11 @@ tmpnam.o: /usr/include/sys/types.h /usr/include/stdint.h
 tempnam.o: tempnam.c /usr/include/sys/param.h /usr/include/sys/localopts.h
 tempnam.o: /usr/include/sys/stddef.h /usr/include/machine/machparam.h
 tempnam.o: /usr/include/sys/types.h /usr/include/sys/select.h
-tempnam.o: /usr/include/sys/types.h /usr/include/signal.h
-tempnam.o: /usr/include/sys/types.h /usr/include/errno.h /usr/include/stdio.h
-tempnam.o: /usr/include/sys/types.h /usr/include/stdarg.h /usr/include/stdlib.h
-tempnam.o: /usr/include/unistd.h /usr/include/sys/types.h /usr/include/stdint.h
-tempnam.o: /usr/include/paths.h
+tempnam.o: /usr/include/sys/types.h /usr/include/machine/limits.h
+tempnam.o: /usr/include/signal.h /usr/include/sys/types.h /usr/include/errno.h
+tempnam.o: /usr/include/stdio.h /usr/include/sys/types.h /usr/include/stdarg.h
+tempnam.o: /usr/include/stdlib.h /usr/include/unistd.h /usr/include/sys/types.h
+tempnam.o: /usr/include/stdint.h /usr/include/paths.h
 sprintf.o: sprintf.c /usr/include/stdio.h /usr/include/sys/types.h
 sprintf.o: /usr/include/sys/select.h /usr/include/sys/types.h
 sprintf.o: /usr/include/stdarg.h /usr/include/stdarg.h /usr/include/limits.h
@@ -264,5 +265,9 @@ gets.o: gets.c /usr/include/unistd.h /usr/include/sys/types.h
 gets.o: /usr/include/sys/select.h /usr/include/sys/types.h
 gets.o: /usr/include/stdint.h /usr/include/stdio.h /usr/include/sys/types.h
 gets.o: /usr/include/stdarg.h
+fgetln.o: fgetln.c /usr/include/stdio.h /usr/include/sys/types.h
+fgetln.o: /usr/include/sys/select.h /usr/include/sys/types.h
+fgetln.o: /usr/include/stdarg.h /usr/include/stdlib.h /usr/include/string.h
+fgetln.o: /usr/include/sys/types.h local.h
 
 # IF YOU PUT ANYTHING HERE IT WILL GO AWAY

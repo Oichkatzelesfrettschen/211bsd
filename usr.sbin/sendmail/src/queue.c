@@ -285,7 +285,7 @@ runqueue(forkflag)
 		pid = dofork();
 		if (pid != 0)
 		{
-			extern reapchild();
+			extern void reapchild();
 
 			/* parent -- pick up intermediate zombie */
 #ifndef SIGCHLD

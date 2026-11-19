@@ -1,1 +1,1 @@
-#define NRX	2
+#define NRX	0

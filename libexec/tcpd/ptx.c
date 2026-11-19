@@ -8,8 +8,8 @@
   * Author: Wietse Venema, Eindhoven University of Technology, The Netherlands.
   */
 
-#ifndef lint
-static char sccsid[] = "@(#) ptx.c 1.3 94/12/28 17:42:38";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#) ptx.c 1.4 (2.11BSD) 2026/5/11";
 #endif
 
 #ifdef PTX

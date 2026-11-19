@@ -1,4 +1,6 @@
 /*
+ * @(#)mrd.c    1.1 (2.11BSD) 2026/9/22
+ *
  * Delete an MSDOS subdirectory
  *
  * Emmet P. Gray			US Army, HQ III Corps & Fort Hood
@@ -21,7 +23,8 @@ int clus_size;				/* cluster size (in sectors) */
 char *mcwd;				/* the Current Working Directory */
 int fat_error;				/* FAT error detected? */
 
-static int got_signal(), is_empty();
+static void got_signal();
+static int  is_empty();
 
 main(argc, argv)
 int argc;
@@ -34,9 +37,9 @@ char *argv[];
 	void exit(), fat_write(), dir_write(), disk_flush(), dir_flush();
 	struct directory *dir, *dir_read();
 					/* catch signals */
-	signal(SIGINT, (SIG_TYPE(*) ()) got_signal);
-	signal(SIGTERM, (SIG_TYPE(*) ()) got_signal);
-	signal(SIGQUIT, (SIG_TYPE(*) ()) got_signal);
+	signal(SIGINT, got_signal);
+	signal(SIGTERM, got_signal);
+	signal(SIGQUIT, got_signal);
 
 	if (argc == 1) {
 		fprintf(stderr, "Mtools version %s, dated %s\n", VERSION, DATE);
@@ -170,7 +173,7 @@ unsigned int fat;
  * a user abort.
  */
 
-static int
+static void
 got_signal()
 {
 	void exit(), disk_flush(), fat_write(), dir_flush();

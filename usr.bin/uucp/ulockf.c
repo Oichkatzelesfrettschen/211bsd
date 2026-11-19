@@ -1,5 +1,5 @@
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)ulockf.c	5.5.1 (2.11BSD) 1997/10/2";
+static char sccsid[] = "@(#)ulockf.c	5.5.2 (2.11BSD) 2026/5/9";
 #endif
 
 #include "uucp.h"
@@ -39,16 +39,6 @@ time_t atime;
 	sprintf(file, "%s/LCK..%s", LockDirectory, hfile);
 	i = 0;
 	while (onelock(pid, tempfile, file) == -1) { /* lock file exists */
-#if !defined(BSD4_2) && !defined(USG)
-		struct stat stbuf;
-		time_t ptime;
-		/* get status to check age of the lock file */
-		if (stat(file, &stbuf) == 0) {
-			(void) time(&ptime);
-			if ((ptime - stbuf.st_ctime) < atime)
-				return FAIL; /* file not old enough to delete */
-		}
-#else	BSD4_2 || USG
 		register int fd;
 		fd = open(file, 0);
 		if (fd >= 0) {
@@ -59,7 +49,6 @@ time_t atime;
 				|| errno != ESRCH))
 				return FAIL; /* process is still running */
 		}
-#endif BSD4_2 || USG
 		assert("DEAD LOCK", file, errno);
 		logent(file, "DEAD LOCK");
 		(void) unlink(file);
@@ -116,11 +105,7 @@ char *tempfile, *name;
 {
 	register int fd, ret;
 	extern int errno;
-#ifdef VMS
-	fd = creat(name, LCKMODE, "1version");
-#else !VMS
 	fd = creat(tempfile, LCKMODE);
-#endif !VMS
 	if (fd < 0) {
 		DEBUG(1,"Can't creat temp file %s ", tempfile);
 		DEBUG(1,"-- errno %d", errno);
@@ -131,67 +116,13 @@ char *tempfile, *name;
 
 	if (ret != sizeof(int)) {
 		DEBUG(1,"Temp file write failed -- errno %d\n", errno);
-#ifdef VMS
-		(void) unlink(name);
-#else !VMS
 		(void) unlink(tempfile);
-#endif !VMS
 		return FAIL;
 	}
-#ifndef VMS
 	if (link(tempfile, name) < 0) {
 		(void) unlink(tempfile);
 		return FAIL;
 	}
 	unlink(tempfile);
-#endif	!VMS
 	return SUCCESS;
 }
-
-#if !defined(BSD4_2) && !defined(USG)
-/*
- *	update 'change' time for lock files
- *
- *	Only update ctime, not mtime or atime.
- *	The 'chmod' method permits cu(I)-like programs
- *	to determine how long uucp has been on the line.
- *	The old "change access, mod, and change time" method
- *	can be had by defining OLDTOUCH
- *
- *	return code - none
- */
-
-ultouch()
-{
-	static time_t lasttouch = 0;
-	register int i;
-	struct ut {
-		time_t actime;
-		time_t modtime;
-	} ut;
-
-#ifdef USG
-	time(&Now.time);
-	t1.millitm = 0;
-#else !USG
-	ftime(&Now);
-#endif !USG
-	ut.actime = ut.modtime = Now.time;
-	/* Do not waste time touching locking files too often */
-	/* (But, defend against backward time changes) */
-	if (ut.actime >= lasttouch && ut.actime < lasttouch+60)
-		return;
-	lasttouch = ut.actime;
-	DEBUG(4, "ultouch\n", 0);
-
-	for (i = 0; i < Nlocks; i++) {
-		if (Lockfile[i] == NULL)
-			continue;
-#ifdef	OLDTOUCH
-		utime(Lockfile[i], &ut);
-#else 	!OLDTOUCH
-		chmod(Lockfile[i], LCKMODE);
-#endif !OLDTOUCH
-	}
-}
-#endif !BSD4_2 && ! USG

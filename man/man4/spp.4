@@ -2,22 +2,25 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)spp.4p	1.2 (Berkeley) 9/17/85
+.\"	@(#)spp.4	1.3 (2.11BSD) 2026/9/28
 .\"
-.TH SPP 4P "July 30, 1985"
+.TH SPP 4 "July 30, 1985"
 .UC 6
 .SH NAME
 spp \- Xerox Sequenced Packet Protocol
 .SH SYNOPSIS
-.B #include <sys/socket.h>
-.br
-.B #include <netns/ns.h>
-.br
-.B s = socket(AF_NS, SOCK_STREAM, 0);
-.PP
-.B #include <netns/sp.h>
-.br
-.B s = socket(AF_NS, SOCK_SEQPACKET, 0);
+.nf
+.ft B
+#include <sys/socket.h>
+#include <netns/ns.h>
+
+socket(AF_NS, SOCK_STREAM, 0);
+
+#include <netns/sp.h>
+
+socket(AF_NS, SOCK_SEQPACKET, 0);
+.ft R
+.fi
 .SH DESCRIPTION
 The SPP protocol provides reliable, flow-controlled, two-way
 transmission of data.  It is a byte-stream protocol used to
@@ -28,16 +31,16 @@ Sockets utilizing the SPP protocol are either \*(lqactive\*(rq or
 \*(lqpassive\*(rq.  Active sockets initiate connections to passive
 sockets.  By default SPP sockets are created active; to create a
 passive socket the
-.IR listen (2)
+.BR listen (2)
 system call must be used
 after binding the socket with the
-.IR bind (2)
+.BR bind (2)
 system call.  Only
 passive sockets may use the 
-.IR accept (2)
+.BR accept (2)
 call to accept incoming connections.  Only active sockets may
 use the
-.IR connect (2)
+.BR connect (2)
 call to initiate connections.
 .PP
 Passive sockets may \*(lqunderspecify\*(rq their location to match
@@ -128,7 +131,7 @@ by a bona fide XEROX product internetwork router.
 The data argument for the setsockopt call must be
 an unsigned short.
 .SH SEE ALSO
-intro(4N), ns(4F)
+intro(4), ns(4)
 .SH BUGS
 There should be some way to reflect record boundaries in
 a stream.

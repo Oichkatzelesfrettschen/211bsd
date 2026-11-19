@@ -4,13 +4,14 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-static	char *sccsid = "@(#)errormain.c	5.1 (Berkeley) 5/31/85";
+static	char *sccsid = "@(#)errormain.c	5.2 (2.11BSD) 2026/5/9";
+#endif
+
 #include <stdio.h>
 #include <ctype.h>
 #include <signal.h>
@@ -36,7 +37,7 @@ boolean	terse	= FALSE;	/* Terse output */
 char	*suffixlist = ".*";	/* initially, can touch any file */
 
 int	errorsort();
-int	onintr();
+void	onintr();
 /*
  *	error [-I ignorename] [-n] [-q] [-t suffixlist] [-s] [-v] [infile]
  *	

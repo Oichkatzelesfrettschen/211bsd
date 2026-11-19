@@ -5,7 +5,7 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)announce.c	5.3.1 (2.11BSD GTE) 1/1/94";
+static char sccsid[] = "@(#)announce.c	5.3.2 (2.11BSD) 2026/9/15";
 #endif
 
 #include <sys/types.h>
@@ -20,7 +20,6 @@ static char sccsid[] = "@(#)announce.c	5.3.1 (2.11BSD GTE) 1/1/94";
 
 #include <protocols/talkd.h>
 
-extern	int errno;
 extern	char hostname[];
 
 /*

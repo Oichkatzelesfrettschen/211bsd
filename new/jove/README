@@ -1,9 +1,9 @@
-###########################################################################
-# This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE #
-# is provided to you without charge, and with no warranty.  You may give  #
-# away copies of JOVE, including sources, provided that this notice is    #
-# included in all the files.                                              #
-###########################################################################
+# jove README 2.0 (2.11BSD) 2026/7/27
+
+# This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE
+# is provided to you without charge, and with no warranty.  You may give
+# away copies of JOVE, including sources, provided that this notice is
+# included in all the files.
 
 To make JOVE edit Makefile to set the right directories for the binaries,
 on line documentation, the man pages, and the TMP files and select the
@@ -29,10 +29,6 @@ But if you want to recover buffers on system crashes, you should create a
 directory that doesn't get cleared upon reboot, and use that instead.
 You would probably want to clean out that directory periodically with
 ``cron''.
-
-For the pdp11 version there is the Ovmakefile.  This has only been tested
-on 2.9bsd.  It works pretty well, actually, and it is possible to turn on
-all the compile time options with this version.
 
 Bug reports:  If you find bugs in JOVE I would appreciate hearing about
 them.  (My net address is at end of this message.)  So, send me the bug

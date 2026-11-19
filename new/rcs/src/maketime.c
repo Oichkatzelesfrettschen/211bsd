@@ -3,7 +3,8 @@
  * MAKETIME		derive 32-bit time value from TM structure.
  *
  * Usage:
- *	long t,maketime();
+ *	time_t maketime(struct tm *);
+ *
  *	struct tm *tp;	Pointer to TM structure from <time.h>
  *			NOTE: this must be extended version!!!
  *	t = maketime(tp);
@@ -19,15 +20,15 @@
  * 	Copyright 1981 by Ken Harrenstien, SRI International.
  *	(ARPANET: KLH @ SRI)
  */
-#ifndef lint
-static char rcsid[]= "$Id: maketime.c,v 1.6 87/12/18 17:05:58 narten Exp $";
+#if	!defined(lint) && defined(DOSCCS)
+static char rcsid[]= "$Id: maketime.c,v 1.7 2026/5/19 17:05:58 (2.11BSD) Exp $";
 #endif
 /* $Log:	maketime.c,v $
  * Revision 1.6  87/12/18  17:05:58  narten
  * include rcsparam.h
  * 
  * Revision 1.5  87/12/18  11:35:51  narten
- * maketime.c: fixed USG code - you have tgo call "tzset" in order to have
+ * maketime.c: fixed USG code - you have to call "tzset" in order to have
  * "timezone" set. ("localtime" calls it, but it's probably better not to 
  * count on "localtime" having been called.)
  * 
@@ -50,9 +51,7 @@ static char rcsid[]= "$Id: maketime.c,v 1.6 87/12/18 17:05:58 narten Exp $";
  * 
  * Revision 1.1  82/05/06  11:38:00  wft
  * Initial revision
- * 
  */
-
 
 #include "rcsbase.h"
 #include "time.h"
@@ -62,16 +61,15 @@ int daytb[] = {   /* # days in year thus far, indexed by month (0-12!!) */
 };
 
 struct tm *localtime();
-long	time();
 
-long maketime(atm)
+time_t maketime(atm)
 struct tm *atm;
 {	register struct tm *tp;
 	register int i;
 	int year, yday, mon, day, hour, min, sec, zone, dst, leap;
-	long tres, curtim;
+	time_t tres, curtim;
 
-	VOID time(&curtim);
+	time(&curtim);
 	tp = localtime(&curtim);        /* Get breakdowns of current time */
 	year = tp->tm_year;		/* Use to set up defaults */
 	mon = tp->tm_mon;
@@ -200,31 +198,14 @@ printf("HMS: %d %d %d T=%ld\n",hour,min,sec,tres);
 }
 
 
-/* LOCALZONE		return local timezone in # mins west of GMT
- *
- */
+/* LOCALZONE		return local timezone in # mins west of GMT */
 
-#ifdef V6
-extern long timezone;
-#else
-#ifdef USG
-extern long timezone;
-#else /* V7 */
 #include <sys/types.h>
 #include <sys/timeb.h>
-#endif USG
-#endif V6
 
 int _lclzon = -1;
 localzone()
 {
-#ifdef V6
-	return(_lclzon >= 0 ? _lclzon : (_lclzon = timezone/60L));
-#else
-#ifdef USG
-	tzset();
-	return(_lclzon >= 0 ? _lclzon : (_lclzon = timezone/60L));
-#else /* V7 */
 	struct timeb tb;
 
 	if(_lclzon < 0)
@@ -232,7 +213,4 @@ localzone()
 		_lclzon = tb.timezone;
 	  }
 	return(_lclzon);
-
-#endif USG
-#endif V6
 }

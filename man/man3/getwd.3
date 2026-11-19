@@ -2,19 +2,23 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)getwd.3	6.2 (Berkeley) 5/12/86
+.\"	@(#)getwd.3	6.3 (2.11BSD) 2026/5/7
 .\"
-.TH GETWD 3 "May 12, 1986"
+.TH GETWD 3 "May 7, 2026"
 .UC 5
 .SH NAME
 getwd \- get current working directory pathname
 .SH SYNOPSIS
 .nf
+.ft B
+#include <unistd.h>
+.PP
+.nf
 .B char *getwd(pathname)
 .B char *pathname;
 .fi
 .SH DESCRIPTION
-.I Getwd
+.I getwd
 copies the absolute pathname of the current working directory to
 .I pathname
 and returns a pointer to the result.
@@ -23,7 +27,7 @@ Maximum pathname length is MAXPATHLEN characters (1024),
 as defined in
 .I <sys/param.h>.
 .SH DIAGNOSTICS
-.I Getwd
+.I getwd
 returns zero and places a message in
 .I pathname
 if an error occurs.

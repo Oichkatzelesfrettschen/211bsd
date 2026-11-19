@@ -2,9 +2,9 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)curses.3x	6.3 (Berkeley) 4/23/86
+.\"	@(#)curses.3	6.4 (2.11BSD) 2026/9/27
 .\"
-.TH CURSES 3X "April 23, 1986"
+.TH CURSES 3 "April 23, 1986"
 .UC 4
 .SH NAME
 curses \- screen functions with ``optimal'' cursor motion
@@ -17,22 +17,19 @@ curses \- screen functions with ``optimal'' cursor motion
 These routines give the user a method of updating screens with reasonable
 optimization.  They keep an image of the current screen,
 and the user sets up an image of a new one.  Then the
-.I refresh()
+.BR refresh ()
 tells the routines to make the current screen look like the new one.
 In order to initialize the routines, the routine
-.I initscr()
+.BR initscr ()
 must be called before any of the other routines that deal with windows and
 screens are used.  The routine
-.I endwin()
+.BR endwin ()
 should be called before exiting.
 .SH SEE ALSO
 .I "Screen Updating and Cursor Movement Optimization: A Library Package,"
 Ken Arnold,
-.br
-ioctl(2),
-getenv(3),
-tty(4),
-termcap(5)
+.sp
+ioctl(2), getenv(3), tty(4), termcap(5)
 .SH AUTHOR
 Ken Arnold
 .SH FUNCTIONS

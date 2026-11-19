@@ -1,4 +1,4 @@
-#       Makefile        2.0 (2.11BSD) 2025/11/29
+#       Makefile        2.1 (2.11BSD) 2026/7/27
 
 ###########################################################################
 # This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE #
@@ -44,20 +44,21 @@ CFLAGS = -O
 
 BASESEG = keymaps.o ask.o buf.o ctype.o \
 	  disp.o insert.o io.o jove.o misc.o re.o \
-	  screen.o term.o tune.o util.o version.o
-OVLAY1 = abbrev.o funcdefs.o rec.o paragraph.o fmt.o malloc.o vars.o table.o
-OVLAY2 = c.o wind.o marks.o fp.o
+	  screen.o tune.o util.o version.o
+OVLAY1 = abbrev.o funcdefs.o rec.o paragraph.o fmt.o vars.o table.o
+OVLAY2 = c.o wind.o marks.o fp.o 
 OVLAY3 = extend.o macros.o
 OVLAY4 = iproc.o re1.o argcount.o
-OVLAY5 = proc.o scandir.o case.o delete.o move.o
+OVLAY5 = proc.o case.o delete.o move.o
+OVLAY6 = term.o scandir.o
 
-OBJECTS = $(BASESEG) $(OVLAY1) $(OVLAY2) $(OVLAY3) $(OVLAY4) $(OVLAY5)
+OBJECTS = $(BASESEG) $(OVLAY1) $(OVLAY2) $(OVLAY3) $(OVLAY4) $(OVLAY5) $(OVLAY6)
 
 C_SRC = funcdefs.c abbrev.c argcount.c ask.c buf.c c.c case.c ctype.c \
 	delete.c disp.c extend.c fp.c fmt.c insert.c io.c iproc.c \
-	jove.c macros.c malloc.c marks.c misc.c move.c paragraph.c \
+	jove.c macros.c marks.c misc.c move.c paragraph.c \
 	proc.c re.c re1.c rec.c scandir.c screen.c table.c term.c util.c \
-	vars.c version.c wind.c getch.c mac.c
+	vars.c version.c wind.c getch.c
 
 SOURCES = $(C_SRC) portsrv.c recover.c setmaps.c teachjove.c
 
@@ -68,11 +69,10 @@ DOCS =	doc/cmds.doc.nr doc/example.rc doc/jove.1 doc/jove.2 doc/jove.3 \
 	doc/jove.4 doc/jove.5 doc/jove.nr doc/system.rc \
 	doc/teach-jove doc/teachjove.nr doc/README doc/jove.qref
 
-MISC = Makefile Ovmakefile Makefile.dos tune.dos tune.template \
-	README Readme.dos Readme.mac iproc-pipes.c iproc-ptys.c
+MISC = Makefile tune.template README
 
 SUPPORT = teachjove.c recover.c setmaps.c portsrv.c keymaps.txt \
-	macvert.c menumaps.txt mjovers.Hqx
+	macvert.c menumaps.txt
 
 all:	xjove recover teachjove portsrv macvert
 
@@ -83,6 +83,7 @@ xjove:	$(OBJECTS)
 			-Z $(OVLAY3) \
 			-Z $(OVLAY4) \
 			-Z $(OVLAY5) \
+			-Z $(OVLAY6) \
 			-Y $(BASESEG) \
 			-o xjove $(LIBS) -lc
 	@-size xjove
@@ -123,7 +124,7 @@ tune.c: Makefile tune.template
 	     -e 's;BINDIR;$(BINDIR);' \
 	     -e 's;SHELL;$(SHELL);' tune.template >> tune.c
 
-iproc.o: iproc-ptys.c iproc-pipes.c iproc.c
+iproc.o: iproc.c
 	$(CC) -c $(CFLAGS) iproc.c
 
 macvert:	macvert.c
@@ -176,13 +177,6 @@ TEACHJOVEM: doc/teachjove.nr
 	> $(TEACHJOVEM)
 	chmod 444 $(TEACHJOVEM)
 	chown bin.bin $(TEACHJOVEM)
-
-lint:
-	lint -n $(C_SRC) tune.c keymaps.c
-	@echo Done
-
-tags:
-	ctags -w $(C_SRC) $(HEADERS) iproc-ptys.c
 
 clean:
 	rm -f a.out core *.o keymaps.c tune.c xjove portsrv recover setmaps \

@@ -1,5 +1,5 @@
-#ifndef lint
-static char *sccsid = "@(#)refer7.c	4.3 (Berkeley) 4/23/86";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)refer7.c	4.4 (2.11BSD) 2026/5/9";
 #endif
 
 #include "refer..c"
@@ -85,7 +85,6 @@ char *fnam;
 	int wsize = 50;
 	int finalrn;
 	char sig[MXSIG];
-	extern int *realloc();
 
 	wref = (int *)calloc((unsigned)wsize, (unsigned)sizeof(int));
 	fclose(ftemp);

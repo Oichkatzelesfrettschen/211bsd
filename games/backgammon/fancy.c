@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)fancy.c	5.1 (Berkeley) 5/29/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)fancy.c	5.2 (2.11BSD) 2026/5/11";
+#endif
 
 #include "back.h"
 
@@ -44,10 +44,10 @@ int	oldb[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 int	oldr;
 int	oldw;
-						/* "real" cursor positions, so
-						 * it knows when to reposition.
-						 * These are -1 if curr and curc
-						 * are accurate */
+				/* "real" cursor positions, so
+				 * it knows when to reposition.
+				 * These are -1 if curr and curc
+				 * are accurate */
 int	realr;
 int	realc;
 
@@ -148,7 +148,7 @@ fboard ()  {
 	oldr = (off[1] < 0? off[1]+15: off[1]);
 	oldw = -(off[0] < 0? off[0]+15: off[0]);
 }
-
+
 /*
  * bsect (b,rpos,cpos,cnext)
  *	Print the contents of a board position.  "b" has the value of the
@@ -218,7 +218,7 @@ int	cnext;					/* direction of position */
 		}
 	}
 }
-
+
 refresh()  {
 	register int	i, r, c;
 
@@ -275,7 +275,7 @@ refresh()  {
 	newpos();
 	buflush();
 }
-
+
 fixpos (old,new,r,c,inc)
 int	old, new, r, c, inc;
 
@@ -360,7 +360,7 @@ int		r, c, inc;
 		fancyc (ch);
 	}
 }
-
+
 curmove (r,c)
 register int	r, c;
 
@@ -542,7 +542,7 @@ newpos ()  {
 	realr = -1;
 	realc = -1;
 }
-
+
 clear ()  {
 	register int	i;
 	int		addbuf();
@@ -564,7 +564,7 @@ clear ()  {
 tos ()  {				/* home cursor */
 	curmove (0,0);
 }
-
+
 fancyc (c)
 register char	c;			/* character to output */
 {
@@ -620,7 +620,7 @@ register char	c;			/* character to output */
 					/* use cursor movement routine */
 		curmove (curr,curc+1);
 }
-
+
 clend()  {
 	register int	i;
 	register char	*s;
@@ -674,7 +674,7 @@ newline ()  {
 	else
 		curmove (curr+1,0);
 }
-
+
 getcaps (s)
 register char	*s;
 

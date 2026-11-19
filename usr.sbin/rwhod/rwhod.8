@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)rwhod.8	6.3 (2.11BSD) 2024/9/20
+.\"	@(#)rwhod.8	6.4 (2.11BSD) 2026/10/26
 .\"
 .TH RWHOD 8 "Sep 20, 2024"
 .UC 5
@@ -11,29 +11,29 @@ rwhod \- system status server
 .SH SYNOPSIS
 .B /usr/sbin/rwhod
 .SH DESCRIPTION
-.I Rwhod
+.B rwhod
 is the server which maintains the database used by the
-.IR rwho (1)
+.BR rwho (1)
 and
-.IR ruptime (1)
+.BR ruptime (1)
 programs.  Its operation is predicated on the ability to
 .I broadcast
 messages on a network.
 .PP
-.I Rwhod
+.B rwhod
 operates as both a producer and consumer of status information.
 As a producer of information it periodically
 queries the state of the system and constructs
 status messages which are broadcast on a network.
 As a consumer of information, it listens for other
-.I rwhod
+.B rwhod
 servers' status messages, validating them, then recording
 them in a collection of files located in the directory
 .IR /usr/spool/rwho .
 .PP
 The server transmits and receives messages at the port indicated
 in the ``rwho'' service specification; see 
-.IR services (5).
+.BR services (5).
 The messages sent and received, are of the form:
 .PP
 .nf
@@ -62,28 +62,28 @@ struct	whod {
 .PP
 All fields are converted to network byte order prior to
 transmission.  The load averages are as calculated by the
-.IR w (1)
+.BR w (1)
 program, and represent load averages over the 5, 10, and 15 minute 
 intervals prior to a server's transmission; they are multiplied by 100
 for representation in an integer.  The host name
 included is that returned by the
-.IR gethostname (2)
+.BR gethostname (2)
 system call, with any trailing domain name omitted.
 The array at the end of the message contains information about
 the users logged in to the sending machine.  This information 
 includes the contents of the 
-.IR utmp (5)
+.BR utmp (5)
 entry for each non-idle terminal line and a value indicating the
 time in seconds since a character was last received on the terminal line.
 .PP
 Messages received by the
-.I rwho
+.B rwho
 server are discarded unless they originated at an
-.I rwho
+.B rwho
 server's port.  In addition, if the host's name, as specified
 in the message, contains any unprintable ASCII characters, the
 message is discarded.  Valid messages received by
-.I rwhod
+.B rwhod
 are placed in files named
 .IR whod . hostname
 in the directory

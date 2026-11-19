@@ -1,3 +1,6 @@
+# 2026/9/26  - remove RK as BOOTDEV, much too small for a root filesystem
+# 2026/9/11  - remove TMSCP_DEBUG (not used)
+# 2026/5/15  - remove NHY
 # 2025/08/11 - add NDHUL
 # 2019/10/18 - TIMEZONE set to GMT
 # 1997/1/21 - RK added to GENERIC kernel (for use with Bob Supnik's emulator)
@@ -37,15 +40,15 @@ LINEHZ		60			# clock frequency USA
 # PSW use 'spl', 'mfps/mtps' or 'movb' instructions depending on the cpu type).
 PDP11		GENERIC			# distribution kernel
 #PDP11		44			# PDP-11/44
-#PDP11		70			# PDP-11/70,45,50,55
-#PDP11		73			# PDP-11/73,53,83,93,84,94
+#PDP11		70			# PDP-11/70
+#PDP11		73			# PDP-11/53,73,83,84,93,94
 
 #########################################
 # GENERAL SYSTEM PARAMETERS		#
 #########################################
 
 IDENT		GENERIC			# machine name
-MAXUSERS	4			# maxusers on machine
+MAXUSERS	6			# maxusers on machine
 
 # BOOTDEV is the letter combination denoting the autoboot device,
 # or NONE if not using the autoboot feature.
@@ -54,7 +57,6 @@ BOOTDEV		NONE			# don't autoboot
 #BOOTDEV	hk6			# rk06 boot device
 #BOOTDEV	hk7			# rk07 boot device
 #BOOTDEV	ra			# MSCP boot device
-#BOOTDEV	rk			# rk05 boot device
 #BOOTDEV	rl			# rl01/02 boot device
 #BOOTDEV	rm			# rm02/03/05 rp06 boot device
 #BOOTDEV	br			# Eaton BR1537/BR1711 boot device
@@ -65,37 +67,68 @@ BOOTDEV		NONE			# don't autoboot
 # Timezone
 TIMEZONE	0			# kernel uses GMT by default
 
-# Filesystem configuration
-# Rootdev, swapdev etc. should be in terms of makedev.  For example,
-# if you have an SMD drive using the xp driver, rootdev would be xp0a,
-# or "makedev(10,0)".  Swapdev would be the b partition, xp0b, or
-# "makedev(10,1)".  The 10 is the major number of the device (the offset
-# in the bdevsw table in conf.c) and the 0 and 1 are the minor numbers
-# which correspond to the partitions as described in the section 4 manual
-# pages.  You can also get the major numbers from the MAKEDEV script in
-# /dev.
-PIPEDEV		makedev(10,0)		# makedev(10,0) xp0a
-ROOTDEV		makedev(10,0)		# makedev(10,0) xp0a
-SWAPDEV		makedev(10,1)		# makedev(10,1) xp0b
+#Filesystem configuration
+#
+# PIPEDEV, ROOTDEV, SWAPDEV, DUMPDEV are all in terms of 'makedev(major,minor)'
+# and the major number from this table.  Devices in the you (almost) certainly 
+# do not have category (see below) or not suitable are not listed here:
+#
+#  XX (Device)   major
+#  ===========   =====
+#  hk             4
+#  ra             5
+#  rl             7
+#  xp            10
+
+# The complete list of major numbers is in the script /dev/MAKEDEV
+#
+# and the 'minor' number from this table (partitions other than 'a' and
+# 'b' rarely used but allowed).
+#
+#  minor         partition name
+#  -----         --------------
+#   0            a
+#   1            b
+#   2            c
+#   3            d
+#   4            e
+#   5            f
+#   6            g
+#   7            h
+
+# For example: with a SMD drive (xp) ROOTDEV xp0a is makedev(10,0),
+# PIPEDEV is makedev(10,0) and SWAPDEV is makedev(10,1)
+
+PIPEDEV		makedev(10,0)		# makedev(major,0) XX0a
+ROOTDEV		makedev(10,0)		# makedev(major,0) XX0a
+SWAPDEV		makedev(10,1)		# makedev(major,1) XX0b
 
 # DUMPROUTINE indicates which dump routine should be used.  DUMPDEV
 # should be in terms of makedev.  If DUMPDEV is NODEV no automatic
 # dumps will be taken, and DUMPROUTINE needs to be set to "nulldev" to
-# resolve the reference.  See param.h and ioconf.c for more information.
-# DUMPLO should leave room for the kernel to start swapping without
-# overwriting the dump.
+# resolve the reference.
+
+# A TMSCP tape device may be used as a dump device.  DUMPLO does not apply
+# in this case and the minor number is almost always 0.
+#
+#  XX (Device)   major
+#  ===========   =====
+#  tmscp         12
+
+# DUMPLO should leave room for the kernel to start swapping on SWAPDEV
+# without overwriting the dump.
+
 DUMPLO		512			# dump start address
-DUMPDEV		NODEV			# makedev(10,1) xp0b
+DUMPDEV		NODEV			# makedev(major,1) XX0b
 DUMPROUTINE	nulldev			# no dump routine.
 #DUMPROUTINE	hkdump			# hk driver dump routine
-#DUMPROUTINE	hpdump			# hp driver dump routine
 #DUMPROUTINE	radump			# ra driver dump routine
 #DUMPROUTINE	rldump			# rl driver dump routine
 #DUMPROUTINE	rmdump			# rm driver dump routine
 #DUMPROUTINE	brdump			# br driver dump routine
 #DUMPROUTINE	sidump			# si driver dump routine
 #DUMPROUTINE	xpdump			# xp driver dump routine
-#DUMPROUTINE	tmsdump			# tms driver dump routine
+#DUMPROUTINE	tmsdump			# tmscp driver dump routine
 
 #########################################
 # KERNEL CONFIGURATION			#
@@ -138,8 +171,6 @@ DIAGNOSTIC	NO			# misc. diagnostic loops and checks
 # PERIPHERALS: DISK DRIVES		#
 #########################################
 
-NBR		0		# EATON BR1537/BR1711, BR1538A, B, C, D
-
 NHK		2		# RK611, RK06/07
 
 NRAC		2		# NRAD controllers
@@ -149,9 +180,7 @@ NRK		8		# RK05
 
 NRL		4		# RL01/02
 
-NRX		2		# RX02
-
-NSI		0		# SI 9500 driver for CDC 9766 disks
+NRX		0		# RX02
 
 NXPC		1		# NXPD controllers (RH70/RH11 style)
 NXPD		2		# RM02/03/05, RP04/05/06, CDC 9766,
@@ -175,7 +204,6 @@ NTS		2		# TS11
 
 NTMSCP		2		# TMSCP controllers
 NTMS		2		# TMSCP drives
-TMSCP_DEBUG	NO		# debugging code in TMSCP drive (EXPENSIVE)
 
 #########################################
 # PERIPHERALS: TERMINALS		#
@@ -196,17 +224,15 @@ NDZ		0		# DZ11; NDZ is in units of boards (8 each)
 #########################################
 # PERIPHERALS: OTHER			#
 #########################################
-NDN		0		# DN11 dialer
 NLP		0		# Line Printer
 LP_MAXCOL	132		# Maximum number of columns on line printers
-NDR		0		# DR11-W
 NIBV		0		# IBV11 IEEE-488
 
 #########################################
 # PSEUDO DEVICES, PROTOCOLS, NETWORKING	#
 #########################################
 # Networking only works with split I/D and SUPERVISOR space, i.e. with the
-# 11/44/53/70/73/83/84/93,94.  NETHER should be non-zero for networking
+# 11/44/53/70/73/83/84/93/94.  NETHER should be non-zero for networking
 # systems using any ethernet.  CHECKSTACK makes sure the networking stack
 # pointer and the kernel stack pointer don't collide; it's *very* expensive
 # at 4 extra instructions for EVERY function call AND return, always left
@@ -223,12 +249,19 @@ NETHER		0		# ether pseudo-device
 # script, jove, window, rlogin, ...
 NPTY		0		# pseudo-terminals - GENERIC sys needs NONE
 
-NEC		0		# 3Com Ethernet
 NDE		0		# DEUNA/DELUA
-NIL		0		# Interlan Ethernet
-NSL		0		# Serial Line IP
 NQE		0		# DEQNA
 NQT		0		# DEQTA (DELQA-YM, DELQA-PLUS)
+NSL		0		# Serial Line IP
+
+# The following were known to work in 2.11BSD at one time but are for 
+# hardware you (almost) certainly do not have.
+NSI		0		# SI 9500 driver for CDC 9766 disks
+NBR		0		# EATON BR1537/BR1711, BR1538A, B, C, D
+NDN		0		# DN11 dialer
+NDR		0		# DR11-W
+NEC		0		# 3Com Ethernet
+NIL		0		# Interlan Ethernet
 NVV		0		# V2LNI (Pronet)
 NACC		0		# ACC LH/DH ARPAnet IMP interface
 PLI		NO		# LH/DH is connected to a PLI
@@ -241,25 +274,25 @@ ENABLE34	NO		# if have the ENABLE34 board
 NCSS		0		# DEC/CSS IMP11-A ARPAnet IMP interface
 NDMC		0		# DMC11
 NEN		0		# Xerox prototype (3 Mb) Ethernet
-NHY		0		# Hyperchannel
 NS		0		# Xerox NS (XNS)
 NSRI		0		# SRI DR11c ARPAnet IMP
 NTB		0		# RS232 interface for Genisco/Hitachi tablets
 
 # Defining FPSIM to YES compiles a floating point simulator into the kernel
-# which will catch floating point instruction traps from user space.  This
-# doesn't work at present.
+# which will catch floating point instruction traps from user space.
 FPSIM		NO			# floating point simulator
 
 # To enable profiling, the :splfix script must be changed to use spl6 instead
 # of spl7 (see conf/:splfix.profile), also, you have to have a machine with a
-# supervisor PAR/PDR pair, i.e. an 11/44/45/50/53/55/70/73/83/84, as well
+# supervisor PAR/PDR pair, i.e. an 11/44/53/70/73/83/84/93/94, as well
 # as both a KW11-L and a KW11-P.
 #
 # Note that profiling is not currently working.  We don't have any plans on
 # fixing it, so this is essentially a non-supported feature.
 PROFILE		NO		# system profiling with KW11P clock
 
+# The Ingres driver works but is not needed unless concurrent database accesses
+# will be done.
 INGRES		NO		# include the Ingres lock driver
 
 NIBV		1		# IBV11 GPIB

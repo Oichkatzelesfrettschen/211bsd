@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)sigvec.2	6.3.1 (2.11BSD) 97/9/3
+.\"	@(#)sigvec.2	6.3.2 (2.11BSD) 2026/9/22
 .\"
 .TH SIGVEC 2 "September 3, 1997"
 .UC 4
@@ -14,21 +14,24 @@
 sigvec \- software signal facilities
 .SH SYNOPSIS
 .nf
-.B #include <signal.h>
-.PP
-.B struct sigvec {
-.B	int	(*sv_handler)();
-.B	long	sv_mask;
-.B	int	sv_flags;
-.B };
-.PP
-.B sigvec(sig, vec, ovec)
-.B int sig;
-.B struct sigvec *vec, *ovec;
+.ft B
+#include <signal.h>
+
+typedef void (*sig_t)(int);
+
+struct sigvec
+       {
+       sig_t    sv_handler;
+       long     sv_mask;
+       int      sv_flags;
+       };
+
+sigvec(\fIint sig\fP, \fIstruct sigvec *vec\fP, \fIstruct sigvec *ovec\fP);
+.ft R
 .fi
 .SH DESCRIPTION
-.B This interface has been made obsolete by:
-sigaction(2).
+.B This interface is made obsolete by:
+.BR sigaction (2) .
 .sp
 The system defines a set of signals that may be delivered to a process.
 Signal delivery resembles the occurence of a hardware interrupt:
@@ -58,9 +61,9 @@ defines the set of signals currently blocked from delivery
 to a process.  The signal mask for a process is initialized
 from that of its parent (normally 0).  It
 may be changed with a
-.IR sigblock (2)
+.BR sigblock (2)
 or
-.IR sigsetmask (2)
+.BR sigsetmask (2)
 call, or when a signal is delivered to the process.
 .PP
 When a signal
@@ -80,16 +83,16 @@ must arrange to restore the previous context itself.
 When a signal is delivered to a process a new signal mask is
 installed for the duration of the process' signal handler
 (or until a
-.I sigblock
+.B sigblock
 or
-.I sigsetmask
+.B sigsetmask
 call is made).
 This mask is formed by taking the current signal mask,
 adding the signal to be delivered, and 
 .IR or 'ing
 in the signal mask associated with the handler to be invoked.
 .PP
-.I Sigvec
+.B sigvec
 assigns a handler for a specific signal.  If
 .I vec
 is non-zero, it
@@ -100,7 +103,7 @@ Further, if the SV_ONSTACK bit is set in
 the system will deliver the signal to the process on a
 .IR "signal stack" ,
 specified with
-.IR sigstack (2).
+.BR sigstack (2).
 If 
 .I ovec
 is non-zero, the previous handling information for the signal
@@ -108,7 +111,7 @@ is returned to the user.
 .PP
 The following is a list of all signals
 with names as in the include file
-.RI < signal.h >:
+.RB < signal.h >:
 .LP
 .nf
 .ta \w'SIGVTALRM 'u +\w'15*  'u
@@ -149,9 +152,9 @@ if not caught or ignored.
 .PP
 Once a signal handler is installed, it remains installed
 until another
-.I sigvec
+.B sigvec
 call is made, or an 
-.IR execve (2)
+.BR execve (2)
 is performed.
 The default action for a signal may be reinstated by setting
 .I sv_handler
@@ -172,29 +175,29 @@ The call can be forced to terminate prematurely with an
 EINTR error return by setting the SV_INTERRUPT bit in
 .I sv_flags.
 The affected system calls are
-.IR read (2)
+.BR read (2)
 or
-.IR write (2)
+.BR write (2)
 on a slow device (such as a terminal; but not a file)
 and during a
-.IR wait (2).
+.BR wait (2).
 .PP
 After a
-.IR fork (2)
+.BR fork (2)
 or
-.IR vfork (2)
+.BR vfork (2)
 the child inherits
 all signals, the signal mask, the signal stack,
 and the restart/interrupt flags.
 .PP
-.IR  Execve (2)
+.BR  execve (2)
 resets all
 caught signals to default action and
 resets all signals to be caught on the user stack.
 Ignored signals remain ignored;
 the signal mask remains the same;
 signals that interrupt system calls continue to do so.
-.SH NOTES
+.PP
 The mask specified in 
 .I vec
 is not allowed to block SIGKILL, SIGSTOP, or SIGCONT.  This
@@ -208,7 +211,7 @@ indicates an error occurred and
 .I errno
 is set to indicated the reason.
 .SH ERRORS
-.I Sigvec
+.B sigvec
 will fail and no new signal handler will be installed if one
 of the following occurs:
 .TP 15
@@ -221,7 +224,7 @@ points to memory that is not a valid part of the process
 address space.
 .TP 15
 [EINVAL]
-.I Sig
+.I sig
 is not a valid signal number.
 .TP 15
 [EINVAL]
@@ -236,62 +239,7 @@ kill(1),
 ptrace(2), kill(2),
 sigblock(2), sigsetmask(2), sigpause(2),
 sigstack(2), sigvec(2), setjmp(3), siginterrupt(3), tty(4)
-.SH "NOTES  (VAX-11)"
-The handler routine can be declared:
-.PP
-    handler(sig, code, scp)
-    int sig, code;
-    struct sigcontext *scp;
-.PP
-Here
-.I sig
-is the signal number, into which the hardware faults and traps are
-mapped as defined below. 
-.I Code
-is a parameter that is either a constant
-as given below or, for compatibility mode faults, the code provided by
-the hardware (Compatibility mode faults are distinguished from the
-other SIGILL traps by having PSL_CM set in the psl).
-.I Scp
-is a pointer to the
-.I sigcontext
-structure (defined in
-.RI < signal.h >),
-used to restore the context from before the signal.
-.PP
-The following defines the mapping of hardware traps to signals
-and codes.  All of these symbols are defined in
-.RI < signal.h >:
-.LP
-.ta \w'     Floating/decimal divide by zero   'u +\w'15*  'u +8n
-.nf
-   Hardware condition	Signal	Code
-
-Arithmetic traps:
-   Integer overflow	SIGFPE	FPE_INTOVF_TRAP
-   Integer division by zero	SIGFPE	FPE_INTDIV_TRAP
-   Floating overflow trap	SIGFPE	FPE_FLTOVF_TRAP
-   Floating/decimal division by zero	SIGFPE	FPE_FLTDIV_TRAP
-   Floating underflow trap	SIGFPE	FPE_FLTUND_TRAP
-   Decimal overflow trap	SIGFPE	FPE_DECOVF_TRAP
-   Subscript-range	SIGFPE	FPE_SUBRNG_TRAP
-   Floating overflow fault	SIGFPE	FPE_FLTOVF_FAULT
-   Floating divide by zero fault	SIGFPE	FPE_FLTDIV_FAULT
-   Floating underflow fault	SIGFPE	FPE_FLTUND_FAULT
-Length access control	SIGSEGV
-Protection violation	SIGBUS
-Reserved instruction	SIGILL	ILL_RESAD_FAULT
-Customer-reserved instr.	SIGEMT
-Reserved operand	SIGILL	ILL_PRIVIN_FAULT
-Reserved addressing	SIGILL	ILL_RESOP_FAULT
-Trace pending	SIGTRAP
-Bpt instruction	SIGTRAP
-Compatibility-mode	SIGILL	hardware supplied code
-Chme	SIGSEGV
-Chms	SIGSEGV
-Chmu	SIGSEGV
-.fi
-.SH "NOTES  (PDP-11)"
+.SH NOTES
 The handler routine can be declared:
 .PP
     handler(sig, code, scp)
@@ -299,38 +247,44 @@ The handler routine can be declared:
     struct sigcontext *scp;
 .PP
 Here \fIsig\fP is the signal number, into which the hardware faults and
-traps are mapped as defined below.  \fICode\fP is a parameter that is a
-constant as given below.  \fIScp\fP is a pointer to the \fIsigcontext\fP
-structure (defined in <\fIsignal.h\fP>), used to restore the context from
+traps are mapped as defined below.  \fIcode\fP is a parameter that is a
+constant as given below.  \fIscp\fP is a pointer to the \fBsigcontext\fP
+structure (defined in <\fBsignal.h\fP>), used to restore the context from
 before the signal.
 .PP
 The following defines the mapping of hardware traps to signals
-and codes.  All of these symbols are defined in <\fIsignal.h\fP>:
+and codes.  All of these symbols are defined in <\fBsignal.h\fP>:
 .LP
 .ta \w'     Floating/decimal divide by zero   'u +\w'15*  'u +8n
 .nf
-   Hardware condition	Signal	Code
+   Hardware condition	Signal
 
 Arithmetic traps:
-   Floating overflow trap	SIGFPE	FPE_FLTOVF_TRAP
-   Floating/decimal division by zero	SIGFPE	FPE_FLTDIV_TRAP
-   Floating underflow trap	SIGFPE	FPE_FLTUND_TRAP
-   Decimal overflow trap	SIGFPE	FPE_DECOVF_TRAP
-   Illegal return code	SIGFPE	FPE_CRAZY
-   Bad op code	SIGFPE	FPE_OPCODE_TRAP
-   Bad operand	SIGFPE	FPE_OPERAND_TRAP
-   Maintenance trap	SIGFPE	FPE_MAINT_TRAP
+   Floating overflow trap	SIGFPE
+   Floating/decimal division by zero	SIGFPE
+   Floating underflow trap	SIGFPE
+   Decimal overflow trap	SIGFPE
+   Illegal return code	SIGFPE
+   Bad op code	SIGFPE
+   Bad operand	SIGFPE
+   Maintenance trap	SIGFPE
 Length access control	SIGSEGV
 Protection violation (odd address)	SIGBUS
-Reserved instruction	SIGILL	ILL_RESAD_FAULT
+Reserved instruction	SIGILL
 Customer-reserved instr.	SIGEMT
 Trace pending	SIGTRAP
 Bpt instruction	SIGTRAP
 .fi
+.PP
+SIGFPE handlers must use
+.BR fperr (2)
+to obtain the floating point error registers.  See the comments in
+.B <fperr.h>
+or consult the PDP-11 processor handbook for more information.
 .DT
 .PP
 The handler routine must save any registers it uses and restore them before
-returning.  On the PDP-11, the kernel saves \fIr0\fP and \fIr1\fP before
+returning.  The kernel saves \fIr0\fP and \fIr1\fP before
 calling the handler routine, but expect the handler to save any other
 registers it uses.  The standard entry code generated by the C compiler for
 handler routines written in C automatically saves the remaining general
@@ -338,5 +292,3 @@ registers, but floating point registers are \fInot\fP saved.  As a result
 there is currently no [standard] method for a handler routine written in C
 to perform floating point operations without blowing the interrupted program
 out of the water.
-.SH BUGS
-This manual page is still confusing.

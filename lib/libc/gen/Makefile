@@ -3,7 +3,7 @@
 # All rights reserved.  The Berkeley software License Agreement
 # specifies the terms and conditions for redistribution.
 #
-#	@(#)Makefile	5.7.12 (2.11BSD) 2025/11/29
+#	@(#)Makefile	5.7.13 (2.11BSD) 2026/6/5
 #
 # Several routines have been rewritten in assembly language for the VAX and
 # the PDP. If you are not running on a VAX or PDP, you should use the
@@ -20,13 +20,14 @@ STDSRC=	abort.c alarm.c atoi.c atol.c calloc.c closedir.c crypt.c \
 	getgrouplist.c gethostname.c getpagesize.c \
 	getpass.c getpwent.c getloadavg.c getmntinfo.c \
 	getttyent.c getttynam.c getusershell.c getwd.c \
-	initgroups.c isatty.c malloc.c mktemp.c ndbm.c nlist.c \
+	initgroups.c isatty.c isctype.c malloc.c mktemp.c ndbm.c nlist.c \
 	opendir.c perror.c popen.c psignal.c qsort.c random.c readdir.c \
 	regex.c scandir.c seekdir.c \
 	setmode.c sethostname.c \
 	setenv.c siglist.c signal.c siginterrupt.c \
 	sigsetops.c \
 	sleep.c strcasecmp.c strftime.c swab.c sysctl.c syslog.c system.c \
+	swapdevname.c \
 	syserrlst.c \
 	telldir.c time.c timezone.c ttyname.c ttyslot.c ualarm.c usleep.c \
 	valloc.c strdup.c uname.c wait.c wait3.c waitpid.c
@@ -37,13 +38,14 @@ STDOBJ=	abort.o alarm.o atoi.o atol.o calloc.o closedir.o crypt.o \
 	getgrouplist.o gethostname.o getpagesize.o \
 	getpass.o getpwent.o getloadavg.o getmntinfo.o \
 	getttyent.o getttynam.o getusershell.o getwd.o \
-	initgroups.o isatty.o malloc.o mktemp.o ndbm.o nlist.o \
+	initgroups.o isatty.o isctype.o malloc.o mktemp.o ndbm.o nlist.o \
 	opendir.o perror.o popen.o psignal.o qsort.o random.o readdir.o \
 	regex.o scandir.o seekdir.o \
 	setmode.o sethostname.o \
 	setenv.o siglist.o signal.o siginterrupt.o \
 	sigsetops.o \
 	sleep.o strcasecmp.o strftime.o swab.o sysctl.o syslog.o system.o \
+	swapdevname.o \
 	syserrlst.o \
 	telldir.o time.o timezone.o ttyname.o ttyslot.o ualarm.o usleep.o \
 	valloc.o strdup.o uname.o wait.o wait3.o waitpid.o

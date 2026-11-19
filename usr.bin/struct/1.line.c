@@ -1,6 +1,6 @@
-#ifndef lint
-static char sccsid[] = "@(#)1.line.c	4.1	(Berkeley)	2/11/83";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)1.line.c	4.2	(2.11BSD)	2026/5/9";
+#endif
 
 #include <stdio.h>
 #
@@ -12,7 +12,6 @@ extern int errflag;
 long stchars;			/* counts number of chars at most recent \n read */
 #ifndef unix
 long ostchars;
-extern long ftell();
 #endif
 int newline;			/* counts number of lines read so far in file */
 extern int rdfree(), comfree(),labfree(), contfree();

@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)conf.c	3.2 (2.11BSD GTE) 1997/11/12
+ *	@(#)conf.c	3.3 (2.11BSD) 2026/5/15
  */
 
 #include "param.h"
@@ -149,7 +149,7 @@ daddr_t	rasize();
 #define	raioctl		nodev
 #define	raroot		nulldev
 #define	rastrategy	nodev
-#define	rasize		nodev
+#define	rasize		NULL
 #endif
 
 #include "rx.h"

@@ -2,31 +2,31 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)pause.3c	6.1 (Berkeley) 5/9/85
+.\"	@(#)pause.3	6.2 (2.11BSD) 2026/9/27
 .\"
-.TH PAUSE 3C "May 9, 1985"
+.TH PAUSE 3 "May 9, 1985"
 .UC 4
 .SH NAME
 pause \- stop until signal
 .SH SYNOPSIS
 .B pause()
 .SH DESCRIPTION
-.I Pause
+.B pause
 never returns normally.
 It is used to give up control while waiting for
 a signal from
-.IR kill (2)
+.BR kill (2)
 or an interval timer, see
-.IR setitimer (2).
+.BR setitimer (2).
 Upon termination of a signal handler started during a
-.I pause,
+.B pause,
 the
-.I pause
+.B pause
 call will return.
 .SH "RETURN VALUE
 Always returns \-1.
 .SH ERRORS
-.I Pause
+.B pause
 always returns:
 .TP 15
 [EINTR]

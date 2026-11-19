@@ -14,7 +14,7 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
- *	@(#)ftpcmd.y	5.20.1 (2.11BSD) 2001/2/7
+ *	@(#)ftpcmd.y	5.20.2 (2.11BSD) 2026/9/22
  */
 
 /*
@@ -825,7 +825,7 @@ getline(s, n, iop)
 	return (s);
 }
 
-static int
+static void
 toolong()
 {
 	time_t now;

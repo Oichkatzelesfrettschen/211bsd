@@ -28,8 +28,8 @@
   * course of action.
   */
 
-#ifndef lint
-static char sccsid[] = "@(#) options.c 1.16 95/01/08 17:00:28";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#) options.c 1.17 (2.11BSD) 2026/5/11";
 #endif
 
 /* System libraries. */

@@ -9,7 +9,7 @@
  * software without specific prior written permission. This software
  * is provided ``as is'' without express or implied warranty.
  *
- *	@(#)af.c	7.3 (Berkeley) 12/30/87
+ *	@(#)af.c	7.4 (2.11BSD) 2026/7/9
  */
 
 #include "param.h"
@@ -42,12 +42,8 @@ extern int ns_hash(), ns_netmatch();
 #define	AFNS	AFNULL
 #endif
 
-struct afswitch afswitch[AF_MAX] = {
-	AFNULL,	AFNULL,	AFINET,	AFINET,	AFNULL,
-	AFNULL,	AFNS,	AFNULL,	AFNULL,	AFNULL,
-	AFNULL, AFNULL, AFNULL, AFNULL, AFNULL,
-	AFNULL, AFNULL,					/* through 16 */
-};
+				/*  unspec, unix,  inet, implink, pup,  ns */
+struct afswitch afswitch[AF_MAX] = {AFNULL,AFNULL,AFINET,AFINET,AFNULL,AFNS};
 
 null_init()
 {

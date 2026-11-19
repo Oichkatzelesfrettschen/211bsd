@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)brk.2	6.3 (Berkeley) 5/22/86
+.\"	@(#)brk.2	6.4 (2.11BSD) 2026/8/20
 .\"
 .TH BRK 2 "May 22, 1986"
 .UC 4
@@ -10,7 +10,7 @@
 brk, sbrk \- change data segment size
 .SH SYNOPSIS
 .nf
-#include <sys/types.h>
+#include <unistd.h>
 .PP
 .ft B
 char *brk(addr)
@@ -21,7 +21,7 @@ char *sbrk(incr)
 int incr;
 .fi
 .SH DESCRIPTION
-.I Brk
+.I brk
 sets the system's idea of the lowest data segment 
 location not used by the program (called the break)
 to
@@ -71,10 +71,10 @@ Zero is returned if the
 could be set;
 \-1 if the program requests more
 memory than the system limit.
-.I Sbrk
+.I sbrk
 returns \-1 if the break could not be set.
 .SH ERRORS
-.I Sbrk
+.I sbrk
 will fail and no additional memory will be allocated if
 one of the following are true:
 .TP 15

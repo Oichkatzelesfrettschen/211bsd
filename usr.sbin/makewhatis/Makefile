@@ -4,15 +4,14 @@
 #	@(#)Makefile	1.1 (2.11BSD) 2025/11/25
 #
 
-all:
+makewhatis.0: makewhatis.8
+	/usr/man/manroff makewhatis.8 > makewhatis.0
+
+all: makewhatis.0
 
 clean:
+	rm -f makewhatis.0
 
-depend:
-
-install:
-	install -c -o root -m 755 makewhatis.sh /usr/sbin/makewhatis
-
-lint:
-
-tags:
+install: makewhatis.0
+	install -c -o root -g staff -m 755 makewhatis.sh /usr/sbin/makewhatis
+	install -c -m 444 -o root -g staff makewhatis.0 /usr/man/cat8

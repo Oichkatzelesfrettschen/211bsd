@@ -15,14 +15,13 @@
  * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
  */
 
-#if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: misc.c,v 2.9 1994/01/15 20:43:43 vixie Exp $";
+#if !defined(lint) && defined(DOSCCS)
+char sccsid[] = "@(#)misc.c 2.10 (2.11BSD) 2026/5/10"
 #endif
 
 /* vix 26jan87 [RCS has the rest of the log]
  * vix 30dec86 [written]
  */
-
 
 #include "cron.h"
 #include <sys/time.h>
@@ -34,7 +33,6 @@ static char rcsid[] = "$Id: misc.c,v 2.9 1994/01/15 20:43:43 vixie Exp $";
 #if defined(SYSLOG)
 # include <syslog.h>
 #endif
-
 
 #if defined(LOG_DAEMON) && !defined(LOG_CRON)
 #define LOG_CRON LOG_DAEMON

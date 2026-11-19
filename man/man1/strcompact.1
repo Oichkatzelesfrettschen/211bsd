@@ -1,8 +1,8 @@
 .\" Public domain 1994 - Steven Schultz
 .\"
-.\"	@(#)strcompact.1	1.0 (2.11BSD GTE) 1/25/94
+.\"	@(#)strcompact.1	1.1 (2.11BSD) 2026/2/4
 .\"
-.TH strcompact 1 "January 25, 1994"
+.TH strcompact 1 "February 4, 2026"
 .UC 2
 .SH NAME
 strcompact \- string compaction for object files
@@ -26,14 +26,10 @@ writes to \fIstderr\fP the number of shared strings found.
 strcompact
 exits 0 if successful, and >0 if an error occurred.
 .SH SEE ALSO
-sort(1), symcompact(1), symorder(1), uniq(1)
+sort(1), symcompact(1), symdump(1), symorder(1)
 .SH BUGS
-Execution speed leaves much to be desired - on a 11/73 it takes about
-4 minutes to process the string table of the kernel.  Fortunately this
-is only done once when the kernel is created.
-.PP
 Although
 .B strcompact
-may be run on .o files as well as executables but this is probably not
-worth the trouble since the linker will not create shared strings in the
+may be run on .o files as well as executables this is not
+worth doing since the linker will not create shared strings in the
 final executable.

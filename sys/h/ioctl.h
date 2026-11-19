@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)ioctl.h	1.5 (2.11BSD) 2020/1/7
+ *	@(#)ioctl.h	1.6 (2.11BSD) 2026/5/14
  */
 
 /*
@@ -11,13 +11,8 @@
  */
 #ifndef	_IOCTL_
 #define	_IOCTL_
-#ifdef KERNEL
-#include "ttychars.h"
-#include "ttydev.h"
-#else
 #include <sys/ttychars.h>
 #include <sys/ttydev.h>
-#endif
 
 struct tchars {
 	char	t_intrc;	/* interrupt */
@@ -219,7 +214,6 @@ struct ttysize {
 #define		UIOCCMD(n)	_IO('u', n)		/* usr cntl op "n" */
 
 #define	OTTYDISC	0		/* old, v7 std tty driver */
-#define	NETLDISC	1		/* line discip for berk net */
 #define	NTTYDISC	2		/* new tty discipline */
 #define	TABLDISC	3		/* tablet discipline */
 #define	SLIPDISC	4		/* serial IP discipline */

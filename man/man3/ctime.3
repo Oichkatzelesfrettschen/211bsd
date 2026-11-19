@@ -2,14 +2,16 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)ctime.3	6.7.1 (2.11BSD) 1996/11/27
+.\"	@(#)ctime.3	6.7.2 (2.11BSD) 2026/5/8
 .\"
-.TH CTIME 3  "November 27, 1996"
+.TH CTIME 3  "May 8, 2026"
 .UC 4
 .SH NAME
 ctime, localtime, gmtime, asctime, timezone, tzset \-  convert date and time to ASCII
 .SH SYNOPSIS
 .nf
+.B #include <time.h>
+.PP
 .B void tzset()
 .PP
 .B char *ctime(clock)

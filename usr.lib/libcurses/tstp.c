@@ -5,7 +5,7 @@
  */
 
 #if !defined(lint) && !defined(NOSCCS)
-static char sccsid[] = "@(#)tstp.c	5.1.1 (2.11BSD) 1999/10/24";
+static char sccsid[] = "@(#)tstp.c	5.1.2 (2.11BSD) 2026/9/22";
 #endif
 
 #include	<signal.h>
@@ -14,6 +14,7 @@ static char sccsid[] = "@(#)tstp.c	5.1.1 (2.11BSD) 1999/10/24";
 /*
  * handle stop and start signals
  */
+void
 tstp() {
 	SGTTY	tty;
 	sigset_t oset, set;

@@ -1,8 +1,7 @@
 #if	defined(REFCLOCK) && defined(PSTI)
-#ifndef	lint
-static char *rcsid = "$Header: /usr/users/louie/ntp/RCS/read_psti.c,v 3.4.1.1 89/05/18 18:36:45 louie Exp Locker: louie $";
-static char *sccsid = "@(#)read_psti.c	1.1	MS/ACF	89/02/17";
-#endif	lint
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)read_psti.c	1.2	(2.11BSD) 2026/6/13";
+#endif
 
 #define	ERR_RATE	60	/* Repeat errors once an hour */
 
@@ -37,9 +36,6 @@ static char *sccsid = "@(#)read_psti.c	1.1	MS/ACF	89/02/17";
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
-#if defined(sun)
-#include <termio.h>
-#endif
 
 #ifdef	DEBUG
 extern int debug;
@@ -81,11 +77,7 @@ init_clock_psti(timesource)
 char *timesource;
 {
 	int cfd;
-#ifdef TCSETA
-	struct termio tty;
-#else
 	struct sgttyb tty;
-#endif
 
 	if ((cfd = open(timesource, 2)) < 0) {
 #ifdef DEBUG
@@ -103,29 +95,11 @@ char *timesource;
 		return(-1);
 	}
 
-#ifdef TCSETA
-	if (ioctl(cfd, TCGETA, &tty) < 0) {
-#ifdef DEBUG
-		if (debug) perror("ioctl on radioclock failed"); else
-#endif DEBUG
-		syslog(LOG_ERR, "ioctl on %s failed: %m", timesource);
-		return(-1);
-	}
-	tty.c_cflag = (B9600<<16)|B9600|CS8|CLOCAL|CREAD;
-	tty.c_iflag = ICRNL;
-	tty.c_oflag = 0;
-	tty.c_lflag = 0;
-	bzero((char *)tty.c_cc, sizeof tty.c_cc);
-	tty.c_cc[VMIN] = MIN_READ;
-	tty.c_cc[VTIME] = 0;
-	if (ioctl(cfd, TCSETA, &tty) < 0) {
-#else TCSETA	/* Use older Berkeley style IOCTL's */
 	bzero((char *)&tty, sizeof tty);
 	tty.sg_ispeed = tty.sg_ospeed = B9600;
 	tty.sg_flags = ANYP|CRMOD;
 	tty.sg_erase = tty.sg_kill = '\0';
 	if (ioctl(cfd, TIOCSETP, &tty) < 0) {
-#endif TCSETA
 #ifdef DEBUG
 		if (debug) perror("ioctl on radioclock failed"); else
 #endif DEBUG
@@ -160,10 +134,8 @@ struct timeval **tvpp, **otvpp;
 	int stat1, stat2;
 	fd_set readfds;
 	char message[256];
-#ifndef TCSETA
 	register char *cp;
 	int  need;
-#endif TCSETA
 
 	FD_ZERO(&readfds);
 	FD_SET(cfd, &readfds);
@@ -290,22 +262,22 @@ struct timeval **tvpp, **otvpp;
 	diff =  reltime(rtm, millis*1000) - reltime(mtm, mytime.tv_usec);
 #ifdef DEBUG
 	if (debug > 1)
-		printf("Clock time:  19%d day %03d %02d:%02d:%02d.%03d diff %.3f\n",
-			rtm->tm_year, rtm->tm_yday, rtm->tm_hour,
+		printf("Clock time:  %d day %03d %02d:%02d:%02d.%03d diff %.3f\n",
+			rtm->tm_year + 1900, rtm->tm_yday, rtm->tm_hour,
 			rtm->tm_min, rtm->tm_sec, millis, diff);
 #endif DEBUG
 	
 	if (diff > (90*24*60*60.0) && (nerrors++%ERR_RATE)==0) {
 #ifdef DEBUG
 		if (debug)
-			printf("offset excessive (system 19%d/%d, clock 19%d/%d)\n",
-				mtm->tm_year, mtm->tm_yday,
-				rtm->tm_year, mtm->tm_yday);
+			printf("offset excessive (system %d/%d, clock %d/%d)\n",
+				mtm->tm_year + 1900, mtm->tm_yday,
+				rtm->tm_year + 1900, mtm->tm_yday);
 		else
 #endif DEBUG
-		syslog(LOG_ERR, "offset excessive (system 19%d/%d, clock 19%d/%d)\n",
-				mtm->tm_year, mtm->tm_yday,
-				rtm->tm_year, mtm->tm_yday);
+		syslog(LOG_ERR, "offset excessive (system %d/%d, clock %d/%d)\n",
+				mtm->tm_year + 1900, mtm->tm_yday,
+				rtm->tm_year + 1900, mtm->tm_yday);
 		return(1);
 	}
 

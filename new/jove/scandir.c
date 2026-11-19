@@ -1,9 +1,12 @@
-/***************************************************************************
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)scandir.c 2.0 (2.11BSD) 2026/9/17";
+#endif
+/*
  * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
  * is provided to you without charge, and with no warranty.  You may give  *
  * away copies of JOVE, including sources, provided that this notice is    *
  * included in all the files.                                              *
- ***************************************************************************/
+ */
 
 #include "jove.h"
 
@@ -105,7 +108,7 @@ memfail:	complain("[Malloc failed: cannot scandir]");
 		if (qualify != 0 && (*qualify)(entry->d_name) == 0)
 			continue;
 		if (nentries == nalloc) {
-			ourarray = (char **) realloc((char *) ourarray, (nalloc += 10) * sizeof (char *));
+			ourarray = (char **) realloc((void *) ourarray, (nalloc += 10) * sizeof (char *));
 			if (ourarray == 0)
 				goto memfail;
 		}
@@ -115,10 +118,10 @@ memfail:	complain("[Malloc failed: cannot scandir]");
 	}
 	closedir(dirp);
 	if ((nentries + 1) != nalloc)
-		ourarray = (char **) realloc((char *) ourarray,
+		ourarray = (char **) realloc((void *) ourarray,
 					((nentries + 1) * sizeof (char *)));
 	if (sorter != 0)
-		qsort((char *) ourarray, nentries, sizeof (char **), sorter);
+		qsort((void *) ourarray, nentries, sizeof (char **), sorter);
 	*nmptr = ourarray;
 	ourarray[nentries] = 0;		/* guaranteed 0 pointer */
 
@@ -199,8 +202,8 @@ char	***nmptr;
 	char	**ourarray = *nmptr;
 
 	while (--nentries >= 0)
-		free(*ourarray++);
-	free((char *) *nmptr);
+		free((void *)*ourarray++);
+	free((void *) *nmptr);
 	*nmptr = 0;
 }
 

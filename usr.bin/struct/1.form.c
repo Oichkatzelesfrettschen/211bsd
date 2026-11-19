@@ -1,6 +1,6 @@
-#ifndef lint
-static char sccsid[] = "@(#)1.form.c	4.1	(Berkeley)	2/11/83";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)1.form.c	4.2	(2.11BSD)	2026/5/9";
+#endif
 
 #include <stdio.h>
 #include "1.defs.h"
@@ -22,7 +22,7 @@ int c;
 rdfree(func)
 int (*func)();
 	{
-	int c;
+	register int c;
 	while ( (c = (*input)()) != '\n')
 		{
 		(*func)(c);
@@ -32,7 +32,7 @@ int (*func)();
 rdstand(func)
 int (*func)();
 	{
-	int c;
+	register int c;
 	while ( (c=(*input)()) != '\n')
 		{
 		(*func)(c);
@@ -42,7 +42,7 @@ int (*func)();
 labfree(func)			/* labels in freeform input */
 int (*func)();
 	{
-	int c;
+	register int c;
 	int temp[6];
 	int j;
 	for (j = 0; j < 5; ++j)

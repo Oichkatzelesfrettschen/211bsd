@@ -1,3 +1,5 @@
+/* "@(#)proc.c 1.1 (2.11BSD) 2026/6/29"; */
+
 #include "defs"
 #include "string_defs"
 
@@ -14,8 +16,6 @@ if(parstate != OUTSIDE)
 parstate = INSIDE;
 procclass = CLMAIN;	/* default */
 }
-
-
 
 /* end of procedure. generate variables, epilogs, and prologs */
 
@@ -36,14 +36,8 @@ procode();
 dobss();
 prdbginfo();
 
-#if FAMILY == SCJ
-	putbracket();
-#endif
-
 procinit();	/* clean up for next procedure */
 }
-
-
 
 /* End of declaration section of procedure.  Allocate storage. */
 
@@ -58,7 +52,7 @@ docomleng();
 for(p = entries ; p ; p = p->nextp)
 	doentry(p);
 }
-
+
 /* ROUTINES CALLED WHEN ENCOUNTERING ENTRY POINTS */
 
 /* Main program or Block data */
@@ -113,7 +107,6 @@ p->extinit = YES;
 return(p);
 }
 
-
 entrypt(class, type, length, entry, args)
 int class, type;
 ftnint length;
@@ -164,7 +157,7 @@ settype(q, type, (int) length);
 if(parstate >= INDATA)
 	doentry(p);
 }
-
+
 /* generate epilogs */
 
 LOCAL epicode()
@@ -206,7 +199,6 @@ else if(procclass != CLBLOCK)
 	}
 }
 
-
 /* generate code to return value of type  t */
 
 LOCAL retval(t)
@@ -244,7 +236,6 @@ switch(t)
 goret(t);
 }
 
-
 /* Allocate extra argument array if needed. Generate prologs. */
 
 LOCAL procode()
@@ -252,32 +243,21 @@ LOCAL procode()
 register struct entrypoint *p;
 struct addrblock *argvec;
 
-#if TARGET==GCOS
-	argvec = autovar(lastargslot/SZADDR, TYADDR, NULL);
-#else
 	if(lastargslot>0 && nentry>1)
 		argvec = autovar(lastargslot/SZADDR, TYADDR, NULL);
 	else
 		argvec = NULL;
-#endif
 
-
-#if TARGET == PDP11
 	/* for the optimizer */
 	if(fudgelabel)
 		putlabel(fudgelabel);
-#endif
 
 for(p = entries ; p ; p = p->nextp)
 	prolog(p, argvec);
 
-#if FAMILY == SCJ
-	putrbrack(procno);
-#endif
-
 prendproc();
 }
-
+
 /*
    manipulate argument lists (allocate argument slot positions)
  * keep track of return types and labels
@@ -371,8 +351,6 @@ for(p = ep->arglist ; p ; p = p->nextp)
 putlabel(ep->entrylabel);
 }
 
-
-
 LOCAL nextarg(type)
 int type;
 {
@@ -381,7 +359,7 @@ k = lastargslot;
 lastargslot += typesize[type];
 return(k);
 }
-
+
 /* generate variable references */
 
 LOCAL dobss()
@@ -394,7 +372,7 @@ ftnint leng, iarrl, iarrlen();
 struct extsym *mkext();
 char *memname();
 
-pruse(asmfile, USEBSS);
+fprintf(asmfile, "%s\n", USEBSS);
 
 for(p = hashtab ; p<lasthash ; ++p)
     if(q = p->varp)
@@ -435,9 +413,6 @@ for(i = 0 ; i < nequiv ; ++i)
 		}
 }
 
-
-
-
 doext()
 {
 struct extsym *p;
@@ -445,9 +420,6 @@ struct extsym *p;
 for(p = extsymtab ; p<nextext ; ++p)
 	prext( varstr(XL, p->extname), p->maxleng, p->extinit);
 }
-
-
-
 
 ftnint iarrlen(q)
 register struct nameblock *q;
@@ -467,7 +439,7 @@ if(q->vleng)
 	else 	return(-1);
 return(leng);
 }
-
+
 LOCAL docommon()
 {
 register struct extsym *p;
@@ -509,10 +481,6 @@ for(p = extsymtab ; p<nextext ; ++p)
 		}
 }
 
-
-
-
-
 LOCAL docomleng()
 {
 register struct extsym *p;
@@ -530,9 +498,6 @@ for(p = extsymtab ; p < nextext ; ++p)
 	}
 }
 
-
-
-
 /* ROUTINES DEALING WITH AUTOMATIC AND TEMPORARY STORAGE */
 
 frtemp(p)
@@ -540,9 +505,6 @@ struct addrblock *p;
 {
 holdtemps = mkchain(p, holdtemps);
 }
-
-
-
 
 /* allocate an automatic variable slot */
 
@@ -570,18 +532,12 @@ if(t == TYCHAR)
 	q->vleng = ICON(leng);
 q->vstg = STGAUTO;
 q->ntempelt = nelt;
-#if TARGET==PDP11 || TARGET==VAX
 	/* stack grows downward */
 	autoleng += nelt*leng;
 	q->memoffset = ICON( - autoleng );
-#else
-	q->memoffset = ICON( autoleng );
-	autoleng += nelt*leng;
-#endif
 
 return(q);
 }
-
 
 struct addrblock *mktmpn(nelt, type, lengp)
 int nelt;
@@ -618,16 +574,13 @@ q->istemp = YES;
 return(q);
 }
 
-
-
-
-struct addrblock *mktemp(type, lengp)
+struct addrblock *mktmp(type, lengp)
 int type;
 expptr lengp;
 {
 return( mktmpn(1,type,lengp) );
 }
-
+
 /* VARIOUS ROUTINES FOR PROCESSING DECLARATIONS */
 
 struct extsym *comblock(len, s)
@@ -652,7 +605,6 @@ else if(p->extstg != STGCOMMON)
 
 return( p );
 }
-
 
 incomm(c, v)
 struct extsym *c;
@@ -699,10 +651,6 @@ else if(v->vtype!=type || (type==TYCHAR && v->vleng->xconst.ci!=length) )
 	error("incompatible or duplicate type declaration", v, 0, DCLERR);
 /*! added "or duplicate" to error message PLWard 10/80 */
 }
-
-
-
-
 
 lengtype(type, length)
 register int type;
@@ -757,10 +705,6 @@ ret:
 	return(type);
 }
 
-
-
-
-
 setintr(v)
 register struct nameblock * v;
 {
@@ -782,8 +726,6 @@ else
 	error("unknown intrinsic function", v, 0, DCLERR);
 }
 
-
-
 setext(v)
 register struct nameblock * v;
 {
@@ -797,9 +739,6 @@ if(v->vprocclass == PUNKNOWN)
 else if(v->vprocclass != PEXTERNAL)
 	error("invalid external declaration", v, 0, DCLERR);
 }
-
-
-
 
 /* create dimensions block for array variable */
 

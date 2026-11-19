@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)chgrp.c	5.7.1 (2.11BSD GTE) 11/4/94";
+static char sccsid[] = "@(#)chgrp.c	5.7.2 (2.11BSD) 2026/5/19";
 #endif
 
 /*
@@ -21,8 +21,8 @@ static char sccsid[] = "@(#)chgrp.c	5.7.1 (2.11BSD GTE) 11/4/94";
 #include <pwd.h>
 #include <sys/dir.h>
 
-struct	group *gr, *getgrnam(), *getgrgid();
-struct	passwd *getpwuid(), *pwd;
+struct	group *gr;
+struct	passwd *pwd;
 struct	stat stbuf;
 gid_t	gid;
 uid_t	uid;

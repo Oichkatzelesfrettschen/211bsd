@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)wwenviron.c	3.14 5/2/86";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)wwenviron.c	3.15 (2.11BSD) 2026/5/9";
 #endif
 
 /*
@@ -9,7 +9,7 @@ static char sccsid[] = "@(#)wwenviron.c	3.14 5/2/86";
  */
 
 #include "ww.h"
-#include <sys/signal.h>
+#include <signal.h>
 
 /*
  * Set up the environment of this process to run in window 'wp'.

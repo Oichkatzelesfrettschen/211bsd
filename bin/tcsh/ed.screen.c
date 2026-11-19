@@ -1,4 +1,3 @@
-/* $Header: /home/hyperion/mu/christos/src/sys/tcsh-6.00/RCS/ed.screen.c,v 3.0 1991/07/04 21:49:28 christos Exp $ */
 /*
  * ed.screen.c: Editor/t_c_-curses interface
  */
@@ -35,9 +34,8 @@
  * SUCH DAMAGE.
  */
 #include "config.h"
-#if !defined(lint) && !defined(pdp11)
-static char *rcsid()
-    { return "$Id: ed.screen.c,v 3.0 1991/07/04 21:49:28 christos Exp $"; }
+#if !defined(lint) && defined(DOSCCS)
+    static char *sccsid = "@(#)ed.screen.c 3.1 (2.11BSD) 2026/7/23";
 #endif
 
 #include "sh.h"
@@ -1178,48 +1176,26 @@ GetTermCaps()
     extern char *getenv();
     struct t_c_str *t;
 
-
-#ifdef SIG_WINDOW
-#ifdef BSDSIGS
     sigmask_t omask;
-#endif				/* BSDSIGS */
     int     lins, cols;
 
     /* don't want to confuse things here */
-#ifdef BSDSIGS
     omask = sigblock(sigmask(SIG_WINDOW)) & ~sigmask(SIG_WINDOW);
-#else				/* BSDSIGS */
-    (void) sighold(SIG_WINDOW);
-#endif				/* BSDSIGS */
-#endif				/* SIG_WINDOW */
+
     area = buf;
 
     GotTermCaps = 1;
 
     setname("gett_c_s");
     ptr = getenv("TERM");
-#ifdef apollo
-    /*
-     * If we are on a pad, we pretend that we are dumb. Otherwise the t_c_
-     * library will put us in a weird screen mode, thinking that we are going
-     * to use curses
-     */
-    if (isapad())
-	ptr = "dumb";
-#endif
     if (!ptr || !ptr[0])
 	ptr = "dumb";
 
-    setzero(bp, TC_BUFSIZ);
+    bzero(bp, TC_BUFSIZ);
 
     i = tgetent(bp, ptr);
     if (i <= 0) {
 	if (i == -1) {
-#if SVID == 0
-	    xprintf("tcsh: Cannot open /etc/t_c_.\n");
-	}
-	else if (i == 0) {
-#endif				/* SVID */
 	    xprintf("tcsh: No entry for terminal type \"%s\"\n",
 		    getenv("TERM"));
 	}
@@ -1280,11 +1256,7 @@ GetTermCaps()
     (void) GetSize(&lins, &cols);	/* get the correct window size */
     ChangeSize(lins, cols);
 
-# ifdef BSDSIGS
     (void) sigsetmask(omask);	/* can change it again */
-# else				/* BSDSIGS */
-    (void) sigrelse(SIG_WINDOW);
-# endif				/* BSDSIGS */
 #else				/* SIG_WINDOW */
     ChangeSize(Val(T_li), Val(T_co));
 #endif				/* SIG_WINDOW */

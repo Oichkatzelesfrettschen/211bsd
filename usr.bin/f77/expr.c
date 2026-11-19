@@ -1,3 +1,5 @@
+/* "@(#)expr.c 1.1 (2.11BSD) 2026/6/28"; */
+
 #include "defs"
 #include "string_defs"
 
@@ -14,7 +16,6 @@ p->vtype = t;
 return(p);
 }
 
-
 struct constblock *mklogcon(l)
 register int l;
 {
@@ -24,8 +25,6 @@ p = mkconst(TYLOGICAL);
 p->xconst.ci = l;
 return(p);
 }
-
-
 
 struct constblock *mkintcon(l)
 ftnint l;
@@ -41,8 +40,6 @@ p->xconst.ci = l;
 return(p);
 }
 
-
-
 struct constblock *mkaddcon(l)
 register int l;
 {
@@ -52,8 +49,6 @@ p = mkconst(TYADDR);
 p->xconst.ci = l;
 return(p);
 }
-
-
 
 struct constblock *mkrealcon(t, d)
 register int t;
@@ -66,11 +61,10 @@ p->xconst.cd[0] = d;
 return(p);
 }
 
-
 struct constblock *mkbitcon(shift, leng, s)
 int shift;
 int leng;
-char *s;
+register char *s;
 {
 register struct constblock *p;
 
@@ -81,10 +75,6 @@ while(--leng >= 0)
 		p->xconst.ci = (p->xconst.ci << shift) | hextoi(*s++);
 return(p);
 }
-
-
-
-
 
 struct constblock *mkstrcon(l,v)
 int l;
@@ -100,7 +90,6 @@ while(--l >= 0)
 	*s++ = *v++;
 return(p);
 }
-
 
 struct constblock *mkcxcon(realp,imagp)
 register expptr realp, imagp;
@@ -132,26 +121,22 @@ frexpr(imagp);
 return(p);
 }
 
-
 struct errorblock *errnode()
 {
-struct errorblock *p;
+register struct errorblock *p;
+
 p = ALLOC(errorblock);
 p->tag = TERROR;
 p->vtype = TYERROR;
 return(p);
 }
 
-
-
-
-
 expptr mkconv(t, p)
 register int t;
 register expptr p;
 {
 register expptr q;
-register int pt;
+	int pt;
 expptr opconv();
 
 if(t==TYUNKNOWN || t==TYERROR)
@@ -166,14 +151,12 @@ else if( ISCONST(p) && pt!=TYADDR)
 	consconv(t, &(q->xconst), p->vtype, &(p->xconst));
 	frexpr(p);
 	}
-#if TARGET == PDP11
 	else if(ISINT(t) && pt==TYCHAR)
 		{
 		q = mkexpr(OPBITAND, opconv(p,TYSHORT), ICON(255));
 		if(t == TYLONG)
 			q = opconv(q, TYLONG);
 		}
-#endif
 else
 	q = opconv(p, t);
 
@@ -181,8 +164,6 @@ if(t == TYCHAR)
 	q->vleng = ICON(1);
 return(q);
 }
-
-
 
 expptr opconv(p, t)
 expptr p;
@@ -195,15 +176,11 @@ q->vtype = t;
 return(q);
 }
 
-
-
 struct exprblock *addrof(p)
 expptr p;
 {
 return( mkexpr(OPADDR, p, NULL) );
 }
-
-
 
 tagptr cpexpr(p)
 register tagptr p;
@@ -275,7 +252,7 @@ switch(tag)
 
 return(e);
 }
-
+
 frexpr(p)
 register tagptr p;
 {
@@ -334,7 +311,7 @@ switch(p->tag)
 
 free(p);
 }
-
+
 /* fix up types in expression; replace subtrees and convert
    names to address blocks */
 
@@ -374,10 +351,6 @@ switch(p->tag)
 		else	return( mklhs(p) );
 	}
 }
-
-
-
-
 
 /* special case tree transformations and cleanups of expression trees */
 
@@ -448,11 +421,7 @@ switch(opcode)
 		if( ISCOMPLEX(ltype) || ISCOMPLEX(rtype) )
 			break;
 		if( ONEOF(ltype, MSKADDR|MSKINT) && ONEOF(rtype, MSKADDR|MSKINT)
-#if FAMILY==SCJ
-		    && typesize[ltype]>=typesize[rtype] )
-#else
 		    && typesize[ltype]==typesize[rtype] )
-#endif
 			break;
 		p->rightp = fixtype( mkconv(ptype, rp) );
 		break;
@@ -535,7 +504,7 @@ switch(opcode)
 p->vtype = ptype;
 return(p);
 }
-
+
 #if SZINT < SZLONG
 /*
    for efficient subscripting, replace long ints by shorts
@@ -604,7 +573,7 @@ switch(p->opcode)
 return(p);
 }
 #endif
-
+
 fixargs(doput, p0)
 int doput;
 struct listblock *p0;
@@ -643,7 +612,6 @@ if(p0)
 return(nargs);
 }
 
-
 mkscalar(np)
 register struct nameblock *np;
 {
@@ -653,25 +621,8 @@ register struct dimblock *dp;
 vardcl(np);
 ap = mkaddr(np);
 
-#if TARGET == VAX
-	/* on the VAX, prolog causes array arguments
-	   to point at the (0,...,0) element, except when
-	   subscript checking is on
-	*/
-	if( !checksubs && np->vstg==STGARG)
-		{
-		dp = np->vdim;
-		frexpr(ap->memoffset);
-		ap->memoffset = mkexpr(OPSTAR, ICON(typesize[np->vtype]),
-					cpexpr(dp->baseoffset) );
-		}
-#endif
 return(ap);
 }
-
-
-
-
 
 expptr mkfunct(p)
 register struct primblock * p;
@@ -766,8 +717,6 @@ err:
 	return( errnode() );
 }
 
-
-
 LOCAL struct exprblock *stfcall(np, actlist)
 struct nameblock *np;
 struct listblock *actlist;
@@ -810,7 +759,7 @@ while(actuals!=NULL && formals!=NULL)
 		rp->rpltag = ap->tag;
 		}
 	else	{
-		rp->rplvp = mktemp(q->vtype, q->vleng);
+		rp->rplvp = mktmp(q->vtype, q->vleng);
 		rp->rplxp = fixtype( mkexpr(OPASSIGN, cpexpr(rp->rplvp), ap) );
 		if( (rp->rpltag = rp->rplxp->tag) == TERROR)
 			error("disagreement of argument types in statement function call",0,0,ERR);
@@ -846,9 +795,6 @@ while(--nargs >= 0)
 frchain( &oactp );
 return(q);
 }
-
-
-
 
 struct addrblock *mklhs(p)
 register struct primblock * p;
@@ -937,14 +883,9 @@ struct nameblock *np;
 if(nregvar>0 && regnamep[nregvar-1]==np)
 	{
 	--nregvar;
-#if FAMILY == DMR
 	putnreg();
-#endif
 	}
 }
-
-
-
 
 struct addrblock *memversion(np)
 register struct nameblock *np;
@@ -972,9 +913,6 @@ for(i = 0 ; i < nregvar ; ++i)
 return(-1);
 }
 
-
-
-
 enregister(np)
 struct nameblock *np;
 {
@@ -988,17 +926,12 @@ if( ONEOF(np->vtype, MSKIREG) )
 	regnamep[nregvar++] = np;
 	if(nregvar > highregvar)
 		highregvar = nregvar;
-#if FAMILY == DMR
 	putnreg();
-#endif
 	return(YES);
 	}
 else
 	return(NO);
 }
-
-
-
 
 expptr suboffset(p)
 register struct primblock *p;
@@ -1037,12 +970,7 @@ else if(n > 0)
 	while( --n >= 0)
 		prod = mkexpr(OPPLUS, sub[n],
 			mkexpr(OPSTAR, prod, cpexpr(dimp->dims[n].dimsize)) );
-#if TARGET == VAX
-	if(checksubs || np->vstg!=STGARG)
-		prod = mkexpr(OPMINUS, prod, cpexpr(dimp->baseoffset));
-#else
 	prod = mkexpr(OPMINUS, prod, cpexpr(dimp->baseoffset));
-#endif
 	if(checksubs)
 		prod = subcheck(np, prod);
 	if(np->vtype == TYCHAR)
@@ -1057,9 +985,6 @@ if(p->fcharp && np->vtype==TYCHAR)
 
 return(offp);
 }
-
-
-
 
 expptr subcheck(np, p)
 struct nameblock *np;
@@ -1089,7 +1014,7 @@ if(p->tag==TADDR && p->vstg==STGREG)
 	t = p;
 	}
 else	{
-	checkvar = mktemp(p->vtype, NULL);
+	checkvar = mktmp(p->vtype, NULL);
 	t = mkexpr(OPASSIGN, cpexpr(checkvar), p);
 	}
 checkcond = mkexpr(OPLT, t, cpexpr(dimp->nelt) );
@@ -1111,9 +1036,6 @@ badsub:
 	error("subscript on variable %s out of range", varstr(VL,np->varname),0,ERR1);
 	return ( ICON(0) );
 }
-
-
-
 
 struct addrblock *mkaddr(p)
 register struct nameblock *p;
@@ -1164,9 +1086,6 @@ error("mkaddr: impossible storage tag %d", p->vstg,0,FATAL1);
 /* NOTREACHED */
 }
 
-
-
-
 mkarg(type, argno)
 int type, argno;
 {
@@ -1180,9 +1099,6 @@ p->vstg = (type==TYLENG ? STGLENG : STGARG);
 p->memno = argno;
 return(p);
 }
-
-
-
 
 tagptr mkprim(v, args, lstr, rstr)
 register union { struct paramblock; struct nameblock; } *v;
@@ -1214,8 +1130,6 @@ p->fcharp = lstr;
 p->lcharp = rstr;
 return(p);
 }
-
-
 
 vardcl(v)
 register struct nameblock *v;
@@ -1264,9 +1178,6 @@ switch(v->vstg)
 v->vdcldone = YES;
 }
 
-
-
-
 impldcl(p)
 register struct nameblock *p;
 {
@@ -1302,10 +1213,9 @@ if( isupper(c) )
 	c = tolower(c);
 return(c - 'a');
 }
-
+
 #define ICONEQ(z, c)  (ISICON(z) && z->xconst.ci==c)
 #define COMMUTE	{ e = lp;  lp = rp;  rp = e; }
-
 
 expptr mkexpr(opcode, lp, rp)
 int opcode;
@@ -1530,7 +1440,6 @@ err:
 		frexpr(rp);
 	return( errnode() );
 }
-
 
 cktype(op, lt, rt)
 register int op, lt, rt;
@@ -1649,16 +1558,12 @@ switch(op)
 	}
 err1:	return(TYERROR);
 }
-
+
 LOCAL expptr fold(e)
 register struct exprblock *e;
 {
 struct constblock *p;
-#ifdef VERSION6
-	expptr lp, rp;
-#else
 	register expptr lp, rp;
-#endif
 int etype, mtype, ltype, rtype, opcode;
 int i, ll, lr;
 char *q, *s;
@@ -1786,8 +1691,6 @@ frexpr(e);
 return(p);
 }
 
-
-
 /* assign constant l = r , doing coercion */
 
 consconv(lt, lv, rt, rv)
@@ -1839,8 +1742,6 @@ switch(lt)
 	}
 }
 
-
-
 consnegop(p)
 register struct constblock *p;
 {
@@ -1863,8 +1764,6 @@ switch(p->vtype)
 		error("consnegop: impossible type %d", p->vtype,0,FATAL1);
 	}
 }
-
-
 
 LOCAL conspower(powp, ap, n)
 register union constant *powp;
@@ -1917,10 +1816,7 @@ for( ; ; )
 	}
 }
 
-
-
 /* do constant operation cp = a op b */
-
 
 LOCAL consbinop(opcode, type, cp, ap, bp)
 int opcode, type;
@@ -2066,9 +1962,6 @@ switch(opcode)
 	}
 }
 
-
-
-
 conssgn(p)
 register expptr p;
 {
@@ -2098,9 +1991,8 @@ switch(p->vtype)
 	}
 /* NOTREACHED */
 }
-
-char *powint[ ] = { "pow_ii", "pow_ri", "pow_di", "pow_ci", "pow_zi" };
 
+char *powint[ ] = { "pow_ii", "pow_ri", "pow_di", "pow_ci", "pow_zi" };
 
 LOCAL expptr mkpower(p)
 register struct exprblock *p;
@@ -2172,14 +2064,11 @@ else	{
 free(p);
 return(q);
 }
-
-
 
 /* Complex Division.  Same code as in Runtime Library
 */
 
 struct dcomplex { double dreal, dimag; };
-
 
 LOCAL zdiv(c, a, b)
 register struct dcomplex *a, *b, *c;

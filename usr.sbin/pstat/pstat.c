@@ -10,7 +10,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)pstat.c	5.10 (2.11BSD) 2025/12/26";
+static char sccsid[] = "@(#)pstat.c	5.11 (2.11BSD) 2026/1/27";
 #endif
 
 /*
@@ -34,6 +34,9 @@ static char sccsid[] = "@(#)pstat.c	5.10 (2.11BSD) 2025/12/26";
 #include <sys/vm.h>
 #include <nlist.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sysexits.h>
 
 char	*fcore	= "/dev/kmem";
 char	*fmem	= "/dev/mem";
@@ -109,104 +112,106 @@ int	buff;
 int	ubmapf;
 int	totflg;
 int	allflg;
-int	kflg;
 u_short	pgetw();
+
+extern	char	*__progname;
+
+static	void	kflgeval(char *arg)
+	{
+	register char *ap;
+
+	ap = strsep(&arg, ":");
+	if	(ap)
+		{
+		if	(*ap != '\0')
+			fnlist = ap;
+		}
+	ap = strsep(&arg, ":");
+	if	(ap)
+		{
+		if	(*ap != '\0')
+			{
+			fcore = ap;
+			fmem = ap;
+			}
+		}
+	}
 
 main(argc, argv)
 char **argv;
 {
 	register char *argp;
-	int allflags;
+	int allflags, c;
 
-	argc--, argv++;
-	while (argc > 0 && **argv == '-') {
-		argp = *argv++;
-		argp++;
-		argc--;
-		while (*argp++)
-		switch (argp[-1]) {
-
-		case 'T':
-			totflg++;
-			break;
-
-		case 'a':
-			allflg++;
-			break;
-
-		case 'i':
-			inof++;
-			break;
-
-		case 'k':
-			kflg++;
-			fcore = fmem = "/core";
-			break;
-
-		case 'x':
-			txtf++;
-			break;
-
-		case 'p':
-			prcf++;
-			break;
-
-		case 't':
-			ttyf++;
-			break;
-
-		case 'u':
-			if (argc == 0)
+	while	((c = getopt(argc, argv, "Taik:xptu:fscmb")) != EOF)
+		{
+		switch	(c)
+			{
+			case 'T':
+				totflg++;
 				break;
-			argc--;
-			usrf++;
-			sscanf( *argv++, "%lo", &ubase);
-			break;
-
-		case 'f':
-			filf++;
-			break;
-		case 's':
-			swpf++;
-			break;
-			break;
-		case 'c':
-			coref++;
-			break;
-		case 'm':
-			ubmapf++;
-			break;
-		case 'b':
-			buff++;
-			break;
-		default:
-			usage();
-			exit(1);
+			case 'a':
+				allflg++;
+				break;
+			case 'i':
+				inof++;
+				break;
+			case 'k':
+				kflgeval(optarg);
+				break;
+			case 'x':
+				txtf++;
+				break;
+			case 'p':
+				prcf++;
+				break;
+			case 't':
+				ttyf++;
+				break;
+			case 'u':
+				usrf++;
+				sscanf(optarg, "%lo", &ubase);
+				break;
+			case 'f':
+				filf++;
+				break;
+			case 's':
+				swpf++;
+				break;
+				break;
+			case 'c':
+				coref++;
+				break;
+			case 'm':
+				ubmapf++;
+				break;
+			case 'b':
+				buff++;
+				break;
+			default:
+				fprintf(stderr, "usage: %s -[aixptfscmbT] [-u ubase] [-k kern:mem]\n", __progname);
+				exit(EX_USAGE);
+			}
 		}
-	}
-	if (argc>1) {
-		fcore = fmem = argv[1];
-		kflg++;
-	}
+
 	if ((fc = open(fcore, 0)) < 0) {
-		printf("Can't find %s\n", fcore);
+		fprintf(stderr, "Can't open %s\n", fcore);
 		exit(1);
 	}
 	if ((fm = open(fmem, 0)) < 0) {
-		printf("Can't find %s\n", fmem);
+		fprintf(stderr, "Can't open %s\n", fmem);
 		exit(1);
 	}
-	if (argc>0)
-		fnlist = argv[0];
+
 	nlist(fnlist, nl);
 	if (nl[0].n_type == 0) {
-		printf("no namelist, n_type: %d n_value: %o n_name: %s\n", nl[0].n_type, nl[0].n_value, nl[0].n_name);
+		fprintf(stderr, "%s: %s no namelist\n", __progname, fnlist);
 		exit(1);
 	}
 	allflags = filf | totflg | inof | prcf | txtf | ttyf | usrf |
 			 swpf | coref | ubmapf | buff;
 	if (allflags == 0) {
-		printf("pstat: one or more of -[aixptfscmbuT] is required\n");
+		fprintf(stderr, "%s: one or more of -[aixptfscmbuT] required\n", __progname);
 		exit(1);
 	}
 	if (filf||totflg)
@@ -233,12 +238,6 @@ char **argv;
 	exit(0);
 }
 
-usage()
-{
-
-	printf("usage: pstat -[aixptfscmbT] [-u [ubase]] [system] [core]\n");
-}
-
 doinode()
 {
 	register struct inode *ip;
@@ -250,13 +249,13 @@ doinode()
 	ninode = pgetw((off_t)nl[SNINODE].n_value);
 	xinode = (struct inode *)calloc(ninode, sizeof (struct inode));
 	ainode = nl[SINODE].n_value;
-	if (ninode < 0 || ninode > 10000) {
-		fprintf(stderr, "number of inodes is preposterous (%d)\n",
-			ninode);
+	if (ninode < 0 || ninode > 1000) {
+		fprintf(stderr, "%s: number of inodes preposterous (%d)\n",
+			ninode, __progname);
 		return;
 	}
 	if (xinode == NULL) {
-		fprintf(stderr, "can't allocate memory for inode table\n");
+		fprintf(stderr, "%s: can't allocate inode memory\n", __progname);
 		return;
 	}
 	lseek(fc, (off_t)ainode, 0);
@@ -269,11 +268,11 @@ doinode()
 		return;
 	}
 	printf("%d/%d active inodes\n", nin, ninode);
-printf("   LOC      FLAGS      CNT  DEVICE  RDC WRC  INO   MODE  NLK  UID  SIZE/DEV FS\n");
+printf("    LOC     FLAGS      CNT  DEVICE  RDC WRC  INO    MODE NLK  UID  SIZE/DEV     FS\n");
 	for (ip = xinode; ip < &xinode[ninode]; ip++) {
 		if (ip->i_count == 0)
 			continue;
-		printf("%7.1o ", ainode + (ip - xinode)*sizeof (*ip));
+		printf("%#7o ", ainode + (ip - xinode)*sizeof (*ip));
 		putf((long)ip->i_flag&ILOCKED, 'L');
 		putf((long)ip->i_flag&IUPD, 'U');
 		putf((long)ip->i_flag&IACC, 'A');
@@ -293,14 +292,14 @@ printf("   LOC      FLAGS      CNT  DEVICE  RDC WRC  INO   MODE  NLK  UID  SIZE/
 		printf("%4d", ip->i_flag&IPIPE ? 0 : ip->i_shlockc);
 		printf("%4d", ip->i_flag&IPIPE ? 0 : ip->i_exlockc);
 		printf("%6u ", ip->i_number);
-		printf("%7.1o", ip->i_mode);
+		printf("%#7o", ip->i_mode);
 		printf("%4d", ip->i_nlink);
 		printf("%5u", ip->i_uid);
 		if ((ip->i_mode&IFMT)==IFBLK || (ip->i_mode&IFMT)==IFCHR)
 			printf("%6d,%3d", major(ip->i_rdev), minor(ip->i_rdev));
 		else
 			printf("%10ld", ip->i_size);
-		printf(" %2d", ip->i_fs);
+		printf(" %#7o", ip->i_fs);
 		printf("\n");
 	}
 	free(xinode);
@@ -338,13 +337,13 @@ dotext()
 	ntext = pgetw((off_t)nl[SNTEXT].n_value);
 	xtext = (struct text *)calloc(ntext, sizeof (struct text));
 	atext = nl[STEXT].n_value;
-	if (ntext < 0 || ntext > 10000) {
-		fprintf(stderr, "number of texts is preposterous (%d)\n",
-			ntext);
+	if (ntext < 0 || ntext > 1000) {
+		fprintf(stderr, "%s: number of texts preposterous (%d)\n",
+			__progname, ntext);
 		return;
 	}
 	if (xtext == NULL) {
-		fprintf(stderr, "can't allocate memory for text table\n");
+		fprintf(stderr, "%s: can't allocate text table memory\n", __progname);
 		return;
 	}
 	lseek(fc, (off_t)atext, 0);
@@ -361,26 +360,25 @@ dotext()
 	}
 	printf("%d/%d active texts, %d used\n", ntx, ntext, ntxca);
 	printf("\
-   LOC   FLAGS   DADDR   CADDR    SIZE   IPTR   CNT CCNT   FORW     BACK\n");
+    LOC  FLAGS   DADDR   CADDR    SIZE    IPTR  CNT CCNT   FORW    BACK\n");
 	for (xp = xtext; xp < &xtext[ntext]; xp++) {
 		if (xp->x_iptr == NULL)
 			continue;
-		printf("%7.1o ", atext + (xp - xtext)*sizeof (*xp));
-		putf((long)xp->x_flag&XPAGI, 'P');
+		printf("%#7o ", atext + (xp - xtext)*sizeof (*xp));
 		putf((long)xp->x_flag&XTRC, 'T');
 		putf((long)xp->x_flag&XWRIT, 'W');
 		putf((long)xp->x_flag&XLOAD, 'L');
 		putf((long)xp->x_flag&XLOCK, 'K');
 		putf((long)xp->x_flag&XWANT, 'w');
 		putf((long)xp->x_flag&XUNUSED, 'u');
-		printf("%7.1o ", xp->x_daddr);
-		printf("%7.1o ", xp->x_caddr);
-		printf("%7.1o ", xp->x_size);
-		printf("%7.1o", xp->x_iptr);
+		printf("%8.1d ", xp->x_daddr);
+		printf("%#7o ", xp->x_caddr);
+		printf("%7d ", xp->x_size);
+		printf("%#7o", xp->x_iptr);
 		printf("%4u ", xp->x_count);
 		printf("%4u ", xp->x_ccount);
-		printf("%7.1o ", xp->x_forw);
-		printf("%7.1o\n", xp->x_back);
+		printf("%#7o ", xp->x_forw);
+		printf("%#7o\n", xp->x_back);
 	}
 	free(xtext);
 }
@@ -395,13 +393,13 @@ doproc()
 	nproc = pgetw((off_t)nl[SNPROC].n_value);
 	xproc = (struct proc *)calloc(nproc, sizeof (struct proc));
 	aproc = nl[SPROC].n_value;
-	if (nproc < 0 || nproc > 10000) {
-		fprintf(stderr, "number of procs is preposterous (%d)\n",
-			nproc);
+	if (nproc < 0 || nproc > 1000) {
+		fprintf(stderr, "%s: number of procs preposterous (%d)\n",
+			__progname, nproc);
 		return;
 	}
 	if (xproc == NULL) {
-		fprintf(stderr, "can't allocate memory for proc table\n");
+		fprintf(stderr, "%s: can't allocate proc table memory\n", __progname);
 		return;
 	}
 	lseek(fc, (off_t)aproc, 0);
@@ -415,15 +413,15 @@ doproc()
 		return;
 	}
 	printf("%d/%d processes\n", np, nproc);
-printf("   LOC   S       F PRI      SIG   UID SLP TIM  CPU  NI   PGRP    PID   PPID    ADDR   SADDR   DADDR    SIZE   WCHAN    LINK   TEXTP SIGM\n");
+printf("    LOC  S       F PRI      SIG   UID SLP TIM  CPU  NI   PGRP    PID   PPID    ADDR   SADDR   DADDR    SIZE   WCHAN    LINK   TEXTP     SIGM\n");
 	for (pp=xproc; pp<&xproc[nproc]; pp++) {
 		if (pp->p_stat==0 && allflg==0)
 			continue;
-		printf("%7.1o", aproc + (pp - xproc)*sizeof (*pp));
+		printf("%#7o", aproc + (pp - xproc)*sizeof (*pp));
 		printf(" %2d", pp->p_stat);
-		printf(" %7.1x", pp->p_flag);
+		printf(" %#7x", pp->p_flag);
 		printf(" %3d", pp->p_pri);
-		printf(" %8.1lx", pp->p_sig);
+		printf(" %#8lx", pp->p_sig);
 		printf(" %5u", pp->p_uid);
 		printf(" %3d", pp->p_slptime);
 		printf(" %3d", pp->p_time);
@@ -432,27 +430,26 @@ printf("   LOC   S       F PRI      SIG   UID SLP TIM  CPU  NI   PGRP    PID   P
 		printf(" %6d", pp->p_pgrp);
 		printf(" %6d", pp->p_pid);
 		printf(" %6d", pp->p_ppid);
-		printf(" %7.1o", pp->p_addr);
-		printf(" %7.1o", pp->p_saddr);
-		printf(" %7.1o", pp->p_daddr);
-		printf(" %7.1o", pp->p_dsize+pp->p_ssize);
-		printf(" %7.1o", pp->p_wchan);
-		printf(" %7.1o", pp->p_link);
-		printf(" %7.1o", pp->p_textp);
-		printf(" %8.1lx", pp->p_sigmask);
+		printf(" %#7o", pp->p_addr);
+		printf(" %#7o", pp->p_saddr);
+		printf(" %#7o", pp->p_daddr);
+		printf(" %7d", pp->p_dsize+pp->p_ssize);
+		printf(" %#7o", pp->p_wchan);
+		printf(" %#7o", pp->p_link);
+		printf(" %#7o", pp->p_textp);
+		printf(" %#8lx", pp->p_sigmask);
 		printf("\n");
 	}
 	free(xproc);
 }
 
 static char mesg[] =
-" # RAW CAN OUT         MODE    ADDR  DEL  COL      STATE       PGRP DISC\n";
+" # RAW CAN OUT        FLAGS    ADDR  DEL  COL      STATE      PGRP DISC\n";
 static int ttyspace = 64;
 static struct tty *tty;
 
 dotty()
 {
-	extern char *malloc();
 
 	if ((tty = (struct tty *)malloc(ttyspace * sizeof(*tty))) == 0) {
 		printf("pstat: out of memory\n");
@@ -476,7 +473,6 @@ char *name;
 {
 	int ntty;
 	register struct tty *tp;
-	extern char *realloc();
 
 	lseek(fc, (long)nl[number].n_value, 0);
 	read(fc, &ntty, sizeof(ntty));
@@ -504,7 +500,7 @@ struct tty *atp;
 	tp = atp;
 
 	printf("%4d%4d", tp->t_rawq.c_cc, tp->t_canq.c_cc);
-	printf("%4d %12.1lo %7.1o %4d %4d ", tp->t_outq.c_cc, tp->t_flags,
+	printf("%4d %#12lx %#7o %4d %4d ", tp->t_outq.c_cc, tp->t_flags,
 		tp->t_addr, tp->t_delct, tp->t_col);
 	putf(tp->t_state&TS_TIMEOUT, 'T');
 	putf(tp->t_state&TS_WOPEN, 'W');
@@ -529,10 +525,6 @@ struct tty *atp;
 
 	case NTTYDISC:
 		printf(" ntty\n");
-		break;
-
-	case NETLDISC:
-		printf(" berknet\n");
 		break;
 
 	case TABLDISC:
@@ -733,13 +725,13 @@ dofile()
 	nf = 0;
 	nfile = pgetw((off_t)nl[SNFILE].n_value);
 	xfile = (struct file *)calloc(nfile, sizeof (struct file));
-	if (nfile < 0 || nfile > 10000) {
-		fprintf(stderr, "number of files is preposterous (%d)\n",
-			nfile);
+	if (nfile < 0 || nfile > 1000) {
+		fprintf(stderr, "%s: number of files preposterous (%d)\n",
+			__progname, nfile);
 		return;
 	}
 	if (xfile == NULL) {
-		fprintf(stderr, "can't allocate memory for file table\n");
+		fprintf(stderr, "%s: can't allocate file table memory\n", __progname);
 		return;
 	}
 	afile = nl[SFIL].n_value;
@@ -753,13 +745,13 @@ dofile()
 		return;
 	}
 	printf("%d/%d open files\n", nf, nfile);
-	printf("   LOC   TYPE   FLG        CNT  MSG   DATA    OFFSET\n");
+	printf("    LOC   TYPE  FLG        CNT  MSG     DATA     OFFSET\n");
 	loc = afile;
 	for	(fp=xfile; fp < &xfile[nfile]; fp++, loc += sizeof (*fp))
 		{
 		if (fp->f_count==0)
 			continue;
-		printf("%7.1o ", loc);
+		printf("%#7o ", loc);
 		if (fp->f_type <= DTYPE_PIPE)
 			printf("%-8.8s", dtypes[fp->f_type]);
 		else
@@ -775,11 +767,8 @@ dofile()
 		putf((long)fp->f_flag&FDEFER, 'd');
 		printf("  %3d", fp->f_count);
 		printf("  %3d", fp->f_msgcount);
-		printf("  %7.1o", fp->f_data);
-		if (fp->f_offset < 0)
-			printf("  0%lo\n", fp->f_offset);
-		else
-			printf("  %ld\n", fp->f_offset);
+		printf("  %#7o", fp->f_data);
+		printf("  %#9lx\n", fp->f_offset);
 	}
 	free(xfile);
 }
@@ -806,7 +795,7 @@ int nlind;
 		break;
 	case SCOREMAP:
 		name = "coremap";
-		mshift = -4;	/* clocks -> kBytes */
+		mshift = -4;	/* clicks -> kBytes */
 		break;
 	case SUBMAP:
 		name = "ub_map";
@@ -824,7 +813,7 @@ int nlind;
 	num = (maphdr.m_limit - maphdr.m_map);
 	maptbl = (struct mapent *)calloc(num, sizeof (*maptbl));
 	if (maptbl == NULL) {
-		fprintf(stderr, "can't allocate memory for %s table\n", name);
+		fprintf(stderr, "%s: can't allocate memory for %s table\n", __progname, name);
 		return;
 	}
 
@@ -839,7 +828,7 @@ int nlind;
 		freetot += size;
 		if (size>freemax) freemax = size;
 		if(flag) {
-			printf("%7.1o %6u %6u\n",
+			printf(nlind == SCOREMAP ? "%#7o %6u %6u\n" : "%7d %6u %6u\n",
 				maptbl[i].m_addr, size, size<<mshift);
 		}
 	}
@@ -875,15 +864,15 @@ dobuf()
 	int i;
 	
 	nbuf = pgetw((off_t)nl[SNBUF].n_value);
-	if (nbuf <= 0 || nbuf >= 2000) {
-		fprintf(stderr, "number of buffers is preposterous (%d)\n",
-			nbuf);
+	if (nbuf <= 0 || nbuf >= 500) {
+		fprintf(stderr, "%s: number of buffers preposterous (%d)\n",
+			__progname, nbuf);
 		return;
 	}
 
 	xbuf = (struct buf *) calloc(nbuf, sizeof (struct buf));
 	if (xbuf == NULL) {
-		fprintf(stderr, "can't allocate memory for buf table\n");
+		fprintf(stderr, "%s: can't allocate buf table memory\n", __progname);
 		return;
 	}
 
@@ -893,12 +882,12 @@ dobuf()
 	abufe = abuf + nbuf * sizeof (struct buf);
 
 	if (buff) {
-		printf("IND    LOC       FLAGS         ");
+		printf("IND     LOC      FLAGS         ");
 		printf("FORW   BACKW   AFORW  ABACKW   DEVICE   BLKNO\n");
 
 		for (bp=xbuf, i=0; bp<&xbuf[nbuf]; bp++, i++) {
 			printf("%3d ", i);
-			printf("%7.1o ", abuf + (bp - xbuf)*sizeof(*bp));
+			printf("%#7o ", abuf + (bp - xbuf)*sizeof(*bp));
 			putf((long)bp->b_flags&B_READ,   'R');
 			putf((long)bp->b_flags&B_DONE,   'D');
 			putf((long)bp->b_flags&B_ERROR,  'E');
@@ -935,7 +924,7 @@ struct buf *bp;
 	if (bp >= abuf && bp < abufe) {
 		printf("  ->%3d ", ind);
 	} else {
-		printf("%7.1o ", bp);
+		printf("%#7o ", bp);
 	}
 }
 

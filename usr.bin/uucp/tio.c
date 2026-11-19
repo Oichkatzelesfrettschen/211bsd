@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)tio.c	4.6 (Berkeley) 1/24/86";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)tio.c	4.7 (2.11BSD) 2026/5/9";
 #endif
 
 #include <signal.h>
@@ -8,7 +8,7 @@ static char sccsid[] = "@(#)tio.c	4.6 (Berkeley) 1/24/86";
 #include <sys/stat.h>
 #include <netinet/in.h>
 
-extern int pkfail();
+extern void pkfail();
 #define TPACKSIZE	512
 #define TBUFSIZE	1024
 #define	LBUFSIZE	128
@@ -103,19 +103,12 @@ FILE *fp1;
 		return FAIL;
 	signal(SIGALRM, pkfail);
 	bytes = 0L;
-#ifdef USG
-	time(&t1.time);
-	t1.millitm = 0;
-#else !USG
+
 	ftime(&t1);
-#endif !USG
+
 	while ((len = read(fileno(fp1), bufr.t_data, TBUFSIZE)) > 0) {
 		bytes += len;
-#if defined(vax) || defined(pdp11) || defined(ns32000)
 		bufr.t_nbytes = htonl((long)len);
-#else !vax and !pdp11 and !ns32000
-		bufr.t_nbytes = len;
-#endif !vax and !pdp11 and !ns32000
 		DEBUG(8,"twrdata sending %d bytes\n",len);
 		len += sizeof(long);
 		alarm(MAXMSGTIME);
@@ -133,12 +126,9 @@ FILE *fp1;
 	alarm(0);
 	if (ret != len)
 		return FAIL;
-#ifdef USG
-	time(&t2.time);
-	t2.millitm = 0;
-#else !USG
+
 	ftime(&t2);
-#endif !USG
+
 	Now = t2;
 	t2.time -= t1.time;
 	mil = t2.millitm - t1.millitm;
@@ -148,7 +138,6 @@ FILE *fp1;
 	}
 	sprintf(text, "sent data %ld bytes %ld.%02d secs",
 				bytes, (long)t2.time, mil/10);
-	sysacct(bytes, t2.time);
 	DEBUG(1, "%s\n", text);
 	syslog(text);
 	return SUCCESS;
@@ -166,12 +155,9 @@ FILE *fp2;
 	if(setjmp(Failbuf))
 		return FAIL;
 	signal(SIGALRM, pkfail);
-#ifdef USG
-	time(&t1.time);
-	t1.millitm = 0;
-#else !USG
+
 	ftime(&t1);
-#endif !USG
+
 	bytes = 0L;
 	for (;;) {
 		alarm(MAXMSGTIME);
@@ -179,9 +165,7 @@ FILE *fp2;
 		alarm(0);
 		if (len != sizeof Nbytes)
 			return FAIL;
-#if defined(vax) || defined(pdp11) || defined(ns32000)
 		Nbytes = ntohl(Nbytes);
-#endif vax or pdp11 or ns32000
 		DEBUG(8,"trddata expecting %ld bytes\n",Nbytes);
 		nread = Nbytes;
 		if (nread == 0)
@@ -199,12 +183,9 @@ FILE *fp2;
 			return FAIL;
 		}
 	}
-#ifdef USG
-	time(&t2.time);
-	t2.millitm = 0;
-#else !USG
+
 	ftime(&t2);
-#endif !USG
+
 	Now = t2;
 	t2.time -= t1.time;
 	mil = t2.millitm - t1.millitm;
@@ -214,16 +195,10 @@ FILE *fp2;
 	}
 	sprintf(bufr, "received data %ld bytes %ld.%02d secs",
 				bytes, (long)t2.time, mil/10);
-	sysacct(bytes, t2.time - t1.time);
 	DEBUG(1, "%s\n", bufr);
 	syslog(bufr);
 	return SUCCESS;
 }
-
-#if !defined(BSD4_2) && !defined(USG)
-#define	TC	1024
-static	int tc = TC;
-#endif !BSD4_2 && !USG
 
 trdblk(blk, len,  fn)
 register int len;
@@ -231,13 +206,6 @@ char *blk;
 {
 	register int i, ret;
 
-#if !defined(BSD4_2) && !defined(USG)
-	/* call ultouch occasionally */
-	if (--tc < 0) {
-		tc = TC;
-		ultouch();
-	}
-#endif !BSD4_2 && !USG
 	for (i = 0; i < len; i += ret) {
 		ret = read(fn, blk, len - i);
 		if (ret < 0)
@@ -253,12 +221,5 @@ char *blk;
 twrblk(blk, len, fn)
 register char *blk;
 {
-#if !defined(BSD4_2) && !defined(USG)
-	/* call ultouch occasionally */
-	if (--tc < 0) {
-		tc = TC;
-		ultouch();
-	}
-#endif !BSD4_2 && !USG
 	return write(fn, blk, len);
 }

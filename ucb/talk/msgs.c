@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)msgs.c	5.1 (Berkeley) 6/6/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)msgs.c	5.2 (2.11BSD) 2026/5/9";
+#endif
 
 /* 
  * A package to display what is happening every MSG_INTERVAL seconds
@@ -27,7 +27,8 @@ int	current_line = 0;
 static	struct itimerval itimer;
 static	struct timeval wait = { MSG_INTERVAL , 0};
 static	struct timeval undo = { LONG_TIME, 0};
-	
+
+void
 disp_msg()
 {
 
