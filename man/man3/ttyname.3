@@ -1,29 +1,31 @@
-.\"	@(#)ttyname.3	6.1 (Berkeley) 5/15/85
+.\"	@(#)ttyname.3	6.2 (2.11BSD) 2026/5/8
 .\"
-.TH TTYNAME 3  "May 15, 1985"
+.TH TTYNAME 3  "May 8, 2026"
 .AT 3
 .SH NAME
 ttyname, isatty, ttyslot \- find name of a terminal
 .SH SYNOPSIS
+.B #include <unistd.h>
+.PP
 .B char *ttyname(filedes)
 .PP
 .B isatty(filedes)
 .PP
 .B ttyslot()
 .SH DESCRIPTION
-.I Ttyname
+.I ttyname
 returns a pointer to the null-terminated path name
 of the terminal device associated with file descriptor
 .I filedes
 (this is a system file descriptor and has nothing to do with the
 standard I/O FILE typedef).
 .PP
-.I Isatty
+.I isatty
 returns 1 if
 .I filedes
 is associated with a terminal device, 0 otherwise.
 .PP
-.I Ttyslot
+.I ttyslot
 returns the number of the entry in the
 .IR ttys (5)
 file for the control terminal of the current process.
@@ -34,12 +36,12 @@ file for the control terminal of the current process.
 .SH SEE ALSO
 ioctl(2), ttys(5)
 .SH DIAGNOSTICS
-.I Ttyname
+.I ttyname
 returns a null pointer (0) if
 .I filedes
 does not describe a terminal device in directory `/dev'.
 .PP
-.I Ttyslot
+.I ttyslot
 returns 0 if `/etc/ttys' is inaccessible or if
 it cannot determine the control terminal.
 .SH BUGS

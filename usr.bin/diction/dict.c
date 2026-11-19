@@ -1,6 +1,6 @@
-#ifndef lint
-static char dict_sccsid[] = "@(#)dict.c	4.2	(Berkeley)	82/11/06";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char dict_sccsid[] = "@(#)dict.c	4.3	(2.11BSD)	2026/5/8";
+#endif
 
 struct dict  dict[] = {
 "a",'A',

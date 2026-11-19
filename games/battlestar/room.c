@@ -5,7 +5,7 @@
  */
 
 #if !defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)room.c	1.4 (2.11BSD) 2025/12/27";
+static char sccsid[] = "@(#)room.c	1.5 (2.11BSD) 2026/7/11";
 #endif
 
 #include "externs.h"
@@ -26,12 +26,12 @@ writedes()
 	if (desc < 0)
 		desc = open(BATTLESTRINGS, O_RDONLY, 0666);
 
-	lseek(desc, (off_t) location[position].name, L_SET);
+	lseek(desc, location[position].name, L_SET);
 	read(desc, &buf, sizeof(buf));
 	printf("\n\t%s\n", &buf);
 	if (beenthere[position] < 3) {
 		compass = NORTH;
-		lseek(desc, (off_t) location[position].desc, L_SET);
+		lseek(desc, location[position].desc, L_SET);
 		read(desc, &buf, sizeof(buf));
 		for (p = buf; c = *p++;)
 			if (c != '-' && c != '*' && c != '+')

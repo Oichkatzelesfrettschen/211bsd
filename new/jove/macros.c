@@ -1,31 +1,18 @@
-/***************************************************************************
- * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
- * is provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is    *
- * included in all the files.                                              *
- ***************************************************************************/
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)macros.c 2.0 (2.11BSD) 2026/9/17";
+#endif
+
+/*
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE
+ * is provided to you without charge, and with no warranty.  You may give
+ * away copies of JOVE, including sources, provided that this notice is
+ * included in all the files.
+ */
 
 #include "jove.h"
 #include "ctype.h"
 #include "io.h"
 
-#ifdef MAC
-#	undef private
-#	define private
-#endif
-
-#ifdef	LINT_ARGS
-private void
-	add_mac(struct macro *),
-	del_mac(struct macro *),
-	pop_macro_stack(void),
-	push_macro_stack(struct macro *, int);
-	
-private int
-	PrefChar(int);
-
-private struct macro * mac_exists(char *);
-#else
 private void
 	add_mac(),
 	del_mac(),
@@ -36,12 +23,6 @@ private int
 	PrefChar();
 
 private struct macro * mac_exists();
-#endif	/* LINT_ARGS */
-
-#ifdef MAC
-#	undef private
-#	define private static
-#endif
 
 struct macro	*macros = 0;		/* macros */
 int	InMacDefine = NO;
@@ -76,9 +57,9 @@ struct macro	*mac;
 			m->m_nextm = mac->m_nextm;
 			break;
 		}
-	free(mac->Name);
-	free(mac->m_body);
-	free((char *) mac);
+	free((void *)mac->Name);
+	free((void *)mac->m_body);
+	free((void *) mac);
 }
 
 struct macro	KeyMacro;	/* Macro used for defining */
@@ -123,7 +104,7 @@ void
 free_mthread(t)
 struct m_thread	*t;
 {
-	free((char *) t);
+	free((void *) t);
 }
 
 private void
@@ -177,7 +158,7 @@ int	c;
 {
 	if (KeyMacro.m_len >= KeyMacro.m_buflen) {
 		KeyMacro.m_buflen += 16;
-		KeyMacro.m_body = realloc(KeyMacro.m_body, (unsigned) KeyMacro.m_buflen);
+		KeyMacro.m_body = (char *)realloc((void *)KeyMacro.m_body, (unsigned) KeyMacro.m_buflen);
 		if (KeyMacro.m_body == 0) {
 			KeyMacro.m_buflen = KeyMacro.m_len = 0;
 			complain("[Can't allocate storage for keyboard macro]");
@@ -225,8 +206,8 @@ NameMac()
 	else {
 		if (strcmp(name, KeyMacro.Name) == 0)
 			complain("[Can't name it that!]");
-		free(m->Name);
-		free(m->m_body);
+		free((void *)m->Name);
+		free((void *)m->m_body);
 	}
 	name = copystr(name);
 	m->Type = KeyMacro.Type;

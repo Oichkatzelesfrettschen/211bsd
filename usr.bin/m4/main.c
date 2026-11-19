@@ -39,7 +39,7 @@ static char copyright[] =
 "@(#) Copyright (c) 1989, 1993\n\
 	The Regents of the University of California.  All rights reserved.\n";
 
-static char sccsid[] = "@(#)main.c	8.1 (Berkeley) 6/6/93";
+static char sccsid[] = "@(#)main.c	8.2 (2.11BSD) 2026/9/16";
 #endif
 
 /*
@@ -54,10 +54,10 @@ static char sccsid[] = "@(#)main.c	8.1 (Berkeley) 6/6/93";
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 #include "mdef.h"
 #include "stdd.h"
 #include "extern.h"
-#include "pathnames.h"
 
 ndptr hashtab[HASHSIZE];	/* hash table for macros etc.  */
 char buf[BUFSIZE];		/* push-back buffer	       */
@@ -133,12 +133,8 @@ struct keyblk keywrds[] = {	/* m4 keywords to be installed */
 
 #define MAXKEYS	(sizeof(keywrds)/sizeof(struct keyblk))
 
-extern int optind;
-extern char *optarg;
-
 void macro();
 void initkwds();
-extern int getopt();
 
 int
 main(argc,argv)

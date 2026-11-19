@@ -1,22 +1,25 @@
-.TH CRC 1 OMEN 
+\"
+.\"     @(#)crc.1      2.0 (2.11BSD) 2026/6/17
+.\"
+.TH CRC 1 "June 17, 2026"
 .SH NAME
-crc \- checksum files
+\fBcrc\fP \- checksum files
 .SH SYNOPSIS
 .B crc
 file ...
 .SH DESCRIPTION
 For each file,
-.I crc\^
+.B crc
 calculates and prints a 32-bit CRC,
 the byte count, and the file name.
 It is typically used to validate files transferred between
 different systems, and is useful in detecting subtle disk corruption.
-.I Crc\^
+.B crc
 uses a checksum compatible with the
 DOS
-version of crc,
+version of \fBcrc\fP,
 the 32 bit CRC used by PKZIP version 0.9,
-as well as the "crc" command in ZCOMM and Professional-YAM
+as well as the \fBcrc\fP command in ZCOMM and Professional-YAM
 (high reliability communications programs).
 
 The 32-bit CRC used is the frame
@@ -27,6 +30,6 @@ protocol).
 32 bit CRC code courtesy Gary S. Brown.
 .SH BUGS
 Although extremely unlikely,
-files with different data may still produce the same crc value.
+files with different data may still produce the same CRC value.
 .SH "SEE ALSO"
-chek(1), undos(OMEN), todos(OMEN), tocpm(OMEN), sum(1), wc(1).
+sum(1), wc(1).

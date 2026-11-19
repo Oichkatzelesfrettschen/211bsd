@@ -1,4 +1,7 @@
-static	char *sccsid = "@(#)sort.c	4.11 (Berkeley) 6/3/86";
+#if	!defined(lint) && defined(DOSCCS)
+static	char *sccsid = "@(#)sort.c	4.12 (2.11BSD) 2026/5/8";
+#endif
+
 #include <stdio.h>
 #include <ctype.h>
 #include <signal.h>
@@ -8,11 +11,7 @@ static	char *sccsid = "@(#)sort.c	4.11 (Berkeley) 6/3/86";
 #define	L	1024
 #define	N	7
 #define	C	20
-#ifndef pdp11
-#define	MEM	(128*2048)
-#else
 #define	MEM	(16*2048)
-#endif
 #define NF	10
 
 #define rline(mp)	(fgets((mp)->l, L, (mp)->b) == NULL)
@@ -31,7 +30,7 @@ char	*tspace;
 int	cmp(), cmpa();
 int	(*compare)() = cmpa;
 char	*eol();
-int	term();
+void	term();
 int 	mflg;
 int	cflg;
 int	uflg;
@@ -248,9 +247,8 @@ char **argv;
 	lspace = (int *)sbrk(0);
 	while((int)brk(ep) == -1)
 		ep -= 512;
-#ifndef	vax
 	brk(ep -= 512);	/* for recursion */
-#endif
+
 	a = ep - (char*)lspace;
 	nlines = (a-L);
 	nlines /= (5*(sizeof(char *)/sizeof(char)));
@@ -559,6 +557,7 @@ char *s, *t;
 	fputs("\n",stderr);
 }
 
+void
 term()
 {
 	register i;

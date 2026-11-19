@@ -1,4 +1,4 @@
-#	Makefile	2.0 (2.11BSD) 2025/11/25
+#	Makefile	2.1 (2.11BSD) 2026/1/23
 #
 CFLAGS=	-O
 LDFLAGS= -i
@@ -10,7 +10,7 @@ SUBDIR=	at calendar dc diction diff3 efl eqn fstat f77 find graph id learn \
 	lex \
 	m4 neqn plot printf prof ranlib ratfor refer roff spell struct tbl \
 	mkerrlst patch \
-	renice shar tip uucp uname whereis yacc xargs xinstall
+	renice shar tip touch uucp uname whereis yacc xargs xinstall
 
 # Shell scripts that need only be installed and are never removed.
 #
@@ -21,13 +21,13 @@ SCRIPT=	lorder mkdep nohup lint
 SRCS=	basename.c cal.c cb.c checkeq.c col.c comm.c crypt.c deroff.c \
 	fgrep.c file.c iostat.c join.c look.c mesg.c ptx.c \
 	rev.c sleep.c sort.c spline.c split.c sum.c tabs.c \
-	tc.c tk.c touch.c tr.c tsort.c tty.c uniq.c units.c
+	tc.c tk.c tr.c tsort.c tty.c uniq.c units.c
 
 # C programs that live in the current directory and do not need
 # explicit make lines.
 #
 STD=	basename cal cb checkeq col comm crypt deroff fgrep file join look \
-	mesg ptx rev sleep sort spline split sum tabs tc tk touch tr \
+	mesg ptx rev sleep sort spline split sum tabs tc tk tr \
 	tsort tty uniq units
 
 # C programs that live in the current directory and need explicit make lines.

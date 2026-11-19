@@ -1,5 +1,5 @@
 /*
- * savecore.c 1.3 (2.11BSD) 2025/9/6
+ * savecore.c 1.4 (2.11BSD) 2026/9/14
  */
 
 #include	<sys/param.h>
@@ -9,11 +9,9 @@
 #include	<sys/fs.h>
 #include	<sys/time.h>
 
-#ifdef	pdp11
 #define	CLICK	ctob(1)		/* size of core units */
 #define	REGLOC	0300		/* offset of saved registers in disk dump */
 #define	NREGS	8		/* r0-6, KA6 */
-#endif
 
 #define	DAY		(60L*60L*24L)
 #define	LEEWAY		(3*DAY)

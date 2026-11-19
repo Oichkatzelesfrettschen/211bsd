@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)win.c	5.1.1 (2.11BSD GTE) 11/20/94";
+static char sccsid[] = "@(#)win.c     5.2 (2.11BSD) 2026/5/12";
 #endif
 
 # include	"trek.h"

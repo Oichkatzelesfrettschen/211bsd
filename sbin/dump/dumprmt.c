@@ -32,7 +32,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)dumprmt.c	1.2 (2.11BSD GTE) 12/7/94";
+static char sccsid[] = "@(#)dumprmt.c	1.3 (2.11BSD) 2026/5/7";
 #endif
 
 #include <sys/param.h>
@@ -88,7 +88,7 @@ void
 rmtgetconn()
 {
 	static struct servent *sp = 0;
-	struct passwd *pw;
+	register struct passwd *pw;
 	char *name = "root";
 	int size;
 
@@ -190,7 +190,7 @@ rmtgetb()
 
 void
 rmtgets(cp, len)
-	char *cp;
+	register char *cp;
 	int len;
 {
 

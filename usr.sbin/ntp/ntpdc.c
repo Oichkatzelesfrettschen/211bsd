@@ -1,7 +1,6 @@
-#if !defined(lint) && defined(DOSCCS)
-static char *RCSid = "$Source: /usr/src/new/ntp/ntpdc.c,v $ $Revision: 3.4.1.8 $ $Date: 95/01/27 17:31:26 $";
-#endif
-
+/*
+ * @(#)ntpdc.c 3.4.1.9 (2.11BSD) 2026/9/22
+*/
 /*
  * $Log:	ntpdc.c,v $
  * Revision 3.4.1.8  95/01/27  17:31:26  sms
@@ -98,7 +97,8 @@ static char *RCSid = "$Source: /usr/src/new/ntp/ntpdc.c,v $ $Revision: 3.4.1.8 $
 extern int errno;
 int debug;
 int s;
-int timedout, timeout();
+int timedout;
+void timeout();
 int nflag, vflag, tflag;
 
 struct sockaddr_in sin = {AF_INET};
@@ -297,6 +297,7 @@ query(host)
 	return 1;
 }
 
+void
 timeout()
 {
 	timedout = 1;

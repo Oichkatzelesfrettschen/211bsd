@@ -1,8 +1,10 @@
 #if	defined(DOSCCS) && !defined(lint)
-static char *sccsid = "@(#)ld.c	4.6 1998/01/19";
+static char *sccsid = "@(#)ld.c	4.7 (2.11BSD) 2026/9/21";
 #endif
 
 /*
+ * 4.7 2026/09/21 - sms.  signal prototype and typedef changes
+ *
  * 4.6 1998/01/19 - Tim Shoppa (shoppa@triumf.ca)
  *      Minor bug fix: when tsize was being incremented by THUNKSZ,
  *      no check was being made for 16-bit overflow.  Fix was to
@@ -294,7 +296,7 @@ u_int	ovbase;			/* The base address of the overlays */
 	short	*lookup(), *slookup(), *lookloc();
 	char	*rstrtab;	/* ranlib string table pointer */
 	u_int	add();
-	int	delexit();
+	void	delexit();
 	VADDR	sym2va();
 	off_t	skip();
 
@@ -496,6 +498,7 @@ next:
 	exit(0);
 }
 
+void
 delexit()
 	{
 

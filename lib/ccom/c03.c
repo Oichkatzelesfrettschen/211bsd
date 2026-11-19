@@ -6,7 +6,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static	char	sccsid[] = "@(#)c03.c	2.2 (2.11BSD) 2025/8/29";
+static	char	sccsid[] = "@(#)c03.c	2.3 (2.11BSD) 2026/1/26";
 #endif
 #include "c0.h"
 
@@ -91,6 +91,7 @@ struct nmlist *tptr;
 		case CONST:
 		case VOLATIL:
 		case SIGNED:
+		case RESTR:
 			continue;
 
 		case UNION:
@@ -180,7 +181,8 @@ strdec(mosf, kind)
 		mosflg = mosf;
 		do {
 			o = symbol();
-		} while (o == KEYW && (cval == CONST || cval == VOLATIL));
+		} while (o == KEYW &&
+		    (cval == CONST || cval == VOLATIL || cval == RESTR));
 		if (o==LBRACE && ssym->hblklev<blklev)
 			ssym = pushdecl(ssym);
 		if (ssym->hclass && ssym->hclass!=tagkind) {
@@ -585,7 +587,7 @@ struct nmlist *absname;
 	type = 0;
 more:	switch(o=symbol()) {
 	case KEYW:
-		if (cval == CONST || cval == VOLATIL) {
+		if (cval == CONST || cval == VOLATIL || cval == RESTR) {
 			mosflg = mossym;
 			mossym = 0;
 			goto more;

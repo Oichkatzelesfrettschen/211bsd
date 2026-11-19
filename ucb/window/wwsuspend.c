@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)wwsuspend.c	3.7 4/24/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)wwsuspend.c	3.8 (2.11BSD) 2026/5/9";
 #endif
 
 /*
@@ -10,11 +10,11 @@ static char sccsid[] = "@(#)wwsuspend.c	3.7 4/24/85";
 
 #include "ww.h"
 #include "tt.h"
-#include <sys/signal.h>
+#include <signal.h>
 
 wwsuspend()
 {
-	int (*oldsig)();
+	sig_t	oldsig;
 
 	oldsig = signal(SIGTSTP, SIG_IGN);
 	wwend();

@@ -30,9 +30,10 @@ static char sccsid[] = "@(#)nstest.c	4.12 (Berkeley) 6/1/90";
 #include <netinet/in.h>
 #include <stdio.h>
 #include <arpa/nameser.h>
+#include <arpa/inet.h>
 #include <resolv.h>
+#include <strings.h>
 
-extern char *inet_ntoa();
 char *progname;
 FILE *log;
 #define MAXDATA		256   /* really should get definition from named/db.h */
@@ -99,7 +100,7 @@ main(argc, argv)
 	for (;;) {
 		printf("> ");
 		fflush(stdout);
-		if ((cp = (char *)gets(buf)) == NULL)
+		if ((cp = fgets(buf, sizeof buf, stdin)) == NULL)
 			break;
 		switch (*cp++) {
 		case 'a':
@@ -223,11 +224,11 @@ main(argc, argv)
 			    int Type, oldnbytes, nbytes, i;
 #ifdef ALLOW_T_UNSPEC
 			    printf("Data type (a = T_A, u = T_UNSPEC): ");
-			    gets(IType);
+			    fgets(IType, sizeof IType, stdin);
 			    if (IType[0] == 'u') {
 			    	Type = T_UNSPEC;
 			    	printf("How many data bytes? ");
-			    	gets(TempStr); /* Throw away CR */
+			    	fgets(TempStr, sizeof TempStr, stdin);
 			    	sscanf(TempStr, "%d", &nbytes);
 			    	for (i = 0; i < nbytes; i++) {
 			    		(NewRR.r_data)[i] = (char) i;
@@ -237,7 +238,7 @@ main(argc, argv)
 			    	Type = T_A;
 			    	nbytes = sizeof(u_long);
 			    	printf("Inet addr for new dname (e.g., 192.4.3.2): ");
-			    	gets(TempStr);
+			    	fgets(TempStr, sizeof TempStr, stdin);
 			    	putlong(ntohl(inet_addr(TempStr)), NewRR.r_data);
 #ifdef ALLOW_T_UNSPEC
 			    }
@@ -247,7 +248,7 @@ main(argc, argv)
 			    NewRR.r_size = nbytes;
 			    NewRR.r_ttl = 99999999;
 			    printf("Add, modify, or modify all (a/m/M)? ");
-			    gets(TempStr);
+			    fgets(TempStr, sizeof TempStr, stdin);
 			    if (TempStr[0] == 'a') {
 			    	n = res_mkquery(UPDATEA, cp, C_IN, Type,
 			    			OldRRData, nbytes,
@@ -256,7 +257,7 @@ main(argc, argv)
 			    } else {
 			    	if (TempStr[0] == 'm') {
 			    	    printf("How many data bytes in old RR? ");
-			    	    gets(TempStr); /* Throw away CR */
+			    	    fgets(TempStr, sizeof TempStr, stdin);
 			    	    sscanf(TempStr, "%d", &oldnbytes);
 				    for (i = 0; i < oldnbytes; i++) {
 					    OldRRData[i] = (char) i;
@@ -287,7 +288,7 @@ main(argc, argv)
 				char TempStr[100];
 				int nbytes, i;
 				printf("How many data bytes in oldrr data? ");
-				gets(TempStr); /* Throw away CR */
+				fgets(TempStr, sizeof TempStr, stdin);
 				sscanf(TempStr, "%d", &nbytes);
 				for (i = 0; i < nbytes; i++) {
 					OldRRData[i] = (char) i;

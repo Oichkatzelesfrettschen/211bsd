@@ -1,5 +1,5 @@
 #if     defined(DOSCCS) && !defined(lint)
-static char *sccsid = "@(#)putdmr.c 2.0 (2.11BSD) 2020/2/8";
+static char *sccsid = "@(#)putdmr.c 2.1 (2.11BSD) 2026/7/29";
 #endif
 
 /*  INTERMEDIATE CODE GENERATION FOR D. M. RITCHIE C COMPILERS */
@@ -7,10 +7,6 @@ static char *sccsid = "@(#)putdmr.c 2.0 (2.11BSD) 2020/2/8";
 #include "defs"
 #include "string_defs"
 #include "dmrdefs"
-
-#if FAMILY != DMR
-	WRONG put FILE !!!!
-#endif
 
 extern int ops2[];
 extern int types2[];
@@ -40,11 +36,9 @@ if( ! headerdone )
 /* end 11/12/92 change */
 
 	headerdone = YES;
-#if TARGET == PDP11
 	/* fake jump to start the optimizer */
 	if(class != CLBLOCK)
 		putgoto( fudgelabel = newlabel() );
-#endif
 	}
 }
 
@@ -160,7 +154,7 @@ for(i = 0 ; i<nlab ; ++i)
 p2i(0);
 putlabel(skiplabel);
 }
-
+
 putx(p)
 register expptr p;
 {
@@ -412,7 +406,7 @@ switch(p->opcode)	/* check for special cases and rewrite */
 		lp = p->leftp;
 		if(lp->tag != TADDR)
 			{
-			tp = mktemp(lp->vtype, lp->vleng);
+			tp = mktmp(lp->vtype, lp->vleng);
 			putx( mkexpr(OPASSIGN, cpexpr(tp), lp) );
 			ncomma = 1;
 			lp = tp;
@@ -445,7 +439,7 @@ if(p->vleng)
 	frexpr(p->vleng);
 free(p);
 }
-
+
 putforce(t, p)
 int t;
 expptr p;
@@ -469,7 +463,7 @@ if(!ISICON(p->rightp) || (k = p->rightp->xconst.ci)<2)
 	error("putpower: bad call",0,0,FATAL);
 base = p->leftp;
 type = base->vtype;
-t1 = mktemp(type, NULL);
+t1 = mktmp(type, NULL);
 t2 = NULL;
 ncomma = 1;
 putassign(cpexpr(t1), cpexpr(base) );
@@ -484,7 +478,7 @@ if(k == 2)
 	putx( mkexpr(OPSTAR, cpexpr(t1), cpexpr(t1)) );
 else
 	{
-	t2 = mktemp(type, NULL);
+	t2 = mktmp(type, NULL);
 	++ncomma;
 	putassign(cpexpr(t2), cpexpr(t1));
 	
@@ -514,7 +508,7 @@ int *ncommap;
 {
 register struct addrblock *t;
 
-t = mktemp(TYDREAL, NULL);
+t = mktmp(TYDREAL, NULL);
 ++*ncommap;
 putassign(cpexpr(t), p);
 return(t);
@@ -575,7 +569,7 @@ switch(p->tag)
 		if( ! addressable(p) )
 			{
 			++*ncommap;
-			resp = mktemp(tyint, NULL);
+			resp = mktmp(tyint, NULL);
 			putassign( cpexpr(resp), p->memoffset );
 			p->memoffset = resp;
 			}
@@ -585,7 +579,7 @@ switch(p->tag)
 		if( ISCOMPLEX(p->vtype) )
 			break;
 		++*ncommap;
-		resp = mktemp(TYDREAL, NO);
+		resp = mktmp(TYDREAL, NO);
 		putassign( cpexpr(resp), p);
 		return(resp);
 
@@ -604,7 +598,7 @@ else if(opcode == OPASSIGN)
 	++*ncommap;
 	return( putcxeq(p) );
 	}
-resp = mktemp(p->vtype, NULL);
+resp = mktmp(p->vtype, NULL);
 if(lp = putcx1(p->leftp, ncommap) )
 	ltype = lp->vtype;
 if(rp = putcx1(p->rightp, ncommap) )
@@ -723,13 +717,12 @@ free(lp);
 free(rp);
 free(p);
 }
-
+
 LOCAL struct addrblock *putch1(p, ncommap)
 register expptr p;
 int * ncommap;
 {
 register struct addrblock *t;
-struct addrblock *mktemp(), *putconst();
 
 switch(p->tag)
 	{
@@ -750,7 +743,7 @@ switch(p->tag)
 				break;
 
 			case OPCONCAT:
-				t = mktemp(TYCHAR, cpexpr(p->vleng) );
+				t = mktmp(TYCHAR, cpexpr(p->vleng) );
 				putcat( cpexpr(t), p );
 				break;
 
@@ -758,7 +751,7 @@ switch(p->tag)
 				if(!ISICON(p->vleng) || p->vleng->xconst.ci!=1
 				   || ! INT(p->leftp->vtype) )
 					error("putch1: bad character conversion",0,0,FATAL);
-				t = mktemp(TYCHAR, ICON(1) );
+				t = mktmp(TYCHAR, ICON(1) );
 				putop( mkexpr(OPASSIGN, cpexpr(t), p) );
 				break;
 			default:
@@ -769,9 +762,8 @@ switch(p->tag)
 	default:
 		error("putch1: bad tag %d", p->tag,0,FATAL1);
 	}
-/* NOTREACHED */
 }
-
+
 LOCAL putchop(p)
 expptr p;
 {
@@ -882,7 +874,7 @@ else
 	*ncommap += 2;
 	}
 }
-
+
 LOCAL putaddr(p, indir)
 register struct addrblock *p;
 int indir;
@@ -964,7 +956,6 @@ switch(p->vstg)
 frexpr(p);
 }
 
-
 LOCAL struct addrblock *putcall(p)
 register struct exprblock *p;
 {
@@ -1008,14 +999,14 @@ if(!indir)  for(cp = arglist ; cp ; cp = cp->nextp)
 if(type == TYCHAR)
 	{
 	if( ISICON(p->vleng) )
-		fval = mktemp(TYCHAR, p->vleng);
+		fval = mktmp(TYCHAR, p->vleng);
 	else	{
 		error("adjustable character function",0,0,ERR);
 		return(NULL);
 		}
 	}
 else if( ISCOMPLEX(type) )
-	fval = mktemp(type, NULL);
+	fval = mktmp(type, NULL);
 else
 	fval = NULL;
 
@@ -1047,10 +1038,11 @@ for(cp = arglist ; cp ; cp = cp->nextp)
 		if(indir)
 			putx(q);
 		else	{
-			t = mktemp(q->vtype, q->vleng);
+			type = q->vtype;
+			t = mktmp(q->vtype, q->vleng);
 			putassign( cpexpr(t), q );
 			putaddr(t, NO);
-			putcomma(1, q->vtype, YES);
+			putcomma(1, type, YES);
 			}
 		}
 	if(first)
@@ -1093,8 +1085,8 @@ p0 = p->leftp->listp;
 free(p->leftp);
 free(p);
 
-sp = mktemp(type, NULL);
-tp = mktemp(type, NULL);
+sp = mktmp(type, NULL);
+tp = mktmp(type, NULL);
 qp = mkexpr(OPCOLON, cpexpr(tp), cpexpr(sp));
 qp = mkexpr(OPQUEST, mkexpr(op, cpexpr(tp),cpexpr(sp)), qp);
 qp = fixexpr(qp);
@@ -1129,7 +1121,7 @@ if(indir)
 while(--n >= 0)
 	p2op2(P2COMOP, type);
 }
-
+
 /*
  *  routines that put bytes on the pass2 input stream
 */
@@ -1199,8 +1191,7 @@ if(offp)
 	 * It is unclear whether this works.
 	 * wfj note 10/80
 	 */
-	if(shortsubs)
-		offp = shorten(offp);
+	offp = shorten(offp);
 #endif
 	if(offp->vtype != TYLONG)
 		offp = mkconv(TYINT, offp);

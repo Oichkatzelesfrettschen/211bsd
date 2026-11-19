@@ -1,10 +1,8 @@
-#ifndef lint
-static char sccsid[] = "@(#)getargs.c	5.3 (Berkeley) 6/19/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)getargs.c	5.4 (2.11BSD) 2026/5/9";
 #endif
 
 #include "uucp.h"
-
-/*LINTLIBRARY*/
 
 /*
  *	getargs  -  this routine will generate a vector of

@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)xqt.c	5.3 (Berkeley) 6/23/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)xqt.c	5.4 (2.11BSD) 2026/5/9";
 #endif
 
 #include <signal.h>
@@ -7,17 +7,11 @@ static char sccsid[] = "@(#)xqt.c	5.3 (Berkeley) 6/23/85";
 
 int LocalOnly = 0;
 
-/*LINTLIBRARY*/
-
 /*
  *	start up uucico for rmtname
  *
  *	return codes:  none
  */
-
-#ifdef	VMS
-#define	fork	vfork
-#endif VMS
 
 xuucico(rmtname)
 char *rmtname;
@@ -39,24 +33,12 @@ char *rmtname;
 			sprintf(opt, "-s%s", rmtname);
 		else
 			opt[0] = '\0';
-#ifndef	VMS
 		if (LocalOnly)
 			execl(UUCICO, "uucico", "-r1", "-L", opt, (char *)0);
 		else
 			execl(UUCICO, "uucico", "-r1", opt, (char *)0);
-#else	VMS
-		/* Under VMS/EUNICE release the batch job */
-		if (LocalOnly)
-			execl(STARTUUCP, "startuucp", "uucico", "-r1", "-L", opt, (char *)0);
-		else
-			execl(STARTUUCP, "startuucp", "uucico", "-r1", opt, (char *)0);
-#endif	VMS
 		exit(100);
 	}
-#ifdef	VMS
-	while(wait(0) != -1)
-		;	/* Wait for it to finish!! */
-#endif	VMS
 	return;
 }
 

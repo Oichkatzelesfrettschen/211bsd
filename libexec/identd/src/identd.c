@@ -1,10 +1,10 @@
 /*
-** identd.c                       A TCP/IP link identification protocol server
+ * @(#)identd.c    1.1 (2.11BSD) 2026/9/22
+ *
+** identd.c     A TCP/IP link identification protocol server
 **
 ** This program is in the public domain and may be used freely by anyone
 ** who wants to. 
-**
-** Last update: 7 Oct 1993
 **
 ** Please send bug fixes/bug reports to: Peter Eriksson <pen@lysator.liu.se>
 */
@@ -222,30 +222,18 @@ alarm_handler(int s)
 #endif
 
 
-#if !defined(hpux) && !defined(__hpux) && !defined(SVR4) && \
-    !defined(_CRAY) && !defined(sco) && !defined(LINUX)
 /*
 ** This is used to clean up zombie child processes
 ** if the -w or -b options are used.
 */
-static SIGRETURN_TYPE
+static void
 child_handler()
 {
-#if defined(NeXT) || (defined(__sgi) && defined(__SVR3))
-    union wait status;
-#else
     int status;
-#endif
 
     while (wait3(&status, WNOHANG, NULL) > 0)
 	;
-  
-#ifndef SIGRETURN_TYPE_IS_VOID
-    return 0;
-#endif
 }
-#endif
-
 
 char *clearmem(vbp, len)
      void *vbp;
@@ -627,19 +615,13 @@ int main(argc,argv)
 	struct sockaddr sad;
 	int sadlen;
 	
-	
 	/*
 	** Set up the SIGCHLD signal child termination handler so
 	** that we can avoid zombie processes hanging around and
 	** handle childs terminating before being able to complete the
 	** handshake.
 	*/
-#if (defined(SVR4) || defined(hpux) || defined(__hpux) || defined(IRIX) || \
-     defined(_CRAY) || defined(_AUX_SOURCE)) || defined(sco) || defined(LINUX)
-	signal(SIGCHLD, SIG_IGN);
-#else
-	signal(SIGCHLD, (SIGRETURN_TYPE (*)()) child_handler);
-#endif
+	signal(SIGCHLD, child_handler);
     
 	/*
 	** Loop and dispatch client handling processes

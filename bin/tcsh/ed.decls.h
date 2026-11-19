@@ -1,5 +1,6 @@
-/* $Header: /home/hyperion/mu/christos/src/sys/tcsh-6.00/RCS/ed.decls.h,v 3.0 1991/07/04 21:49:28 christos Exp $ */
 /*
+ * @(#)ed.decls.h      2.0 (2.11BSD) 2026/9/21
+ *
  * ed.decls.h: Editor external definitions
  */
 /*-
@@ -48,7 +49,7 @@ extern	void	DeleteBack		__P((int));
  */
 extern	void	check_window_size	__P((int));
 #ifdef SIG_WINDOW
-extern	sigret_t window_change		__P((int));
+extern	void window_change		__P((void));
 #endif
 extern	void	ed_I			__P((void));
 extern	int	Cookedmode		__P((void));

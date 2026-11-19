@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)uipc_mbuf.c	2.0 (2.11BSD) 12/24/92
+ *	@(#)uipc_mbuf.c	2.1 (2.11BSD) 2026/7/15
  */
 
 #include "param.h"
@@ -13,6 +13,19 @@
 #include "kernel.h"
 #include "domain.h"
 #include "protosw.h"
+
+/*
+ * These are global strings used by the panic() statements in the 
+ * MGET() and MFREE() macros.  Each use of MGET or MFREE used 5 or 6 bytes
+ * of D space!
+*/
+	char mgetStr[] = "mget";
+	char mfreeStr[] = "mfree";
+
+/*
+ * One copy here saved 14 bytes of D space.
+*/
+static	char mcopystr[] = "m_copy";
 
 struct mbuf *mbuf, *mbutl, xmbuf[NMBUFS + 1];
 struct mbuf xmbutl[(NMBCLUSTERS*CLBYTES/sizeof (struct mbuf))+7];
@@ -236,10 +249,10 @@ m_copy(m, off, len)
 	if (len == 0)
 		return (0);
 	if (off < 0 || len < 0)
-		panic("m_copy");
+		panic(mcopystr);
 	while (off > 0) {
 		if (m == 0)
-			panic("m_copy");
+			panic(mcopystr);
 		if (off < m->m_len)
 			break;
 		off -= m->m_len;
@@ -250,7 +263,7 @@ m_copy(m, off, len)
 	while (len > 0) {
 		if (m == 0) {
 			if (len != M_COPYALL)
-				panic("m_copy");
+				panic(mcopystr);
 			break;
 		}
 		MGET(n, M_DONTWAIT, m->m_type);

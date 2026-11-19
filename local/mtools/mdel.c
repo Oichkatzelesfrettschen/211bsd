@@ -1,3 +1,7 @@
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)mdel.c 2.1 (2.11BSD) 2026/3/21";
+#endif
+
 /*
  * Delete an MSDOS file
  *
@@ -10,6 +14,7 @@
 
 #include <stdio.h>
 #include <signal.h>
+#include <strings.h>
 #include "msdos.h"
 #include "patchlevel.h"
 
@@ -21,7 +26,7 @@ int clus_size;				/* cluster size (in sectors) */
 char *mcwd;				/* the Current Working Directory */
 int fat_error;				/* FAT error detected? */
 
-static int got_signal();
+static void got_signal();
 
 main(argc, argv)
 int argc;
@@ -29,14 +34,15 @@ char *argv[];
 {
 	int i, ismatch, entry, nogo, verbose, fargn;
 	unsigned int start;
+	register char *cp;
 	char *filename, *newfile, *get_name(), *unix_name(), *get_path();
 	char *pathname, ans[10], drive, get_drive(), last_drive, *fix_mcwd();
 	void exit(), fat_write(), dir_write(), dir_flush(), disk_flush();
 	struct directory *dir, *dir_read();
 					/* catch signals */
-	signal(SIGINT, (SIG_TYPE(*) ()) got_signal);
-	signal(SIGTERM, (SIG_TYPE(*) ()) got_signal);
-	signal(SIGQUIT, (SIG_TYPE(*) ()) got_signal);
+	signal(SIGINT, got_signal);
+	signal(SIGTERM, got_signal);
+	signal(SIGQUIT, got_signal);
 
 	if (argc > 1 && !strcmp(argv[1], "-v")) {
 		verbose = 1;
@@ -97,7 +103,11 @@ char *argv[];
 				if (dir->attr & 0x01) {
 					while (!nogo) {
 						printf("%s: \"%s\" is read only, erase anyway (y/n) ? ", argv[0], newfile);
-						gets(ans);
+						ans[0] = '\0';
+						fgets(ans, sizeof ans, stdin);
+						cp = index(ans, '\n');
+						if	(cp) *cp = '\0';
+
 						if (ans[0] == 'y' || ans[0] == 'Y')
 							break;
 						if (ans[0] == 'n' || ans[0] == 'N')
@@ -133,7 +143,7 @@ char *argv[];
  * a user abort.
  */
 
-static int
+static void
 got_signal()
 {
 	void exit(), disk_flush(), fat_write(), dir_flush();

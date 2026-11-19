@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)itime_.c	5.1	6/7/85
+ *	@(#)itime_.c	5.2	(2.11BSD) 2026/7/21
  */
 
 /*
@@ -16,14 +16,14 @@
  *	iarray will receive the current time; hour, min, sec.
  */
 
-#include <sys/types.h>
+#include <time.h>
 #include <sys/time.h>
 
 itime_(iar)
 struct { long ihr; long imin; long isec; } *iar;
 {
-	struct tm *localtime(), *lclt;
-	long int time(), t;
+	struct tm *lclt;
+	time_t t;
 
 	t = time(0);
 	lclt = localtime(&t);

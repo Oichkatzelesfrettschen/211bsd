@@ -4,15 +4,16 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)pl_main.c	5.1 (Berkeley) 5/29/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)pl_main.c	5.2 (2.11BSD) 2026/1/27";
+#endif
 
 #include "player.h"
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <strings.h>
 
-int choke(), child();
+void choke(), child();
 
 /*ARGSUSED*/
 pl_main()
@@ -36,7 +37,7 @@ initialize()
 	char message[60];
 	int load;
 	register int n;
-	char *nameptr;
+	char *nameptr, *cp;
 	int nat[NNATION];
 
 	if (game < 0) {
@@ -170,9 +171,11 @@ reprint:
 		(void) strncpy(captain, nameptr, sizeof captain);
 	else {
 		(void) printf("Your name, Captain? ");
-		(void) fflush(stdout);
-		(void) gets(captain);
-		if (!*captain)
+		captain[0] = '\0';
+		(void) fgets(captain, sizeof captain, stdin);
+		cp = index(captain, '\n');
+		if (cp) *cp = '\0';
+		if (captain[0] == '\0')
 			(void) strcpy(captain, "no name");
 	}
 	captain[sizeof captain - 1] = '\0';

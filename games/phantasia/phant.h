@@ -3,7 +3,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)phant.h     1.1 (2.11BSD) 2020/1/7";
+static char sccsid[] = "@(#)phant.h     1.2 (2.11BSD) 2026/9/22";
 #endif
 
 #include <setjmp.h>
@@ -147,12 +147,10 @@ struct	worm_hole	/* worm hole */
 #define voidfile	PATH"/void"
 #define	enemyfile	PATH"/enemy"
 
-/* library functions and system calls */
-unsigned sleep();
-long	time(), ftell();
-char	*getlogin(), *getpass(), *ctime();
-struct	passwd	*getpwuid();
-char	*strcpy(), *strncpy();
+#include <stdio.h>
+#include <unistd.h>
+#include <strings.h>
+#include <time.h>
 
 /* function and global variable declarations */
 void	adjuststats(), callmonster(), checkinterm(), checkmov(), checktampered(),
@@ -161,7 +159,8 @@ void	adjuststats(), callmonster(), checkinterm(), checkmov(), checktampered(),
 	paws(), printhelp(), printmonster(), printplayers(), printstats(), purge(),
 	showall(), showusers(), statread(), talk(), tampered(), titlestuff(),
 	trade(), treasure(), trunc(), update(), voidupdate();
-int	allocvoid(), findchar(), findspace(), gch(), interrupt(), rgetch(), rngcalc();
+int	allocvoid(), findchar(), findspace(), gch() , rgetch(), rngcalc();
+void	interrupt();
 unsigned level();
 double	inflt();
 char	*printloc();

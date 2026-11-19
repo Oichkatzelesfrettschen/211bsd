@@ -1,14 +1,12 @@
-#ifndef lint
-static char sccsid[] = "@(#)xec.c	4.3 8/11/83";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)xec.c	4.4 (2.11BSD) 2026/5/11";
 #endif
 
-#
 /*
  * UNIX shell
  *
  * S. R. Bourne
  * Bell Telephone Laboratories
- *
  */
 
 #include	"defs.h"
@@ -18,10 +16,7 @@ LOCAL INT	parent;
 
 SYSTAB		commands;
 
-
-
 /* ========	command execution	========*/
-
 
 execute(argt, execflg, pf1, pf2)
 	TREPTR		argt;

@@ -2,43 +2,42 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)byteorder.3n	6.2 (Berkeley) 5/15/86
+.\"	@(#)byteorder.3	6.3 (2.11BSD) 2026/9/27
 .\"
-.TH BYTEORDER 3N "May 15, 1986"
+.TH BYTEORDER 3 "May 15, 1986"
 .UC 5
 .SH NAME
 htonl, htons, ntohl, ntohs \- convert values between host and network byte order
 .SH SYNOPSIS
 .nf
-.B #include <sys/types.h>
-.B #include <netinet/in.h>
-.PP
-.B netlong = htonl(hostlong);
-.B u_long netlong, hostlong;
-.PP
-.B netshort = htons(hostshort);
-.B u_short netshort, hostshort;
-.PP
-.B hostlong = ntohl(netlong);
-.B u_long hostlong, netlong;
-.PP
-.B hostshort = ntohs(netshort);
-.B u_short hostshort, netshort;
+.ft B
+#include <sys/types.h>
+#include <netinet/in.h>
+
+u_long
+htonl(\fIu_long hostlong\fP);
+
+u_short
+htons(\fIu_short hostshort\fP);
+
+u_long
+ntohl(\fIu_long netlong\fP);
+
+u_short
+ntohs(\fI u_short netshort\fP);
+.ft R
 .fi
 .SH DESCRIPTION
 These routines convert 16 and 32 bit quantities between network
 byte order and host byte order.  On machines such as the SUN
 these routines are defined as null macros in the include file
-.RI < netinet/in.h >.
+.RB < netinet/in.h >.
 .PP
 These routines are most often used in conjunction with Internet
 addresses and ports as returned by
-.IR gethostbyname (3N)
+.BR gethostbyname (3)
 and
-.IR getservent (3N).
+.BR getservent (3).
 .SH "SEE ALSO"
-gethostbyname(3N),
-getservent(3N)
-.SH BUGS
-The VAX handles bytes backwards from most everyone else in
-the world.  This is not expected to be fixed in the near future.
+gethostbyname(3),
+getservent(3)

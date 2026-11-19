@@ -31,27 +31,19 @@
  * SUCH DAMAGE.
  */
 
-#if !defined(BUILTIN) && !defined(SHELL) && !defined(lint) && defined(DOSCCS)
+#if !defined(lint) && defined(DOSCCS)
 static char copyright[] =
 "@(#) Copyright (c) 1989, 1993\n\
 	The Regents of the University of California.  All rights reserved.\n";
 
-static char sccsid[] = "@(#)printf.c	8.1 (Berkeley) 7/20/93";
-#endif /* not lint */
-
-#include <sys/types.h>
-
-#include <errno.h>
-#ifdef SHELL
-#define	EOF	-1
-#else
-#include <stdio.h>
+static char sccsid[] = "@(#)printf.c	8.2 (2.11BSD) 2026/5/8";
 #endif
-#include <string.h>
 
-extern	double	atof();
-extern	long	strtol();
-extern	int	errno;
+#include <math.h>
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 /*
  * XXX

@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)lpd.c	5.4.1 (2.11BSD GTE) 1/1/94";
+static char sccsid[] = "@(#)lpd.c	5.4.2 (2.11BSD) 2026/9/22";
 #endif
 
 /*
@@ -45,9 +45,9 @@ static char sccsid[] = "@(#)lpd.c	5.4.1 (2.11BSD GTE) 1/1/94";
 
 int	lflag;				/* log requests flag */
 
-int	reapchild();
-int	mcleanup();
-int	unblock, unpause();
+void	reapchild();
+void	mcleanup(), unpause();
+int	unblock;
 
 main(argc, argv)
 	int argc;
@@ -221,6 +221,7 @@ main(argc, argv)
 	}
 }
 
+void
 reapchild()
 {
 	union wait status;
@@ -229,6 +230,7 @@ reapchild()
 		;
 }
 
+void
 mcleanup()
 {
 	if (lflag)
@@ -237,6 +239,7 @@ mcleanup()
 	exit(0);
 }
 
+void
 unpause()
 {
 	unblock++;

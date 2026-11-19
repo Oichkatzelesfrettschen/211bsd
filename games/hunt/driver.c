@@ -8,6 +8,7 @@
  *  specifies the terms and conditions for redistribution.
  *
  * 1997/9/9 - updated to use sigprocmask (and compute the alarm mask correctly)
+ * 2026/9/22 - fix signal prototypes
  */
 
 # include	"hunt.h"
@@ -190,7 +191,7 @@ init()
 	SOCKET		test_port;
 	auto int	msg;
 # endif	INTERNET
-	int cleanup();
+	void cleanup();
 
 # ifndef DEBUG
 	(void) ioctl(fileno(stdout), TIOCNOTTY, NULL);
@@ -644,6 +645,7 @@ check_again:
  * cleanup:
  *	Exit with the given value, cleaning up any droppings lying around
  */
+void
 cleanup(eval)
 int	eval;
 {

@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char *sccsid = "@(#)ex_subr.c	7.10.1 (2.11BSD) 1996/3/22";
+static char *sccsid = "@(#)ex_subr.c	7.10.2 (2.11BSD) 2026/9/22";
 #endif
 
 #include "ex.h"
@@ -764,6 +764,8 @@ markit(addr)
  * in a weird state, etc.
  */
 int _ovno;
+
+void
 onemt()
 {
 	int oovno;
@@ -786,6 +788,7 @@ onemt()
  * as they are a backup even without preservation if they
  * are not removed.
  */
+void
 onhup()
 {
 
@@ -815,6 +818,7 @@ onhup()
  * Then like a normal error (with the \n before Interrupt
  * suppressed in visual mode).
  */
+void
 onintr()
 {
 
@@ -897,6 +901,7 @@ exit(i)
 /*
  * We have just gotten a susp.  Suspend and prepare to resume.
  */
+void
 onsusp()
 {
 	ttymode f;

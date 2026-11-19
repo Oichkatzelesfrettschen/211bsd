@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)ed.c	4.5.1.1 (Berkeley) 8/12/86";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ed.c	4.5.2 (2.11BSD) 2026/5/7";
 #endif
 
 /*
@@ -10,6 +10,9 @@ static char sccsid[] = "@(#)ed.c	4.5.1.1 (Berkeley) 8/12/86";
 #include <sgtty.h>
 #undef CEOF
 #include <setjmp.h>
+#include <stdlib.h>
+#include <unistd.h>
+
 #define	NULL	0
 #define	FNSIZE	64
 #define	LBSIZE	512
@@ -55,9 +58,8 @@ char	*linebp;
 int	ninbuf;
 int	io;
 int	pflag;
-long	lseek();
-int	(*oldhup)();
-int	(*oldquit)();
+sig_t	oldhup;
+sig_t	oldquit;
 int	vflag	= 1;
 
 
@@ -92,17 +94,15 @@ int	*address();
 char	*getline();
 char	*getblock();
 char	*place();
-char	*mktemp();
-char	*malloc();
-char	*realloc();
+extern	char	*mktemp();
 jmp_buf	savej;
 
 main(argc, argv)
 char **argv;
 {
 	register char *p1, *p2;
-	extern int onintr(), quit(), onhup();
-	int (*oldintr)();
+	void onintr(), quit(), onhup();
+	sig_t oldintr;
 
 	oldquit = signal(SIGQUIT, SIG_IGN);
 	oldhup = signal(SIGHUP, SIG_IGN);
@@ -546,6 +546,7 @@ exfile()
 	}
 }
 
+void
 onintr()
 {
 	signal(SIGINT, onintr);
@@ -554,6 +555,7 @@ onintr()
 	error(Q);
 }
 
+void
 onhup()
 {
 	signal(SIGINT, SIG_IGN);
@@ -744,7 +746,8 @@ int (*f)();
 
 callunix()
 {
-	register (*savint)(), pid, rpid;
+	sig_t savint;
+	register pid_t pid, rpid;
 	int retcode;
 
 	setnoaddr();

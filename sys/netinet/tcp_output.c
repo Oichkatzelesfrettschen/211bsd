@@ -9,7 +9,7 @@
  * software without specific prior written permission. This software
  * is provided ``as is'' without express or implied warranty.
  *
- *	@(#)tcp_output.c	7.13.1.5 (2.11BSD) 2000/5/17
+ *	@(#)tcp_output.c	7.13.1.5 (2.11BSD) 2026/7/16
  */
 
 #include "param.h"
@@ -240,7 +240,7 @@ send:
 
 	ti = mtod(m, struct tcpiphdr *);
 	if (tp->t_template == 0)
-		panic("tcp_output");
+		panic("tcpo 1");
 	bcopy((caddr_t)tp->t_template, (caddr_t)ti, sizeof (struct tcpiphdr));
 
 	/*
@@ -421,7 +421,7 @@ tcp_setpersist(tp)
 	register t = ((tp->t_srtt >> 2) + tp->t_rttvar) >> 1;
 
 	if (tp->t_timer[TCPT_REXMT])
-		panic("tcp_output REXMT");
+		panic("tcpo 2");
 	/*
 	 * Start/restart persistance timer.
 	 */

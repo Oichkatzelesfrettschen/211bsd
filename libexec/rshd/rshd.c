@@ -20,7 +20,7 @@ char copyright[] =
 "@(#) Copyright (c) 1983, 1988, 1989 The Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)rshd.c	5.17.1.4 (Berkeley) 1996/11/29";
+static char sccsid[] = "@(#)rshd.c	5.17.1.5 (2.11BSD) 2026/9/21";
 #endif
 
 /*
@@ -35,7 +35,6 @@ static char sccsid[] = "@(#)rshd.c	5.17.1.4 (Berkeley) 1996/11/29";
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <sys/file.h>
-#include <sys/signal.h>
 #include <sys/time.h>
 
 #include <netinet/in.h>
@@ -49,11 +48,13 @@ static char sccsid[] = "@(#)rshd.c	5.17.1.4 (Berkeley) 1996/11/29";
 #include <syslog.h>
 #include <arpa/nameser.h>
 #include <resolv.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <string.h>
-#include "pathnames.h"
+#include <paths.h>
 
-int	errno;
+#define	_PATH_DEFPATH	"PATH=/bin:/usr/ucb:/usr/bin:/usr/sbin"
+
 int	keepalive = 1;
 int	check_all = 0;
 /*VARARGS1*/

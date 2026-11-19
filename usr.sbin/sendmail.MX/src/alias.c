@@ -16,9 +16,9 @@
 
 #if !defined(lint) && !defined(NOSCCS)
 #ifdef DBM
-static char sccsid[] = "@(#)alias.c	5.15 (Berkeley) 4/1/88 (with DBM)";
+static char sccsid[] = "@(#)alias.c	5.16 (2.11BSD) 2026/9/19 (with DBM)";
 #else
-static char sccsid[] = "@(#)alias.c	5.15 (Berkeley) 4/1/88 (without DBM)";
+static char sccsid[] = "@(#)alias.c	5.16 (2.11BSD) 2026/9/19 (without DBM)";
 #endif
 #endif /* not lint */
 
@@ -216,10 +216,10 @@ initaliases(aliasfile, init)
 			**	Only works with new DBM -- old one will
 			**	just consume file descriptors forever.
 			**	If you have a dbmclose() it can be
-			**	added before the sleep(30).
+			**	added before the xsleep(30).
 			*/
 
-			sleep(30);
+			xsleep(30);
 # ifdef NDBM
 			dbminit(aliasfile);
 # endif NDBM
@@ -316,7 +316,7 @@ readaliases(aliasfile, init)
 	bool skipping;
 	int naliases, bytes, longest;
 	FILE *af;
-	int (*oldsigint)();
+	sig_t oldsigint;
 	ADDRESS al, bl;
 	register STAB *s;
 	char line[BUFSIZ];

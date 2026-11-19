@@ -1,8 +1,6 @@
-#ifndef lint
-static char sccsid[] = "@(#)prefix.c	5.3 (Berkeley) 6/20/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)prefix.c	5.4 (2.11BSD) 2026/5/9";
 #endif
-
-/*LINTLIBRARY*/
 
 /*
  *	check s2 for prefix s1

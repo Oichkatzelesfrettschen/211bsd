@@ -35,7 +35,7 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)misc.c	5.7.1 (2.11BSD) 1999/10/25";
+static char sccsid[] = "@(#)misc.c	5.7.2 (2.11BSD) 2026/10/21";
 #endif
 
 #include <sys/param.h>
@@ -46,7 +46,6 @@ static char sccsid[] = "@(#)misc.c	5.7.1 (2.11BSD) 1999/10/25";
 #include <string.h>
 #include "archive.h"
 #include "extern.h"
-#include "pathnames.h"
 
 extern CHDR chdr;			/* converted header */
 extern char *archive;			/* archive name */
@@ -66,9 +65,9 @@ tmp()
 	}
 
 	if (envtmp)
-		(void)sprintf(path, "%s/%s", envtmp, _NAME_ARTMP);
+		(void)sprintf(path, "%s/ar.XXXXXX", envtmp);
 	else
-		bcopy(_PATH_ARTMP, path, sizeof(_PATH_ARTMP));
+		strcpy(path, "/tmp/ar.XXXXXX");
 	
 	sigfillset(&set);
 	(void)sigprocmask(SIG_BLOCK, &set,  &oset);

@@ -1,0 +1,33 @@
+.\"
+.\"     @(#)strdup.3	8.1.1 (2.11BSD) 1996/1/12
+.\"
+.TH STRDUP 3 "May 27, 2026"
+.UC 7
+.SH NAME
+\fBstrdup\fP \- save a copy of a string
+.SH SYNOPSIS
+.B #include <string.h>
+.sp
+.B char *
+.br
+\fBstrdup\fP(\fIconst char *s\fP)
+.SH DESCRIPTION
+The
+.BR strdup ()
+function
+allocates sufficient memory for a copy of the string \fIs\fP, does the copy
+and returns a pointer to the allocated memory.  The pointer may be used as
+an argument to free(3).
+.SH RETURN VALUES
+The
+.BR strdup ()
+function
+returns NULL and sets \fBerrno\fP to ENOMEM if insufficient memory is available.
+.SH SEE ALSO
+malloc(3),
+bcopy(3)
+.SH HISTORY
+The
+.BR strdup ()
+function
+first appeared in 4.4BSD

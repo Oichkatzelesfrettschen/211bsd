@@ -1,7 +1,14 @@
+#if     !defined(lint) && defined(DOSCCS)
+char rcsid[] = "util.c 2.1 (2.11BSD) 2026/6/21";
+#endif
+
 #include "EXTERN.h"
 #include "common.h"
 #include "INTERN.h"
 #include "util.h"
+
+void	my_exit();
+static	char internalerr[] = "patch: internal error, can't reopen %s\n";
 
 /* Rename a file, copying it if necessary. */
 
@@ -10,33 +17,33 @@ move_file(from,to)
 char *from, *to;
 {
     char bakname[512];
-    Reg1 char *s;
-    Reg2 int i;
-    Reg3 int fromfd;
+    register char *s;
+    register int i;
+    register int fromfd;
 
     /* to stdout? */
 
     if (strEQ(to, "-")) {
 #ifdef DEBUGGING
 	if (debug & 4)
-	    say2("Moving %s to stdout.\n", from);
+	    fprintf(stderr, "Moving %s to stdout\n", from);
 #endif
 	fromfd = open(from, 0);
 	if (fromfd < 0)
-	    fatal2("patch: internal error, can't reopen %s\n", from);
+	    fatal(internalerr, from);
 	while ((i=read(fromfd, buf, sizeof buf)) > 0)
 	    if (write(1, buf, i) != 1)
-		fatal1("patch: write failed\n");
-	Close(fromfd);
+		fatal("patch: write failed\n");
+	close(fromfd);
 	return 0;
     }
 
 	if (origprae) {
-		Strcpy (bakname, origprae);
-    	Strcat(bakname, to);
+		strcpy (bakname, origprae);
+    	strcat(bakname, to);
 	} else {
-   		Strcpy(bakname, to);
-    	Strcat(bakname, origext?origext:ORIGEXT);
+   		strcpy(bakname, to);
+    	strcat(bakname, origext?origext:ORIGEXT);
 	}
     if (stat(to, &filestat) >= 0) {	/* output file exists */
 	dev_t to_device = filestat.st_dev;
@@ -54,15 +61,15 @@ char *from, *to;
 	    if (*s)
 		*s = toupper(*s);
 	    else
-		Strcpy(simplename, simplename+1);
+		strcpy(simplename, simplename+1);
 	}
 	while (unlink(bakname) >= 0) ;	/* while() is for benefit of Eunice */
 #ifdef DEBUGGING
 	if (debug & 4)
-	    say3("Moving %s to %s.\n", to, bakname);
+	    fprintf(stderr, "Moving %s to %s\n", to, bakname);
 #endif
 	if (link(to, bakname) < 0) {
-	    say3("patch: can't backup %s, output is in %s\n",
+	    fprintf(stderr, "patch: can't backup %s, output is in %s\n",
 		to, from);
 	    return -1;
 	}
@@ -70,27 +77,27 @@ char *from, *to;
     }
 #ifdef DEBUGGING
     if (debug & 4)
-	say3("Moving %s to %s.\n", from, to);
+	fprintf(stderr, "Moving %s to %s\n", from, to);
 #endif
     if (link(from, to) < 0) {		/* different file system? */
-	Reg4 int tofd;
+	int tofd;
 	
 	tofd = creat(to, 0666);
 	if (tofd < 0) {
-	    say3("patch: can't create %s, output is in %s.\n",
+	    fprintf(stderr, "patch: can't create %s, output is in %s\n",
 	      to, from);
 	    return -1;
 	}
 	fromfd = open(from, 0);
 	if (fromfd < 0)
-	    fatal2("patch: internal error, can't reopen %s\n", from);
+	    fatal(internalerr, from);
 	while ((i=read(fromfd, buf, sizeof buf)) > 0)
 	    if (write(tofd, buf, i) != i)
-		fatal1("patch: write failed\n");
-	Close(fromfd);
-	Close(tofd);
+		fatal("patch: write failed\n");
+	close(fromfd);
+	close(tofd);
     }
-    Unlink(from);
+    unlink(from);
     return 0;
 }
 
@@ -100,31 +107,31 @@ void
 copy_file(from,to)
 char *from, *to;
 {
-    Reg3 int tofd;
-    Reg2 int fromfd;
-    Reg1 int i;
+    register int tofd;
+    register int fromfd;
+    register int i;
     
     tofd = creat(to, 0666);
     if (tofd < 0)
-	fatal2("patch: can't create %s.\n", to);
+	fatal("patch: can't create %s\n", to);
     fromfd = open(from, 0);
     if (fromfd < 0)
-	fatal2("patch: internal error, can't reopen %s\n", from);
+	fatal(internalerr, from);
     while ((i=read(fromfd, buf, sizeof buf)) > 0)
 	if (write(tofd, buf, i) != i)
-	    fatal2("patch: write (%s) failed\n", to);
-    Close(fromfd);
-    Close(tofd);
+	    fatal("patch: write (%s) failed\n", to);
+    close(fromfd);
+    close(tofd);
 }
 
 /* Allocate a unique area for a string. */
 
 char *
 savestr(s)
-Reg1 char *s;
+register char *s;
 {
-    Reg3 char *rv;
-    Reg2 char *t;
+    register char *rv;
+    register char *t;
 
     if (!s)
 	s = "Oops";
@@ -135,7 +142,7 @@ Reg1 char *s;
 	if (using_plan_a)
 	    out_of_mem = TRUE;
 	else
-	    fatal1("patch: out of memory (savestr)\n");
+	    fatal("patch: out of memory (savestr)\n");
     }
     else {
 	t = rv;
@@ -144,90 +151,49 @@ Reg1 char *s;
     return rv;
 }
 
-#if defined(lint) && defined(CANVARARG)
-
-/*VARARGS ARGSUSED*/
-say(pat) char *pat; { ; }
-/*VARARGS ARGSUSED*/
-fatal(pat) char *pat; { ; }
-/*VARARGS ARGSUSED*/
-ask(pat) char *pat; { ; }
-
-#else
-
-/* Vanilla terminal output (buffered). */
-
 void
-say(pat,arg1,arg2,arg3)
-char *pat;
-long arg1,arg2,arg3;
+fatal(char *fmt, ...)
 {
-    fprintf(stderr, pat, arg1, arg2, arg3);
-    Fflush(stderr);
-}
+    va_list ap;
 
-/* Terminal output, pun intended. */
-
-void				/* very void */
-fatal(pat,arg1,arg2,arg3)
-char *pat;
-long arg1,arg2,arg3;
-{
-#ifdef VOIDSIG
-    void my_exit();
-#else
-    int my_exit();
-#endif
-
-    say(pat, arg1, arg2, arg3);
+    va_start(ap, fmt);
+    vfprintf(stderr, fmt, ap);
     my_exit(1);
 }
 
-/* Get a response from the user, somehow or other. */
+/*
+ * Get a response from the user.
+ *
+ * stdin (0) is almost always patch input
+ * stdout (1) is often new file output
+ * stderr (2) can be redirected to a file
+ *
+ * open /dev/tty to get a terminal  to prompt and read response
+*/
 
 void
-ask(pat,arg1,arg2,arg3)
-char *pat;
-long arg1,arg2,arg3;
+ask(prompt)
+char *prompt;
 {
     int ttyfd;
     int r;
-    bool tty2 = isatty(2);
 
-    Sprintf(buf, pat, arg1, arg2, arg3);
-    Fflush(stderr);
-    write(2, buf, strlen(buf));
-    if (tty2) {				/* might be redirected to a file */
-	r = read(2, buf, sizeof buf);
-    }
-    else if (isatty(1)) {		/* this may be new file output */
-	Fflush(stdout);
-	write(1, buf, strlen(buf));
-	r = read(1, buf, sizeof buf);
-    }
-    else if ((ttyfd = open("/dev/tty", 2)) >= 0 && isatty(ttyfd)) {
-					/* might be deleted or unwriteable */
-	write(ttyfd, buf, strlen(buf));
+    if	((ttyfd = open("/dev/tty", 2)) >= 0)
+	{
+	write(ttyfd, prompt, strlen(prompt));
 	r = read(ttyfd, buf, sizeof buf);
-	Close(ttyfd);
-    }
-    else if (isatty(0)) {		/* this is probably patch input */
-	Fflush(stdin);
-	write(0, buf, strlen(buf));
-	r = read(0, buf, sizeof buf);
-    }
-    else {				/* no terminal at all--default it */
+	close(ttyfd);
+        }
+    else
+	{				/* no terminal - can't happen */
 	buf[0] = '\n';
 	r = 1;
-    }
-    if (r <= 0)
+	}
+    if	(r <= 0)
 	buf[0] = 0;
     else
 	buf[r] = '\0';
-    if (!tty2)
-	say1(buf);
 }
-#endif /* lint */
 
 /* How to handle certain events when not in a critical region. */
 
@@ -235,34 +201,18 @@ void
 set_signals(reset)
 int reset;
 {
-#ifndef lint
-#ifdef VOIDSIG
-    void my_exit();
-    static void (*hupval)(),(*intval)();
-#else
-    int my_exit();
-    static int (*hupval)(),(*intval)();
-#endif
+    static sig_t hupval, intval;
 
     if (!reset) {
 	hupval = signal(SIGHUP, SIG_IGN);
 	if (hupval != SIG_IGN)
-#ifdef VOIDSIG
 	    hupval = my_exit;
-#else
-	    hupval = (int(*)())my_exit;
-#endif
 	intval = signal(SIGINT, SIG_IGN);
 	if (intval != SIG_IGN)
-#ifdef VOIDSIG
 	    intval = my_exit;
-#else
-	    intval = (int(*)())my_exit;
-#endif
     }
-    Signal(SIGHUP, hupval);
-    Signal(SIGINT, intval);
-#endif
+    signal(SIGHUP, hupval);
+    signal(SIGINT, intval);
 }
 
 /* How to handle certain events when in a critical region. */
@@ -270,24 +220,22 @@ int reset;
 void
 ignore_signals()
 {
-#ifndef lint
-    Signal(SIGHUP, SIG_IGN);
-    Signal(SIGINT, SIG_IGN);
-#endif
+    signal(SIGHUP, SIG_IGN);
+    signal(SIGINT, SIG_IGN);
 }
 
 /* Make sure we'll have the directories to create a file. */
 
 void
 makedirs(filename,striplast)
-Reg1 char *filename;
+register char *filename;
 bool striplast;
 {
     char tmpbuf[256];
-    Reg2 char *s = tmpbuf;
+    register char *s = tmpbuf;
     char *dirv[20];
-    Reg3 int i;
-    Reg4 int dirvp = 0;
+    register int i;
+    int dirvp = 0;
 
     while (*filename) {
 	if (*filename == '/') {
@@ -326,7 +274,7 @@ int assume_exists;
 {
     char *s;
     char *name;
-    Reg1 char *t;
+    register char *t;
     char tmpbuf[200];
 
     if (!at)
@@ -336,7 +284,7 @@ int assume_exists;
     name = t;
 #ifdef DEBUGGING
     if (debug & 128)
-	say4("fetchname %s %d %d\n",name,strip_leading,assume_exists);
+	fprintf(stderr, "fetchname %s %d %d\n",name,strip_leading,assume_exists);
 #endif
     if (strnEQ(name, "/dev/null", 9))	/* so files can be created by diffing */
 	return Nullch;			/*   against /dev/null. */
@@ -353,17 +301,10 @@ int assume_exists;
 	}
     }
     name = savestr(name);
-    Sprintf(tmpbuf, "RCS/%s", name);
     free(s);
     if (stat(name, &filestat) < 0 && !assume_exists) {
-	Strcat(tmpbuf, RCSSUFFIX);
-	if (stat(tmpbuf, &filestat) < 0 && stat(tmpbuf+4, &filestat) < 0) {
-	    Sprintf(tmpbuf, "SCCS/%s%s", SCCSPREFIX, name);
-	    if (stat(tmpbuf, &filestat) < 0 && stat(tmpbuf+5, &filestat) < 0) {
-		free(name);
-		name = Nullch;
-	    }
-	}
-    }
+	free(name);
+	name = Nullch;
+    	}
     return name;
 }

@@ -4,15 +4,15 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)acu.c	5.5 (Berkeley) 12/4/87";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)acu.c	5.6 (2.11BSD) 2026/5/9";
+#endif
 
 #include "tip.h"
 
 static acu_t *acu = NOACU;
 static int conflag;
-static int acuabort();
+static void acuabort();
 static acu_t *acutype();
 static jmp_buf jmpbuf;
 /*
@@ -144,7 +144,7 @@ disconnect(reason)
 	(*acu->acu_disconnect)();
 }
 
-static int
+static void
 acuabort(s)
 {
 	signal(s, SIG_IGN);

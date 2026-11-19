@@ -9,7 +9,7 @@
  * software without specific prior written permission. This software
  * is provided ``as is'' without express or implied warranty.
  *
- *	@(#)if_ether.c	7.8 (2.11BSD) 2025/8/21
+ *	@(#)if_ether.c	7.9 (2.11BSD) 2026/7/16
  */
 
 /*
@@ -201,7 +201,7 @@ arpresolve(ac, m, destip, desten, usetrailers)
 		} else {
 			at = arptnew(destip);
 			if (at == 0)
-				panic("arpresolve: no free entry");
+				panic("arp !free");
 			at->at_hold = m;
 			arpwhohas(ac, destip);
 			splx(s);
@@ -287,14 +287,11 @@ in_arpinput(ac, m)
 		goto out;	/* it's from me, ignore it. */
 	if (!bcmp((caddr_t)ea->arp_sha, (caddr_t)etherbroadcastaddr,
 	    sizeof (ea->arp_sha))) {
-		printf("arp: ether address is broadcast for IP address %x!\n",
-		    ntohl(isaddr.s_addr));
+		printf("eth=bcast %x\n", ntohl(isaddr.s_addr));
 		goto out;
 	}
 	if (isaddr.s_addr == myaddr.s_addr) {
-		printf("%s: %s\n",
-			"duplicate IP address!! sent from ethernet address",
-			ether_sprintf(ea->arp_sha));
+		printf("dup IP frm %s\n", ether_sprintf(ea->arp_sha));
 		itaddr = myaddr;
 		if (op == ARPOP_REQUEST)
 			goto reply;

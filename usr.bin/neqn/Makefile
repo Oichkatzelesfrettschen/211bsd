@@ -1,4 +1,4 @@
-#	Makefile	4.2	(2.11BSD) 2025/11/27
+#	Makefile	4.3	(2.11BSD) 2026/1/13
 
 CFLAGS=-O -DNEQN -I../eqn/
 YFLAGS=-d
@@ -28,7 +28,7 @@ install: neqn
 	install -c -s -m 755 neqn /usr/bin
 
 clean:
-	rm -f *.o e.c e.def
+	rm -f *.o e.c e.def neqn
 
 diacrit.o:	../eqn/diacrit.c
 	$(CC) $(CFLAGS) -c ../eqn/diacrit.c

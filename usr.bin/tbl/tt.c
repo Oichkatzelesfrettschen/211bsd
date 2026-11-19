@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)tt.c	4.2 8/11/83";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)tt.c	4.3 (2.11BSD) 2026/5/9";
 #endif
 
  /* tt.c: subroutines for drawing horizontal lines */
@@ -24,7 +24,8 @@ return(c<ncol && ctype(i,c)=='s');
 }
 lspan(i,c)
 {
-int k;
+register int k;
+
 if (ctype(i,c) != 's') return(0);
 c++;
 if (c < ncol && ctype(i,c)== 's') 
@@ -34,7 +35,8 @@ return(k);
 }
 ctspan(i,c)
 {
-int k;
+register int k;
+
 c++;
 for(k=1; c<ncol && ctype(i,c)=='s'; k++)
 	c++;

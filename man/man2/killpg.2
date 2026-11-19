@@ -2,26 +2,29 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)killpg.2	6.3 (Berkeley) 5/14/86
+.\"	@(#)killpg.2	6.4 (2.11BSD) 2026/9/21
 .\"
 .TH KILLPG 2 "May 14, 1986"
 .UC 4
 .SH NAME
 killpg \- send signal to a process group
 .SH SYNOPSIS
+.nf
 .ft B
-killpg(pgrp, sig)
-.br
-int pgrp, sig;
+#include <signal.h>
+
+int
+killpg(\fIpid_t pgrp\fP, \fIint sig\fP)
 .ft R
+.fi
 .SH DESCRIPTION
-.I Killpg
+.B killpg
 sends the signal
 .I sig
 to the process group
 .IR pgrp .
 See
-.IR sigvec (2)
+.BR sigvec (2)
 for a list of signals.
 .PP
 The sending process and members of the process group must
@@ -31,14 +34,14 @@ As a single special case the continue signal SIGCONT may be sent
 to any process that is a descendant of the current process.
 .SH "RETURN VALUE
 Upon successful completion, a value of 0 is returned.  Otherwise,
-a value of \-1 is returned and the global variable \fIerrno\fP
+a value of \-1 is returned and the global variable \fBerrno\fP
 is set to indicate the error.
 .SH "ERRORS
-\fIKillpg\fP will fail and no signal will be sent if any of the
+\fBkillpg\fP will fail and no signal will be sent if any of the
 following occur:
 .TP 15
 [EINVAL]
-\fISig\fP is not a valid signal number.
+\fIsig\fP is not a valid signal number.
 .TP 15
 [ESRCH]
 No process can be found in the process group specified by \fIpgrp\fP.

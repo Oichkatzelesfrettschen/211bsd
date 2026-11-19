@@ -1,3 +1,7 @@
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)mread.c 2.1 (2.11BSD) 2026/3/21";
+#endif
+
 /*
  * Read (copy) an MSDOS file to Unix
  *
@@ -12,13 +16,12 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <strings.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifdef BSD
 #include <sys/time.h>
-#else /* BSD */
 #include <time.h>
-#endif /* BSD */
 #include "msdos.h"
 #include "patchlevel.h"
 
@@ -39,15 +42,12 @@ int argc;
 char *argv[];
 {
 	FILE *fp;
-	extern int optind;
-	extern char *optarg;
 	int i, ismatch, entry, single, c, oops, preserve, nowarn, textmode;
 	unsigned int fat;
 	long size, mtime;
 	char *filename, *newfile, *get_name(), *unix_name(), *pathname;
-	char *get_path(), *target, tmp[MAX_PATH], *strcat(), *strcpy(), drive;
+	char *get_path(), *target, tmp[MAX_PATH], drive;
 	char get_drive(), last_drive, *fix_mcwd(), *s;
-	void exit();
 	struct directory *dir, *dir_read();
 	struct stat stbuf;
 
@@ -201,6 +201,7 @@ int nowarn;
 {
 	static FILE *fp;
 	char ans[10];
+	register char *cp;
 	struct stat stbuf;
 
 	if (!nowarn) {
@@ -208,7 +209,11 @@ int nowarn;
 			/* CONSTCOND */
 			while (1) {
 				printf("File \"%s\" exists, overwrite (y/n) ? ", target);
-				gets(ans);
+				ans[0] = '\0';
+				fgets(ans, sizeof ans, stdin);
+				cp = index(ans, '\n');
+				if	(cp) *cp = '\0';
+
 				if (ans[0] == 'n' || ans[0] == 'N')
 					return(NULL);
 				if (ans[0] == 'y' || ans[0] == 'Y')
@@ -239,13 +244,8 @@ static long
 conv_stamp(time_field, date_field)
 unsigned char *time_field, *date_field;
 {
-#ifdef BSD
 	struct timeval tv;
 	struct timezone tz;
-#else /* BSD */
-	extern long timezone;
-	void tzset();
-#endif /* BSD */
 	struct tm *tmbuf, *localtime();
 	int year, mon, mday, hour, min, sec, old_leaps;
 	long answer, sec_year, sec_mon, sec_mday, sec_hour, sec_min, sec_leap;
@@ -271,13 +271,8 @@ unsigned char *time_field, *date_field;
 	sec_hour = hour * 60L * 60L;
 	sec_min = min * 60L;
 					/* correct for Time Zone */
-#ifdef BSD
 	gettimeofday(&tv, &tz);
 	tzone = tz.tz_minuteswest * 60L;
-#else /* BSD */
-	tzset();
-	tzone = timezone;
-#endif /* BSD */
 
 	answer = sec_leap + sec_year + sec_mon + sec_mday + sec_hour + sec_min + sec + tzone;
 					/* correct for Daylight Saving Time */
@@ -297,7 +292,6 @@ set_mtime(target, mtime)
 char *target;
 long mtime;
 {
-#ifdef BSD
 	struct timeval tv[2];
 
 	if (mtime != 0L) {
@@ -307,18 +301,6 @@ long mtime;
 		tv[1].tv_usec = 0;
 		utimes(target, tv);
 	}
-#else /* BSD */
-	struct {
-		time_t actime;
-		time_t modtime;
-	} utbuf;
-
-	if (mtime != 0L) {
-		utbuf.actime = mtime;
-		utbuf.modtime = mtime;
-		utime(target, &utbuf);
-	}
-#endif /* BSD */
 	return;
 }
 

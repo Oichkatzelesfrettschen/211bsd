@@ -9,7 +9,7 @@
 # software without specific prior written permission. This software
 # is provided ``as is'' without express or implied warranty.
 #
-#	2.11	(2.11BSD) 2025/11/25
+#	2.12	(2.11BSD) 2026/2/28
 #
 #########################################################
 # Networking, separate I/D kernel			#
@@ -25,7 +25,6 @@ N4=	../netns
 N6=	../pdpif
 S=	../sys
 U=	../pdpuba
-MB=	../pdpmba
 
 DEFS=	-DKERNEL ${OPTS} -I. -I${H}
 CFLAGS=	-O ${DEFS}
@@ -35,7 +34,7 @@ AS=	/bin/as -V
 ED=	/bin/ed
 SED=	/bin/sed
 
-SUB=	sys pdp pdpuba pdpmba net pdpnet
+SUB=	sys pdp pdpuba net pdpnet
 
 # GENERAL RULES:
 # scb.o MUST be loaded first, param.o MUST be loaded last,
@@ -71,8 +70,8 @@ OV5=	quota_kern.o quota_ufs.o quota_sys.o ufs_bmap.o	\
 	sys_pipe.o
 # OV6 gets the (hopefully) never used routines
 OV6=	clock.o dn.o init_main.o kern_pdp.o machdep2.o subr_prf.o syscalls.o \
-	subr_log.o toy.o vm_swp.o
-OV7=	ufs_disksubr.o ufs_dsort.o ufs_syscalls2.o kern_sig2.o
+	subr_log.o vm_swp.o
+OV7=	ufs_disksubr.o ufs_dsort.o ufs_syscalls2.o kern_sig2.o toy.o
 OV8=	mch_fpsim.o kern_sysctl.o kern_xxx.o ingreslock.o vm_text.o
 OV9=	tmscp.o tmscpdump.o
 
@@ -107,10 +106,10 @@ unix: ${SUB} ${KERNOBJ} d.unix.o checksys
 	size unix
 	@echo Compacting symbol table
 	-symcompact unix
-	@echo Compacting strings table
-	-strcompact unix
 	@echo rearranging symbols
 	-symorder ../pdp/symbols.sort unix
+	@echo Compacting strings table
+	-strcompact unix
 	./checksys unix
 
 # d.netnix.o must be the last object file in the dependency list!
@@ -119,10 +118,10 @@ netnix: d.netnix.o
 	size netnix
 	@echo Compacting symbol table
 	-symcompact netnix
-	@echo Compacting strings table - this will take a few minutes
-	-strcompact netnix
 	@echo rearranging symbols
 	-symorder ../pdp/symbols.sort netnix
+	@echo Compacting strings table - this will take a few minutes
+	-strcompact netnix
 
 # Resolve all references between the kernel and the net.  Always regenerate!!!
 # This was a constant source of problems during development.  Should really
@@ -158,7 +157,7 @@ checksys: ../conf/checksys.c
 netbind: ../conf/netbind.c
 	${CC} ${CFLAGS} -o $@ ../conf/netbind.c
 
-sys pdp pdpuba pdpmba:
+sys pdp pdpuba:
 	make -f Make.$@ I=${I} H=${H} M=${M} AS="${AS}" CPP="${CPP}" \
 	    CFLAGS="${CFLAGS}" SED="${SED}"
 
@@ -181,7 +180,7 @@ depend: FRC
 	mkdep ${CFLAGS} param.c ioconf.c ../conf/checksys.c ../conf/netbind.c
 
 TAGSFILE= ${S}/tags
-TLIST=	${H} ${I} ${N1} ${N2} ${N3} ${N4} ${N5} ${N6} ${M} ${S} ${U} ${MB} ${SS}
+TLIST=	${H} ${I} ${N1} ${N2} ${N3} ${N4} ${N5} ${N6} ${M} ${S} ${U} ${SS}
 
 tags: FRC
 	rm -f ${TAGSFILE}

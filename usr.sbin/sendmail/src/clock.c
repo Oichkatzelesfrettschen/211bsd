@@ -9,7 +9,7 @@
 */
 
 #if !defined(lint) && !defined(NOSCCS)
-static char	SccsId[] = "@(#)clock.c	5.4.2 (2.11BSD) 1997/10/3";
+static char	SccsId[] = "@(#)clock.c	5.4.3 (2.11BSD) 2026/9/19";
 #endif
 
 # include "sendmail.h"
@@ -42,7 +42,7 @@ setevent(intvl, func, arg)
 	register EVENT **evp;
 	register EVENT *ev;
 	auto time_t now;
-	extern tick();
+	extern void tick();
 
 # ifdef DEBUG
 	if (intvl <= 0)
@@ -79,7 +79,8 @@ setevent(intvl, func, arg)
 	tick();
 	return (ev);
 }
-/*
+
+/*
 **  CLREVENT -- remove an event from the event queue.
 **
 **	Parameters:
@@ -122,7 +123,8 @@ clrevent(ev)
 	/* restore clocks and pick up anything spare */
 	tick();
 }
-/*
+
+/*
 **  TICK -- take a clock tick
 **
 **	Called by the alarm clock.  This routine runs events as needed.
@@ -137,6 +139,7 @@ clrevent(ev)
 **		calls the next function in EventQueue.
 */
 
+void
 tick()
 {
 	register time_t now;
@@ -196,40 +199,44 @@ tick()
 	if (EventQueue != NULL)
 		(void) alarm((unsigned) (EventQueue->ev_time - now));
 }
-/*
-**  SLEEP -- a version of sleep that works with this stuff
-**
-**	Because sleep uses the alarm facility, I must reimplement
-**	it here.
-**
-**	Parameters:
-**		intvl -- time to sleep.
-**
-**	Returns:
-**		none.
-**
-**	Side Effects:
-**		waits for intvl time.  However, other events can
-**		be run during that interval.
+
+/*
+ *  XSLEEP -- a version of sleep that works with this stuff
+ *
+ *	Because sleep uses the alarm facility, I must reimplement
+ *	it here.
+ *
+ *	Eric should have known that the same name as a system library 
+ *	function is BAD coding practice.  The function is renamed to 
+ *	xsleep() to avoid conflict with unistd.h
+ *
+ *	Parameters:
+ *		intvl -- time to sleep.
+ *
+ *	Returns:
+ *		Unlike the system sleep this function does not return the
+ *		unslept time.
+ *
+ *	Side Effects:
+ *		waits for intvl time.  However, other events can
+ *		be run during that interval.
 */
 
 static bool	SleepDone;
 
-unsigned int
-sleep(intvl)
-	unsigned int intvl;
+endsleep()
 {
-	extern endsleep();
+	SleepDone = TRUE;
+}
 
+void
+xsleep(intvl)
+	int intvl;
+{
 	if (intvl == 0)
 		return;
 	SleepDone = FALSE;
 	(void) setevent((time_t) intvl, endsleep, 0);
 	while (!SleepDone)
 		pause();
-}
-
-endsleep()
-{
-	SleepDone = TRUE;
 }

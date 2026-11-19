@@ -33,8 +33,11 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)mdef.h	8.1 (Berkeley) 6/6/93
+ *	@(#)mdef.h	8.2 (2.11BSD) 2026/9/24
  */
+
+#define _PATH_DIVNAME   "/tmp/m4.0XXXXXX"       /* unix diversion files */
+#define UNIQUE          8                       /* unique char location */
 
 #define MACRTYPE        1
 #define DEFITYPE        2

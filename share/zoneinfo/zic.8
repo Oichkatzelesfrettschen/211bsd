@@ -1,4 +1,4 @@
-.. @(#)zic.8	3.3 2024/9/19
+.. @(#)zic.8	3.4 (2.11BSD) 2024/9/19
 .TH ZIC 8
 .SH NAME
 zic \- time zone compiler
@@ -16,7 +16,7 @@ zic \- time zone compiler
 .I filename
 \&... ]
 .SH DESCRIPTION
-.I Zic
+.B zic
 reads text from the file(s) named on the command line
 and creates the time conversion information files specified in this input.
 If a
@@ -33,7 +33,7 @@ in the default directory named below.
 .TP
 .BI "\-l " timezone
 Use the given time zone as local time.
-.I Zic
+.B zic
 will act as if the file contained a link line of the form
 .sp
 .ti +.5i
@@ -42,7 +42,7 @@ Link	\fItimezone\fP		localtime
 .B \-v
 Complain if a year that appears in a data file is outside the range
 of years representable by
-.IR time (2)
+.BR time (2)
 values.
 .sp
 Input lines are made up of fields.
@@ -291,4 +291,4 @@ the earliest transition time recorded in the compiled file is correct.
 .SH FILES
 /usr/share/zoneinfo default directory used for created files
 .SH "SEE ALSO"
-newctime(3), tzfile(5), zdump(8)
+ctime(3), tzfile(5), zdump(8)

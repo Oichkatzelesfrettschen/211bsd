@@ -1,4 +1,7 @@
-static char *sccsid = "@(#)rev.c	4.1 (Berkeley) 10/1/80";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)rev.c	4.2 (2.11BSD) 2026/5/8";
+#endif
+
 #include <stdio.h>
 
 /* reverse lines of a file */

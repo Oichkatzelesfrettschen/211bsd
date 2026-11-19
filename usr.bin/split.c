@@ -1,4 +1,7 @@
-static char *sccsid = "@(#)split.c	4.2 (Berkeley) 4/29/83";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)split.c	4.3 (2.11BSD) 2026/5/8";
+#endif
+
 #include <stdio.h>
 
 unsigned count = 1000;

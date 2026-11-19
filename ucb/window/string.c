@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)string.c	3.8 4/24/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)string.c	3.9 (2.11BSD) 2026/5/9";
 #endif
 
 /*
@@ -9,9 +9,8 @@ static char sccsid[] = "@(#)string.c	3.8 4/24/85";
  */
 
 #include "string.h"
-
-char *malloc();
-char *sprintf();
+#include <stdio.h>
+#include <stdlib.h>
 
 char *
 str_cpy(s)

@@ -1,3 +1,6 @@
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)curdir.c 3.3 (2.11BSD) 2026/5/11";
+#endif
 /*******************************************************************
  *                     curdir: get current directory
  *******************************************************************
@@ -6,9 +9,6 @@
  * Unlike pwd, returns to current directory after it is finished.
  * Uses stdio buffering for directory reads.
  */
-
- static char rcsid[]=
- "$Header: /arthur/src/local/bin/rcs/src/RCS/curdir.c,v 3.2 87/10/18 10:21:49 narten Exp $";
 
 /*******************************************************************
  *      $Log:	curdir.c,v $

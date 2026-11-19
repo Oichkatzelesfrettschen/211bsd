@@ -2,41 +2,29 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)pstat.8	6.5 (2.11BSD) 2025/12/16
+.\"	@(#)pstat.8	6.6 (2.11BSD) 2026/6/14
 .\"
-.TH PSTAT 8 "September 28, 2024"
+.TH PSTAT 8 "June 14, 2026"
 .UC 4
 .SH NAME
 pstat \- print system facts
 .SH SYNOPSIS
-.B /usr/sbin/pstat
-.B \-aixptufbcmsT
-[
-.B suboptions
-] [
-.B system
-] [
-.B corefile
-]
+.B pstat
+\fB-aixptfbcmsT\fP [\fB-u ubase\fP] [\fB-k kern:mem\fP]
 .SH DESCRIPTION
-.I Pstat
+.B pstat
 interprets the contents of certain system tables.
-If
-.I corefile
-is given, the tables are sought there, otherwise
-in
-.I /dev/kmem.
-The required namelist is taken from
-.I /unix
-unless 
-.I system
-is specified.
+.PP
 Options are
 .TP \w'WCHAN\ 'u
 .B \-a
-Under
-.BR \-p ,
+With
+.BR \-p
 describe all process slots rather than just active ones.
+.TP
+.B -k
+files to use for the kernel symbols and the system tables.
+Defaults are /unix and /dev/kmem.  Used for postmortem system debugging.
 .TP
 .B \-i
 Print the inode table with the these headings:
@@ -114,16 +102,13 @@ loading in progress
 locked
 .IP w
 wanted (L flag is on)
-.IP P
-resulted from demand-page-from-inode exec format (see
-.IR execve (2))
+.IP u
+unused since swapped out for cache
 .RE
 .IP DADDR
 Disk address in swap, measured in multiples of 512 bytes.
 .IP CADDR
 Head of a linked list of loaded processes using this text segment.
-.IP RSS
-Size of resident text, measured in multiples of 512 bytes.
 .IP SIZE
 Size of text segment, measured in multiples of 512 bytes.
 .IP IPTR
@@ -214,23 +199,24 @@ The process ID number.
 .IP PPID
 The process ID of parent process.
 .IP ADDR
-If in core, the page frame number of the first page of the `u-area' of
-the process.
+If in core memory address of the `u-area' of the process.
 If swapped out, the position in the swap area
 measured in multiples of 512 bytes.
-.IP RSS
-Resident set size \- the number of physical page frames allocated
+.IP SADDR
+Address of stack area.
 to this process.
-.IP SRSS
-RSS at last swap (0 if never swapped).
+.IP DADDR
+Address of data area.
 .IP SIZE
-Virtual size of process image (data+stack) in multiples of 512 bytes.
+Size of process image (data+stack) in multiples of 512 bytes.
 .IP WCHAN
 Wait channel number of a waiting process.
 .IP LINK
 Link pointer in list of runnable processes.
 .IP TEXTP
 If text is pure, pointer to location of text table entry.
+.IP SIGM
+Signal mask.
 .PD
 .TP
 .B \-t
@@ -279,9 +265,7 @@ hangup on close
 .IP PGRP
 Process group for which this is controlling terminal.
 .IP DISC
-Line discipline; blank is old tty OTTYDISC or ``new tty'' for NTTYDISC
-or ``net'' for NETLDISC (see
-.IR bk (4)).
+Line discipline; blank is old tty OTTYDISC or ``new tty'' for NTTYDISC.
 .PD
 .TP
 .B \-u
@@ -289,10 +273,7 @@ print information about a user process;
 the next argument is its address as given
 by
 .IR ps (1).
-The process must be in main memory, or the file used can
-be a core image and the address 0.
-Only the fields located in the first page cluster can be located
-succesfully if the process is in main memory.
+The process must be in main memory (not swapped out).
 .TP
 .B \-f
 Print the open file table with these headings:

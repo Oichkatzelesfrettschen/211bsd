@@ -2,9 +2,9 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)arp.4p	6.2 (Berkeley) 8/1/87
+.\"	@(#)arp.4	6.3 (2.11BSD) 2026/9/26
 .\"
-.TH ARP 4P "August 1, 1987"
+.TH ARP 4 "August 1, 1987"
 .UC 2
 .SH NAME
 arp \- Address Resolution Protocol
@@ -59,7 +59,6 @@ The
 structure contains:
 .LP
 .RS
-.ta \w'#define\ \ 'u +\w'ATF_USETRAILERS\ \ 'u +\w'0x08\ \ \ \  'u
 .nf
 /*
  * ARP ioctl request
@@ -69,11 +68,11 @@ struct arpreq {
 	struct sockaddr	arp_ha;		/* hardware address */
 	int	arp_flags;		/* flags */
 };
+.sp
 /*  arp_flags field values */
-#define ATF_COM		0x02	/* completed entry (arp_ha valid) */
-#define	ATF_PERM	0x04	/* permanent entry */
-#define	ATF_PUBL	0x08	/* publish (respond for other host) */
-#define	ATF_USETRAILERS	0x10	/* send trailer packets to host */
+#define ATF_COM         0x02    /* completed entry */
+#define ATF_PERM        0x04    /* permanent entry */
+#define ATF_PUBL        0x08    /* publish (respond for other host) */
 .fi
 .RE
 .LP
@@ -82,8 +81,7 @@ The address family for the
 sockaddr must be AF_INET; for the 
 .I arp_ha
 sockaddr it must be AF_UNSPEC.
-The only flag bits which may be written are ATF_PERM, ATF_PUBL
-and ATF_USETRAILERS.
+The only flag bits which may be written are ATF_PERM and ATF_PUBL.
 ATF_PERM causes the entry to be permanent if the ioctl call succeeds.
 The peculiar nature of the ARP tables may cause the ioctl to fail if more
 than 8 (permanent) Internet host addresses hash to the same slot.
@@ -92,17 +90,6 @@ indicated host coming from other machines.  This allows a host to act as an
 ``ARP server,'' which may be useful in convincing an ARP-only machine to talk
 to a non-ARP machine.
 .PP
-ARP is also used to negotiate the use of trailer IP encapsulations;
-trailers are an alternate encapsulation used to allow efficient packet
-alignment for large packets despite variable-sized headers.
-Hosts which wish to receive trailer encapsulations so indicate
-by sending gratuitous ARP translation replies along with replies
-to IP requests; they are also sent in reply to IP translation replies.
-The negotiation is thus fully symmetrical, in that either or both hosts
-may request trailers.
-The ATF_USETRAILERS flag is used to record the receipt of such a reply,
-and enables the transmission of trailer packets to that host.
-.PP
 ARP watches passively for hosts impersonating the local host (i.e. a host
 which responds to an ARP mapping request for the local host's address).
 .SH DIAGNOSTICS
@@ -110,12 +97,9 @@ which responds to an ARP mapping request for the local host's address).
 ARP has discovered another host on the local network which responds to
 mapping requests for its own Internet address.
 .SH SEE ALSO
-ec(4), de(4), il(4), inet(4F), arp(8C), ifconfig(8C)
+de(4), qe(4), qt(4), inet(4), arp(8), ifconfig(8)
 .br
 ``An Ethernet Address Resolution Protocol,'' RFC826, Dave Plummer,
-Network Information Center, SRI.
-.br
-``Trailer Encapsulations,'' RFC893, S.J. Leffler and M.J. Karels,
 Network Information Center, SRI.
 .SH BUGS
 ARP packets on the Ethernet use only 42 bytes of data; however, the smallest

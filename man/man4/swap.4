@@ -2,9 +2,9 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)swap.4	6.2 (Berkeley) 1/28/88
+.\"	@(#)swap.4	6.3 (2.11BSD) 2026/5/30
 .\"
-.TH SWAP 4 "January 28, 1988"
+.TH SWAP 4 "May 30, 2026"
 .UC 2
 .SH NAME
 swap \- swap device
@@ -27,7 +27,16 @@ up correctly.
 .br
 /dev/MAKEDEV.local	script to localize special files
 .DT
+.SH BUGS
+2.11BSD sets the kernel variable 'swapdev' to the boot device (if -R is not
+used with boot).  If the system is booted from an alternate disk '/dev/swap' 
+will probably be wrong and ps, etc will not function properly.  /dev/swap is 
+being deprecated and sysctl()/devname() will 
+be used in the future.
 .SH "SEE ALSO"
+sysctl(3),
+devname(3),
 ps(1),
+fstat(1),
 w(1)
 

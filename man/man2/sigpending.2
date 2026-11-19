@@ -32,24 +32,24 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"	@(#)sigpending.2	8.3.1 (2.11BSD) 1997/9/3
+.\"	@(#)sigpending.2	8.3.2 (2.11BSD) 2026/9/22
 .\"
 .TH SIGPENDING 2 "September 3, 1997"
 .UC 7
 .SH NAME
 \fBsigpending\fP \- get pending signals
 .SH SYNOPSIS
-.B #include <signal.h>
-.sp
-.I int
-.br
-\fBsigpending\fP(set)
-.br
-.I sigset_t *set;
+.nf
+.ft B
+#include <signal.h>
+
+int
+sigpending(sigset_t *set)
+.ft R
+.fi
 .SH DESCRIPTION
-The
 .B sigpending
-function returns a mask of the signals pending for delivery
+returns a mask of the signals pending for delivery
 to the calling process in the location indicated by
 .IR set .
 Signals may be pending because they are currently masked,
@@ -63,7 +63,7 @@ is set to indicated the reason.
 .SH ERRORS
 If
 .B sigpending
-fails then \fIerrno\fP will contain one of the following:
+fails then \fBerrno\fP will contain one of the following:
 .sp
 .TP 20
 [EFAULT]

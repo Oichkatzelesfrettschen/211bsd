@@ -32,7 +32,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)lex.c	5.23 (Berkeley) 4/1/91";
+static char sccsid[] = "@(#)lex.c	5.24 (2.11BSD) 2026/8/19";
 #endif
 
 #include "rcv.h"
@@ -434,7 +434,7 @@ setmsize(sz)
 {
 
 	if (msgvec != 0)
-		cfree((char *) msgvec);
+		free((char *) msgvec);
 	msgvec = (int *) calloc((unsigned) (sz + 1), sizeof *msgvec);
 }
 

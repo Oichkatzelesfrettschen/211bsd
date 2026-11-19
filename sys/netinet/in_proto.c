@@ -9,7 +9,7 @@
  * software without specific prior written permission. This software
  * is provided ``as is'' without express or implied warranty.
  *
- *	@(#)in_proto.c	7.2.1 (2.11BSD) 1995/10/09
+ *	@(#)in_proto.c	7.2.2 (2.11BSD) 2026/5/15
  */
 
 #include "param.h"
@@ -111,26 +111,6 @@ struct protosw impsw[] = {
 struct domain impdomain =
     { AF_IMPLINK, "imp", 0, 0, 0,
       impsw, &impsw[sizeof (impsw)/sizeof(impsw[0])] };
-#endif
-
-#include "hy.h"
-#if NHY > 0
-/*
- * HYPERchannel protocol family: raw interface.
- */
-int	rhy_output();
-extern	struct domain hydomain;
-
-struct protosw hysw[] = {
-{ SOCK_RAW,	&hydomain,	0,		PR_ATOMIC|PR_ADDR,
-  0,		rhy_output,	0,		0,
-  raw_usrreq,
-  0,		0,		0,		0,
-},
-};
-
-struct domain hydomain =
-    { AF_HYLINK, "hy", 0, 0, 0, hysw, &hysw[sizeof (hysw)/sizeof(hysw[0])] };
 #endif
 
 #ifndef	IPFORWARDING

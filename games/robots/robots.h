@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)robots.h	5.1 (Berkeley) 5/30/85
+ *	@(#)robots.h	5.2 (2.11BSD) 2026/9/22
  */
 
 # include	<curses.h>
@@ -78,6 +78,7 @@ extern jmp_buf	End_move;
  * functions types
  */
 
-int	quit(), cmp_sc(), move_robots();
+void	quit(), move_robots();
+int	cmp_sc();
 
 COORD	*rnd_pos();

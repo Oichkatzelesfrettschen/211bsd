@@ -36,8 +36,8 @@ static char copyright[] =
 "@(#) Copyright (c) 1987, 1993\n\
 	The Regents of the University of California.  All rights reserved.\n";
 
-static char sccsid[] = "@(#)xinstall.c	8.1.1 (2.11BSD) 1996/2/21";
-#endif /* not lint */
+static char sccsid[] = "@(#)xinstall.c	8.1.2 (2.11BSD) 2026/1/13";
+#endif
 
 #include <sys/param.h>
 #include <sys/wait.h>
@@ -53,8 +53,9 @@ static char sccsid[] = "@(#)xinstall.c	8.1.1 (2.11BSD) 1996/2/21";
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdarg.h>
 
-#include "pathnames.h"
+#define _PATH_STRIP     "/bin/strip"
 
 struct passwd *pp;
 struct group *gp;
@@ -312,31 +313,14 @@ usage()
 	exit(1);
 }
 
-#if __STDC__
-#include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 void
-#if __STDC__
 err(const char *fmt, ...)
-#else
-err(fmt, va_alist)
-	char *fmt;
-        va_dcl
-#endif
 {
 	va_list ap;
-#if __STDC__
 	va_start(ap, fmt);
-#else
-	va_start(ap);
-#endif
 	(void)fprintf(stderr, "install: ");
 	(void)vfprintf(stderr, fmt, ap);
 	va_end(ap);
 	(void)fprintf(stderr, "\n");
 	exit(1);
-	/* NOTREACHED */
 }

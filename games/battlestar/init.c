@@ -5,7 +5,7 @@
  */
 
 #if !defined(lint) && !defined(pdp11)
-static char sccsid[] = "@(#)init.c	1.3.1 1996/10/26";
+static char sccsid[] = "@(#)init.c	1.3.2 2026/9/22";
 #endif
 
 #include "externs.h"
@@ -15,7 +15,7 @@ initialize(startup)
 	char startup;
 {
 	register struct objs *p;
-	int die();
+	void die();
 
 	puts("Version 4.2, fall 1984.");
 	puts("First Adventure game written by His Lordship, the honorable");

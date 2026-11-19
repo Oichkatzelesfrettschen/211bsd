@@ -1,10 +1,9 @@
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)rcsfnms.c 4.7 (2.11BSD) 2026/5/11";
+#endif
 /*
  *                     RCS file name handling
  */
-#ifndef lint
- static char
- rcsid[]= "$Id: rcsfnms.c,v 3.10 88/02/18 11:57:27 bostic Exp $ Purdue CS";
-#endif
 /****************************************************************************
  *                     creation and deletion of semaphorefile,
  *                     creation of temporary filenames and cleanup()
@@ -22,7 +21,6 @@
  * author.
  * Report problems and direct all inquiries to Tichy@purdue (ARPA net).
  */
-
 
 /* $Log:	rcsfnms.c,v $
  * Revision 3.10  88/02/18  11:57:27  bostic
@@ -89,25 +87,18 @@
  * renamed checkpath() to checkfullpath().
  */
 
-
 #include "rcsbase.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/dir.h>
 
-extern char * rindex();
 extern char * mktemp();
-extern char * malloc();
-extern FILE * fopen();
-extern char * getwd();         /* get working directory; forward decl       */
-extern int    stat(), fstat();
 
 extern FILE * finptr;          /* RCS input file descriptor                 */
 extern FILE * frewrite;        /* New RCS file descriptor                   */
 extern char * RCSfilename, * workfilename; /* filenames                     */
 struct stat RCSstat, workstat; /* file status for RCS file and working file */
 int    haveRCSstat,  haveworkstat; /* indicators if status availalble       */
-
 
 char tempfilename [NCPFN+10];  /* used for derived file names               */
 char sub1filename [NCPPN];     /* used for files path/file.sfx,v            */
@@ -117,7 +108,6 @@ int  madesema;                 /* indicates whether a semaphore file has been se
 char * tfnames[10] =           /* temp. file names to be unlinked when finished   */
        {nil,nil,nil,nil,nil,nil,nil,nil,nil,nil};
 int  lastfilename         = -1;/* index of last file name in tfnames[]      */
-
 
 struct compair {
         char * suffix, * comlead;
@@ -142,7 +132,6 @@ struct compair comtable[] = {
         "p",   " * ",   /* pascal      */
         "r",   "# ",    /* ratfor      */
         "red", "% ",    /* psl/rlisp   */
-
 #ifdef sparc
         "s",   "! ",    /* assembler   */
 #endif
@@ -155,7 +144,6 @@ struct compair comtable[] = {
 #ifdef vax
         "s",   "# ",    /* assembler   */
 #endif
-
         "sh",  "# ",    /* shell       */
         "sl",  "% ",    /* psl         */
         "red", "% ",    /* psl/rlisp   */

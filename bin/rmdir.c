@@ -4,35 +4,31 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)rmdir.c	5.1 (Berkeley) 4/30/85";
-#endif not lint
+static char sccsid[] = "@(#)rmdir.c	5.2 (2.11BSD) 2026/5/7";
+#endif
 
 /*
  * Remove directory
  */
 #include <stdio.h>
+#include <err.h>
 
 main(argc,argv)
 	int argc;
 	char **argv;
 {
-	int errors = 0;
+	register int errors = 0;
 
-	if (argc < 2) {
-		fprintf(stderr, "usage: %s directory ...\n", argv[0]);
-		exit(1);
-	}
+	if (argc < 2)
+		errx(1, "usage: %s directory ...", argv[0]);
 	while (--argc)
 		if (rmdir(*++argv) < 0) {
-			fprintf(stderr, "rmdir: ");
-			perror(*argv);;
+			warn("%s", *argv);
 			errors++;
 		}
 	exit(errors != 0);

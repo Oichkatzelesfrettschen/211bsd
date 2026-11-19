@@ -1,4 +1,4 @@
-/* static	char *sccsid = "@(#)main.c	4.10 (2.11BSD) 98/9/15"; */
+/* static	char *sccsid = "@(#)main.c	4.11 (2.11BSD) 2026/9/15"; */
 
 #include "defs"
 
@@ -43,11 +43,6 @@ int ignerr	= NO;    /* default is to stop on error */
 int okdel	= YES;
 int doenvlast	= NO;
 int inarglist;
-#ifdef pwb
-char *prompt	= ">";	/* other systems -- pick what you want */
-#else
-char *prompt	= "";	/* other systems -- pick what you want */
-#endif
 int nopdir	= 0;
 char junkname[20];
 char funny[128];
@@ -63,11 +58,8 @@ int descset, nfargs;
 TIMETYPE tjunk;
 char c, *s;
 static char onechar[2] = 'X';
-#ifdef unix
 int intrupt();
-#endif
 char *op = options + 1;
-
 
 #ifdef METERFILE
 meter(METERFILE);
@@ -166,12 +158,7 @@ setvar("MFLAGS", options);		/* MFLAGS=options to make */
 setmachine();
 
 if( !descset )
-#ifdef unix
 	if( rddescf("makefile") )  rddescf("Makefile");
-#endif
-#ifdef gcos
-	rddescf("makefile");
-#endif
 
 if (doenvlast == YES)
 	readenv();
@@ -183,11 +170,9 @@ if( srchname(".SILENT") ) silflag = 1;
 if(p=srchname(".SUFFIXES")) sufflist = p->linep;
 if( !sufflist ) fprintf(stderr,"No suffix list.\n");
 
-#ifdef unix
 sigivalue = (int) signal(SIGINT, SIG_IGN) & 01;
 sigqvalue = (int) signal(SIGQUIT, SIG_IGN) & 01;
 enbint(intrupt);
-#endif
 
 nfargs = 0;
 
@@ -221,7 +206,6 @@ exit(0);
 
 #include <sys/stat.h>
 
-#ifdef unix
 intrupt()
 {
 struct varblock *varptr();
@@ -244,9 +228,6 @@ fprintf(stderr, "\n");
 exit(2);
 }
 
-
-
-
 isprecious(p)
 char *p;
 {
@@ -265,15 +246,14 @@ return(NO);
 
 
 enbint(k)
-int (*k)();
+sig_t k;
 {
 if(sigivalue == 0)
 	signal(SIGINT,k);
 if(sigqvalue == 0)
 	signal(SIGQUIT,k);
 }
-#endif
-
+
 extern char *builtin[];
 
 char **linesptr	= builtin;
@@ -296,23 +276,6 @@ if( !firstrd++ )
 
 	if (doenvlast == NO)
 		readenv();
-
-#ifdef pwb
-		{
-		char *nlog, s[BUFSIZ];
-		nlog = logdir();
-		if ( (k=fopen( concat(nlog,"/makecomm",s), "r")) != NULL)
-			rdd1(k);
-		else if ( (k=fopen( concat(nlog,"/Makecomm",s), "r")) != NULL)
-			rdd1(k);
-	
-		if ( (k=fopen("makecomm", "r")) != NULL)
-			rdd1(k);
-		else if ( (k=fopen("Makecomm", "r")) != NULL)
-			rdd1(k);
-		}
-#endif
-
 	}
 if(! unequal(descfile, "-"))
 	return( rdd1(stdin) );
@@ -355,14 +318,12 @@ struct dirhdr *od;
 struct shblock *sp;
 struct lineblock *lp;
 
-#ifdef unix
 if(prntflag)
 	{
 	printf("Open directories:\n");
 	for (od = firstod; od; od = od->nxtopendir)
 		printf("\t%d: %s\n", od->dirfc->dd_fd, od->dirn);
 	}
-#endif
 
 if(firstvar != 0) printf("Macros:\n");
 for(vp = firstvar; vp ; vp = vp->nxtvarblock)

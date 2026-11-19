@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)tb.c	4.3 9/14/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)tb.c	4.4 (2.11BSD) 2026/5/9";
 #endif
 
  /* tb.c: check which entries exist, also storage allocation */

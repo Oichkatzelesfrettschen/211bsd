@@ -1,8 +1,7 @@
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)service.c	4.4.1 12/9/94";
+static char sccsid[] = "@(#)service.c	4.4.2 (2.11BSD) 2026/5/11";
 #endif
 
-#
 /*
  * UNIX shell
  *
@@ -12,24 +11,15 @@ static char sccsid[] = "@(#)service.c	4.4.1 12/9/94";
  */
 
 #include	"defs.h"
+#include	<errno.h>
 #include	<fcntl.h>
 
 PROC VOID	gsort();
 
 #define ARGMK	01
 
-INT		errno;
 STRING		sysmsg[];
 INT		num_sysmsg;
-
-/* fault handling */
-#define ENOMEM	12
-#define ENOEXEC 8
-#define E2BIG	7
-#define ENOENT	2
-#define ETXTBSY 26
-
-
 
 /* service routines for `execute' */
 

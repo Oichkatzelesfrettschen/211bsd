@@ -15,8 +15,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#if	!defined(lint) && !defined(pdp11)
-static char sccsid[] = "@(#)domacro.c	1.7 (2.11BSD) 2026/1/5";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)domacro.c	1.8 (2.11BSD) 2026/9/14";
 #endif
 
 #include "ftp_var.h"

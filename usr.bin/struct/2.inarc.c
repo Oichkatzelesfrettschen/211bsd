@@ -1,6 +1,6 @@
-#ifndef lint
-static char sccsid[] = "@(#)2.inarc.c	4.1	(Berkeley)	2/11/83";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)2.inarc.c	4.2	(2.11BSD)	2026/5/9";
+#endif
 
 #include <stdio.h>
 #
@@ -15,7 +15,7 @@ struct list **inarc;
 VERT *head;
 	{
 	VERT v,adj,x;
-	int i, j;
+	register int i, j;
 
 	for (v=0; v < nodenum; ++v) inarc[v] = 0;
 

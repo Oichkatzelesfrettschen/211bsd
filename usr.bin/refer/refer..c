@@ -1,5 +1,5 @@
 #if     defined(DOSCCS) && !defined(lint)
-static char *sccsid = "@(#)refer..c    4.5 (2.11BSD) 2025/12/26";
+static char *sccsid = "@(#)refer..c    4.5 (2.11BSD) 2026/9/14";
 #endif
 
 #include <stdio.h>
@@ -8,13 +8,10 @@ static char *sccsid = "@(#)refer..c    4.5 (2.11BSD) 2025/12/26";
 
 #define FLAG 003
 #define AFLAG 007
-#ifdef pdp11
+
 #define NRFTXT 5000
 #define NRFTBL 250
-#else
-#define NRFTXT 10000
-#define NRFTBL 500
-#endif
+
 #define NTFILE 20
 #define QLEN 512
 #define ANSLEN 1024
@@ -47,4 +44,5 @@ extern char *class(),*caps(),*revauth();
 extern char *artskp(),*fpar();
 extern char *trimnl();
 
-extern char *getenv(), *strcpy(), *strcat();
+#include <stdlib.h>
+#include <strings.h>

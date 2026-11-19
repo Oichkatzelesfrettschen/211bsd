@@ -1,3 +1,7 @@
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)expand.c 2.1 (2.11BSD) 2026/3/21";
+#endif
+
 /*
  * Do filename expansion with the shell.  Returns a pointer to a
  * static area.
@@ -6,6 +10,8 @@
 #define EXPAND_BUF	2048
 
 #include <stdio.h>
+#include <string.h>
+#include <strings.h>
 
 char *
 expand(input)
@@ -13,7 +19,7 @@ char *input;
 {
 	FILE *fp, *popen();
 	int last;
-	char buf[256], *strpbrk(), *strcpy();
+	char buf[256];
 	static char ans[EXPAND_BUF];
 
 	if (input == NULL)
@@ -52,63 +58,3 @@ char *input;
 
 	return(ans);
 }
-
-/*
- * Miscellaneous routines probably missing from Bezerkely
- */
-
-#ifdef BSD
-/*
- * Return ptr to first occurrence of any character from `brkset'
- * in the character string `string'; NULL if none exists.
- */
-
-char *
-strpbrk(string, brkset)
-register char *string, *brkset;
-{
-	register char *p;
-
-	if (!string || !brkset)
-		return(0);
-	do {
-		for (p = brkset; *p != '\0' && *p != *string; ++p)
-			;
-		if (*p != '\0')
-			return(string);
-	}
-	while (*string++);
-	return(0);
-}
-
-/*
- * Copies the character c, n times to string s
- */
-
-char *
-memset(s, c, n)
-char *s, c;
-int n;
-{
-	char *s1 = s;
-
-	while (n > 0) {
-		--n;
-		*s++ = c;
-	}
-	return(s1);
-}
-
-/*
- * Copy contents of memory (with possible overlapping).
- */
-
-char *
-memcpy(s1, s2, n)
-char *s1, *s2;
-int n;
-{
-	bcopy(s2, s1, n);
-	return(s1);
-}
-#endif /* BSD */

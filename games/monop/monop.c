@@ -1,3 +1,7 @@
+#if     !defined(lint) && defined(DOSCCS)
+static char sccsid[] = "monop.c 1.2 (2.11BSD) 2026/8/19";
+#endif
+
 # include	"monop.def"
 
 /*
@@ -70,8 +74,8 @@ over:
 				else
 					printf("\"done\" is a reserved word.  Please try again\n");
 				for (i = 0; i < num_play; i++)
-					cfree(play[i].name);
-				cfree(play);
+					free(play[i].name);
+				free(play);
 				goto blew_it;
 			}
 }

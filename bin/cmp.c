@@ -10,15 +10,13 @@
  * is provided ``as is'' without express or implied warranty.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1987 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif /* !lint */
 
-#ifndef lint
-static char sccsid[] = "@(#)cmp.c	4.8 (Berkeley) 12/21/87";
-#endif /* !lint */
+static char sccsid[] = "@(#)cmp.c	4.9 (2.11BSD) 2026/5/7";
+#endif
 
 #include <sys/param.h>
 #include <sys/file.h>
@@ -26,6 +24,7 @@ static char sccsid[] = "@(#)cmp.c	4.8 (Berkeley) 12/21/87";
 #include <stdio.h>
 #include <ctype.h>
 #include <errno.h>
+#include <stdlib.h>
 
 #define DIFF	1			/* found differences */
 #define ERR	2			/* error during run */
@@ -44,8 +43,6 @@ main(argc, argv)
 	int	argc;
 	char	**argv;
 {
-	extern char	*optarg;
-	extern int	optind;
 	int	ch;
 	u_long	otoi();
 
@@ -91,7 +88,7 @@ main(argc, argv)
  */
 static
 skip(dist, fd, fname)
-	register u_long	dist;		/* length in bytes, to skip */
+	u_long	dist;			/* length in bytes, to skip */
 	register int	fd;		/* file descriptor */
 	char	*fname;			/* file name for error */
 {
@@ -115,8 +112,8 @@ cmp()
 	register u_char	*C1, *C2;	/* traveling pointers */
 	register int	cnt,		/* counter */
 			len1, len2;	/* read lengths */
-	register long	byte,		/* byte count */
-			line;		/* line count */
+	long	byte,			/* byte count */
+		line;			/* line count */
 	short	dfound = NO;		/* if difference found */
 
 	for (byte = 0, line = 1;;) {
@@ -196,7 +193,7 @@ static u_long
 otoi(C)
 	register char	*C;		/* argument string */
 {
-	register u_long	val;		/* return value */
+	u_long	val;			/* return value */
 	register int	base;		/* number base */
 
 	base = (*C == '0') ? 8 : 10;
@@ -213,7 +210,6 @@ static
 error(filename)
 	char *filename;
 {
-	extern int errno;
 	int sverrno;
 
 	if (!silent) {

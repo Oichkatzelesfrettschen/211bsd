@@ -36,8 +36,8 @@ static char copyright[] =
 "@(#) Copyright (c) 1980, 1989, 1993, 1994\n\
 	The Regents of the University of California.  All rights reserved.\n";
 
-static char sccsid[] = "@(#)mount.c	8.19.4 (2.11BSD) 1997/6/29";
-#endif /* not lint */
+static char sccsid[] = "@(#)mount.c	8.19.5 (2.11BSD) 2026/9/24";
+#endif
 
 #include <sys/param.h>
 #include <sys/mount.h>
@@ -50,8 +50,10 @@ static char sccsid[] = "@(#)mount.c	8.19.4 (2.11BSD) 1997/6/29";
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <err.h>
 
-#include "pathnames.h"
+#define _PATH_SBIN	"/sbin"
+#define	_PATH_USRSBIN	"/usr/sbin"
 
 int debug, verbose, skipvfs, mountrw;
 
@@ -488,11 +490,10 @@ void
 usage()
 {
 
-	(void)fprintf(stderr,
-		"usage: mount %s %s\n       mount %s\n       mount %s\n",
+	errx(1,
+		"usage: mount %s %s\n       mount %s\n       mount %s",
 		"[-dfruvw] [-o options] [-t ufs | external_type]",
 			"special node",
 		"[-adfruvw] [-t ufs | external_type]",
 		"[-dfruvw] special | node");
-	exit(1);
 }

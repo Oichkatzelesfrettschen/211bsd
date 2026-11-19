@@ -3,7 +3,7 @@
 # All rights reserved.  The Berkeley software License Agreement
 # specifies the terms and conditions for redistribution.
 #
-#	@(#)Makefile	5.19.11 (2.11BSD) 2025/11/25
+#	@(#)Makefile	5.19.12 (2.11BSD) 2026/1/27
 #
 CFLAGS=	-O
 LDFLAGS= -i
@@ -11,7 +11,7 @@ LDFLAGS= -i
 # Programs that live in subdirectories, and have makefiles of their own.
 #
 SUBDIR=	adb ar as awk chflags chpass csh diff disklabel hostname ld login \
-	ls make nm passwd ping sed sh stty sysctl tcsh test tp
+	ls make mkdir nm passwd ps ping sed sh stty sysctl tcsh test tp
 
 # Shell scripts that need only be installed and are never removed.
 #
@@ -21,7 +21,7 @@ SCRIPT=	false true
 # explicit make lines.
 #
 STD=	cat cc chgrp chmod cmp cp date dd du echo ed hostid \
-	kill ln mkdir mt mv nice od pagesize pr \
+	grep kill ln mt mv nice od pagesize pr \
 	pwd rm rmail rmdir size sync tar tee time who
 
 # C programs that live in the current directory and need explicit make lines.
@@ -36,10 +36,6 @@ SETUID=	mail rcp su
 #
 OPERATOR= df
 
-# Programs that must run set-group-id kmem.
-#
-KMEM=	ps
-
 # Programs that must run set-group-id tty.
 #
 TTY=	wall write
@@ -47,7 +43,7 @@ TTY=	wall write
 # 'strip' is handled specially because 'install -s' now uses 'strip' and
 # thus we can't do a 'install -s strip /bin/strip' without an error.
 #
-BINS=	${STD} ${NSTD} ${SETUID} ${OPERATOR} ${KMEM} ${TTY} strip
+BINS=	${STD} ${NSTD} ${SETUID} ${OPERATOR} ${TTY} strip
 
 all:	${SUBDIR} ${BINS}
 
@@ -57,7 +53,7 @@ ${SUBDIR}: FRC
 FRC:
 
 
-${STD} ${SETUID} ${KMEM} ${OPERATOR} ${TTY} strip:
+${STD} ${SETUID} ${OPERATOR} ${TTY} strip:
 	${CC} ${CFLAGS} ${LDFLAGS} -o $@ $@.c
 
 install: ${BINS}
@@ -69,8 +65,6 @@ install: ${BINS}
 		(install -c -o root -m 4755 -s $$i /bin/$$i); done
 	-for i in ${OPERATOR}; do \
 		(install -c -o root -g operator -m 2755 -s $$i /bin/$$i); done
-	-for i in ${KMEM}; do \
-		(install -c -o root -g kmem -m 2755 -s $$i /bin/$$i); done
 	-for i in ${TTY}; do \
 		(install -c -o root -g tty -m 2755 -s $$i /bin/$$i); done
 	-install -c -s -m 755 -g staff strip /bin/xstrip

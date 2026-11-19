@@ -5,7 +5,7 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)recvjob.c	5.4.1 (2.11BSD GTE) 1/1/94";
+static char sccsid[] = "@(#)recvjob.c	5.4.2 (2.11BSD) 2026/9/13";
 #endif
 
 /*
@@ -26,13 +26,14 @@ char	*ddev;			/* disk device (for checking free space) */
 int	dfd;			/* file system device descriptor */
 
 char	*find_dev();
-long	read_number(), atol();
+long	read_number();
 
 recvjob()
 {
 	struct stat stb;
 	char *bp = pbuf;
-	int status, rcleanup();
+	int status;
+	void  rcleanup();
 
 	/*
 	 * Perform lookup for printer name or abbreviation
@@ -260,13 +261,7 @@ chksize(size)
 		return(1);
 	if (read(dfd, (char *)&fs, sizeof fs) != sizeof fs)
 		return(1);
-#ifdef pdp11
 	spacefree = fs.fs_tfree;
-#else
-	spacefree = (fs.fs_cstotal.cs_nbfree * fs.fs_frag +
-		fs.fs_cstotal.cs_nffree - fs.fs_dsize * fs.fs_minfree / 100) *
-			fs.fs_fsize / 1024;
-#endif
 	size = (size + 1023) / 1024;
 	if (minfree + size > spacefree)
 		return(0);
@@ -293,6 +288,7 @@ read_number(fn)
 /*
  * Remove all the files associated with the current job being transfered.
  */
+void
 rcleanup()
 {
 

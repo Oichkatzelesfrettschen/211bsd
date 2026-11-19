@@ -1,5 +1,5 @@
 #if     defined(DOSCCS) && !defined(lint)
-static char *sccsid = "@(#)pfcom.c 1.0 (2.11BSD) 2025/12/25";
+static char *sccsid = "@(#)pfcom.c 1.1 (2.11BSD) 2026/2/21";
 #endif
 
 #include <stdarg.h>
@@ -62,6 +62,7 @@ asm(".globl  fltused ; fltused:");
 			*--fend = *--dbeg;
 #else
 		fend = fbeg = fcvt(d, nd, &decpt, &sign);
+		if (*fbeg == 0) fend = fbeg = "0";
 		while (*fend++); fend--;
 
 		if (nd | falt) {

@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)tail.c	5.2.1 (2.11BSD GTE) 1/1/94";
+static char sccsid[] = "@(#)tail.c	5.2.2 (2.11BSD) 2026/9/14";
 #endif
 
 /* tail command 
@@ -34,11 +34,7 @@ static char sccsid[] = "@(#)tail.c	5.2.1 (2.11BSD GTE) 1/1/94";
 #include	<sys/file.h>
 #include	<errno.h>
 
-#ifdef pdp11
 #define LBIN 16385
-#else
-#define LBIN 32769
-#endif
 #undef	BUFSIZ
 #define	BUFSIZ	8192
 struct	stat	statb;

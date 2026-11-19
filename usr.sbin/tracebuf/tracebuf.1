@@ -1,0 +1,61 @@
+.\"
+.\"	@(#) 2.11BSD tracebuf.1 1.0 2026/5/13
+.\"
+.TH TRACEBUF 1 "May 13, 2026"
+.UC 4
+.SH NAME
+tracebuf \- display kernel I/O statistics
+.SH SYNOPSIS
+.B tracebuf
+[\fB\-w secs\fP]
+[\fB\-i iter\fP]
+[\fB\-h num\fP]
+.SH DESCRIPTION
+With no argument
+.B tracebuf
+prints the kernel \fBtracebuf\fP array once and exits.
+.PP
+The options are:
+.TP 10
+\-i iter
+Specifies the number of reports.
+.TP 10
+\-h num
+print the header every 
+.I num
+reports.
+.TP 10
+\-w secs
+wait 
+.I secs
+seconds between reports.
+.PP
+Each report:
+.TP 15
+breadhit
+buffer read found in cache
+.TP 15
+breadmiss
+buffer read not in cache
+.TP 15
+breadhitra
+buffer read-ahead found in cache
+.TP 15
+breadmissra
+buffer read-ahead not in cache
+.TP 15
+brelese
+buffer released with no I/O implied
+.TP 15
+swapio
+swap I/o request
+.TP 15
+bhit
+read cache rate [breadhit/(breadhit+breadmiss)]
+.SH FILES
+/dev/kmem
+.br
+/unix
+.SH HISTORY
+.B tracebuf
+appeared in 2.11BSD 35th Anniversary Edition

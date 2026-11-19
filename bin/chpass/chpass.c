@@ -20,16 +20,16 @@ char copyright[] =
 "@(#) Copyright (c) 1988 The Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)chpass.c	5.10.1 (2.11BSD) 1996/1/12";
-#endif /* not lint */
+static char sccsid[] = "@(#)chpass.c	5.10.2 (2.11BSD) 2026/9/21";
+#endif
 
 #include <sys/param.h>
 #include <sys/file.h>
 #include <sys/stat.h>
-#include <sys/signal.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <pwd.h>
+#include <signal.h>
 #include <errno.h>
 #include <stdio.h>
 #include <ctype.h>

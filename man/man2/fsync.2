@@ -2,26 +2,29 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)fsync.2	6.4 (Berkeley) 5/22/86
+.\"	@(#)fsync.2	6.5 (2.11BSD) 2026/9/20
 .\"
 .TH FSYNC 2 "May 22, 1986"
 .UC 5
 .SH NAME
 fsync \- synchronize a file's in-core state with that on disk
 .SH SYNOPSIS
+.nf
 .ft B
-fsync(fd)
-.br
-int fd;
+#include <unistd.h>
+
+int
+fsync(\fIint fd\fP)
 .ft R
+.fi
 .SH DESCRIPTION
-.I Fsync
+.B fsync
 causes all modified data and attributes of \fIfd\fP
 to be moved to a permanent storage device.
 This normally results in all in-core modified copies
 of buffers for the associated file to be written to a disk.
 .PP
-.I Fsync
+.B fsync
 should be used by programs that require a file to be
 in a known state, for example, in building a simple transaction
 facility.
@@ -29,7 +32,7 @@ facility.
 A 0 value is returned on success.  A \-1 value indicates
 an error.
 .SH "ERRORS
-The \fIfsync\fP fails if:
+\fBfsync\fP fails if:
 .TP 15
 [EBADF]
 \fIFd\fP is not a valid descriptor.

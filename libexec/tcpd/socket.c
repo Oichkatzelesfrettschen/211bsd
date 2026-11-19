@@ -15,8 +15,8 @@
   * Author: Wietse Venema, Eindhoven University of Technology, The Netherlands.
   */
 
-#ifndef lint
-static char sccsid[] = "@(#) socket.c 1.14 95/01/30 19:51:50";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#) socket.c 1.15 (2.11BSD) 2026/5/11";
 #endif
 
 /* System libraries. */
@@ -25,12 +25,11 @@ static char sccsid[] = "@(#) socket.c 1.14 95/01/30 19:51:50";
 #include <sys/param.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <stdio.h>
 #include <syslog.h>
 #include <string.h>
-
-extern char *inet_ntoa();
 
 /* Local stuff. */
 

@@ -1,5 +1,5 @@
 #if     defined(DOSCCS) && !defined(lint)
-static char *sccsid = "@(#)misc.c 2.0 (2.11BSD) 2020/2/8";
+static char *sccsid = "@(#)misc.c 2.1 (2.11BSD) 2026/6/29";
 #endif
 
 #include <stdlib.h>
@@ -131,12 +131,8 @@ static char name[XL+1];
 for(i=0;  i<n && *s!=' ' && *s!='\0' ; ++i)
 	name[i] = *s++;
 
-#if TARGET != GCOS
 name[i++] = '_';
-#endif
-
 name[i] = '\0';
-
 return( name );
 }
 
@@ -166,12 +162,6 @@ p = q = ckalloc(n);
 while(--n >= 0)
 	*q++ = *s++;
 return(p);
-}
-
-char *copys(s)
-char *s;
-{
-return( copyn( strlen(s)+1 , s) );
 }
 
 ftnint convci(n, s)
@@ -404,24 +394,6 @@ if(t==TYCOMPLEX && (t1==TYDREAL || t2==TYDREAL) )
 return(t);
 }
 
-/* return log base 2 of n if n a power of 2; otherwise -1 */
-#if FAMILY == SCJ
-log2(n)
-ftnint n;
-{
-int k;
-
-/* trick based on binary representation */
-
-if(n<=0 || (n & (n-1))!=0)
-	return(-1);
-
-for(k = 0 ;  n >>= 1  ; ++k)
-	;
-return(k);
-}
-#endif
-
 frrpl()
 {
 struct rplblock *rp;
@@ -530,7 +502,6 @@ if (n == 0)
 
 if( p = calloc(1, (unsigned) n) )
 	return(p);
-
 error("out of memory",0,0,FATAL);
 /* NOTREACHED */
 }

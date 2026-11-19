@@ -1,12 +1,10 @@
-#ifndef lint
-static char sccsid[] = "@(#)assert.c	5.5 (Berkeley) 6/19/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)assert.c	5.6 (2.11BSD) 2026/5/9";
 #endif
 
 #include "uucp.h"
-#include <sys/time.h>
+#include <time.h>
 #include <errno.h>
-
-/*LINTLIBRARY*/
 
 /*
  *	print out assetion error
@@ -17,7 +15,6 @@ char *s1, *s2;
 {
 	register FILE *errlog;
 	register struct tm *tp;
-	extern struct tm *localtime();
 	time_t clock;
 	int pid;
 
@@ -36,14 +33,8 @@ char *s1, *s2;
 	fprintf(errlog, "pid: %d  ", pid);
 	(void) time(&clock);
 	tp = localtime(&clock);
-#ifdef USG
-	fprintf(errlog, "(%d/%d-%2.2d:%2.2d) ", tp->tm_mon + 1,
-		tp->tm_mday, tp->tm_hour, tp->tm_min);
-#endif
-#ifndef USG
 	fprintf(errlog, "(%d/%d-%02d:%02d) ", tp->tm_mon + 1,
 		tp->tm_mday, tp->tm_hour, tp->tm_min);
-#endif
 	fprintf(errlog, "%s %s (%d)\n", s1 ? s1 : "", s2 ? s2 : "", i1);
 	if (errlog != stderr)
 		(void) fclose(errlog);

@@ -1,4 +1,9 @@
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)jpnerror.c     1.1 (2.11BSD) 2026/7/24";
+#endif
+
 #include <sys/file.h>
+#include <errno.h>
 #include "config.h"
 #include "sh.h"
 
@@ -24,18 +29,16 @@ mkprintf(a1,a2,a3,a4)
 	*/
 	efil = open(efilname, O_RDONLY);
 	if (efil < 0) {
-		perror(efilname);
+		printf("open %s %d\n", efilname, errno);
 		exit(2);
 	}
 	if (lseek(efil, (long)a1,0) == -1) {
-		printf("lseek of mkstr file failed\n"); 
-		    perror(efilname);
-		    exit(2);
+		printf("lseek %s %d\n", efilname, errno); 
+		exit(2);
 	}
 	if (read(efil, buf, 256) <= 0) {
-		printf("read of mkstr file failed\n");
-		    perror(efilname);
-		    exit(2);
+		printf("read %s %d\n", efilname, errno);
+		exit(2);
 	}
 	close(efil);
 	xprintf(buf, a2, a3, a4);

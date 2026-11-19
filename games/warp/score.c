@@ -1,4 +1,4 @@
-/* $Header: /usr/src/games/warp/RCS/score.c,v 1.1.1 95/01/21 02:13:26 games Exp $ */
+/* $Header: /usr/src/games/warp/RCS/score.c,v 1.1.2 (2.11BSD) 2026/5/11 02:13:26 sms Exp $ */
 
 /* $Log:	score.c,v $
  * Revision 7.0.1.2a  87/07/03  02:13:26  games
@@ -12,7 +12,6 @@
  * 
  * Revision 7.0  86/10/08  15:13:14  lwall
  * Split into separate files.  Added amoebas and pirates.
- * 
  */
 
 #include "EXTERN.h"
@@ -27,6 +26,8 @@
 #include "weapon.h"
 #include "INTERN.h"
 #include "score.h"
+#include <math.h>
+#include <time.h>
 
 void
 score_init()
@@ -239,9 +240,7 @@ wscore()
     printf("WHO           SCORE  DF   CDF  E  B  WV  FLAGS\r\n");
     resetty();
     Sprintf(spbuf,"/bin/cat %ssave.*",SAVEDIR);
-#ifndef lint
     execl("/bin/sh", "sh", "-c", spbuf, 0);
-#endif
     finalize(1);
 }
 
@@ -378,10 +377,6 @@ wavescore()
     long tmp;
     FILE *mapfp;
     int row;
-    double pow();
-#ifndef lint
-    double atan2();
-#endif
 
     clear();
     if (curscore > possiblescore)
@@ -400,12 +395,8 @@ wavescore()
 	    power += (350.0 - (double)inumstars) * ((double)inumenemies - 5.0);
     if (inumstars > 850 && inumenemies > 2)
 	    power += ((double)inumstars - 850.0) * ((double)inumenemies - 2.0);
-#ifndef lint
     effectscore = ((double)curscore / possiblescore) *
 	atan2(power, (double) timer + 1.0) / pi_over_2;
-#else
-    effectscore = pi_over_2;
-#endif
     if (inumstars)
 	starscore = (double) numstars / (double) inumstars;
     else
@@ -427,10 +418,8 @@ wavescore()
     Sprintf(spbuf,"Star save ratio:         %1.8f (%d/%d)",
 	starscore, numstars, inumstars);
     mvaddstr( 6,5, spbuf);
-#ifndef lint
     bonuses += tmp = (long) (((double)curscore / possiblescore) *
 	(starscore*starscore) * smarts * 20);
-#endif
     Sprintf(spbuf, "%6ld", tmp);
     mvaddstr( 6, 68, spbuf);
     row = 7;
@@ -535,12 +524,12 @@ score()
     Reg1 FILE *logfd;
     Reg2 FILE *outfd;
     Reg3 int i;
-    long nowtime, time();
+    long nowtime;
     char *scoreboard;
 
     for (i=0; link(LOGFILE, LOCKFILE) == -1 && i<10; i++)
 	sleep(1);
-    nowtime = time((long *)0);
+    nowtime = time((time_t *)0);
     strcpy(cdate,ctime(&nowtime));
     if ((logfd = fopen(LOGFILE,"a")) != NULL) {
 	fprintf(logfd,

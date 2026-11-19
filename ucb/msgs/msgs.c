@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)msgs.c	5.3 (2.11BSD) 2026/1/7";
+static char sccsid[] = "@(#)msgs.c	5.4 (2.11BSD) 2026/9/21";
 #endif
 
 /*
@@ -99,13 +99,9 @@ time_t	t;
 time_t	keep;
 struct	sgttyb	otty;
 
-char	*ctime();
 char	*nxtfld();
-int	onintr();
-int	onsusp();
-off_t	ftell();
-FILE	*popen();
-struct	passwd	*getpwuid();
+void	onintr();
+void	onsusp();
 
 extern	int	errno;
 
@@ -607,6 +603,7 @@ int length;
 	stty(fileno(stdout), &otty);
 }
 
+void
 onintr()
 {
 	signal(SIGINT, onintr);
@@ -631,6 +628,7 @@ onintr()
 /*
  * We have just gotten a susp.  Suspend and prepare to resume.
  */
+void
 onsusp()
 {
 

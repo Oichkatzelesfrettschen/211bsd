@@ -10,9 +10,9 @@
  * is provided ``as is'' without express or implied warranty.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)ns_forw.c	4.26 (Berkeley) 3/28/88";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ns_forw.c	4.27 (2.11BSD) 2026/5/10";
+#endif
 
 #include <stdio.h>
 #include <sys/param.h>
@@ -20,6 +20,8 @@ static char sccsid[] = "@(#)ns_forw.c	4.26 (Berkeley) 3/28/88";
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <syslog.h>
+#include <errno.h>
+#include <stdlib.h>
 #include <arpa/nameser.h>
 #include "ns.h"
 #include "db.h"
@@ -30,7 +32,6 @@ struct	fwdinfo *fwdtab;		/* list of forwarding hosts */
 
 int	nsid;				/* next forwarded query id */
 extern int forward_only;		/* you are only a slave */
-extern int errno;
 extern short ns_port;
 
 time_t	retrytime();
@@ -55,7 +56,6 @@ ns_forw(nsp, msg, msglen, fp, qsp, dfd, qpp)
 	register struct qinfo *qp;
 	HEADER *hp;
 	u_short id;
-	extern char *calloc();
 
 #ifdef DEBUG
 	if (debug >= 3)

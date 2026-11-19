@@ -1,5 +1,5 @@
-#ifndef lint
-static char *sccsid = "@(#)refer1.c	4.3 (Berkeley) 4/23/86";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)refer1.c	4.4 (2.11BSD) 2026/5/9";
 #endif
 
 #include <signal.h>
@@ -134,7 +134,13 @@ char *argv[];
 	exit(0);
 }
 
-extern int intr();
+void
+intr()
+{
+	signal(SIGINT, SIG_IGN);
+	cleanup();
+	exit(1);
+}
 
 signals()
 {
@@ -143,13 +149,6 @@ signals()
 	signal(SIGHUP, intr);
 	signal(SIGPIPE, intr);
 	signal(SIGTERM, intr);
-}
-
-intr()
-{
-	signal(SIGINT, SIG_IGN);
-	cleanup();
-	exit(1);
 }
 
 cleanup()

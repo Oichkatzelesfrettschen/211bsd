@@ -1,4 +1,6 @@
 /*
+ * "@(#)put.c 1.1 (2.11BSD) 2026/6/28"
+ *
  * INTERMEDIATE CODE GENERATION PROCEDURES COMMON TO BOTH
  * JOHNSON AND RITCHIE FAMILIES OF SECOND PASSES
 */
@@ -6,11 +8,7 @@
 #include "defs"
 #include "string_defs"
 
-#if FAMILY == SCJ
-#	include "scjdefs"
-#else
-#	include "dmrdefs"
-#endif
+#include "dmrdefs"
 
 /*
 char *ops [ ] =
@@ -42,11 +40,7 @@ int ops2 [ ] =
 int types2 [ ] =
 	{
 	P2BAD, P2INT|P2PTR, P2SHORT, P2LONG, P2REAL, P2DREAL,
-#if TARGET == INTERDATA
-	P2BAD, P2BAD, P2LONG, P2CHAR, P2INT, P2BAD
-#else
 	P2REAL, P2DREAL, P2LONG, P2CHAR, P2INT, P2BAD
-#endif
 	};
 
 
@@ -54,7 +48,6 @@ setlog()
 {
 types2[TYLOGICAL] = types2[tylogical];
 }
-
 
 putex1(p)
 expptr p;
@@ -64,27 +57,17 @@ templist = hookup(templist, holdtemps);
 holdtemps = NULL;
 }
 
-
-
-
-
 putassign(lp, rp)
 expptr lp, rp;
 {
 putx( fixexpr( mkexpr(OPASSIGN, lp, rp) ));
 }
 
-
-
-
 puteq(lp, rp)
 expptr lp, rp;
 {
 putexpr( mkexpr(OPASSIGN, lp, rp) );
 }
-
-
-
 
 /* put code for  a *= b */
 
@@ -93,10 +76,6 @@ expptr a, b;
 {
 putx( fixexpr( mkexpr(OPSTAREQ, cpexpr(a), cpexpr(b)) ));
 }
-
-
-
-
 
 struct addrblock *realpart(p)
 register struct addrblock *p;
@@ -108,9 +87,6 @@ if( ISCOMPLEX(p->vtype) )
 	q->vtype += (TYREAL-TYCOMPLEX);
 return(q);
 }
-
-
-
 
 struct addrblock *imagpart(p)
 register struct addrblock *p;
@@ -128,7 +104,7 @@ else
 	q = mkrealcon( ISINT(p->vtype) ? TYDREAL : p->vtype , 0.0);
 return(q);
 }
-
+
 struct addrblock *putconst(p)
 register struct constblock *p;
 {
@@ -267,7 +243,7 @@ switch(type)
 frexpr(p);
 return( q );
 }
-
+
 /*
  * put out a character string constant.  begin every one on
  * a long integer boundary, and pad with nulls
@@ -278,7 +254,7 @@ char *s;
 ftnint n;
 {
 int b[SZSHORT];
-int i;
+register int i;
 
 i = 0;
 while(--n >= 0)

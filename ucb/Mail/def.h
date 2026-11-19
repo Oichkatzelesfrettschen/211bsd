@@ -30,15 +30,17 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)def.h	5.22.2 (2.11BSD) 1997/10/31
+ *	@(#)def.h	5.22.3 (2.11BSD) 2026/9/16
  */
 
 #include <sys/param.h>		/* includes <sys/types.h> */
-#include <sys/signal.h>
+#include <signal.h>
 #include <stdio.h>
 #include <sgtty.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include "pathnames.h"
 /*
  * Mail -- a mail program
@@ -279,23 +281,17 @@ FILE	*infix();
 FILE	*run_editor();
 FILE	*setinput();
 char	**unpack();
-char	*calloc();
 char	*copy();
 char	*copyin();
 char	*detract();
 char	*expand();
 char	*getdeadletter();
-char	*gets();
 char	*hfield();
 char	*name1();
 char	*nameof();
 char	*nextword();
-char	*getenv();
 char	*getname();
-char	*fgets();
 char	*ishfield();
-char	*malloc();
-char	*mktemp();
 char	*readtty();
 char	*reedit();
 char	*salloc();
@@ -307,7 +303,6 @@ char	*value();
 char	*vcopy();
 char	*yankword();
 off_t	fsize();
-uid_t	getuid();
 struct	cmd	*lex();
 struct	grouphead	*findgroup();
 struct	name	*nalloc();

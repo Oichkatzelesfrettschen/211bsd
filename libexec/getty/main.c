@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)main.c	5.5.3 (2.11BSD) 2025/3/10";
+static char sccsid[] = "@(#)main.c	5.5.4 (2.11BSD) 2026/9/22";
 #endif
 
 /*
@@ -90,6 +90,7 @@ char partab[] = {
 
 jmp_buf timeout;
 
+void
 dingdong()
 {
 
@@ -100,6 +101,7 @@ dingdong()
 
 jmp_buf	intrupt;
 
+void
 interrupt()
 {
 

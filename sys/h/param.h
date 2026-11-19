@@ -3,10 +3,10 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)param.h	1.8 (2.11BSD) 2026/1/1
+ *	@(#)param.h	1.8 (2.11BSD) 2026/10/30
  */
 
-#define	BSD	202601		/* System version (year and month) */
+#define	BSD	202610		/* System version (year and month) */
 
 #include <sys/localopts.h>
 #include <sys/stddef.h>		/* for 'offsetof' */

@@ -1,3 +1,6 @@
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)partime.c 1.4 (2.11BSD) 2026/5/11";
+#endif
 /*
  * PARTIME		parse date/time string into a TM structure
  *
@@ -25,11 +28,6 @@
  *	Flush AMPM from TM structure and handle locally within PARTIME,
  *		like midnight/noon?
  */
-
-#if	!defined(lint) && defined(DOSCCS)
-static char rcsid[]=
-"$Header: /arthur/src/local/bin/rcs/src/RCS/partime.c,v 1.3 2022/10/2 bqt Exp $";
-#endif
 
 /* $Log:	partime.c,v $
  * Revision 1.3  2022/10/2  00:00:00  bqt
@@ -150,7 +148,7 @@ struct tm *atm;
 	int (*aproc)();
 
 	tp = (int *)atm;
-	zaptime(tp);			 /* Initialize the TM structure */
+	memset(atm, TMNULL, sizeof (*atm));	/* init the eTM structure */
 	midnoon = TMNULL;		/* and our own temp stuff */
 	btoken.tcnt = btoken.tbrkl = 0;
 	btoken.tcp = astr;
@@ -476,15 +474,4 @@ struct tmwent *astruc;
 			else lastptr = astruc;		/* 1st ambig */
 	  }
 	return((unsigned int)lastptr);
-}
-
-
-
-zaptime(tp)
-register int *tp;
-/* clears tm structure pointed to by tp */
-{	register int i;
-	i = (sizeof (struct tm))/(sizeof (int));
-	do *tp++ = TMNULL;		/* Set entry to "unspecified" */
-	while(--i);			/* Faster than FOR */
 }

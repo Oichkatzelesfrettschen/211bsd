@@ -1,18 +1,18 @@
-static	char sccsid[] = "@(#)ln.c 4.6 11/15/85";
-/*
- * ln
- */
+#if	!defined(lint) && defined(DOSCCS)
+static	char sccsid[] = "@(#)ln.c 4.7 (2.11BSD) 2026/7/18";
+#endif
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <strings.h>
+#include <unistd.h>
 #include <errno.h>
 
 struct	stat stb;
 int	fflag;		/* force flag set? */
 int	sflag;
 char	name[BUFSIZ];
-char	*rindex();
-extern	int errno;
 
 main(argc, argv)
 	int argc;
@@ -52,8 +52,6 @@ usage:
 	fprintf(stderr, "Usage: ln [ -s ] f1\nor: ln [ -s ] f1 f2\nln [ -s ] f1 ... fn d2\n");
 	exit(1);
 }
-
-int	link(), symlink();
 
 linkit(from, to)
 	char *from, *to;

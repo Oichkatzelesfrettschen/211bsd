@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)tipout.c	5.1 (Berkeley) 4/30/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)tipout.c	5.2 (2.11BSD) 2026/5/9";
+#endif
 
 #include "tip.h"
 /*
@@ -22,6 +22,7 @@ static	jmp_buf sigbuf;
  * TIPOUT wait state routine --
  *   sent by TIPIN when it wants to posses the remote host
  */
+void
 intIOT()
 {
 
@@ -34,6 +35,7 @@ intIOT()
  * Scripting command interpreter --
  *  accepts script file name over the pipe and acts accordingly
  */
+void
 intEMT()
 {
 	char c, line[256];
@@ -63,6 +65,7 @@ intEMT()
 	longjmp(sigbuf, 1);
 }
 
+void
 intTERM()
 {
 
@@ -71,6 +74,7 @@ intTERM()
 	exit(0);
 }
 
+void
 intSYS()
 {
 

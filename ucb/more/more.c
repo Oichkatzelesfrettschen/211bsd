@@ -52,8 +52,8 @@ static char sccsid[] = "@(#)more.c	5.9 (2.11BSD) 2025/12/26";
 struct sgttyb	otty, savetty;
 long		file_pos, file_size;
 int		fnum, no_intty, no_tty, slow_tty;
-int		dum_opt, dlines, onquit(), end_it(), chgwinsz();
-int		onsusp();
+int		dum_opt, dlines;
+void		onquit(), end_it(), chgwinsz(), onsusp();
 int		nscroll = 11;	/* Number of lines scrolled by 'd' */
 int		fold_opt = 1;	/* Fold long lines */
 int		stop_opt = 1;	/* Stop after form feeds */
@@ -468,6 +468,7 @@ register int num_lines;
 ** Come here if a quit signal is received
 */
 
+void
 onquit()
 {
     signal(SIGQUIT, SIG_IGN);
@@ -492,6 +493,7 @@ onquit()
 ** Come here if a signal for a window size change is received
 */
 
+void
 chgwinsz()
 {
     struct winsize win;
@@ -515,6 +517,7 @@ chgwinsz()
 ** Clean up terminal state and exit. Also come here if interrupt signal received
 */
 
+void
 end_it ()
 {
 
@@ -1724,6 +1727,7 @@ register FILE *f;
 
 /* Come here when we get a suspend signal from the terminal */
 
+void
 onsusp ()
 {
     /* ignore SIGTTOU so we don't get stopped if csh grabs the tty */

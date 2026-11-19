@@ -3,12 +3,16 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)inquire.c	5.2	7/30/85
+ *	@(#)inquire.c	5.3 (2.11BSD) 2026/8/6
  */
 
 /*
  * inquire.c - f77 i/o inquire statement routine
  */
+
+static char unknown[] = "UNKNOWN";
+static char yes[] = "YES";
+static char no[] = "NO";
 
 #include "fio.h"
 
@@ -67,21 +71,21 @@ f_inqu(a) inlist *a;
 	}
 	if(a->inacc)
 	{
-		if(!p) s = "unknown";
-		else if(p->url) s = "direct";
-		else	s = "sequential";
+		if(!p) s = unknown;
+		else if(p->url) s = "DIRECT";
+		else	s = "SEQUENTIAL";
 		b_char(s,a->inacc,a->inacclen);
 	}
 	if(a->inseq)
 	{
-		if(!p) s = "unknown";
-		else s = (p && !p->url)? "yes" : "no";
+		if(!p) s = unknown;
+		else s = (p && !p->url)? yes : no;
 		b_char(s,a->inseq,a->inseqlen);
 	}
 	if(a->indir)
 	{
-		if(!p) s = "unknown";
-		else s = (p && p->useek && p->url)? "yes" : "no";
+		if(!p) s = unknown;
+		else s = (p && p->useek && p->url)? yes : no;
 		b_char(s,a->indir,a->indirlen);
 	}
 	if(a->inform)
@@ -91,21 +95,21 @@ f_inqu(a) inlist *a;
 			if(p->uprnt) s = "print"; /*** NOT STANDARD FORTRAN ***/
 			else
 #endif
-				s = p->ufmt?"formatted":"unformatted";
+				s = p->ufmt?"FORMATTED":"UNFORMATTED";
 		}
-		else s = "unknown";
+		else s = unknown;
 		b_char(s,a->inform,a->informlen);
 	}
 	if(a->infmt)
 	{
-		if (p) s= p->ufmt? "yes" : "no";
-		else s= "unknown";
+		if (p) s= p->ufmt? yes : no;
+		else s= unknown;
 		b_char(s,a->infmt,a->infmtlen);
 	}
 	if(a->inunf)
 	{
-		if (p) s= p->ufmt? "no" : "yes";
-		else s= "unknown";
+		if (p) s= p->ufmt? no : yes;
+		else s= unknown;
 		b_char(s,a->inunf,a->inunflen);
 	}
 	if(a->inrecl) *a->inrecl = p ? p->url : -1;
@@ -118,9 +122,9 @@ f_inqu(a) inlist *a;
 	if(a->inblank)
 	{
 		if( p && p->ufmt)
-			s = p->ublnk ? "zero" : "null" ;
+			s = p->ublnk ? "ZERO" : "NULL" ;
 		else
-			s = "unknown";
+			s = unknown;
 		b_char(s,a->inblank,a->inblanklen);
 	}
 	return(OK);

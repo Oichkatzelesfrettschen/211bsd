@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)tset.c	5.8.2 (2.11BSD GTE) 1997/3/28";
+static char sccsid[] = "@(#)tset.c	5.8.3 (2.11BSD) 2026/2/2";
 #endif
 
 /*
@@ -379,7 +379,7 @@ main(argc, argv)
 	char		bs_char;
 	int		csh;
 	int		settle;
-	int		setmode();
+	void		xsetmode();
 	extern char	PC;
 	int		lmode;
 	int		ldisc;
@@ -397,9 +397,9 @@ main(argc, argv)
 	(void) ioctl(FILEDES, TIOCGETC, (char *)&tchar);
 	bcopy((char *)&tchar, (char *)&oldtchar, sizeof tchar);
 	ospeed = mode.sg_ospeed & 017;
-	(void) signal(SIGINT, setmode);
-	(void) signal(SIGQUIT, setmode);
-	(void) signal(SIGTERM, setmode);
+	(void) signal(SIGINT, xsetmode);
+	(void) signal(SIGQUIT, xsetmode);
+	(void) signal(SIGTERM, xsetmode);
 
 	if (command = rindex(argv[0], '/'))
 		command++;
@@ -789,7 +789,7 @@ found:
 			if (oldmode.sg_flags&(XTABS|CRMOD))
 			{
 				oldmode.sg_flags &= ~(XTABS|CRMOD);
-				setmode(-1);
+				xsetmode(-1);
 			}
 			if (settabs()) {
 				settle = YES;
@@ -818,7 +818,7 @@ found:
 			}
 		}
 
-		setmode(0);	/* set new modes, if they've changed */
+		xsetmode(0);	/* set new modes, if they've changed */
 
 		/* set up environment for the shell we are using */
 		/* (this code is rather heuristic, checking for $SHELL */
@@ -946,7 +946,8 @@ settabs()
 	return 0;
 }
 
-setmode(flag)
+void
+xsetmode(flag)
 int	flag;
 /* flag serves several purposes:
  *	if called as the result of a signal, flag will be > 0.

@@ -1,15 +1,14 @@
-.\"	@(#)rand.3c	6.2 (Berkeley) 9/29/85
+.\"	@(#)rand.3	6.3 (2.11BSD) 2026/9/27
 .\"
-.TH RAND 3C "September 29, 1985"
+.TH RAND 3 "September 29, 1985"
 .AT 3
 .SH NAME
 rand, srand \- random number generator
 .SH SYNOPSIS
 .nf
-.B srand(seed)
-.B int seed;
+.B srand(\fIint seed\fP)
 .PP
-.B rand()
+.B int rand(\fIvoid\fP)
 .fi
 .SH DESCRIPTION
 .ft B
@@ -17,7 +16,7 @@ The newer random(3) should be used in new applications;
 rand remains for compatibilty.
 .ft R
 .PP
-.I Rand
+.B rand
 uses a multiplicative congruential
 random number generator with period
 .if t 2\u\s732\s0\d
@@ -32,10 +31,10 @@ on the VAX, and
 on the PDP-11.
 .PP
 The generator is reinitialized by calling
-.I srand
+.B srand
 with 1 as argument.
 It can be set to a random starting point by calling
-.I srand
+.B srand
 with whatever you like as argument.
 .SH "SEE ALSO"
 random(3)

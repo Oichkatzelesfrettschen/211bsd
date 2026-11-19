@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)mount.2	6.3.1 (2.11BSD) 1996/1/25
+.\"	@(#)mount.2	6.3.2 (2.11BSD) 2026/9/8
 .\"
 .TH MOUNT 2 "January 25, 1996"
 .UC 4
@@ -11,16 +11,17 @@ mount, umount \- mount or remove file system
 .SH SYNOPSIS
 .nf
 .ft B
-mount(special, name, flags)
-char *special, *name;
-int flags;
-.PP
-.ft B
-umount(special)
-char *special;
+#include <sys/mount.h>
+
+int
+mount(\fIconst char *special\fP, \fIconst char *name\fP, \fIflags\fP)
+
+int
+umount(\fIconst char *special\fP)
+.ft R
 .fi
 .SH DESCRIPTION
-.I Mount
+.B mount
 announces to the system that a removable file system has
 been mounted on
 the block-structured special file
@@ -29,15 +30,15 @@ from now on, references to file
 .I name
 will refer to
 the root file on the newly mounted file system.
-.I Special
+.I special
 and
 .I name
 are pointers to null-terminated strings
 containing the appropriate path names.
 .PP
-.I Name
+.I name
 must exist already. 
-.I Name
+.I name
 must be a directory.
 Its old contents
 are inaccessible while the file system
@@ -64,13 +65,19 @@ Do not interpret special files on the filesystem.
 MNT_SYNCHRONOUS
 All I/O to the filesystem should be done synchronously.
 .PP
-.I Umount
+The flag MNT_UPDATE indicates that the mount command is being applied to an
+already mounted filesystem.  This allows the mount flags to be changed
+without requiring that the filesystem be unmounted and remounted.  Some
+filesystems may not allow all flags to be changed.  For example, most
+filesystems will not allow a change from read-write to read-only.
+.PP
+.B umount
 announces to the system that the
 .I special
 file is no longer to contain a removable file system.
 The associated file reverts to its ordinary interpretation.
 .SH "RETURN VALUE
-.I Mount
+.B mount
 returns 0 if the action occurred, \-1 if
 .I special
 is inaccessible or not an appropriate file, if
@@ -83,14 +90,14 @@ is in use, or if
 there are already too many
 file systems mounted.
 .PP
-.I Umount
+.B umount
 returns 0 if the action occurred; \-1 if
 if the special file is inaccessible or
 does not have a mounted file system,
 or if there are active files in the mounted 
 file system.
 .SH ERRORS
-.I Mount
+.B mount
 will fail when one of the following occurs:
 .TP 15
 [ENAMETOOLONG]
@@ -110,7 +117,7 @@ A component of \fIname\fP does not exist.
 A component of \fIspecial\fP does not exist.
 .TP 15
 [ENOTBLK]
-.I Special
+.I special
 is not a block device.
 .TP 15
 [ENXIO]
@@ -147,10 +154,10 @@ An I/O error occurred while reading the super block or
 cylinder group information.
 .TP 15
 [EFAULT]
-\fISpecial\fP or \fIname\fP points outside the
+\fIspecial\fP or \fIname\fP points outside the
 process's allocated address space.
 .PP
-.I Umount
+.I umount
 may fail with one of the following errors:
 .TP 15
 [ENOTDIR]
@@ -170,11 +177,11 @@ Too many symbolic links were encountered in translating the pathname.
 The caller is not the super-user.
 .TP 15
 [ENODEV]
-.I Special
+.I special
 does not exist.
 .TP 15
 [ENOTBLK]
-.I Special
+.I special
 is not a block device.
 .TP 15
 [ENXIO]
@@ -195,7 +202,7 @@ An I/O error occurred while writing the super block or
 other cached file system information.
 .TP 15
 [EFAULT]
-\fISpecial\fP points outside the process's allocated address space.
+\fIspecial\fP points outside the process's allocated address space.
 .SH "SEE ALSO"
 mount(8), umount(8)
 .SH BUGS
@@ -206,6 +213,3 @@ tape file systems must be mounted read-only or
 errors will occur when access times are updated,
 whether or not any
 explicit write is attempted.
-.PP
-MNT_SYNCHRONOUS is not currently implemented in the kernel but may be
-specified because the kernel ignores it.

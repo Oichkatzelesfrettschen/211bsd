@@ -15,12 +15,9 @@ char copyright[] =
 "@(#) Copyright (c) 1987 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)fstat.c	5.12 (2.11BSD) 2024/9/20";
+static char sccsid[] = "@(#)fstat.c	5.13 (2.11BSD) 2026/5/21";
 #endif
 
-/*
- *  fstat 
- */
 #include <sys/param.h>
 #include <sys/user.h>
 #include <sys/proc.h>
@@ -40,23 +37,13 @@ static char sccsid[] = "@(#)fstat.c	5.12 (2.11BSD) 2024/9/20";
 #include <netinet/in.h>
 #include <netinet/in_pcb.h>
 #include <stdio.h>
-#include <ctype.h>
 #include <nlist.h>
 #include <pwd.h>
-
-#ifdef	ULTRIX
-		/* UFS -> GFS */
-#    define	inode	gnode
-#    define	x_iptr	x_gptr
-#    define	i_dev	g_dev
-#    define	i_number g_number
-#    define	i_mode	g_mode
-#    define	i_size	g_size
-#endif
+#include <unistd.h>
+#include <stdlib.h>
 
 #define	N_KMEM	"/dev/kmem"
 #define	N_MEM	"/dev/mem"
-#define	N_SWAP	"/dev/swap"
 #define	N_UNIX	"/unix"
 
 #define	TEXT	-2
@@ -70,7 +57,6 @@ typedef struct devs {
 } DEVS;
 DEVS	*devs;
 
-#ifdef pdp11
 static struct nlist nl[] = {
 	{ "_proc" },
 #define	X_PROC		0
@@ -80,57 +66,27 @@ static struct nlist nl[] = {
 #define	X_NETDATA	2
 	{ "" },
 };
-#else
-static struct nlist nl[] = {
-	{ "_proc" },
-#define	X_PROC		0
-	{ "_Usrptmap" },
-#define	X_USRPTMA	1
-	{ "_nproc" },
-#define	X_NPROC		2
-	{ "_usrpt" },
-#define	X_USRPT		3
-	{ "" },
-};
-#endif
 
 struct proc	*mproc;
-#ifndef pdp11
-struct pte	*Usrptma, *usrpt;
-#endif
 
 union {
 	struct	user user;
-#ifdef pdp11
 	char	upages[ctob(USIZE)];
-#else
-	char	upages[UPAGES][NBPG];
-#endif
 } user;
 
-extern int	errno;
 static int	fflg, vflg;
 static int	kmem, mem, nproc, swap;
 static char	*uname;
-#ifdef pdp11
 static off_t	netdata;
 long	lgetw();
-#endif
-
-off_t	lseek();
 
 main(argc, argv)
 	int	argc;
 	char	**argv;
 {
-	extern char *optarg;
-	extern int optind;
 	register struct passwd *passwd;
 	register int pflg, pid, uflg, uid;
 	int ch, size;
-	struct passwd *getpwnam(), *getpwuid();
-	long lgetw();
-	char *malloc();
 
 	pflg = uflg = 0;
 	while ((ch = getopt(argc, argv, "p:u:v")) != EOF)
@@ -177,22 +133,15 @@ main(argc, argv)
 		fprintf(stderr, "%s: No namelist\n", N_UNIX);
 		exit(1);
 	}
-#ifdef pdp11
+
 	if (nl[X_NETDATA].n_type) {
 		netdata = lgetw((off_t)nl[X_NETDATA].n_value);
 		netdata = ctob(netdata);
 	}
-#else
-	Usrptma = (struct pte *)nl[X_USRPTMA].n_value;
-	usrpt = (struct pte *) nl[X_USRPT].n_value;
-#endif
+
 	nproc = (int)lgetw((off_t)nl[X_NPROC].n_value);
 
-#ifdef pdp11
 	(void)lseek(kmem, (off_t)nl[X_PROC].n_value, L_SET);
-#else
-	(void)lseek(kmem, lgetw((off_t)nl[X_PROC].n_value), L_SET);
-#endif
 	size = nproc * sizeof(struct proc);
 	if ((mproc = (struct proc *)malloc((u_int)size)) == NULL) {
 		fprintf(stderr, "fstat: out of space.\n");
@@ -223,50 +172,6 @@ main(argc, argv)
 	exit(0);
 }
 
-#ifndef pdp11
-static
-getu()
-{
-	struct pte *pteaddr, apte;
-	struct pte arguutl[UPAGES+CLSIZE];
-	register int i;
-	int ncl;
-
-	if ((mproc->p_flag & SLOAD) == 0) {
-		if (swap < 0)
-			return(0);
-		(void)lseek(swap, (off_t)dtob(mproc->p_swaddr), L_SET);
-		if (read(swap, (char *)&user.user, sizeof(struct user))
-		    != sizeof(struct user)) {
-			fprintf(stderr, "fstat: can't read u for pid %d from %s\n", mproc->p_pid, N_SWAP);
-			return(0);
-		}
-		return(1);
-	}
-	pteaddr = &Usrptma[btokmx(mproc->p_p0br) + mproc->p_szpt - 1];
-	(void)lseek(kmem, (off_t)pteaddr, L_SET);
-	if (read(kmem, (char *)&apte, sizeof(apte)) != sizeof(apte)) {
-		printf("fstat: can't read indir pte to get u for pid %d from %s\n", mproc->p_pid, N_SWAP);
-		return(0);
-	}
-	(void)lseek(mem, (off_t)ctob(apte.pg_pfnum+1) - (UPAGES+CLSIZE)
-	    * sizeof(struct pte), L_SET);
-	if (read(mem, (char *)arguutl, sizeof(arguutl)) != sizeof(arguutl)) {
-		printf("fstat: can't read page table for u of pid %d from %s\n", mproc->p_pid, N_KMEM);
-		return(0);
-	}
-	ncl = (sizeof(struct user) + NBPG*CLSIZE - 1) / (NBPG*CLSIZE);
-	while (--ncl >= 0) {
-		i = ncl * CLSIZE;
-		(void)lseek(mem, (off_t)ctob(arguutl[CLSIZE+i].pg_pfnum), L_SET);
-		if (read(mem, user.upages[i], CLSIZE*NBPG) != CLSIZE*NBPG) {
-			printf("fstat: can't read page %u of u of pid %d from %s\n", arguutl[CLSIZE+i].pg_pfnum, mproc->p_pid, N_MEM);
-			return(0);
-		}
-	}
-	return(1);
-}
-#else
 static
 getu()
 {
@@ -277,7 +182,7 @@ getu()
 		(void)lseek(swap, (off_t)(mproc->p_addr)<<9, L_SET);
 		if (read(swap, (char *)&user.user, sizeof(struct user))
 		    != sizeof(struct user)) {
-			fprintf(stderr, "fstat: can't read u for pid %d from %s\n", mproc->p_pid, N_SWAP);
+			fprintf(stderr, "fstat: can't read u for pid %d from swap\n", mproc->p_pid);
 			return(0);
 		}
 		return(1);
@@ -289,17 +194,14 @@ getu()
 	}
 	return(1);
 }
-#endif
 
 static
 dotext()
 {
 	struct text	text;
 
-#ifdef pdp11
 	if (!mproc->p_textp)
 		return;
-#endif
 	(void)lseek(kmem, (off_t)mproc->p_textp, L_SET);
 	if (read(kmem, (char *) &text, sizeof(text)) != sizeof(text)) {
 		rerr1("text table", N_KMEM);
@@ -331,10 +233,6 @@ itrans(ftype, g, fno)
 	}
 	if (mproc->p_pid == 0)
 		comm = "swapper";
-#ifndef pdp11
-	else if (mproc->p_pid == 2)
-		comm = "pagedaemon";
-#endif
 	else
 		comm = user.user.u_comm;
 	printf("%-8.8s %-10.10s %5d  ", uname, comm, mproc->p_pid);
@@ -355,15 +253,11 @@ itrans(ftype, g, fno)
 
 	switch(ftype) {
 	case DTYPE_INODE:
-#ifdef pdp11
 	case DTYPE_PIPE:
-#endif
 		printf("\t%2d, %2d\t%5lu\t%6ld\t%3s %s\n", major(inode.i_dev),
 		    minor(inode.i_dev), (long)inode.i_number,
 		    inode.i_mode == IFSOCK ? 0L : inode.i_size,
-#ifdef pdp11
 		    ftype == DTYPE_PIPE ? "pip" :
-#endif
 		    itype(inode.i_mode), name ? name : "");
 		break;
 	case DTYPE_SOCKET:
@@ -421,42 +315,27 @@ socktrans(sock)
 	struct inpcb	inpcb;
 	struct unpcb	unpcb;
 	int len;
-	char dname[32], *strcpy();
+	char dname[32];
 
 	/* fill in socket */
-#ifdef pdp11
 	(void)lseek(mem, (off_t)sock + netdata, L_SET);
 	if (read(mem, (char *)&so, sizeof(struct socket))
-#else
-	(void)lseek(kmem, (off_t)sock, L_SET);
-	if (read(kmem, (char *)&so, sizeof(struct socket))
-#endif
 	    != sizeof(struct socket)) {
 		rerr2(errno, (int)sock, "socket");
 		return;
 	}
 
 	/* fill in protosw entry */
-#ifdef pdp11
 	(void)lseek(mem, (off_t)so.so_proto + netdata, L_SET);
 	if (read(mem, (char *)&proto, sizeof(struct protosw))
-#else
-	(void)lseek(kmem, (off_t)so.so_proto, L_SET);
-	if (read(kmem, (char *)&proto, sizeof(struct protosw))
-#endif
 	    != sizeof(struct protosw)) {
 		rerr2(errno, (int)so.so_proto, "protosw");
 		return;
 	}
 
 	/* fill in domain */
-#ifdef pdp11
 	(void)lseek(mem, (off_t)proto.pr_domain + netdata, L_SET);
 	if (read(mem, (char *)&dom, sizeof(struct domain))
-#else
-	(void)lseek(kmem, (off_t)proto.pr_domain, L_SET);
-	if (read(kmem, (char *)&dom, sizeof(struct domain))
-#endif
 	    != sizeof(struct domain)) {
 		rerr2(errno, (int)proto.pr_domain, "domain");
 		return;
@@ -469,13 +348,8 @@ socktrans(sock)
 	if (dom.dom_family == AF_INET)
 		(void)strcpy(dname, "inet");
 	else {
-#ifdef pdp11
 		(void)lseek(mem, (off_t)dom.dom_name + netdata, L_SET);
 		if ((len = read(mem, dname, sizeof(dname) - 1)) < 0) {
-#else
-		(void)lseek(kmem, (off_t)dom.dom_name, L_SET);
-		if ((len = read(kmem, dname, sizeof(dname) - 1)) < 0) {
-#endif
 			rerr2(errno, (int)dom.dom_name, "char");
 			dname[0] = '\0';
 		}
@@ -505,13 +379,8 @@ socktrans(sock)
 		getinetproto(proto.pr_protocol);
 		if (proto.pr_protocol == IPPROTO_TCP ) {
 			if (so.so_pcb) {
-#ifdef pdp11
 				(void)lseek(mem,(off_t)so.so_pcb+netdata,L_SET);
 				if (read(mem, &inpcb, sizeof(struct inpcb))
-#else
-				(void)lseek(kmem, (off_t)so.so_pcb, L_SET);
-				if (read(kmem, (char *)&inpcb, sizeof(struct inpcb))
-#endif
 				    != sizeof(struct inpcb)){
 					rerr2(errno, (int)so.so_pcb, "inpcb");
 					return;
@@ -526,13 +395,8 @@ socktrans(sock)
 		/* print address of pcb and connected pcb */
 		if (so.so_pcb) {
 			printf(" %x", (int)so.so_pcb);
-#ifdef pdp11
 			(void)lseek(mem, (off_t)so.so_pcb + netdata, L_SET);
 			if (read(mem, (char *)&unpcb, sizeof(struct unpcb))
-#else
-			(void)lseek(kmem, (off_t)so.so_pcb, L_SET);
-			if (read(kmem, (char *)&unpcb, sizeof(struct unpcb))
-#endif
 			    != sizeof(struct unpcb)){
 				rerr2(errno, (int)so.so_pcb, "unpcb");
 				return;
@@ -636,7 +500,6 @@ getfname(filename)
 {
 	struct stat statbuf;
 	DEVS *cur;
-	char *malloc();
 
 	if (stat(filename, &statbuf)) {
 		perror(filename);
@@ -665,6 +528,8 @@ getfname(filename)
 static
 openfiles()
 {
+	char	buff[32];
+
 	if ((kmem = open(N_KMEM, O_RDONLY, 0)) < 0) {
 		perror(N_KMEM);
 		exit(1);
@@ -673,8 +538,10 @@ openfiles()
 		perror(N_MEM);
 		exit(1);
 	}
-	if ((swap = open(N_SWAP, O_RDONLY, 0)) < 0) {
-		perror(N_SWAP);
+	
+	swapdevname(buff, sizeof (buff));
+	if ((swap = open(buff, O_RDONLY, 0)) < 0) {
+		perror(buff);
 		exit(1);
 	}
 }
@@ -700,11 +567,7 @@ static long
 lgetw(loc)
 	off_t loc;
 {
-#ifdef pdp11
 	u_short word;
-#else
-	long word;
-#endif
 
 	(void)lseek(kmem, (off_t)loc, L_SET);
 	if (read(kmem, (char *)&word, sizeof(word)) != sizeof(word))

@@ -4,14 +4,13 @@
  * the terms of the Berkeley Software License Agreement.
  */
 
-/* @(#)externs.h	1.3.1 1996/10/26 */
+/* @(#)externs.h	1.3.2 (2.11BSD) 2026/7/11 */
 
-#include <sys/signal.h>
+#include <signal.h>
 #include <stdio.h>
 
-#define PATH(x)		"/usr/games/lib/x"
-#define logfile		PATH(battlestar.log)
-#define BATTLESTRINGS	PATH(battle_strings)
+#define logfile		"/usr/games/lib/battlestar.log"
+#define BATTLESTRINGS	"/usr/games/lib/battle_strings"
 
 #define BITS (8 * sizeof (int))
 
@@ -191,7 +190,7 @@
 
 struct room {
 #ifdef pdp11
-	unsigned name;
+	off_t name;
 #else
 	char *name;
 #endif
@@ -205,7 +204,7 @@ struct room {
 #define down	link[6]
 #define flyhere	link[7]
 #ifdef pdp11
-	unsigned desc;
+	off_t	desc;
 #else
 	char *desc;
 #endif

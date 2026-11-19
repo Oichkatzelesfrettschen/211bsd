@@ -1,5 +1,5 @@
-#ifndef	lint
-static char *RCSid = "$Source: /usr/users/louie/ntp/RCS/test.c,v $ $Revision: 3.4.1.4 $ $Date: 89/05/18 18:37:39 $";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)test.c	3.4.1.5 (2.11BSD) 2026/5/10";
 #endif
 
 /*

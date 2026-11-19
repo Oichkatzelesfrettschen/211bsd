@@ -22,7 +22,7 @@ char copyright[] =
 "@(#) Copyright (c) 1985,1989 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)main.c	5.39 (Berkeley) 6/24/90";
+static char sccsid[] = "@(#)main.c	5.40 (2.11BSD) 2026/9/22";
 #endif
 
 /*
@@ -53,7 +53,8 @@ static char sccsid[] = "@(#)main.c	5.39 (Berkeley) 6/24/90";
 #include <stdio.h>
 #include <string.h>
 #include "res.h"
-#include "pathnames.h"
+
+#define _PATH_HELPFILE  "/usr/share/misc/nslookup.help"
 
 /*
  *  Default Internet address of the current host.
@@ -110,11 +111,7 @@ int		queryClass = C_IN;
  * Stuff for Interrupt (control-C) signal handler.
  */
 
-#ifdef SVR3
 extern void	IntrHandler();
-#else
-extern int	IntrHandler();
-#endif
 FILE		*filePtr;
 jmp_buf		env;
 

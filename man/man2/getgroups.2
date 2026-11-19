@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)getgroups.2	6.3 (Berkeley) 5/13/86
+.\"	@(#)getgroups.2	6.4 (2.11BSD) 2026/9/28
 .\"
 .TH GETGROUPS 2 "May 13, 1986"
 .UC 5
@@ -11,14 +11,13 @@ getgroups \- get group access list
 .SH SYNOPSIS
 .nf
 .ft B
-#include <sys/param.h>
-.PP
-.ft B
-ngroups = getgroups(gidsetlen, gidset)
-int ngroups, gidsetlen, *gidset;
+#include <unistd.h>
+
+getgroups(\fIint gidsetlen\fP, \fIgid_t *gidset\fP)
+.ft R
 .fi
 .SH DESCRIPTION
-.I Getgroups
+.B getgroups
 gets the current group access list of the user process
 and stores it in the array 
 .IR gidset .
@@ -26,7 +25,7 @@ The parameter
 .I gidsetlen
 indicates the number of entries that may be placed in 
 .IR gidset.
-.I Getgroups
+.B getgroups
 returns the actual number of groups returned in
 .IR gidset .
 No more than NGROUPS, as defined in
@@ -49,10 +48,4 @@ is smaller than the number of groups in the group set.
 The argument \fIgidset\fP specifies
 an invalid address.
 .SH "SEE ALSO
-setgroups(2), initgroups(3X)
-.SH BUGS
-The
-.I gidset
-array should be of type
-.BR gid_t ,
-but remains integer for compatibility with earlier systems.
+setgroups(2), initgroups(3)

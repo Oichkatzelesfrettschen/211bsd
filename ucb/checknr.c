@@ -4,15 +4,13 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)checknr.c	5.2 (Berkeley) 12/5/85";
-#endif not lint
+static char sccsid[] = "@(#)checknr.c	5.3 (2.11BSD) 2026/5/8";
+#endif
 
 /*
  * checknr: check an nroff/troff input file for matching macro calls.
@@ -23,6 +21,7 @@ static char sccsid[] = "@(#)checknr.c	5.2 (Berkeley) 12/5/85";
  */
 #include <stdio.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 #define MAXSTK	100	/* Stack size */
 #define MAXBR	100	/* Max number of bracket pairs known */
@@ -143,8 +142,6 @@ int	fflag;		/* -f: ignore \f */
 int	sflag;		/* -s: ignore \s */
 int	ncmds;		/* size of knowncmds */
 int	slot;		/* slot in knowncmds found by binsrch */
-
-char	*malloc();
 
 main(argc, argv)
 int argc;

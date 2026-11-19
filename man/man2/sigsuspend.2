@@ -29,25 +29,26 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"	@(#)sigsuspend.2	8.2.1 (2.11BSD) 1995/9/3
+.\"	@(#)sigsuspend.2	8.2.2 (2.11BSD) 2026/9/22
 .\"
 .TH SIGSUSPEND 2 "September 3, 1997"
 .UC 7
 .SH NAME
 \fBsigsuspend\fP \- atomically release blocked signals and wait for interrupt
 .SH SYNOPSIS
-.B #include <signal.h>
-.sp
-.I int
-.br
-\fBsigsuspend\fP(sigmask)
-.br
-.I sigset_t *sigmask
+.nf
+.ft B
+#include <signal.h>
+
+int
+sigsuspend\fP(\fIsigset_t *sigmask\fP)
+.ft R
+.fi
 .SH DESCRIPTION
-.BR Sigsuspend ()
+.B sigsuspend
 temporarily changes the blocked signal mask to the set to which
 .I sigmask
-points,
+points
 and then waits for a signal to arrive;
 on return the previous set of masked signals is restored.
 The signal mask set

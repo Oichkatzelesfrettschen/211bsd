@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)mount.h	7.3 (2.11BSD) 2019/11/18
+ *	@(#)mount.h	7.4 (2.11BSD) 2026/23
  */
 
 /*
@@ -101,6 +101,11 @@ struct	xmount
 */
 #define	MNT_WAIT	1
 #define	MNT_NOWAIT	2
+
+#ifndef	KERNEL
+int	mount(const char *, const char *, int);
+int	umount(const char *);
+#endif
 
 #if defined(KERNEL) && !defined(SUPERVISOR)
 struct	mount mount[NMOUNT];

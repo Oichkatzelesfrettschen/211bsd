@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)wwrint.c	3.4 4/24/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)wwrint.c	3.5 (2.11BSD) 2026/5/9";
 #endif
 
 /*
@@ -10,7 +10,7 @@ static char sccsid[] = "@(#)wwrint.c	3.4 4/24/85";
 
 #include "ww.h"
 #include <fcntl.h>
-#include <sys/signal.h>
+#include <signal.h>
 
 /*
  * Tty input interrupt handler.
@@ -23,6 +23,7 @@ static char sccsid[] = "@(#)wwrint.c	3.4 4/24/85";
  * when the buffer is empty; and everywhere else, we only change wwibp.
  * It should be completely safe.
  */
+void
 wwrint()
 {
 	register n;

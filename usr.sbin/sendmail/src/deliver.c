@@ -9,7 +9,7 @@
 */
 
 #if !defined(lint) && !defined(NOSCCS)
-static char	SccsId[] = "@(#)deliver.c	5.10.1 (2.11BSD GTE) 3/6/95";
+static char	SccsId[] = "@(#)deliver.c	5.10.2 (2.11BSD) 2026/9/19";
 #endif
 
 # include <signal.h>
@@ -507,7 +507,7 @@ markfailure(e, q, rcode)
 		if (pid >= 0)\
 			break;\
 		if (i > 0)\
-			sleep((unsigned) NFORKTRIES - i);\
+			xsleep(NFORKTRIES - i);\
 	}\
 }
 /*

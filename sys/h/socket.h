@@ -9,7 +9,7 @@
  * software without specific prior written permission. This software
  * is provided ``as is'' without express or implied warranty.
  *
- *	@(#)socket.h	7.2.2 (2.11BSD GTE) 1995/10/11
+ *	@(#)socket.h	7.2.3 (2.11BSD) 2026/7/9
  */
 
 #ifndef	_SYS_SOCKET_H_
@@ -74,20 +74,9 @@ struct	linger {
 #define	AF_INET		2		/* internetwork: UDP, TCP, etc. */
 #define	AF_IMPLINK	3		/* arpanet imp addresses */
 #define	AF_PUP		4		/* pup protocols: e.g. BSP */
-#define	AF_CHAOS	5		/* mit CHAOS protocols */
-#define	AF_NS		6		/* XEROX NS protocols */
-#define	AF_NBS		7		/* nbs protocols */
-#define	AF_ECMA		8		/* european computer manufacturers */
-#define	AF_DATAKIT	9		/* datakit protocols */
-#define	AF_CCITT	10		/* CCITT protocols, X.25 etc */
-#define	AF_SNA		11		/* IBM SNA */
-#define AF_DECnet	12		/* DECnet */
-#define AF_DLI		13		/* Direct data link interface */
-#define AF_LAT		14		/* LAT */
-#define	AF_HYLINK	15		/* NSC Hyperchannel */
-#define	AF_APPLETALK	16		/* Apple Talk */
+#define	AF_NS		5		/* XEROX NS protocols */
 
-#define	AF_MAX		17
+#define	AF_MAX		6
 
 /*
  * Structure used by kernel to store most
@@ -115,18 +104,7 @@ struct sockproto {
 #define	PF_INET		AF_INET
 #define	PF_IMPLINK	AF_IMPLINK
 #define	PF_PUP		AF_PUP
-#define	PF_CHAOS	AF_CHAOS
 #define	PF_NS		AF_NS
-#define	PF_NBS		AF_NBS
-#define	PF_ECMA		AF_ECMA
-#define	PF_DATAKIT	AF_DATAKIT
-#define	PF_CCITT	AF_CCITT
-#define	PF_SNA		AF_SNA
-#define PF_DECnet	AF_DECnet
-#define PF_DLI		AF_DLI
-#define PF_LAT		AF_LAT
-#define	PF_HYLINK	AF_HYLINK
-#define	PF_APPLETALK	AF_APPLETALK
 
 #define	PF_MAX		AF_MAX
 
@@ -147,18 +125,7 @@ struct sockproto {
 	{ "inet", CTLTYPE_NODE }, \
 	{ "implink", CTLTYPE_NODE }, \
 	{ "pup", CTLTYPE_NODE }, \
-	{ "chaos", CTLTYPE_NODE }, \
-	{ "xerox_ns", CTLTYPE_NODE }, \
-	{ "iso", CTLTYPE_NODE }, \
-	{ "emca", CTLTYPE_NODE }, \
-	{ "datakit", CTLTYPE_NODE }, \
-	{ "ccitt", CTLTYPE_NODE }, \
-	{ "ibm_sna", CTLTYPE_NODE }, \
-	{ "decnet", CTLTYPE_NODE }, \
-	{ "dec_dli", CTLTYPE_NODE }, \
-	{ "lat", CTLTYPE_NODE }, \
-	{ "hylink", CTLTYPE_NODE }, \
-	{ "appletalk", CTLTYPE_NODE }, \
+	{ "xerox_ns", CTLTYPE_NODE } \
 }
 #endif
 

@@ -1,12 +1,12 @@
-#ifndef lint
-static char sccsid[] = "@(#)cntrl.c	5.8 (Berkeley) 1/24/86";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)cntrl.c	5.9 (2.11BSD) 2026/5/9";
 #endif
 
 #include "uucp.h"
 #include <sys/stat.h>
 #include "uust.h"
+#include <errno.h>
 
-extern int errno;
 extern int turntime;
 int willturn;
 int HaveSentHup = 0;
@@ -143,19 +143,15 @@ char *wkpre;
 	Wfile[0] = '\0';
 	willturn = turntime > 0;
 remaster:
-#ifdef USG
-	time(&LastTurned.time);
-	LastTurned.millitm = 0;
-#else !USG
+	
 	ftime(&LastTurned);
-#endif !USG
+
 	send_or_receive = RESET;
 	HaveSentHup = 0;
 top:
 	for (i = 0; i < sizeof wrkvec / sizeof wrkvec[0]; i++)
 		wrkvec[i] = 0;
 	DEBUG(4, "*** TOP ***  -  role=%s\n", role ? "MASTER" : "SLAVE");
-	setupline(RESET);
 	if (Now.time > (LastCheckedNoLogin.time+60)) {
 		LastCheckedNoLogin = Now;
 		if (access(NOLOGIN, 0) == 0) {
@@ -243,8 +239,6 @@ top:
 				lnotify(User, filename, "access denied");
 				goto top;
 			}
-
-			setupline(SNDFILE);
 		}
 
 		if (wrktype == RCVFILE) {
@@ -267,7 +261,6 @@ top:
 				unlinkdf(Dfile);
 				goto top;
 			}
-			setupline(RCVFILE);
 		}
 sendmsg:
 		DEBUG(4, "wrktype - %c\n", wrktype);
@@ -307,12 +300,7 @@ process:
 			WMESG(HUP, "");
 			RMESG(HUP, msg, 1);
 			logent(Rmtname, "TURNAROUND");
-#ifdef USG
-				time(&LastTurned.time);
-				LastTurned.millitm = 0;
-#else !USG
-				ftime(&LastTurned);
-#endif !USG
+			ftime(&LastTurned);
 			Nfiles = 0; /* force rescan of queue for work */
 			goto process;
 		}

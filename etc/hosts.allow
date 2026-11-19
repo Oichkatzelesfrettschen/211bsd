@@ -1,4 +1,9 @@
-tftpd: LOCAL
-rshd: LOCAL
-zyncd: LOCAL
-popper: LOCAL
+#
+#       @(#)hosts.allow        2.0 (2.11BSD) 2026/10/11
+#
+ftpd: .example.com LOCAL
+rlogind: .example.com LOCAL
+rshd: .example.com LOCAL
+tftpd: .example.com LOCAL
+popper: .example.com LOCAL
+telnetd: .example.com LOCAL

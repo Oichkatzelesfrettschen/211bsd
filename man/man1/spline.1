@@ -1,6 +1,6 @@
-.\"	@(#)spline.1g	6.1 (Berkeley) 4/29/85
+.\"	@(#)spline.1	6.2 (2.11BSD) 2026/9/28
 .\"
-.TH SPLINE 1G "April 29, 1985"
+.TH SPLINE 1 "April 29, 1985"
 .AT 3
 .SH NAME
 spline \- interpolate smooth curve
@@ -8,7 +8,7 @@ spline \- interpolate smooth curve
 .B spline
 [ option ] ...
 .SH DESCRIPTION
-.I Spline
+.B spline
 takes pairs of numbers from the standard input as abcissas and ordinates
 of a function.
 It produces a similar set, which
@@ -23,7 +23,7 @@ Numerical Methods for Scientists and Engineers,
 has two continuous derivatives,
 and sufficiently many points to look smooth when plotted, for
 example by
-.IR  graph (1G).
+.BR  graph (1).
 .PP
 The following options are recognized,
 each as a separate argument.
@@ -183,7 +183,7 @@ Normally these limits are calculated from the data.
 Automatic abcissas start at lower limit
 (default 0).
 .SH "SEE ALSO"
-graph(1G), plot(1G)
+graph(1), plot(1)
 .SH DIAGNOSTICS
 When data is not strictly monotone in
 .I x,

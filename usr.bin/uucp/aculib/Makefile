@@ -1,7 +1,7 @@
-#	Makefile	4.4	86/02/12
+#	Makefile	4.5	(2.11BSD) 2026/1/30
 
 DEBUG=
-CFLAGS= -O  ${DEBUG}
+CFLAGS= -O  -I. ${DEBUG}
 
 OBJS= bsdtcp.o df2.o df12.o dk.o dn.o hys.o hysq.o mic.o nov.o pen.o pnet.o \
 	rvmacs.o sy.o unet.o va212.o va811.o va820.o vad.o vent.o vmacs.o \

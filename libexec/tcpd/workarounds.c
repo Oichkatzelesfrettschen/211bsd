@@ -7,8 +7,8 @@
   * Author: Wietse Venema, Eindhoven University of Technology, The Netherlands.
   */
 
-#ifndef lint
-char    sccsid[] = "@(#) workarounds.c 1.4 95/01/08 21:08:00";
+#if	!defined(lint) && defined(DOSCCS)
+char    sccsid[] = "@(#) workarounds.c 1.5 (2.11BSD) 2026/5/11";
 #endif
 
 #include <sys/types.h>
@@ -20,8 +20,6 @@ char    sccsid[] = "@(#) workarounds.c 1.4 95/01/08 21:08:00";
 #include <errno.h>
 #include <stdio.h>
 #include <syslog.h>
-
-extern int errno;
 
 #include "tcpd.h"
 

@@ -2,9 +2,9 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)uusend.1c	6.2 (Berkeley) 4/24/86
+.\"	@(#)uusend.1	6.3 (2.11BSD) 2026/9/28
 .\"
-.TH UUSEND 1C "April 24, 1986"
+.TH UUSEND 1 "April 24, 1986"
 .UC 4
 .SH NAME
 uusend \- send a file to a remote host
@@ -17,11 +17,11 @@ mode
 sourcefile
 sys1!sys2!..!remotefile
 .SH DESCRIPTION
-.I Uusend
+.B uusend
 sends a file to a given location on a remote system.
 The system need not be directly connected to the local
 system, but a chain of
-.IR uucp (1)
+.BR uucp (1)
 links needs to connect the two systems.
 .PP
 If the
@@ -34,7 +34,7 @@ The sourcefile
 can be ``\-'',
 meaning to use the standard input.
 Both of these options are primarily intended for internal use of
-.IR uusend .
+.BR uusend .
 .PP
 The remotefile can include the ~userid syntax.
 .SH DIAGNOSTICS
@@ -48,11 +48,11 @@ This command should not exist, since
 should handle it.
 .PP
 All systems along the line must have the
-.I uusend
+.B uusend
 command available and allow remote execution of it.
 .PP
 Some uucp systems have a bug where binary files cannot be the
 input to a
-.I uux
+.B uux
 command.  If this bug exists in any system along the line,
 the file will show up severly munged.

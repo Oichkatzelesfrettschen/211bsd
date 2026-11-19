@@ -1,4 +1,4 @@
-.\"	@(#)mktemp.3	6.3 (Berkeley) 4/10/87
+.\"	@(#)mktemp.3	6.4 (2.11BSD) 2026/7/29
 .\"
 .TH MKTEMP 3  "April 10, 1987"
 .AT 3
@@ -9,7 +9,7 @@ mktemp \- make a unique file name
 .B char *mktemp(template)
 .B char *template;
 .sp
-.B mkstemp(template)
+.B int mkstemp(template)
 .B char *template;
 .fi
 .SH DESCRIPTION

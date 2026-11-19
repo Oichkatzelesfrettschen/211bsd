@@ -29,7 +29,7 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"     @(#)mount.8	8.7.3 (2.11BSD) 1997/7/3
+.\"     @(#)mount.8	8.7.4 (2.11BSD) 2026/9/8
 .\"
 .TH MOUNT 8 "November 16, 1996"
 .UC 7
@@ -69,11 +69,10 @@ file.
 .PP
 The system maintains a list of currently mounted file systems.
 If no arguments are given to
-.BR mount ,
-this list is printed.
+.BR mount
+that list is printed.
 .PP
 The options are as follows:
-.sp
 .TP 10
 \fB\-a\fP
 Causes everything to be done except for the actual system call.
@@ -94,16 +93,17 @@ flag is currently not implemented.
 Options are specified with a \fB\-o\fP
 flag followed by a comma separated string of options.
 The following options are available:
-.sp
 .RS 1.0i
 .TP 10
 async
 All I/O
 to the file system should be done asynchronously.
-
-.B This is a dangerous flag to set,
-.B and should not be used unless you are prepared to recreate the file
-.B system should your system crash.
+.sp
+.ft B
+This is a dangerous flag to set and should 
+not be used unless you are prepared to 
+recreate the file system should the system crash.
+.ft R
 .TP 10
 force
 The same as
@@ -175,11 +175,7 @@ to execute the equivalent of:
 \fB\-r\fP
 The file system is to be mounted read-only.
 Mount the file system read-only (even the super-user may not write it).
-The same as the
-``rdonly''
-argument to the
-\fB\-o\fP
-option.
+The same as the ``rdonly'' argument to the \fB\-o\fP option.
 .TP 10
 \fB\-t\fP "\fIufs\fP | \fIexternal type\fP"
 The argument following the
@@ -187,9 +183,9 @@ The argument following the
 is used to indicate the file system type.
 The type
 .I ufs
-is the default.  \fIUfs\fP is also the only value supported by 2.11BSD other 
+is the default.  \fIufs\fP is the only value supported by 2.11BSD other 
 than \fIswap\fP.  Thus
-the \fB\-t\fP will rarely be used.
+the \fB\-t\fP is rarely be used.
 The \fB\-t\fP option can be used
 to indicate that the actions should only be taken on
 filesystems of the specified type.

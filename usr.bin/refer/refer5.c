@@ -1,16 +1,11 @@
 #if	defined(DOSCCS) && !defined(lint)
-static char *sccsid = "@(#)refer5.c	4.7.1 (2.11BSD GTE) 1/1/94";
+static char *sccsid = "@(#)refer5.c	4.7.2 (2.11BSD) 2026/9/14";
 #endif
 
 #include "refer..c"
 #define SAME 0
-#ifdef pdp11
 #define NFLAB 1500		/* number of bytes to record all labels */
 #define NLABC 500		/* max number of labels */
-#else
-#define NFLAB 3000		/* number of bytes to record all labels */
-#define NLABC 1000		/* max number of labels */
-#endif
 
 static char sig[MXSIG];
 static char bflab[NFLAB];

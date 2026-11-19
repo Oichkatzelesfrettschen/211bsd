@@ -32,8 +32,8 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)strftime.c	8.1.1 (2.11BSD) 1995/04/01";
-#endif /* LIBC_SCCS and not lint */
+static char sccsid[] = "@(#)strftime.c	8.1.2 (2.11BSD) 2026/6/7";
+#endif
 
 #include <sys/types.h>
 #include <sys/time.h>
@@ -106,7 +106,7 @@ _fmt(format, t)
 			case 'h':
 				if (t->tm_mon < 0 || t->tm_mon > 11)
 					return(0);
-				if	(ch == 'b')
+				if	(ch != 'B')
 					{
 					bcopy(Bfmt[t->tm_mon], junk, 3);
 					junk[3] = '\0';

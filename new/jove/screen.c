@@ -1,9 +1,12 @@
-/***************************************************************************
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)screen.c 2.0 (2.11BSD) 2026/9/17";
+#endif
+/*
  * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
  * is provided to you without charge, and with no warranty.  You may give  *
  * away copies of JOVE, including sources, provided that this notice is    *
  * included in all the files.                                              *
- ***************************************************************************/
+ */
 
 #include "jove.h"
 #include "io.h"
@@ -460,14 +463,14 @@ make_scr()
 #ifdef RESHAPING
 	/* In case we are RESHAPING the window! */
 	if (DesiredScreen)
-		free((char *) DesiredScreen);
+		free((void *) DesiredScreen);
 	if (PhysScreen)
-		free((char *) PhysScreen);
+		free((void *) PhysScreen);
 	if (Savelines)
-		free((char *) Savelines);
+		free((void *) Savelines);
 	if (Screen) {
-		free(Screen->s_line);	/* free all the screen data */
-		free((char *) Screen);
+		free((void *)Screen->s_line);	/* free all the screen data */
+		free((void *) Screen);
 	}
 #endif /* RESHAPING */
 

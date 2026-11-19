@@ -1,5 +1,6 @@
-static char *RCSid =
-"$Header: /usr/src/new/rcs/src/RCS/sccstorcs.c,v 1.4. (2.11BSD)";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)sccstorcs.c 1.5 (2.11BSD) 2026/5/11";
+#endif
 
 /*
  * SCCSTORCS - build RCS file from SCCS file preserving deltas.

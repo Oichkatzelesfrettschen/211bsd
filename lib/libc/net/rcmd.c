@@ -16,16 +16,16 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)rcmd.c	5.22 (2.11BSD) 2025/3/26";
+static char sccsid[] = "@(#)rcmd.c	5.23 (2.11BSD) 2026/9/21";
 #endif
 
 #include <stdio.h>
 #include <ctype.h>
 #include <pwd.h>
 #include <string.h>
+#include <signal.h>
 #include <sys/param.h>
 #include <sys/file.h>
-#include <sys/signal.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 

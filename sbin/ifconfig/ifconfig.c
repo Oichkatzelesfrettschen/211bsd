@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)ifconfig.c	4.21 (2.11BSD) 2022/1/21";
+static char sccsid[] = "@(#)ifconfig.c	4.22 (2.11BSD) 2026/1/31";
 #endif
 
 #include <sys/types.h>
@@ -61,17 +61,10 @@ struct	cmd {
 } cmds[] = {
 	{ "up",		IFF_UP,		setifflags } ,
 	{ "down",	-IFF_UP,	setifflags },
-	{ "trailers",	-IFF_NOTRAILERS,setifflags },
-	{ "-trailers",	IFF_NOTRAILERS,	setifflags },
 	{ "arp",	-IFF_NOARP,	setifflags },
 	{ "-arp",	IFF_NOARP,	setifflags },
 	{ "debug",	IFF_DEBUG,	setifflags },
 	{ "-debug",	-IFF_DEBUG,	setifflags },
-#ifdef notdef
-#define	EN_SWABIPS	0x1000
-	{ "swabips",	EN_SWABIPS,	setifflags },
-	{ "-swabips",	-EN_SWABIPS,	setifflags },
-#endif
 	{ "netmask",	NEXTARG,	setifnetmask },
 	{ "metric",	NEXTARG,	setifmetric },
 	{ "broadcast",	NEXTARG,	setifbroadaddr },
@@ -114,7 +107,6 @@ main(argc, argv)
 		    "\t[ af [ address [ dest_addr ] ] [ up ] [ down ]",
 			    "[ netmask mask ] ]\n",
 		    "\t[ metric n ]\n",
-		    "\t[ trailers | -trailers ]\n",
 		    "\t[ arp | -arp ]\n");
 		exit(1);
 	}

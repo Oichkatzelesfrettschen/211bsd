@@ -1,5 +1,5 @@
 .rn '' }`
-''' $Header: patch.man,v 2.0.1.3 (2.11BSD) 2025/12/26 20:47:18 sms $
+''' $Header: patch.man,v 2.1 (2.11BSD) 2026/6/18 20:47:18 sms $
 ''' 
 ''' $Log:	patch.man,v $
 ''' Revision 2.0.1.2  88/06/22  20:47:18  lwall
@@ -67,7 +67,7 @@
 .ds L' `
 .ds R' '
 'br\}
-.TH PATCH 1 LOCAL
+.TH PATCH 1 "June 18, 2026"
 .SH NAME
 patch - a program for applying a diff file to an original
 .SH SYNOPSIS
@@ -178,11 +178,6 @@ The context diff header takes precedence over an Index line.
 If no filename can be intuited from the leading garbage, you will be asked
 for the name of the file to patch.
 .PP
-(If the original file cannot be found, but a suitable SCCS or RCS file is
-handy,
-.I patch
-will attempt to get or check out the file.)
-.PP
 Additionally, if the leading garbage contains a \*(L"Prereq: \*(R" line,
 .I patch
 will take the first word from the prerequisites line (normally a version
@@ -190,14 +185,6 @@ number) and check the input file to see if that word can be found.
 If not,
 .I patch
 will ask for confirmation before proceeding.
-.PP
-The upshot of all this is that you should be able to say, while in a news
-interface, the following:
-.Sp
-	| patch -d /usr/src/local/blurfl
-.Sp
-and patch a file in the blurfl directory directly from the article containing
-the patch.
 .PP
 If the patch file contains more than one patch,
 .I patch
@@ -392,7 +379,7 @@ No environment variables are used by
 .SH FILES
 /tmp/patch*
 .SH SEE ALSO
-diff(1)
+diff(1), ed(1)
 .SH NOTES FOR PATCH SENDERS
 There are several things you should bear in mind if you are going to
 be sending out patches.

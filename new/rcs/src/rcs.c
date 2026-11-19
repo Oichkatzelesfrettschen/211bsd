@@ -1,10 +1,9 @@
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)rcs.c 4.8 (2.11BSD) 2026/5/11";
+#endif
 /*
  *                      RCS create/change operation
  */
-#if	!defined(lint) && defined(DOSCCS)
-static char rcsid[]=
-"$Header: /usr/src/local/bin/rcs/src/RCS/rcs.c,v 4.7 87/12/18 11:37:17 narten Exp $ Purdue CS";
-#endif
 /***************************************************************************
  *                       create RCS files or change RCS file attributes
  *                       Compatibility with release 2: define COMPAT2
@@ -19,8 +18,6 @@ static char rcsid[]=
  * in any form or by any means without the prior written permission of the
  * author.
  */
-
-
 
 /* $Log:	rcs.c,v $
  * Revision 4.7  87/12/18  11:37:17  narten
@@ -107,11 +104,7 @@ static char rcsid[]=
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "rcsbase.h"
-#ifndef lint
-static char rcsbaseid[] = RCSBASE;
-#endif
 
-extern FILE * fopen();
 extern char * bindex();
 extern int  expandsym();                /* get numeric revision name        */
 extern struct  hshentry  * getnum();
@@ -123,14 +116,12 @@ extern char              * Klog, *Khead, *Kaccess, *Ktext;
 extern char * Ksuffix;
 #endif
 extern char * getcaller();              /* get login of caller              */
-extern char * malloc();
 extern struct hshentry   * genrevs();
 extern struct hshentry   * breaklock(); /* remove locks (forward)           */
 extern struct hshentry   * findlock();  /* find and remove lock             */
 extern char * checkid();                /* check an identifier              */
 extern char * getfullRCSname();         /* get full path name of RCS file   */
 extern char * mktempfile();             /* temporary file name generator    */
-extern free();
 extern void catchints();
 extern void ignoreints();
 extern int nextc;                       /* next input character             */

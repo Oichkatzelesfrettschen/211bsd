@@ -1,6 +1,6 @@
-#ifndef lint
-static char *sccsid = "@(#)mknod.c	4.2 (Berkeley) 8/28/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)mknod.c	4.3 (2.11BSD) 2026/5/7";
+#endif
 
 #include <stdio.h>
 
@@ -8,7 +8,7 @@ main(argc, argv)
 	int argc;
 	char **argv;
 {
-	int m, a, b;
+	register int m, a, b;
 
 	if(argc != 5) {
 		printf("arg count\n");
@@ -36,9 +36,9 @@ usage:
 }
 
 number(s)
-char *s;
+register char *s;
 {
-	int n, c;
+	register int n, c;
 
 	n = 0;
 	while(c = *s++) {

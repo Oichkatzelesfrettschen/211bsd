@@ -1,6 +1,6 @@
 #!/bin/csh -f
 #
-#	@(#)updatedb.csh	4.6.1	(2.11BSD)	1996/10/23
+#	@(#)updatedb.csh	4.6.2	(2.11BSD)	2026/4/27
 #
 set SRCHPATHS = "/"			# directories to be put in the database
 set LIBDIR = /usr/libexec/find		# for subprograms
@@ -23,6 +23,18 @@ nice +10
 find ${SRCHPATHS} -print | tr '/' '\001' | \
    (sort -f; echo $status > $errs) | \
    tr '\001' '/' >$filelist
+
+# The last file in $filelist is not processed into $FCODES.
+#
+# This was noticed when both /VERSION and /VERSION.old were present and last
+# after 'sort -f' above)  but "find VERSION" would not display VERSION.old!
+#
+# Append a dummy/junk line to $filelist before processing with 'bigram'. The
+# dummy name will not appear in find.codes.
+
+set fake=`tail -1 $filelist`.xxx
+echo $fake >> $filelist
+
 $LIBDIR/bigram <$filelist | \
    (sort; echo $status >> $errs) | uniq -c | sort -nr | \
    awk '{ if (NR <= 128) print $2 }' | tr -d '\012' > $bigrams

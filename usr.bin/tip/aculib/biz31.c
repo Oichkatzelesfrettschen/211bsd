@@ -4,16 +4,16 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)biz31.c	5.1 (Berkeley) 6/6/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)biz31.c	5.2 (2.11BSD) 2026/5/9";
+#endif
 
 #include "tip.h"
 
 #define MAXRETRY	3		/* sync up retry count */
 #define DISCONNECT_CMD	"\21\25\11\24"	/* disconnection string */
 
-static	int sigALRM();
+static	void sigALRM();
 static	int timeout = 0;
 static	jmp_buf timeoutbuf;
 
@@ -124,7 +124,7 @@ echo(s)
 	}
 }
 
-static int
+static void
 sigALRM()
 {
 
@@ -137,7 +137,7 @@ detect(s)
 	register char *s;
 {
 	char c;
-	int (*f)();
+	sig_t f;
 
 	f = signal(SIGALRM, sigALRM);
 	timeout = 0;
@@ -162,7 +162,7 @@ flush(s)
 	register char *s;
 {
 	char c;
-	int (*f)();
+	sig_t f;
 
 	f = signal(SIGALRM, sigALRM);
 	while (*s++) {

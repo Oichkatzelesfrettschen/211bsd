@@ -1,19 +1,19 @@
 /*
-** cxref.c
-**
-** C driver for Cxref program.
-** does argument handling, then builds the right
-** shell commands for passing to the system() routine.
-**
-** Set up the argument vectors ourselves, the i/o with a pipe()
-** call, and do all the forking and execing ourselves.
-**
-** Arnold Robbins, Information and Computer Science, Georgia Tech
-**	gatech!arnold
-** Copyright (c) 1984 by Arnold Robbins
-** All rights reserved
-** This program may not be sold, but may be distributed
-** provided this header is included.
+ * @(#)cxref.c      1.1 (2.11BSD) 2026/9/21
+ *
+ * C driver for Cxref program.
+ * does argument handling, then builds the right
+ * shell commands for passing to the system() routine.
+ *
+ * Set up the argument vectors ourselves, the i/o with a pipe()
+ * call, and do all the forking and execing ourselves.
+ *
+ * Arnold Robbins, Information and Computer Science, Georgia Tech
+ *	gatech!arnold
+ * Copyright (c) 1984 by Arnold Robbins
+ * All rights reserved
+ * This program may not be sold, but may be distributed
+ * provided this header is included.
 */
 
 #include <stdio.h>
@@ -50,7 +50,7 @@ int argc;
 char **argv;
 {
 	int i;
-	int catchem();
+	void catchem();
 
 	signal (SIGQUIT, catchem);
 	signal (SIGINT, catchem);
@@ -609,6 +609,7 @@ char *fname;
 	return ( strcmp(cp, "-") == 0 ? "stdin" : cp);
 }
 
+void
 catchem()	/* simple signal catcher */
 {
 	signal(SIGQUIT, SIG_IGN);

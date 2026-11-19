@@ -1,3 +1,7 @@
+/*
+ * = "@(#)dclgen.c 2.0 (2.11BSD) 2026/7/15";
+*/
+
 #include "defs"
 
 #define DOCOMMON 1
@@ -47,11 +51,6 @@ else if(procclass == PRBLOCK)
 	}
 else	{
 	p2str("c  main program");
-	if(tailor.ftnsys == CRAY)
-		{
-		p2stmt(0);
-		p2key(FPROGRAM);
-		}
 	}
 
 if(thisargs)

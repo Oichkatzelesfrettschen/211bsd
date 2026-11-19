@@ -3,7 +3,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static	char	sccsid[] = "@(#)c01.c	2.1 (2.11BSD) 2022/1/21";
+static	char	sccsid[] = "@(#)c01.c	2.2 (2.11BSD) 2026/1/26";
 #endif
 
 #include "c0.h"
@@ -290,15 +290,13 @@ build(op)
 		if (leftc)
 			cvn = leftc;
 		leftc = 0;
-	} else if (op==COLON || op==MAX || op==MIN) {
+	} else if (op==COLON) {
 		if (t1>=PTR && t1==t2)
 			cvn = 0;
-		if (op!=COLON && (t1>=PTR || t2>=PTR))
-			op += MAXP-MAX;
 		/*
 		 * Allow "e ? i : p" and "e ? p : i" with warning.
 		 */
-		if (op==COLON && (cvn==ITP || cvn==LTP)) {
+		if (cvn==ITP || cvn==LTP) {
 			p3 = leftc? p1: p2;
 			if ((p3->t.op!=CON || p3->c.value!=0)
 			 && (p3->t.op!=LCON || p3->l.lvalue!=0)) {

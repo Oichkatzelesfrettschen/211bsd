@@ -5,7 +5,7 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)alarm.c	5.2 (Berkeley) 3/9/86";
+static char sccsid[] = "@(#)alarm.c	5.3 (2.11BSD) 2026/9/19";
 #endif LIBC_SCCS and not lint
 
 /*
@@ -13,8 +13,9 @@ static char sccsid[] = "@(#)alarm.c	5.2 (Berkeley) 3/9/86";
  */
 #include <sys/time.h>
 
+unsigned int
 alarm(secs)
-	int secs;
+	unsigned int secs;
 {
 	struct itimerval it, oitv;
 	register struct itimerval *itp = &it;

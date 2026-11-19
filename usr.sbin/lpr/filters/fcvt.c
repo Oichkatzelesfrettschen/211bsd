@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)fcvt.c	5.1 (Berkeley) 5/15/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)fcvt.c	5.2 (2.11BSD) 2026/5/10";
+#endif
 
 /*
  * Convert from the SAIL font format to the Unix font format.

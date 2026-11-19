@@ -1,6 +1,6 @@
-.\"	@(#)uuq.1c	6.2 (Berkeley) 4/24/86
+.\"	@(#)uuq.1	6.3 (2.11BSD) 2026/9/28
 .\"
-.TH UUQ 1C "April 24, 1986"
+.TH UUQ 1 "April 24, 1986"
 .UC 6
 .SH NAME
 uuq \- examine or manipulate the uucp queue
@@ -22,13 +22,13 @@ uuq \- examine or manipulate the uucp queue
 .BI -b baud
 ]
 .SH DESCRIPTION
-.I Uuq
+.B uuq
 is used to examine (and possibly delete) entries in the uucp queue.
 .PP
 When listing jobs,
-.I uuq
+.B uuq
 uses a format reminiscent of
-.IR ls .
+.BR ls .
 For the long format,
 information for each job listed includes
 job number, number of files to transfer, user who
@@ -53,7 +53,7 @@ Limit output to jobs for systems whose system names begin with \fIsystem\fP.
 Limit output to jobs for users whose login names begin with \fIuser\fP.
 .TP 10
 .BI \-d jobno
-Delete job number \fIjobno\fP (as obtained from a previous \fIuuq\fP command)
+Delete job number \fIjobno\fP (as obtained from a previous \fBuuq\fP command)
 from the uucp queue.
 Only the UUCP Administrator is permitted to delete jobs.
 .TP 10
@@ -68,17 +68,17 @@ Use \fIbaud\fP to compute the transfer time instead of the default
 .ta \w'/usr/spool/uucp/D.hostname/D.*   'u
 /usr/spool/uucp/	Default spool directory
 /usr/spool/uucp/C./C.*	Control files
-.br
+.sp
 /usr/spool/uucp/D\fIhostname\fP./D.*	Outgoing data files
 /usr/spool/uucp/X./X.*	Outgoing execution files
 .SH SEE ALSO
-uucp(1C), uux(1C), uulog(1C), uusnap(8C)
+uucp(1), uux(1), uulog(1), uusnap(8)
 .SH BUGS
 No information is available on work requested by the remote machine.
 .PP
 The user who requests a remote uucp command is unknown.
 .PP
-.B "Uuq -l"
+.B "uuq -l"
 can be horrendously slow.
 .SH AUTHOR
 Lou Salkind, New York University

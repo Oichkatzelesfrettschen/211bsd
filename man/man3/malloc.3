@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)malloc.3	6.3 (Berkeley) 5/14/86
+.\"	@(#)malloc.3	6.4 (2.11BSD) 2026/8/20
 .\"
 .TH MALLOC 3  "May 14, 1986"
 .UC 4
@@ -10,28 +10,30 @@
 malloc, free, realloc, calloc, alloca \- memory allocator
 .SH SYNOPSIS
 .nf
-.B char *malloc(size)
+.B #include <stdlib.h>
+.PP
+.B void *malloc(size)
 .B unsigned size;
 .PP
-.B free(ptr)
-.B char *ptr;
+.B void free(ptr)
+.B void *ptr;
 .PP
-.B char *realloc(ptr, size)
-.B char *ptr;
+.B void *realloc(ptr, size)
+.B void *ptr;
 .B unsigned size;
 .PP
-.B char *calloc(nelem, elsize)
+.B void *calloc(nelem, elsize)
 .B unsigned nelem, elsize;
 .PP
-.B char *alloca(size)
+.B void *alloca(size)
 .B int size;
 .fi
 .SH DESCRIPTION
-.I Malloc
+.I malloc
 and
 .I free
 provide a general-purpose memory allocation package.
-.I Malloc
+.I malloc
 returns a pointer to a block of at least
 .I size
 bytes beginning on a word boundary.
@@ -48,7 +50,7 @@ Needless to say, grave disorder will result if the space assigned by
 is overrun or if some random number is handed to
 .IR free .
 .PP
-.I Malloc
+.I malloc
 maintains multiple lists of free blocks according to size,
 allocating space from the appropriate list.
 It calls
@@ -58,7 +60,7 @@ It calls
 to get more memory from the system when there is no
 suitable space already free.
 .PP
-.I Realloc
+.I realloc
 changes the size of the block pointed to by
 .I ptr
 to
@@ -81,14 +83,14 @@ and
 were previously used to attempt storage compaction.
 This procedure is no longer recommended.
 .PP
-.I Calloc
+.I calloc
 allocates space for an array of
 .I nelem
 elements of size
 .I elsize.
 The space is initialized to zeros.
 .PP
-.I Alloca
+.I alloca
 allocates 
 .I size
 bytes of space in the stack frame of the caller.
@@ -105,12 +107,12 @@ or larger, the memory returned will be page-aligned.
 brk(2),
 pagesize(2)
 .SH DIAGNOSTICS
-.I Malloc, realloc
+.I malloc, realloc
 and
 .I calloc
 return a null pointer (0) if there is no available memory or if the arena
 has been detectably corrupted by storing outside the bounds of a block.
-.I Malloc
+.I malloc
 may be recompiled to check the arena very stringently on every transaction;
 those sites with a source code license may check the source code to see
 how this can be done.
@@ -125,9 +127,7 @@ The current implementation of
 .I malloc
 does not always fail gracefully when system
 memory limits are approached.
-It may fail to allocate memory when larger free blocks could be broken
-up, or when limits are exceeded because the size is rounded up.
-It is optimized for sizes that are powers of two.
+It may fail to allocate when limits are exceeded because the size is rounded up.
 .PP
-.I Alloca
+.I alloca
 is machine dependent; its use is discouraged.

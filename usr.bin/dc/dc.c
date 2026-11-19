@@ -1,9 +1,10 @@
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)dc.c	4.3.2	(2.11BSD)	2022/10/2";
+static char sccsid[] = "@(#)dc.c	4.3.3	(2.11BSD) 2026/9/21";
 #endif
 
 #include <stdio.h>
 #include <signal.h>
+#include <stdlib.h>
 #include "dc.h"
 
 main(argc,argv)
@@ -110,7 +111,7 @@ casediv:
 				continue;
 			}
 			if((c = sbackc(p))<0){
-				error("sqrt of neg number\n");
+				xerror("sqrt of neg number\n");
 			}
 			if(k<savk)n = savk;
 			else{
@@ -126,7 +127,7 @@ casediv:
 			neg = 0;
 			arg1 = pop();
 			EMPTY;
-			if(sunputc(arg1) != 0)error("exp not an integer\n");
+			if(sunputc(arg1) != 0) xerror("exp not an integer\n");
 			arg2 = pop();
 			EMPTYR(arg1);
 			if(sfbeg(arg1) == 0 && sbackc(arg1)<0){
@@ -134,7 +135,7 @@ casediv:
 				chsign(arg1);
 			}
 			if(length(arg1)>=3){
-				error("exp too big\n");
+				xerror("exp too big\n");
 			}
 			savk = sunputc(arg2);
 			p = exp(arg2,arg1);
@@ -297,7 +298,7 @@ casediv:
 			EMPTY;
 			p = scalint(p);
 			if(length(p)>1){
-				error("scale too big\n");
+				xerror("scale too big\n");
 			}
 			rewind(p);
 			k = sfeof(p)?0:sgetc(p);
@@ -324,16 +325,16 @@ casediv:
 			p = pop();
 			EMPTY;
 			if(length(p)>2){
-				error("Q?\n");
+				xerror("Q?\n");
 			}
 			rewind(p);
 			if((c =  sgetc(p))<0){
-				error("neg Q\n");
+				xerror("neg Q\n");
 			}
 			release(p);
 			while(c-- > 0){
 				if(readptr == &readstk[0]){
-					error("readstk?\n");
+					xerror("readstk?\n");
 				}
 				if(*readptr != 0)release(*readptr);
 				readptr--;
@@ -385,7 +386,7 @@ casediv:
 			continue;
 		case 'S':
 			if(stkptr == &stack[0]){
-				error("save: args\n");
+				xerror("save: args\n");
 			}
 			c = readc() & 0377;
 			sptr = stable[c];
@@ -404,10 +405,10 @@ casediv:
 			sp->val = p;
 			continue;
 sempty:
-			error("symbol table overflow\n");
+			xerror("symbol table overflow\n");
 		case 's':
 			if(stkptr == &stack[0]){
-				error("save:args\n");
+				xerror("save:args\n");
 			}
 			c = readc() & 0377;
 			sptr = stable[c];
@@ -415,7 +416,7 @@ sempty:
 				p = sptr->val;
 				if(c >= ARRAYST){
 					rewind(p);
-					while(sfeof(p) == 0)release(getwd(p));
+					while(sfeof(p) == 0)release(xgetwd(p));
 				}
 				release(p);
 			}
@@ -435,7 +436,7 @@ sempty:
 			c = readc() & 0377;
 			sptr = stable[c];
 			if(sptr == 0){
-				error("L?\n");
+				xerror("L?\n");
 			}
 			stable[c] = sptr->next;
 			sptr->next = sfree;
@@ -444,7 +445,7 @@ sempty:
 			if(c >= ARRAYST){
 				rewind(p);
 				while(sfeof(p) == 0){
-					q = getwd(p);
+					q = xgetwd(p);
 					if(q != 0)release(q);
 				}
 			}
@@ -457,14 +458,14 @@ sempty:
 			fsfile(q);
 			c = 0;
 			if((sfbeg(q) == 0) && ((c = sbackc(q))<0)){
-				error("neg index\n");
+				xerror("neg index\n");
 			}
 			if(length(q)>2){
-				error("index too big\n");
+				xerror("index too big\n");
 			}
 			if(sfbeg(q) == 0)c = c*100+sbackc(q);
 			if(c >= MAXIND){
-				error("index too big\n");
+				xerror("index too big\n");
 			}
 			release(q);
 			n = readc() & 0377;
@@ -500,14 +501,14 @@ sempty:
 			fsfile(q);
 			c = 0;
 			if((sfbeg(q) == 0) && ((c = sbackc(q))<0)){
-				error("neg index\n");
+				xerror("neg index\n");
 			}
 			if(length(q)>2){
-				error("index too big\n");
+				xerror("index too big\n");
 			}
 			if(sfbeg(q) == 0)c = c*100+sbackc(q);
 			if(c >= MAXIND){
-				error("index too big\n");
+				xerror("index too big\n");
 			}
 			release(q);
 			n = readc() & 0377;
@@ -516,7 +517,7 @@ sempty:
 				p = sptr->val;
 				if(length(p)-PTRSZ >= c*PTRSZ){
 					seekc(p,c*PTRSZ);
-					s = getwd(p);
+					s = xgetwd(p);
 					if(s != 0){
 						q = copy(s,length(s));
 						pushp(q);
@@ -537,7 +538,7 @@ execute:
 					release(*readptr);
 				else{
 					if(readptr++ == &readstk[RDSKSZ]){
-						error("nesting depth\n");
+						xerror("nesting depth\n");
 					}
 				}
 			}
@@ -550,7 +551,7 @@ execute:
 			continue;
 		case '?':
 			if(++readptr == &readstk[RDSKSZ]){
-				error("nesting depth\n");
+				xerror("nesting depth\n");
 			}
 			*readptr = 0;
 			fsave = curfile;
@@ -921,6 +922,8 @@ char *argv[];
 	sfree = &symlst[0];
 	return;
 }
+
+void
 onintr(){
 
 	signal(SIGINT,onintr);
@@ -1556,7 +1559,8 @@ subt(){
 command(){
 	int c;
 	char line[100],*sl;
-	register (*savint)(),pid,rpid;
+	sig_t	savint;
+	register pid_t pid,rpid;
 	int retcode;
 
 	switch(c = readc()){
@@ -1635,7 +1639,7 @@ load(){
 			q = salloc(length(p));
 			rewind(p);
 			while(sfeof(p) == 0){
-				s = getwd(p);
+				s = xgetwd(p);
 				if(s == 0){putwd(q, (struct blk *)NULL);}
 				else{
 					t = copy(s,length(s));
@@ -1846,7 +1850,7 @@ char *s;
 					p = tmps->val;
 					rewind(p);
 					ct = 0;
-					while((q = getwd(p)) != NULL){
+					while((q = xgetwd(p)) != NULL){
 						ct++;
 						if(q != 0){
 							if(((int)q->beg & 01) != 0){
@@ -1893,7 +1897,7 @@ register struct blk *p;
 }
 
 struct blk *
-getwd(p)
+xgetwd(p)
 struct blk *p;
 {
 	register struct wblk *wp;
@@ -1931,7 +1935,6 @@ nalloc(p,nbytes)
 register char *p;
 unsigned nbytes;
 {
-	char *malloc();
 	register char *q, *r;
 	q = r = malloc(nbytes);
 	if(q==0)

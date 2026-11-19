@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)write.2	6.5 (Berkeley) 8/1/87
+.\"	@(#)write.2	6.6 (2.11BSD) 2026/9/17
 .\"
 .TH WRITE 2 "August 1, 1987"
 .UC 4
@@ -11,30 +11,24 @@ write, writev \- write output
 .SH SYNOPSIS
 .nf
 .ft B
-cc = write(d, buf, nbytes)
-int cc, d;
-char *buf;
-unsigned short nbytes;
-.PP
-.ft B
-#include <sys/types.h>
-#include <sys/uio.h>
-.PP
-.ft B
-cc = writev(d, iov, iovcnt)
-int cc, d;
-struct iovec *iov;
-int iovcnt;
+#include <unistd.h>
+
+ssize_t
+write(\fIint d\fP, \fIconst void *buf\fP, \fIsize_t nbytes\fP)
+
+ssize_t
+writev(\fIint d\fP, \fIconst struct iovec *iov\fP, \fIint iovcnt\fP)
+.ft R
 .fi
 .SH DESCRIPTION
-.I Write
+.B write
 attempts to write
 .I nbytes
 of data to the object referenced by the descriptor
 .I d
 from the buffer pointed to by
 .IR buf .
-.I Writev
+.B writev
 performs the same action, but gathers the output data
 from the 
 .I iovcnt
@@ -43,7 +37,7 @@ buffers specified by the members of the
 array: iov[0], iov[1], ..., iov[iovcnt\|\-\|1].
 .PP
 For 
-.IR writev ,
+.BR writev ,
 the 
 .I iovec
 structure is defined as
@@ -62,7 +56,7 @@ Each
 .I iovec
 entry specifies the base address and length of an area
 in memory from which data should be written.
-.I Writev
+.B writev
 will always write a complete area before proceeding
 to the next.
 .PP
@@ -70,7 +64,7 @@ On objects capable of seeking, the \fIwrite\fP starts at a position
 given by the pointer associated with
 .IR d ,
 see
-.IR lseek (2).
+.BR lseek (2).
 Upon return from
 .IR write ,
 the pointer is incremented by the number of bytes actually written.
@@ -80,7 +74,7 @@ position.  The value of the pointer associated with such an object
 is undefined.
 .PP
 If the real user is not the super-user, then
-.I write
+.B write
 clears the set-user-id bit on a file.
 This prevents penetration of system security
 by a user who
@@ -89,9 +83,9 @@ owned by the super-user.
 .PP
 When using non-blocking I/O on objects such as sockets that are subject
 to flow control,
-.I write
+.B write
 and
-.I writev
+.B writev
 may write fewer bytes than requested;
 the return value must be noted,
 and the remainder of the operation should be retried when possible.
@@ -101,9 +95,9 @@ is returned.  Otherwise a \-1 is returned and the global variable
 .I errno
 is set to indicate the error.
 .SH ERRORS
-.I Write
+.B write
 and
-.I writev
+.B writev
 will fail and the file pointer will remain unchanged if one or more
 of the following are true:
 .TP 15
@@ -147,11 +141,11 @@ The file was marked for non-blocking I/O,
 and no data could be written immediately.
 .PP
 In addition, 
-.I writev
+.B writev
 may return one of the following errors:
 .TP 15
 [EINVAL]
-.I Iovcnt
+.I iovcnt
 was less than or equal to 0, or greater than 16.
 .TP 15
 [EINVAL]
@@ -161,4 +155,4 @@ values in the
 .I iov
 array overflowed a short.
 .SH "SEE ALSO"
-fcntl(2), lseek(2), open(2), pipe(2), select(2)
+fcntl(2), lseek(2), open(2), pipe(2)

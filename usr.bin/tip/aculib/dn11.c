@@ -4,16 +4,16 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)dn11.c	5.1 (Berkeley) 4/30/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)dn11.c	5.2 (2.11BSD) 2026/5/9";
+#endif
 
 /*
  * Routines for dialing up on DN-11
  */
 #include "tip.h"
 
-int dn_abort(), alarmtr();
+void dn_abort(), alarmtr();
 static jmp_buf jmpbuf;
 static int child = -1, dn;
 
@@ -80,6 +80,7 @@ dn_dialer(num, acu)
 	return (1);
 }
 
+void
 alarmtr()
 {
 
@@ -100,6 +101,7 @@ dn_disconnect()
 	close(FD);
 }
 
+void
 dn_abort()
 {
 

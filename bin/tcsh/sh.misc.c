@@ -1,4 +1,3 @@
-/* $Header: /home/hyperion/mu/christos/src/sys/tcsh-6.00/RCS/sh.misc.c,v 3.2 1991/07/05 02:23:28 christos Exp $ */
 /*
  * sh.misc.c: Miscelaneous functions
  */
@@ -37,7 +36,7 @@
 #include "config.h"
 #if !defined(lint) && !defined(pdp11)
 static char *rcsid() 
-    { return "$Id: sh.misc.c,v 3.2 1991/07/05 02:23:28 christos Exp $"; }
+    { return "$Id: sh.misc.c,v 3.3 2026/8/20 02:23:28 (2.11BSD) Exp $"; }
 #endif
 
 #include "sh.h"
@@ -59,17 +58,6 @@ any(s, c)
 	if (*s++ == c)
 	    return (1);
     return (0);
-}
-
-void
-setzero(cp, i)
-    char   *cp;
-    int     i;
-{
-    if (i != 0)
-	do
-	    *cp++ = 0;
-	while (--i);
 }
 
 char   *
@@ -303,14 +291,14 @@ dmove(i, j)
 
     if (i == j || i < 0)
 	return (i);
-#ifdef DUP2
+
     if (j >= 0) {
 	(void) dup2(i, j);
 	if (j != i)
 	    (void) close(i);
 	return (j);
     }
-#endif
+
     j = dcopy(i, j);
     if (j != i)
 	(void) close(i);
@@ -324,12 +312,12 @@ dcopy(i, j)
 
     if (i == j || i < 0 || j < 0 && i > 2)
 	return (i);
-#ifdef DUP2
+
     if (j >= 0) {
 	(void) dup2(i, j);
 	return (j);
     }
-#endif
+
     (void) close(j);
     return (renum(i, j));
 }

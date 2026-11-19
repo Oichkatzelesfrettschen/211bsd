@@ -1,6 +1,6 @@
 .\" Public domain.  May 24, 1996.
 .\"
-.\"	@(#)reboot.8	1.0 (2.11BSD) 1996/5/24
+.\"	@(#)reboot.8	1.1 (2.11BSD) 2026/10/23
 .\"
 .TH BOOT 8 "May 24, 1996"
 .UC 2
@@ -180,7 +180,6 @@ is one of the following
 .nf
 .ne 10
 	xp	RM02/03/05, RP04/05/06, DIVA, SI Eagle, CDC 9766, Fuji 160
-	rp	RP03
 	rk	RK05
 	hk	RK06/7
 	rl	RL01/2
@@ -213,53 +212,6 @@ type \*(lqhk(0,0)unix\*(rq to the boot prompt.  The specification
 And finally the specification
 \*(lqts(0,3)\*(rq would cause the fourth file on a tape threaded on `ts'
 tape drive 0 to be loaded and executed.
-.PP
-.B "Cold boot loaders:"
-The following programs to load and execute the primary bootstrap may be
-installed in read-only memories or manually keyed into main memory.  Each
-program is position-independent but should be placed well above location 0
-so it will not be overwritten.  Each reads a block from the beginning of a
-device into core location zero.  The octal words constituting the program
-are listed on the left.
-.PP
-.nf
-.if n .ta 3 11 15 23 38
-.if t .ta .3i 1i 1.4i 2i 3.5i
-.ne 10
-RK (drive 0):
-	012700		mov	$rkda,r0
-	177412
-	005040		clr	\-(r0)	/ rkda cleared by start
-	010040		mov	r0,\-(r0)
-	012740		mov	$5,\-(r0)
-	000005
-	105710	1:	tstb	(r0)
-	002376		bge	1b
-	005007		clr	pc
-.PP
-.ne 11
-RP (drive 0)
-	012700		mov	$rpmr,r0
-	176726
-	005040		clr	\-(r0)
-	005040		clr	\-(r0)
-	005040		clr	\-(r0)
-	010040		mov	r0,\-(r0)
-	012740		mov	$5,\-(r0)
-	000005
-	105710	1:	tstb	(r0)
-	002376		bge	1b
-	005007		clr	pc
-.PP
-.ne 7
-TM (drive 0):
-	012700		mov	$tmba,r0
-	172526
-	010040		mov	r0,\-(r0)
-	012740		mov	$60003,\-(r0)
-	060003
-	000777		br	.
-.DT
 .SH FILES
 .ta \w'/mdec/xxuboot   'u
 /unix	system code
@@ -270,7 +222,7 @@ TM (drive 0):
 .br
 /mdec/xxuboot	sector 0 boot blocks, xx is disk type
 .SH "SEE ALSO"
-crash(8V),
+crash(8),
 autoconfig(8),
 reboot(2),
 disklabel(8),

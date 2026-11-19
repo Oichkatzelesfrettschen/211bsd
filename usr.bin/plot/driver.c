@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)driver.c	4.4 (Berkeley) 9/21/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)driver.c	4.5 (2.11BSD) 2026/5/9";
 #endif
 
 #include <stdio.h>

@@ -1,29 +1,18 @@
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)cico.c	5.14.1 (2.11BSD) 1997/10/2";
+static char sccsid[] = "@(#)cico.c	5.14.2 (2.11BSD) 2026/5/9";
 #endif
 
 #include <signal.h>
 #include "uucp.h"
 #include <setjmp.h>
-#ifdef	USG
-#include <termio.h>
-#endif
-#ifndef	USG
 #include <sgtty.h>
-#endif
-#ifdef BSDTCP
 #include <netdb.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#endif BSDTCP
 #include <sys/stat.h>
 #include "uust.h"
 #include "uusub.h"
-
-#if defined(VMS) && defined(BSDTCP)
-#define NOGETPEER
-#endif
 
 #ifdef BSD2_9
 #define NOGETPEER
@@ -71,12 +60,7 @@ extern int errno;
 extern char MaxGrade, DefMaxGrade;
 extern char Myfullname[];
 
-#ifdef	USG
-struct termio Savettyb;
-#endif
-#ifndef	USG
 struct sgttyb Savettyb;
-#endif
 
 /*
  *	this program is used  to place a call to a
@@ -91,7 +75,7 @@ register char *argv[];
 	char wkpre[NAMESIZE], file[NAMESIZE];
 	char msg[MAXFULLNAME], *q;
 	register char *p;
-	extern onintr(), timeout(), dbg_signal();
+	extern void onintr(), timeout(), dbg_signal();
 	extern char *pskip();
 	char rflags[MAXFULLNAME];
 #ifdef NOGETPEER
@@ -230,16 +214,9 @@ register char *argv[];
 		/* initial handshake */
 		onesys = 1;
 		if (!IsTcpIp) {
-#ifdef	USG
-			ret = ioctl(Ifn, TCGETA, &Savettyb);
-			Savettyb.c_cflag = (Savettyb.c_cflag & ~CS8) | CS7;
-			Savettyb.c_oflag |= OPOST;
-			Savettyb.c_lflag |= (ISIG|ICANON|ECHO);
-#else !USG
 			ret = ioctl(Ifn, TIOCGETP, &Savettyb);
 			Savettyb.sg_flags |= ECHO;
 			Savettyb.sg_flags &= ~RAW;
-#endif !USG
 			ttyn = ttyname(Ifn);
 		}
 		fixmode(Ifn);
@@ -254,12 +231,7 @@ register char *argv[];
 		if (setjmp(Sjbuf)) {
 			/* timed out */
 			if (!IsTcpIp) {
-#ifdef	USG
-				ret = ioctl(Ifn, TCSETA, &Savettyb);
-
-#else	!USG
 				ret = ioctl(Ifn, TIOCSETP, &Savettyb);
-#endif !USG
 			}
 			cleanup(0);
 		}
@@ -268,11 +240,7 @@ register char *argv[];
 			if (ret != SUCCESS) {
 				alarm(0);
 				if (!IsTcpIp) {
-#ifdef	USG
-					ret = ioctl(Ifn, TCSETA, &Savettyb);
-#else	!USG
 					ret = ioctl(Ifn, TIOCSETP, &Savettyb);
-#endif !USG
 				}
 				cleanup(0);
 			}
@@ -657,9 +625,7 @@ next:
 	cleanup(0);
 }
 
-#ifndef	USG
 struct sgttyb Hupvec;
-#endif
 
 /*
  *	cleanup and exit with "code" status
@@ -675,10 +641,6 @@ register int code;
 	logcls();
 	if (Role == SLAVE) {
 		if (!IsTcpIp) {
-#ifdef USG
-			Savettyb.c_cflag |= HUPCL;
-			(void) ioctl(0, TCSETA, &Savettyb);
-#else !USG
 			(void) ioctl(0, TIOCHPCL, STBNULL);
 #ifdef TIOCSDTR
 			(void) ioctl(0, TIOCCDTR, STBNULL);
@@ -694,7 +656,6 @@ register int code;
 			(void) ioctl(0, TIOCSETP, &Savettyb);
 			/* make *sure* exclusive access is off */
 			(void) ioctl(0, TIOCNXCL, STBNULL);
-#endif !USG
 		}
 		if (ttyn != NULL)
 			chmod(ttyn, 0600);
@@ -811,11 +772,6 @@ int parm;
 		if (isatty(fileno(stderr)))
 			return;
 		else if (fstat(fileno(stderr), &stbuf) == 0) {
-#ifdef USG
-			/* Is Regular File or Fifo   */
-			if ((stbuf.st_mode & 0060000) == 0)
-				return;
-#else !USG
 #ifdef BSD4_2
 					/* Is Regular File */
 			if ((stbuf.st_mode & S_IFMT) == S_IFREG ||
@@ -826,7 +782,6 @@ int parm;
 			if ((stbuf.st_mode & S_IFMT) == S_IFREG)
 				return;
 #endif BSD4_2
-#endif USG
 		}
 	}
 

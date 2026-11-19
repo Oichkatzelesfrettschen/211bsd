@@ -1,3 +1,5 @@
+/* "@(#)lex.c 1.1 (2.11BSD) 2026/6/28"; */
+
 #include "defs"
 #include "string_defs"
 #include "tokdefs"
@@ -43,7 +45,7 @@ LOCAL int nincl	= 0;
 struct inclfile
 	{
 	struct inclfile *inclnext;
-	FILEP inclfp;
+	FILE *inclfp;
 	char *inclname;
 	int incllno;
 	char *incllinp;
@@ -96,7 +98,7 @@ return(nextch);
 doinclude(name)
 char *name;
 {
-FILEP fp;
+FILE *fp;
 struct inclfile *t;
 
 if(inclp)

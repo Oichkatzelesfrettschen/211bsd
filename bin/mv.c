@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)mv.c	5.3.2 (2.11BSD) 2025/12/25";
+static char sccsid[] = "@(#)mv.c	5.3.3 (2.11BSD) 2026/8/6";
 #endif
 
 /*
@@ -18,11 +18,12 @@ static char sccsid[] = "@(#)mv.c	5.3.2 (2.11BSD) 2025/12/25";
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-
 #include <stdio.h>
 #include <sys/dir.h>
 #include <errno.h>
 #include <signal.h>
+#include <stdlib.h>
+#include <err.h>
 
 #define	DELIM	'/'
 #define MODEBITS 07777
@@ -32,6 +33,8 @@ static char sccsid[] = "@(#)mv.c	5.3.2 (2.11BSD) 2025/12/25";
 #define	ISREG(st)	(((st).st_mode&S_IFMT) == S_IFREG)
 #define	ISDEV(st) \
 	(((st).st_mode&S_IFMT) == S_IFCHR || ((st).st_mode&S_IFMT) == S_IFBLK)
+
+extern	char	*__progname;
 
 char	*dname();
 struct	stat s1, s2;
@@ -45,51 +48,54 @@ main(argc, argv)
 	register char *arg;
 	char *dest;
 
-	if (argc < 2)
-		goto usage;
-	while (argc > 1 && *argv[1] == '-') {
-		argc--;
-		arg = *++argv;
-
-		/*
-		 * all files following a null option
-		 * are considered file names
-		 */
-		if (*(arg+1) == '\0')
-			break;
-		while (*++arg != '\0') switch (*arg) {
-
-		case 'i':
-			iflag++;
-			break;
-
-		case 'f':
-			fflag++;
-			break;
-
-		default:
-			goto usage;
+	while	((i = getopt(argc, argv, "if")) != EOF)
+		{
+		switch	(i)
+			{
+			case 'i':
+				iflag++;
+				break;
+			case 'f':
+				fflag++;
+				break;
+			default:
+				errx(1, "%s: invalid option '%c'", __progname, i);
+			}
 		}
-	}
-	if (argc < 3)
+	argc -= optind;
+	argv += optind;
+
+/*
+ * argc 0 or 1 obviously not enough arguments
+*/
+	if	(argc < 2)
 		goto usage;
+
+/*
+ * Check if last argument is a directory
+*/
 	dest = argv[argc-1];
-	if (stat(dest, &s2) >= 0 && ISDIR(s2)) {
+	if	(stat(dest, &s2) >= 0 && ISDIR(s2))
+		{
 		r = 0;
-		for (i = 1; i < argc-1; i++)
+		for	(i = 0; i < argc-1; i++)
 			r |= movewithshortname(argv[i], dest);
 		exit(r);
-	}
-	if (argc > 3)
+		}
+/*
+ * More than 2 args but last arg is not a directory is an error.
+*/
+	if	(argc > 2)
 		goto usage;
-	r = move(argv[1], argv[2]);
+
+/*
+ * simple case "mv f1 f2"
+*/
+	r = move(argv[0], argv[1]);
 	exit(r);
-	/*NOTREACHED*/
 usage:
-	fprintf(stderr,
-"usage: mv [-if] f1 f2 or mv [-if] f1 ... fn d1 (`fn' is a file or directory)\n");
-	return (1);
-}
+	errx(1, "usage: %s [-if] f1 f2 or mv [-if] f1 ... fn d1 (`fn' is file or directory)", __progname);
+	}
 
 movewithshortname(src, dest)
 	char *src, *dest;
@@ -99,8 +105,7 @@ movewithshortname(src, dest)
 
 	shortname = dname(src);
 	if (strlen(dest) + strlen(shortname) > MAXPATHLEN - 1) {
-		error("%s/%s: pathname too long", dest,
-			shortname);
+		error("%s/%s: pathname too long", dest, shortname);
 		return (1);
 	}
 	sprintf(target, "%s/%s", dest, shortname);
@@ -113,7 +118,7 @@ move(source, target)
 	int targetexists;
 
 	if (lstat(source, &s1) < 0) {
-		Perror2(source, "Cannot access");
+		Perror(source, "Cannot access");
 		return (1);
 	}
 	/*
@@ -140,7 +145,7 @@ move(source, target)
 	if (rename(source, target) >= 0)
 		return (0);
 	if (errno != EXDEV) {
-		Perror2(errno == ENOENT && targetexists == 0 ? target : source,
+		Perror(errno == ENOENT && targetexists == 0 ? target : source,
 		    "rename");
 		return (1);
 	}
@@ -149,7 +154,7 @@ move(source, target)
 		return (1);
 	}
 	if (targetexists && unlink(target) < 0) {
-		Perror2(target, "Cannot unlink");
+		Perror(target, "Cannot unlink");
 		return (1);
 	}
 	/*
@@ -163,14 +168,14 @@ move(source, target)
 
 		m = readlink(source, symln, sizeof (symln) - 1);
 		if (m < 0) {
-			Perror(source);
+			Perror(source, "");
 			return (1);
 		}
 		symln[m] = '\0';
 
 		m = umask(~(s1.st_mode & MODEBITS));
 		if (symlink(symln, target) < 0) {
-			Perror(target);
+			Perror(target, "");
 			return (1);
 		}
 		(void) umask(m);
@@ -180,7 +185,7 @@ move(source, target)
 		struct timeval tv[2];
 
 		if (mknod(target, s1.st_mode, s1.st_rdev) < 0) {
-			Perror(target);
+			Perror(target,"");
 			return (1);
 		}
 
@@ -198,13 +203,13 @@ move(source, target)
 
 		fi = open(source, 0);
 		if (fi < 0) {
-			Perror(source);
+			Perror(source, "");
 			return (1);
 		}
 
 		fo = creat(target, s1.st_mode & MODEBITS);
 		if (fo < 0) {
-			Perror(target);
+			Perror(target, "");
 			close(fi);
 			return (1);
 		}
@@ -214,12 +219,12 @@ move(source, target)
 			if (n == 0) {
 				break;
 			} else if (n < 0) {
-				Perror2(source, "read");
+				Perror(source, "read");
 				close(fi);
 				close(fo);
 				return (1);
 			} else if (write(fo, buf, n) != n) {
-				Perror2(target, "write");
+				Perror(target, "write");
 				close(fi);
 				close(fo);
 				return (1);
@@ -241,7 +246,7 @@ move(source, target)
 
 cleanup:
 	if (unlink(source) < 0) {
-		Perror2(source, "Cannot unlink");
+		Perror(source, "Cannot unlink");
 		return (1);
 	}
 	return (0);
@@ -278,25 +283,16 @@ error(fmt, a1, a2)
 	char *fmt;
 {
 
-	fprintf(stderr, "mv: ");
+	fprintf(stderr, "%s: ", __progname);
 	fprintf(stderr, fmt, a1, a2);
 	fprintf(stderr, "\n");
 }
 
-Perror(s)
-	char *s;
-{
-	char buf[MAXPATHLEN + 10];
-	
-	sprintf(buf, "mv: %s", s);
-	perror(buf);
-}
-
-Perror2(s1, s2)
+Perror(s1, s2)
 	char *s1, *s2;
 {
 	char buf[MAXPATHLEN + 20];
 
-	sprintf(buf, "mv: %s: %s", s1, s2);
+	sprintf(buf, "%s: %s: %s", s1, s2, __progname);
 	perror(buf);
 }

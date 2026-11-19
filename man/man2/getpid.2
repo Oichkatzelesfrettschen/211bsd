@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)getpid.2	6.3 (Berkeley) 5/13/86
+.\"	@(#)getpid.2	6.4 (2.11BSD) 2026/9/20
 .\"
 .TH GETPID 2 "May 13, 1986"
 .UC 4
@@ -11,23 +11,23 @@ getpid, getppid \- get process identification
 .SH SYNOPSIS
 .ft B
 .nf
-pid = getpid()
-int pid;
+#include <unistd.h>
+
+pid_t
+getpid(\fIvoid\fP)
 .sp
-ppid = getppid()
-int ppid;
+pid_t
+getppid(\fIvoid\fP)
 .fi
 .ft R
 .SH DESCRIPTION
-.I Getpid
+.B getpid
 returns
 the process ID of
 the current process.
 Most often it is used
 to generate uniquely-named temporary files.
 .PP
-.I Getppid
+.B getppid
 returns the process ID of the parent
 of the current process. 
-.SH "SEE ALSO
-gethostid(2)

@@ -13,6 +13,9 @@ static char sccsid[] = "@(#)init.c	5.6.4 (2.11BSD) 1999/2/23";
 #include <signal.h>
 #include <utmp.h>
 #include <setjmp.h>
+#include <strings.h>
+#include <time.h>
+#include <unistd.h>
 #include <sys/reboot.h>
 #include <errno.h>
 #include <sys/file.h>
@@ -57,69 +60,37 @@ char	tty[20];
 jmp_buf	sjbuf, shutpass;
 time_t	time0;
 
-int	reset();
-int	idle();
-char	*strcpy(), *strcat();
-long	lseek();
-time_t	time();
+void	reset();
+void	idle();
 void	setsecuritylevel();
 int	getsecuritylevel();
-int	badsys();
-extern	int errno;
+void	badsys();
 
 struct	sigvec rvec = { reset, sigmask(SIGHUP), 0 };
 
-
-#ifdef vax
-main()
-{
-	register int r11;		/* passed thru from boot */
-#else
 main(argc, argv)
 	char **argv;
 {
-#endif
 	int howto, oldhowto;
 
 	time0 = time(0);
-#ifdef vax
-	howto = r11;
-#else
-#ifdef pdp11
+
 	if (argc > 1 && argv[1][0] == '-') {
 		howto = atoi(argv[1]+1);
 		bzero(argv[1], strlen(argv[1])); /* keep ps output clean ... */
 	} else
 		howto = RB_SINGLE;
-#else
-	if (argc > 1 && argv[1][0] == '-') {
-		char *cp;
 
-		howto = 0;
-		cp = &argv[1][1];
-		while (*cp) switch (*cp++) {
-		case 'a':
-			howto |= RB_ASKNAME;
-			break;
-		case 's':
-			howto |= RB_SINGLE;
-			break;
-		}
-	} else {
-		howto = RB_SINGLE;
-	}
-#endif
-#endif
 	if (getuid() != 0)
 		exit(1);
 	if (getpid() != 1)
 		exit(1);
 
 	openlog("init", LOG_CONS|LOG_ODELAY, LOG_AUTH);
-#ifdef pdp11
+
 	if (autoconfig(howto) == 0)
 		howto = RB_SINGLE | (howto & RB_AUTODEBUG);
-#endif
+
 	signal(SIGSYS, badsys);
 	sigvec(SIGTERM, &rvec, (struct sigvec *)0);
 	signal(SIGTSTP, idle);
@@ -141,7 +112,7 @@ main(argc, argv)
 	}
 }
 
-int	shutreset();
+void	shutreset();
 
 shutdown()
 {
@@ -171,6 +142,7 @@ shutdown()
 
 char shutfailm[] = "WARNING: Something is hung (wont die); ps axl advised\n";
 
+void
 shutreset()
 {
 	int status;
@@ -211,7 +183,7 @@ shutend()
  * These may arise if a system does not support sysctl.
  * We tolerate up to 25 of these, then throw in the towel.
  */
-int
+void
 badsys(sig)
 	int sig;
 {
@@ -322,7 +294,7 @@ runcom(oldhowto)
 			dup2(f, 0);
 		dup2(0, 1);
 		dup2(0, 2);
-#ifdef pdp11
+
 		if (oldhowto & (RB_SINGLE|RB_NOFSCK))
 			arg1 = "fastboot";
 		else
@@ -332,12 +304,6 @@ runcom(oldhowto)
 		else
 			arg2 = (char *)0;
 		execl(shell, shell, runc, arg1, arg2, (char *)0);
-#else
-		if (oldhowto & RB_SINGLE)
-			execl(shell, shell, runc, (char *)0);
-		else
-			execl(shell, shell, runc, "autoboot", (char *)0);
-#endif
 		exit(1);
 	}
 	while (wait(&status) != pid)
@@ -360,9 +326,8 @@ runcom(oldhowto)
 	return (1);
 }
 
-#ifdef pdp11
-int	merge();
-#endif
+void	merge();
+
 struct	sigvec	mvec = { merge, sigmask(SIGTERM), 0 };
 /*
  * Multi-user.  Listen for users leaving, SIGHUP's
@@ -415,6 +380,7 @@ multiple()
 #define	CHANGE	2
 #define WCHANGE 4
 
+void
 merge()
 {
 	register struct tab *p;
@@ -607,6 +573,7 @@ rmut(p)
 	}
 }
 
+void
 reset()
 {
 
@@ -615,12 +582,14 @@ reset()
 
 jmp_buf	idlebuf;
 
+void
 idlehup()
 {
 
 	longjmp(idlebuf, 1);
 }
 
+void
 idle()
 {
 	register struct tab *p;
@@ -739,7 +708,6 @@ done:
 	sleep(10);	/* prevent failures from eating machine */
 }
 
-#ifdef pdp11
 #include <machine/autoconfig.h>
 
 autoconfig(howto)
@@ -779,4 +747,3 @@ autoconfig(howto)
 			return (0);
 	}
 }
-#endif

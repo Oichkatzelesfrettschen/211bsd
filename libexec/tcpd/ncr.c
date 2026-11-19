@@ -7,8 +7,8 @@
   * can figure out network addresses, and then restore the original state.
   */
 
-#ifndef lint
-static char sccsid[] = "@(#) ncr.c 1.1 94/12/28 17:42:34";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#) ncr.c 1.2 (2.11BSD) 2026/5/11";
 #endif
 
 #include <sys/types.h>

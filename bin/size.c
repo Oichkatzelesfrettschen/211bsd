@@ -1,5 +1,5 @@
 #if	defined(DOSCCS) && !defined(lint)
-static	char *sccsid = "@(#)size.c	4.5 (2.11BSD) 2020/3/19";
+static	char *sccsid = "@(#)size.c	4.6 (2.11BSD) 2026/9/13";
 #endif
 
 /*
@@ -18,14 +18,12 @@ char **argv;
 {
 	struct exec buf;
 	long sum;
-	int gorp,i;
-	int err = 0;
-	FILE *f;
-#ifdef pdp11
+	register int i;
+	int gorp, err = 0;
+	register FILE *f;
 	struct ovlhdr	ovlbuf;		/* overlay structure */
 	long	coresize;		/* total text size */
 	short	skip;			/* skip over overlay sizes of 0 */
-#endif
 
 	if (argc==1) {
 		*argv = "a.out";
@@ -56,7 +54,6 @@ char **argv;
 		printf("%ld\t%lx", sum, sum);
 		if (gorp>2)
 			printf("\t%s", *argv);
-#ifdef pdp11
 		if (buf.a_magic == A_MAGIC5 || buf.a_magic == A_MAGIC6) {
 			fread(&ovlbuf,sizeof(ovlbuf),1,f);
 			coresize = buf.a_text;
@@ -75,7 +72,6 @@ char **argv;
 				printf("%u", ovlbuf.ov_siz[i]);
 			}
 		}
-#endif
 		printf("\n");
 		fclose(f);
 	}

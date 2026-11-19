@@ -4,15 +4,13 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)cp.c	4.13 (Berkeley) 10/11/85";
-#endif not lint
+static char sccsid[] = "@(#)cp.c	4.14 (2.11BSD) 2026/5/5";
+#endif
 
 /*
  * cp
@@ -22,11 +20,11 @@ static char sccsid[] = "@(#)cp.c	4.13 (Berkeley) 10/11/85";
 #include <sys/stat.h>
 #include <sys/dir.h>
 #include <sys/time.h>
+#include <strings.h>
 
 int	iflag;
 int	rflag;
 int	pflag;
-char	*rindex();
 
 main(argc, argv)
 	int argc;
@@ -184,7 +182,7 @@ rcopy(from, to)
 	char *from, *to;
 {
 	DIR *fold = opendir(from);
-	struct direct *dp;
+	register struct direct *dp;
 	struct stat statb;
 	int errs = 0;
 	char fromname[MAXPATHLEN + 1];
@@ -219,7 +217,7 @@ rcopy(from, to)
 int
 setimes(path, statp)
 	char *path;
-	struct stat *statp;
+	register struct stat *statp;
 {
 	struct timeval tv[2];
 	

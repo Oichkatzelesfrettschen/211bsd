@@ -1,9 +1,12 @@
-/***************************************************************************
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)fp.c 2.0 (2.11BSD) 2026/9/17";
+#endif
+/*
  * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
  * is provided to you without charge, and with no warranty.  You may give  *
  * away copies of JOVE, including sources, provided that this notice is    *
  * included in all the files.                                              *
- ***************************************************************************/
+ */
 
 #include "jove.h"
 #include "io.h"
@@ -138,8 +141,8 @@ File	*fp;
 #endif 
 	(void) close(fp->f_fd);
 	if (fp->f_flags & F_MYBUF)
-		free(fp->f_base);
-	free(fp->f_name);
+		free((void *)fp->f_base);
+	free((void *)fp->f_name);
 	fp->f_flags = 0;	/* indicates that we're available */
 }
 
@@ -153,7 +156,7 @@ File	*fp;
 #ifndef MSDOS
 	do
 #endif /* MSDOS */
-		fp->f_cnt = read(fp->f_fd, fp->f_base, fp->f_bufsize);
+		fp->f_cnt = read(fp->f_fd, (void *)fp->f_base, fp->f_bufsize);
 #ifndef MSDOS
 	while (fp->f_cnt == -1 && errno == EINTR);
 #endif /* MSDOS */
@@ -230,7 +233,7 @@ register File	*fp;
 		return EOF;
 	if (((n = (fp->f_ptr - fp->f_base)) > 0) &&
 #ifndef RAINBOW
-	    (write(fp->f_fd, fp->f_base, n) != n) &&
+	    (write(fp->f_fd, (void *)fp->f_base, n) != n) &&
 #else
 	    (rbwrite(fp->f_fd, fp->f_base, n) != n) &&
 #endif

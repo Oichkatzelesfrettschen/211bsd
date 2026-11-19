@@ -35,17 +35,17 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)misc.c	8.1 (Berkeley) 6/6/93";
+static char sccsid[] = "@(#)misc.c	8.2 (2.11BSD) 2026/9/16";
 #endif
 
 #include <sys/types.h>
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "mdef.h"
 #include "stdd.h"
 #include "extern.h"
-#include "pathnames.h"
 
 /*
  * find the index of second str in the first str.
@@ -166,7 +166,7 @@ int n;
 		oops("%s: cannot unlink.", m4temp);
 }
 
-int
+void
 onintr()
 {
 	oops("interrupted.");

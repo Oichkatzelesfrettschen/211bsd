@@ -10,22 +10,25 @@
  * a (long) pointer.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)mkstr.c	5.1 (Berkeley) 5/31/85";
-#endif not lint
+static char sccsid[] = "@(#)mkstr.c	5.2 (2.11BSD) 2026/5/10";
+#endif
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <strings.h>
+#include <err.h>
 
-#define	ungetchar(c)	ungetc(c, stdin)
+void	process(), copystr(), inithash();
+int	fgetNUL(), match();
+long	hashit();
 
-long	ftell();
-char	*calloc();
 /*
  * mkstr - create a string error message file by massaging C source
  *
@@ -52,29 +55,29 @@ char	*calloc();
  * existing error message file for recompilation of single routines.
  */
 
+extern	char *__progname;
 
 FILE	*mesgread, *mesgwrite;
-char	*progname;
-char	usagestr[] =	"usage: %s [ - ] mesgfile prefix file ...\n";
+char	usagestr[] =	"usage: %s [ - ] mesgfile prefix file ...";
 char	name[100], *np;
 
-main(argc, argv)
+int main(argc, argv)
 	int argc;
 	char *argv[];
 {
 	char addon = 0;
 
-	argc--, progname = *argv++;
+	argc--, argv++;
 	if (argc > 1 && argv[0][0] == '-')
 		addon++, argc--, argv++;
 	if (argc < 3)
-		fprintf(stderr, usagestr, progname), exit(1);
+		errx(1, usagestr, __progname);
 	mesgwrite = fopen(argv[0], addon ? "a" : "w");
 	if (mesgwrite == NULL)
-		perror(argv[0]), exit(1);
+		err(1, "%s", argv[0]);
 	mesgread = fopen(argv[0], "r");
 	if (mesgread == NULL)
-		perror(argv[0]), exit(1);
+		err(1, "%s", argv[0]);
 	inithash();
 	argc--, argv++;
 	strcpy(name, argv[0]);
@@ -83,19 +86,19 @@ main(argc, argv)
 	do {
 		strcpy(np, argv[0]);
 		if (freopen(name, "w", stdout) == NULL)
-			perror(name), exit(1);
+			err(1, "%s", name);
 		if (freopen(argv[0], "r", stdin) == NULL)
-			perror(argv[0]), exit(1);
+			err(1, "%s", argv[0]);
 		process();
 		argc--, argv++;
 	} while (argc > 0);
 	exit(0);
 }
 
-process()
+void process()
 {
 	register char *cp;
-	register c;
+	register int c;
 
 	for (;;) {
 		c = getchar();
@@ -116,103 +119,103 @@ process()
 	}
 }
 
-match(ocp)
+int match(ocp)
 	char *ocp;
 {
 	register char *cp;
-	register c;
+	register int c;
 
 	for (cp = ocp + 1; *cp; cp++) {
 		c = getchar();
 		if (c != *cp) {
 			while (ocp < cp)
 				putchar(*ocp++);
-			ungetchar(c);
+			ungetc(c, stdin);
 			return (0);
 		}
 	}
 	return (1);
 }
 
-copystr()
-{
-	register c, ch;
+void copystr()
+	{
+	register int c, ch;
 	char buf[512];
-	register char *cp = buf;
-	long hashit();
+	register char *cp = buf, *ep;
 
-	for (;;) {
-		c = getchar();
-		if (c == EOF)
+	for	(ep = cp + sizeof(buf) - 1; (c = getchar()) != EOF;)
+		{
+		if	(c == '"')
 			break;
-		switch (c) {
-
-		case '"':
-			*cp++ = 0;
-			goto out;
-		case '\\':
+		if	(c == '\\')
+			{
 			c = getchar();
-			switch (c) {
-
-			case 'b':
-				c = '\b';
-				break;
-			case 't':
-				c = '\t';
-				break;
-			case 'r':
-				c = '\r';
-				break;
-			case 'n':
-				c = '\n';
-				break;
-			case '\n':
-				continue;
-			case 'f':
-				c = '\f';
-				break;
-			case '0':
-				c = 0;
-				break;
-			case '\\':
-				break;
-			default:
-				if (!octdigit(c))
+			switch	(c)
+				{
+				case	'a':
+					c = '\a';
 					break;
-				c -= '0';
-				ch = getchar();
-				if (!octdigit(ch))
+				case	'b':
+					c = '\b';
 					break;
-				c <<= 7, c += ch - '0';
-				ch = getchar();
-				if (!octdigit(ch))
+				case	't':
+					c = '\t';
 					break;
-				c <<= 3, c+= ch - '0', ch = -1;
-				break;
-			}
+				case	'r':
+					c = '\r';
+					break;
+				case	'n':
+					c = '\n';
+					break;
+				case	'\n':
+					continue;
+				case	'f':
+					c = '\f';
+					break;
+				case	'v':
+					c = '\v';
+					break;
+				case	'0':
+					c = 0;
+					break;
+				case	'\\':
+					break;
+				default:
+					if	(!octdigit(c))
+						break;
+					c -= '0';
+					ch = getchar();
+					if	(!octdigit(ch))
+						break;
+					c <<= 7, c += ch - '0';
+					ch = getchar();
+					if	(!octdigit(ch))
+						break;
+					c <<= 3, c+= ch - '0';
+					break;
+				}
+			}	
+		if	(cp < ep)
+			*cp++ = c;
 		}
-		*cp++ = c;
-	}
-out:
 	*cp = 0;
-	printf("%ld", hashit(buf, 1, NULL));
-}
+	printf("%ldL", hashit(buf, 1, NULL));
+	}
 
 octdigit(c)
-	char c;
-{
-
+	register char c;
+	{
 	return (c >= '0' && c <= '7');
-}
+	}
 
-inithash()
+void inithash()
 {
 	char buf[512];
 	int mesgpt = 0;
 
 	rewind(mesgread);
-	while (fgetNUL(buf, sizeof buf, mesgread) != NULL) {
-		hashit(buf, 0, mesgpt);
+	while (fgetNUL(buf, sizeof buf, mesgread) != 0) {
+		(void)hashit(buf, 0, mesgpt);
 		mesgpt += strlen(buf) + 2;
 	}
 }
@@ -225,11 +228,10 @@ struct	hash {
 	struct	hash *hnext;
 } *bucket[NBUCKETS];
 
-long
-hashit(str, really, fakept)
+long hashit(str, really, fakept)
 	char *str;
 	char really;
-	unsigned fakept;
+	unsigned int fakept;
 {
 	int i;
 	register struct hash *hp;
@@ -248,10 +250,10 @@ hashit(str, really, fakept)
 		for (hp = bucket[i]; hp != 0; hp = hp->hnext)
 		if (hp->hval == hashval) {
 			fseek(mesgread, (long) hp->hpt, 0);
-			fgetNUL(buf, sizeof buf, mesgread);
-#ifdef DEBUG
+			(void)fgetNUL(buf, sizeof buf, mesgread);
+/*
 			fprintf(stderr, "Got (from %ld) %s\n", hp->hpt, buf);
-#endif
+*/
 			if (strcmp(buf, str) == 0)
 				break;
 		}
@@ -262,30 +264,27 @@ hashit(str, really, fakept)
 		hp->hpt = really ? ftell(mesgwrite) : fakept;
 		if (really) {
 			fwrite(str, sizeof (char), strlen(str) + 1, mesgwrite);
-			fwrite("\n", sizeof (char), 1, mesgwrite);
+			fputc('\n', mesgwrite);
 		}
 		bucket[i] = hp;
 	}
-#ifdef DEBUG
+/*
 	fprintf(stderr, "%s hashed to %ld at %ld\n", str, hp->hval, hp->hpt);
-#endif
+*/
 	return (hp->hpt);
 }
 
-#include <sys/types.h>
-#include <sys/stat.h>
-
-fgetNUL(obuf, rmdr, file)
+int fgetNUL(obuf, rmdr, file)
 	char *obuf;
 	register int rmdr;
 	FILE *file;
 {
-	register c;
+	register int c;
 	register char *buf = obuf;
 
 	while (--rmdr > 0 && (c = getc(file)) != 0 && c != EOF)
 		*buf++ = c;
 	*buf++ = 0;
 	getc(file);
-	return ((feof(file) || ferror(file)) ? NULL : 1);
+	return ((feof(file) || ferror(file)) ? 0 : 1);
 }

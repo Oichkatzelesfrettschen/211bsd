@@ -1,5 +1,5 @@
 #if	!defined(lint) && defined(DOSCCS)
-static	char *sccsid = "@(#)dumptraverse.c	1.2 (2.11BSD GTE) 12/6/94";
+static	char *sccsid = "@(#)dumptraverse.c	1.3 (2.11BSD) 2026/5/7";
 #endif
 
 #include "dump.h"
@@ -46,7 +46,7 @@ short *map;
 }
 
 icat(ip, fn1, fn2)
-struct	dinode	*ip;
+register struct	dinode	*ip;
 int (*fn1)(), (*fn2)();
 {
 	register i;
@@ -113,7 +113,7 @@ register struct dinode *ip;
 }
 
 add(ip)
-struct dinode *ip;
+register struct dinode *ip;
 {
 
 	if(BIT(ino, nodmap))
@@ -132,7 +132,7 @@ struct dinode *ip;
 }
 
 dump(ip)
-struct dinode *ip;
+register struct dinode *ip;
 {
 	register i;
 

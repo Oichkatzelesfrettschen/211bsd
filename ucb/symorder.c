@@ -1,11 +1,12 @@
 /*
  *	Program Name:   symorder.c
- *	Date: January 21, 1994
+ *	Date: March 25, 2026
  *	Author: S.M. Schultz
  *
  *	-----------------   Modification History   ---------------
  *      Version Date            Reason For Modification
- *      1.0     21Jan94         1. Initial release into the public domain.
+ *	1.0     21Jan1994       1. Initial release into the public domain.
+ *	1.1	24Mar2026       2. Cleanup and add note usage note.
 */
 
 /*
@@ -19,6 +20,9 @@
  * removes redundant strings, significantly reducing the amount of memory 
  * needed.  Running 'symcompact' will reduce the run time needed by
  * this program by eliminating redundant non-overlaid text symbols.
+ *
+ * NOTE: This program will undo some of strcompact's work.  So run this 
+ *       program after symcompact and before strcompact.
 */
 
 #include <stdio.h>
@@ -32,10 +36,11 @@
 #define NUMSYMS	125
 	char	*order[NUMSYMS];
 	int	nsorted; 
-	char	*Pgm;
 	void	cleanup();
 static	char	sym1tmp[20], sym2tmp[20], strtmp[20];
 static	char	*strtab, *oldname;
+
+extern	char	*__progname;
 
 main(argc, argv)
 	int	argc;
@@ -49,21 +54,19 @@ main(argc, argv)
 	struct	nlist	sym;
 	struct	xexec	xhdr;
 
-	Pgm = argv[0];
-
 	signal(SIGQUIT, cleanup);
 	signal(SIGINT, cleanup);
 	signal(SIGHUP, cleanup);
 
 	if	(argc != 3)
 		{
-		fprintf(stderr, "usage %s: symlist file\n", Pgm);
+		fprintf(stderr, "usage %s: symlist file\n", __progname);
 		exit(EX_USAGE);
 		}
 	fp = fopen(argv[2], "r+");
 	if	(!fp)
 		{
-		fprintf(stderr, "%s: can't open '%s' for update\n", Pgm,
+		fprintf(stderr, "%s: can't open '%s' for update\n", __progname,
 			argv[2]);
 		exit(EX_NOINPUT);
 		}
@@ -71,18 +74,18 @@ main(argc, argv)
 	cnt = fread(&xhdr, 1, sizeof (xhdr), fp);
 	if	(cnt < sizeof (xhdr.e))
 		{
-		fprintf(stderr, "%s: Premature EOF reading header\n", Pgm);
+		fprintf(stderr, "%s: Premature EOF reading header\n", __progname);
 		exit(EX_DATAERR);
 		}
 	if	(N_BADMAG(xhdr.e))
 		{
-		fprintf(stderr, "%s: Bad magic number\n", Pgm);
+		fprintf(stderr, "%s: Bad magic number\n", __progname);
 		exit(EX_DATAERR);
 		}
 	nsyms = xhdr.e.a_syms / sizeof (struct nlist);
 	if	(!nsyms)
 		{
-		fprintf(stderr, "%s: '%s' stripped\n", Pgm);
+		fprintf(stderr, "%s: '%s' stripped\n", __progname);
 		exit(EX_OK);
 		}
 	stroff = N_STROFF(xhdr);
@@ -96,13 +99,13 @@ main(argc, argv)
 	fread(&strsiz, sizeof (long), 1, fp);
 	if	(strsiz > 48 * 1024L)
 		{
-		fprintf(stderr, "%s: string table > 48kb\n", Pgm);
+		fprintf(stderr, "%s: string table > 48kb\n", __progname);
 		exit(EX_DATAERR);
 		}
 	strtab = (char *)malloc((int)strsiz);
 	if	(!strtab)
 		{
-		fprintf(stderr, "%s: no memory for strings\n", Pgm);
+		fprintf(stderr, "%s: no memory for strings\n", __progname);
 		exit(EX_OSERR);
 		}
 /*
@@ -114,7 +117,7 @@ main(argc, argv)
 	cnt = fread(strtab + sizeof (long), 1, (int)strsiz - sizeof (long), fp);
 	if	(cnt != (int)strsiz - sizeof (long))
 		{
-		fprintf(stderr, "%s: Premature EOF reading strings\n", Pgm);
+		fprintf(stderr, "%s: Premature EOF reading strings\n", __progname);
 		exit(EX_DATAERR);
 		}
 /*
@@ -124,7 +127,7 @@ main(argc, argv)
 	fp2 = fopen(argv[1], "r");
 	if	(!fp2)
 		{
-		fprintf(stderr, "%s: Can not open '%s'\n", Pgm, argv[1]);
+		fprintf(stderr, "%s: Can not open '%s'\n", __progname, argv[1]);
 		exit(EX_NOINPUT);
 		}
 	getsyms(fp2);
@@ -154,26 +157,13 @@ main(argc, argv)
 /*
  * Now position the executable to the start of the symbol table.  For each
  * symbol scan the list for a match on the symbol name.  If the
- * name matches write the symbol table entry to one tmp file, else write it
- * to the second symbol tmp file.
- *
- * NOTE: Since the symbol table is being rearranged the usefulness of
- * "local" symbols, especially 'register' symbols, is greatly diminished
- * Not that they are terribly useful in any event - especially the register
- * symbols, 'adb' claims to do something with them but doesn't.  In any
- * event this suite of programs is targeted at the kernel and the register
- * local symbols are of no use.  For this reason 'register' symbols are 
- * removed - this has the side effect of even further reducing the symbol 
- * and string tables that must be processed by 'nm', 'ps', 'adb' and so on.  
- * This removal probably should have been done earlier - in 'strcompact' or 
- * 'symcompact' and it may be in the future, but for now just do it here.
+ * name matches write the symbol table entry to the first symbol tmp file,
+ * else write it to the second symbol tmp file.
 */
 	fseek(fp, symoff, L_SET);
 	while	(nsyms--)
 		{
 		fread(&sym, sizeof (sym), 1, fp);
-		if	(sym.n_type == N_REG)
-			continue;
 		if	(inlist(&sym))
 			fwrite(&sym, sizeof (sym), 1, sym1fp);
 		else
@@ -268,7 +258,7 @@ getsyms(fp)
 		if	(nsorted >= NUMSYMS)
 			{
 			fprintf(stderr, "%s: only doing %d symbols\n",
-				Pgm, NUMSYMS);
+				__progname, NUMSYMS);
 			break;
 			}
 		for	(t = asym; isspace(*t); ++t)

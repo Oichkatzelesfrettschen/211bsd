@@ -1,9 +1,9 @@
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)rcskeep.c 4.5 (2.11BSD) 2026/5/11";
+#endif
 /*
  *                     RCS keyword extraction
  */
-#ifndef lint
-static char rcsid[]= "$Id: rcskeep.c,v 4.4 87/12/18 11:44:21 narten Exp $ Purdue CS";
-#endif
 /*****************************************************************************
  *                       main routine: getoldkeys()
  *                       Testprogram: define KEEPTEST

@@ -4,10 +4,10 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#if	!defined(lint) && defined(lint)
+#if	!defined(lint) && defined(DOSCCS)
 static char copyright[] = "Copyright (c) 1990 Regents of the University of California.\nAll rights reserved.\n";
 static char SccsId[] = "@(#)@(#)pop_updt.c	2.3.1  (2.11BSD) 1996/3/21";
-#endif not lint
+#endif
 
 #include <errno.h>
 #include <stdio.h>

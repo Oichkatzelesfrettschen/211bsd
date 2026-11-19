@@ -1,38 +1,4 @@
-#define INTERDATA 2
-#define GCOS 3
-#define PDP11 4
-#define IBM 5
-#define CMACH 6
-#define VAX 7
-
-#define DMR 2
-#define SCJ 3
-
-#define BINARY 2
-#define ASCII 3
-
-#define PREFIX 2
-#define POSTFIX 3
-
-#ifndef FAMILY
-FAMILY NOT DEFINED !!!
-Family = FAMILY
-#endif
-
-#ifndef HERE
-HERE NOT DEFINED !!!!
-Here = HERE
-#endif
-
-#ifndef OUTPUT
-OUTPUT NOT DEFINED!!!!
-Output = OUTPUT
-#endif
-
-#ifndef POLISH
-POLISH NOT DEFINED !!!
-Polish = POLISH
-#endif
+/* "@(#)defines 1.1 (2.11BSD) 2026/6/28"; */
 
 #define M(x) (1<<x)
 #define ALLOC(x) (struct x *) ckalloc(sizeof(struct x))
@@ -45,8 +11,6 @@ typedef long int ftnint;
 #define NO 0
 #define YES 1
 
-
-
 /* block tag values */
 
 #define TNAME 1
@@ -57,7 +21,6 @@ typedef long int ftnint;
 #define TLIST 6
 #define TIMPLDO 7
 #define TERROR 8
-
 
 /* parser states */
 
@@ -73,7 +36,6 @@ typedef long int ftnint;
 #define PROCBLOCK 2
 #define PROCSUBR 3
 #define PROCFUNCT 4
-
 
 /* storage classes */
 
@@ -101,7 +63,6 @@ typedef long int ftnint;
 #define CLBLOCK 5
 #define CLPROC 6
 
-
 /* vproclass values */
 
 #define PUNKNOWN 0
@@ -115,7 +76,6 @@ typedef long int ftnint;
 #define CTLDO 1
 #define CTLIF 2
 #define CTLELSE 3
-
 
 /* operators */
 
@@ -159,7 +119,6 @@ typedef long int ftnint;
 #define OPBITNOT 38
 #define OPRSHIFT 39
 
-
 /* memory regions */
 
 #define REGARG 1
@@ -177,7 +136,6 @@ typedef long int ftnint;
 #define LABFORMAT 2
 #define LABOTHER 3
 
-
 /* INTRINSIC function codes*/
 /*! comments added WFJolitz 8 april 80 */
 
@@ -189,7 +147,6 @@ typedef long int ftnint;
 #define INTRSPEC 5	/* specific, check type and generate a call */
 #define INTRBOOL 6	/* generate internal code for boolean operators */
 #define INTRCNST 7	/* generate intrinsic constant (like pi in algol) --unused */
-
 
 /* I/O statement codes */
 
@@ -209,7 +166,6 @@ typedef long int ftnint;
 #define IOENDFILE 6
 #define IOREAD 7
 #define IOWRITE 8
-
 
 /* type masks */
 

@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)getpagesize.2	6.1 (Berkeley) 5/15/85
+.\"	@(#)getpagesize.2	6.2 (2.11BSD) 2026/9/20
 .\"
 .TH GETPAGESIZE 2 "May 15, 1985"
 .UC 5
@@ -11,12 +11,14 @@ getpagesize \- get system page size
 .SH SYNOPSIS
 .nf
 .ft B
-pagesize = getpagesize()
-int pagesize;
+#include <unistd.h>
+
+int
+getpagesize(\fIvoid\fP)
 .ft R
 .fi
 .SH DESCRIPTION
-.I Getpagesize
+.B getpagesize
 returns the number of bytes in a page.
 Page granularity is the granularity of many of the memory
 management calls.

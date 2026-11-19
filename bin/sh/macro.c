@@ -1,14 +1,12 @@
-#ifndef lint
-static char sccsid[] = "@(#)macro.c	4.3 8/11/83";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)macro.c	4.4 (2.11BSD) 2026/5/11";
 #endif
 
-#
 /*
  * UNIX shell
  *
  * S. R. Bourne
  * Bell Telephone Laboratories
- *
  */
 
 #include	"defs.h"
@@ -16,8 +14,6 @@ static char sccsid[] = "@(#)macro.c	4.3 8/11/83";
 
 LOCAL CHAR	quote;	/* used locally */
 LOCAL CHAR	quoted;	/* used locally */
-
-
 
 LOCAL STRING	copyto(endch)
 	REG CHAR	endch;

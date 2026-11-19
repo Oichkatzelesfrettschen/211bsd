@@ -76,7 +76,7 @@ char **argv;
 	register char *bufp;
 	int pid;
 	char *pend;
-	extern onintr();
+	extern void onintr();
 
 	char *xfile;
 	FILE *xptr;
@@ -498,6 +498,7 @@ char *strt, *end;
 	}
 }
 
+void
 onintr()
 {
 

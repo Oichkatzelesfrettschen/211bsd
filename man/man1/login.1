@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)login.1	6.2.1 (2.11BSD) 1996/11/27
+.\"	@(#)login.1	6.2.2 (2.11BSD) 2026/9/28
 .\"
 .TH LOGIN 1 "November 27, 1996"
 .UC 4
@@ -13,7 +13,7 @@ login \- sign on
 [ \-p ] [ username ]
 .SH DESCRIPTION
 The
-.I login
+.B login
 command
 is used when a user initially
 signs on, or it may be used at any time to change
@@ -23,7 +23,7 @@ described here.
 See \*(lqHow to Get Started\*(rq for how to dial up initially.
 .PP
 If
-.I login
+.B login
 is invoked without an argument,
 it asks for a user name, and, if
 appropriate, a password.
@@ -40,12 +40,12 @@ as is the time of his last login.
 Both are suppressed if he has a \*(lq.hushlogin\*(rq
 file in his home directory; this
 is mostly used to make life easier for non-human users, such as
-.IR uucp .
+.BR uucp .
 .PP
-.I Login
+.B login
 initializes the user and group IDs and the working directory,
 then executes a command interpreter (usually
-.IR  csh (1))
+.BR  csh (1))
 according to specifications found in a password file.
 Argument 0 of the command interpreter is
 the name of the command interpreter with
@@ -53,23 +53,23 @@ a leading dash (\*(lq\-\*(rq).
 .PP
 Login also modifies the
 environment
-.IR environ (7)
+.BR environ (7)
 with information specifying home directory, command interpreter, terminal
 type (if available) and user name.
 The `\-p' argument causes the remainder of the environment to be preserved,
 otherwise any previous environment is discarded.
 .PP
 If the file /etc/nologin exists,
-.I login
+.B login
 prints its contents on the user's terminal and exits. This is
 used by
-.IR shutdown (8)
+.BR shutdown (8)
 to stop users logging in when the system is about to go down.
 .PP
 Login is recognized by
-.IR sh (1)
+.BR sh (1)
 and
-.IR csh (1)
+.BR csh (1)
 and executed directly (without forking).
 .SH FILES
 .ta \w'/usr/spool/mail/*\ \ 'u
@@ -88,7 +88,7 @@ and executed directly (without forking).
 \&.hushlogin	makes login quieter
 .SH "SEE ALSO"
 init(8), getty(8), mail(1), passwd(1), passwd(5), environ(7),
-shutdown(8), rlogin(1c)
+shutdown(8), rlogin(1)
 .SH DIAGNOSTICS
 \*(lqLogin incorrect,\*(rq
 if the name or the password is bad.
@@ -100,11 +100,11 @@ consult a programming counselor.
 An undocumented option,
 .B \-r
 is used by the remote login server,
-.IR rlogind (8C)
+.BR rlogind (8)
 to force
-.I login
+.B login
 to enter into an initial connection protocol.
 .B \-h is used by
-.IR telnetd (8C)
+.BR telnetd (8)
 and other servers to list the host from which
 the connection was received.

@@ -5,15 +5,11 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)dmesg.c	5.5 (2.11BSD) 2024/9/28";
+static char sccsid[] = "@(#)dmesg.c	5.6 (2.11BSD) 2026/4/2";
 #endif
 
 /*
  *	Suck up system messages
- *	dmesg
- *		print current buffer
- *	dmesg -
- *		print and update incremental history
  */
 
 #include <stdio.h>
@@ -26,8 +22,6 @@ static char sccsid[] = "@(#)dmesg.c	5.5 (2.11BSD) 2024/9/28";
 
 struct	msgbuf msgbuf;
 char	*msgbufp;
-int	sflg;
-int	of	= -1;
 
 struct	msgbuf omesg;
 struct	nlist nl[2] = {
@@ -43,25 +37,12 @@ char **argv;
 	int samef, sawnl, ignore;
 	char msgb[MSG_BSIZE];
 
-	if (argc>1 && argv[1][0] == '-') {
-		sflg++;
-		argc--;
-		argv++;
-	}
-	if (sflg) {
-		of = open("/usr/adm/msgbuf", O_RDWR | O_CREAT, 0644);
-		if (of < 0)
-			done("Can't open /usr/adm/msgbuf\n");
-		read(of, (char *)&omesg, sizeof(omesg));
-		lseek(of, 0L, 0);
-	}
-	sflg = 0;
-	nlist(argc>2? argv[2]:"/unix", nl);
+	nlist("/unix", nl);
 	if (nl[0].n_type==0)
-		done("Can't get kernel namelist\n");
-	if ((mem = open((argc>1? argv[1]: "/dev/mem"), 0)) < 0)
-		done("Can't read kernel memory\n");
-	lseek(mem, (long)nl[0].n_value, 0);
+		done("Can't get /unix namelist\n");
+	if ((mem = open("/dev/mem", O_RDONLY)) < 0)
+		done("Can't open /dev/mem\n");
+	lseek(mem, (long)nl[0].n_value, SEEK_SET);
 	read(mem, &msgbuf, sizeof (msgbuf));
 	if (msgbuf.msg_magic != MSG_MAGIC)
 		done("Magic number wrong (namelist mismatch?)\n");
@@ -70,7 +51,7 @@ char **argv;
 	if (omesg.msg_bufx >= MSG_BSIZE)
 		omesg.msg_bufx = 0;
 	msgbuf.msg_bufc = msgb;
-	lseek(mem, (long)ctob((long)msgbuf.msg_click), 0);
+	lseek(mem, (long)ctob((long)msgbuf.msg_click), SEEK_SET);
 	read(mem, msgbuf.msg_bufc, MSG_BSIZE);
 	mstart = &msgbuf.msg_bufc[omesg.msg_bufx];
 	omp = &omesg.msg_bufc[msgbuf.msg_bufx];
@@ -117,9 +98,8 @@ char *s;
 	if (s) {
 		pdate();
 		printf(s);
-	} else if (of != -1)
-		write(of, (char *)&msgbuf, sizeof(msgbuf));
-	exit(s!=NULL);
+	}
+	exit(s ? 1 : 0);
 }
 
 pdate()

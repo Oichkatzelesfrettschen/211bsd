@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)charset.c	1.1 (Berkeley) 9/21/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)charset.c     5.2 (2.11BSD) 2026/5/11";
+#endif
 
 #include "imp.h"
 char *imP_charset = "cour07";

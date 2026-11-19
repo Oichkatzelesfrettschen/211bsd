@@ -2,35 +2,25 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)dmesg.8	6.2.1 (2.11BSD) 1996/11/17
+.\"	@(#)dmesg.8	6.2.2 (2.11BSD) 2026/4/2
 .\"
-.TH DMESG 8 "November 17, 1996"
+.TH DMESG 8 "April 2, 2026"
 .UC 4
 .SH NAME
-dmesg \- collect system diagnostic messages to form error log
+dmesg \- display the system message buffer
 .SH SYNOPSIS
 .B /sbin/dmesg
-[ \- ]
 .SH DESCRIPTION
 .B N.B.:
-.I Dmesg
+.B dmesg
 is obsoleted by
 .IR syslogd (8)
 for maintenance of the system error log.
 .PP
-.I Dmesg
-looks in a system buffer for recently printed diagnostic messages
-and prints them on the standard output.
-The messages are those printed or logged
-by the system when errors occur.
-If the
-.B \-
-flag is given, then
-.I dmesg
-computes (incrementally) the new messages since the last time it
-was run and places these on the standard output.
-.SH FILES
-.ta 2i
-/usr/adm/msgbuf	scratch file for memory of \- option
+.B dmesg
+displays the contents of the system message buffer.
 .SH SEE ALSO
 syslogd(8)
+.SH HISTORY
+.B dmesg 
+first appeared in 4.0BSD.

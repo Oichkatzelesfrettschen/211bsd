@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)dmc.4	6.3.1 (2.11BSD) 1996/10/22
+.\"	@(#)dmc.4	6.3.2 (2.11BSD) 2026/9/28
 .\"
 .TH DMC 4 "October 22, 1996"
 .UC 2
@@ -17,13 +17,13 @@ dmc \- DEC DMC-11/DMR-11 point-to-point communications device
 .ft R
 .SH DESCRIPTION
 The
-.I dmc
+.B dmc
 interface provides access to a point-to-point communications
 device which runs at either 1 Mb/s or 56 Kb/s.  DMC-11's communicate
 using the DEC DDCMP link layer protocol.
 .PP
 The
-.I dmc
+.B dmc
 interface driver also supports a DEC DMR-11 providing point-to-point
 communication running at data rates from 2.4 Kb/s to 1 Mb/s.
 DMR-11's are a more recent design and thus are preferred over DMC-11's.
@@ -54,9 +54,9 @@ The driver places a HOST entry in the kernel routing tables for the
 address given in the SIOCSIFDSTADDR ioctl.  To use the DMC as a
 link between local nets, the route to the remote net must be added manually
 with the
-.IR route (8)
+.BR route (8)
 command, or by the use of the routing process
-.IR routed (8)
+.BR routed (8)
 on each end of the link.
 .SH DIAGNOSTICS
 .BR "dmc%d: bad control %o" .
@@ -78,7 +78,7 @@ A non-fatal error in DDMCP has occurred.
 The interface was handed a message which has
 addresses formatted in an unsuitable address family.
 .SH SEE ALSO
-intro(4N), inet(4F)
+intro(4), inet(4)
 .SH BUGS
 The current version of the driver uses a link-level encapsulation
 so that multiple protocol types may be used.

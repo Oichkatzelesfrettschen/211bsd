@@ -1,8 +1,8 @@
 #if	!defined(lint) && !defined(DOSCCS)
-static	char sccsid[] = "@(#)nm.c 2.11BSD 1/22/94";
+static	char sccsid[] = "@(#)nm.c 2.1 (2.11BSD) 2026/5/19";
 #endif
 /*
- * nm - print name list. string table version
+ * nm - print symbol table of object/executable
  */
 #include <sys/types.h>
 #include <sys/dir.h>
@@ -13,12 +13,13 @@ static	char sccsid[] = "@(#)nm.c 2.11BSD 1/22/94";
 #include <sys/file.h>
 #include "archive.h"
 #include <string.h>
+#include <stdlib.h>
 
 	CHDR	chdr;
 
 #define	SELECT	archive ? chdr.name : *xargv
 
-	char	aflg, gflg, nflg, oflg, pflg, uflg, rflg = 1, archive;
+	char	gflg, nflg, oflg, pflg, uflg, rflg = 1, archive;
 	char	**xargv;
 	char	*strp;
 	union {
@@ -27,9 +28,6 @@ static	char sccsid[] = "@(#)nm.c 2.11BSD 1/22/94";
 	} mag_un;
 
 	off_t	off, skip();
-extern	off_t	ftell();
-extern	char	*malloc();
-extern	long	strtol();
 	int	compare(), narg, errs;
 
 main(argc, argv)
@@ -58,9 +56,6 @@ main(argc, argv)
 			continue;
 		case 'o':
 			oflg++;
-			continue;
-		case 'a':
-			aflg++;
 			continue;
 		default:
 			fprintf(stderr, "nm: invalid argument -%c\n",

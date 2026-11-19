@@ -1,4 +1,4 @@
-#define VERSION "3.03 (2.11BSD) 2025/12/27"
+#define VERSION "3.04 (2.11BSD) 2026/9/22"
 #define PUBDIR "/usr/spool/uucppublic"
 
 /*
@@ -217,12 +217,14 @@ jmp_buf tohere;		/* For the interrupt on RX timeout */
 
 int tryzhdrtype=ZRINIT;	/* Header type to send corresponding to Last rx close */
 
+void
 alrm()
 {
 	longjmp(tohere, -1);
 }
 
 /* called by signal interrupt or terminate to clean things up */
+void
 bibi(n)
 {
 	if (Zmodem)

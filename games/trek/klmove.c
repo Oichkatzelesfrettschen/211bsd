@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)klmove.c	5.1 (Berkeley) 1/29/86";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)klmove.c     5.2 (2.11BSD) 2026/5/12";
+#endif
 
 # include	"trek.h"
 

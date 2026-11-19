@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)kern_time.c	1.5 (2.11BSD) 2000/4/9
+ *	@(#)kern_time.c	1.6 (2.11BSD) 2026/9/18
  */
 
 #include "param.h"
@@ -296,8 +296,6 @@ expire:
 	return (0);
 }
 #endif /* NOT_CURRENTLY_IN_USE */
-
-#define	timevalfix	tvfix
 
 /*
  * Add and subtract routines for timevals.

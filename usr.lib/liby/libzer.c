@@ -4,11 +4,11 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)libzer.c	5.1 (Berkeley) 8/9/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)libzer.c	5.2 (2.11BSD) 2026/5/10";
+#endif
 
-# include <stdio.h>
+#include <stdio.h>
 
 yyerror(s)
 	char *s;

@@ -1,4 +1,4 @@
-# @(#)Makefile	2.13	(2.11BSD) 2025/11/25
+# @(#)Makefile	2.14	(2.11BSD) 2026/4/26
 
 CC	= cc
 LDFLAGS	= -i
@@ -28,32 +28,24 @@ TNMAIN = tn3270.c
 MSMAIN = mset.c
 
 #
-#	In the vax and pdp environments, we use {vax,pdp}bsubs.s, which give
+#	In the pdp environment we use pdpbsubs.s, which give
 #	us a fair amount of increased performance.  We have provided
 #	genbsubs.c, which perform (more or less) the same function.
-#	Don't forget to specify the correct assembly rules if you use them.
 
 #SUBS = genbsubs.c
 SUBS = pdpbsubs.s
-#SUBS = vaxbsubs.s
 
 #SUBSO = genbsubs.o
 SUBSO = pdpbsubs.o
-#SUBSO = vaxbsubs.o
 
 # PDP-11 assembly rules:
 .s.o:
 	/lib/cpp -E $*.s | sed -e 's;^#;/;' | as -V -o $@
 
-# Vax assembly rules:
-#.s.o:
-#	/lib/cpp -E $< | as -o $@
-
 ALLC = ${MOSTC} ${TNMAIN} ${MSMAIN} ${SUBS}
 # ALLC = ${MOSTC} ${TNMAIN} ${MSMAIN}
 
-ALLS =
-#ALLS = vaxbsubs.s
+ALLS = pdpbsubs.s
 
 MOSTO	= tn3270.o ebctab.o asctab.o termin.o keyboard.o \
 		datastream.o screen.o map3270.o options.o \

@@ -1,6 +1,6 @@
 #if     !defined(lint) && defined(DOSCCS)
 char copyright[] =
-static char sccsid[] = "@(#)ident.c 6.2.1 (2.11BSD) 2025/12/26";
+static char sccsid[] = "@(#)ident.c 6.2.2 (2.11BSD) 2026/5/19";
 #endif
 
 /*****************************************************************************
@@ -55,9 +55,6 @@ static char sccsid[] = "@(#)ident.c 6.2.1 (2.11BSD) 2025/12/26";
 #include  "rcsbase.h"
 #define fflsbuf __swbuf
 /* redefinition of _flsbuf in putc not needed */
-#ifndef lint
-static char rcsbaseid[] = RCSBASE;
-#endif
 
 extern enum markers trymatch();
 
@@ -71,7 +68,7 @@ int  argc; char  *argv[];
  */
 
 {
-   FILE *fp, *fopen();
+   FILE *fp;
 
    quietflag = false;
    if (argc > 1 && strcmp("-q",argv[1])==0) {
@@ -100,7 +97,6 @@ int  argc; char  *argv[];
    exit(0);
 }
 
-
 int scanfile(file)
 FILE * file;
 /* Function: scan an open file with descriptor file for keywords.
@@ -110,7 +106,6 @@ FILE * file;
    register int matchcount;
    register int c;
 
-
    matchcount = 0;
    while( (c=getc(file)) != EOF) {
       if ( (char)c==KDELIM)
@@ -118,8 +113,6 @@ FILE * file;
    }
    return matchcount;
 }
-
-
 
 match(fp)   /* group substring between two KDELIM's; then do pattern match */
 FILE *fp;

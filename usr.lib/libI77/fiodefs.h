@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)fiodefs.h	5.2 (Berkeley) 7/30/85
+ *	@(#)fiodefs.h	5.3 (2.11BSD) 2026/8/2
  */
 
 /*
@@ -11,7 +11,14 @@
  */
 
 #include <stdio.h>
+#include <sys/types.h>
 #include "f_errno.h"
+
+/*
+ * If 'tylogical' in f77/init.c is set to TYSHORT and the memory size of a
+ * logical is SZLONG then this define must be set.
+*/
+#define SHORT_LOGICAL
 
 /* Logical Unit Table Size */
 #define MXUNIT 100
@@ -89,15 +96,16 @@ typedef struct		/*rewind, backspace, endfile*/
 typedef struct		/*units*/
 {	FILE *ufd;	/*0=unconnected*/
 	char *ufnm;
-	long uinode;
+	ino_t uinode;
 	int url;	/*0=sequential*/
-	flag useek;	/*true=can backspace, use dir, ...*/
-	flag ufmt;
-	flag uprnt;
-	flag ublnk;
-	flag uend;
-	flag uwrt;	/*last io was write*/
-	flag uscrtch;
+	char useek;	/*true=can backspace, use dir, ...*/
+	char ufmt;
+	char uprnt;
+	char ublnk;
+	char uend;
+	char uwrt;	/*last io was write*/
+	char uscrtch;
+	char uapnd;	/* 1 if access=sequential and opneof set */
 } unit;
 
 typedef struct		/* inquire */
@@ -105,10 +113,19 @@ typedef struct		/* inquire */
 	ftnint inunit;
 	char *infile;
 	ftnlen infilen;
-	ftnint	*inex;	/*parameters in standard's order*/
+#ifdef	SHORT_LOGICAL
+	short	*inex;	/* parameters in standard's (and compiler's) order */
+	short	*inopen;
+#else
+	ftnint	*inex;
 	ftnint	*inopen;
+#endif
 	ftnint	*innum;
+#ifdef	SHORT_LOGICAL
+	short	*innamed;
+#else
 	ftnint	*innamed;
+#endif
 	char	*inname;
 	ftnlen	innamlen;
 	char	*inacc;

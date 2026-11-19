@@ -3,7 +3,7 @@
 # All rights reserved.  The Berkeley software License Agreement
 # specifies the terms and conditions for redistribution.
 #
-#	@(#)Makefile	5.6 (2.11BSD) 2025/11/25
+#	@(#)Makefile	5.7 (2.11BSD) 2026/5/12
 #
 CFLAGS=	-O
 LDFLAGS= -i
@@ -12,7 +12,7 @@ LDFLAGS= -i
 #
 SUBDIR=	adventure backgammon battlestar boggle btlgammon cribbage fortune \
 	hack \
-	hangman hunt mille monop pdp phantasia quiz robots sail snake \
+	hangman hunt mille monop pdp phantasia quiz robots rogue sail snake \
 	trek warp words
 
 # Shell scripts that need only be installed and are never removed.

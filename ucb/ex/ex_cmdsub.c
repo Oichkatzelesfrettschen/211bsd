@@ -113,7 +113,7 @@ delete(hush)
 
 	nonzero();
 	if(FIXUNDO) {
-		register int (*dsavint)();
+		register sig_t dsavint;
 
 #ifdef TRACE
 		if (trace)

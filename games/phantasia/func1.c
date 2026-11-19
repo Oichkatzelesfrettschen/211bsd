@@ -1,5 +1,5 @@
 /*
- * func1.c	Phantasia support routines
+ * func1.c   1.2 (2.11BSD) 2026/7/12
  */
 
 #include "phant.h"
@@ -42,7 +42,7 @@ reg	int	loc;
 			++loc;
 		}
 	fclose(fp);
-	fp = fopen(peoplefile,ACCESS);
+	fp = fopen(peoplefile, "r+");
 	fseek(fp,(long) loc * sizeof(buf),0);
 	initchar(&buf);
 	strcpy(buf.name,"inuse");
@@ -95,7 +95,7 @@ FILE	*fp;
 void	leave(stat)				/* save character in file */
 reg	struct	stats	*stat;
 {
-long	ltemp;
+time_t	ltemp;
 
 	if (!stat->lvl)
 		strcpy(stat->name,"<null>");
@@ -104,13 +104,12 @@ long	ltemp;
 	stat->age += ltemp - secs;
 	update(stat,fileloc);
 	exit1();
-	/*NOTREACHED*/
 }
 
 void	talk(name)				/* send message to all players */
-reg	char	*name;
+char	*name;
 {
-FILE	*fp;
+reg	FILE	*fp;
 char	aline[160];
 
 	mvaddstr(5,0,"Message ? ");
@@ -175,7 +174,7 @@ long	ltemp;
 				fgets(aline,100,fp);
 			ltemp = ftell(fp);
 			fclose(fp);
-			fp = fopen(monsterfile,ACCESS);
+			fp = fopen(monsterfile, "r+");
 			fseek(fp,ltemp,0);
 			fprintf(fp,"%-20s",stat->name);
 			fclose(fp);
@@ -217,12 +216,12 @@ long	ltemp;
 }
 
 void	update(stat,place)			/* update charac file */
-reg	struct	stats	*stat;
-reg	int	place;
+reg struct	stats	*stat;
+int	place;
 {
-FILE	*fp;
+	reg FILE *fp;
 
-	fp = fopen(peoplefile,ACCESS);
+	fp = fopen(peoplefile, "r+");
 	fseek(fp,(long) place*sizeof(*stat),0);
 	fwrite((char *) stat,sizeof(*stat),1,fp);
 	fclose(fp);
@@ -290,7 +289,7 @@ char	instr[100];
 
 void	titlestuff()				/* print out a header */
 {
-FILE	*fp;
+reg FILE	*fp;
 char	instr[80], hiname[21], nxtname[21], aline[80];
 bool	cowfound = FALSE, kingfound = FALSE;
 struct	stats	buf;
@@ -396,37 +395,15 @@ void	exit1() 				/* exit, but cleanup */
 void	init1() 				/* set up for screen updating */
 {
 		/* catch/ingnore signals */
-#ifdef	BSD41
-	sigignore(SIGQUIT);
-	sigignore(SIGALRM);
-	sigignore(SIGTERM);
-	sigignore(SIGTSTP);
-	sigignore(SIGTTIN);
-	sigignore(SIGTTOU);
-	sighold(SIGINT);
-#endif
-#ifdef	BSD42
-	signal(SIGQUIT,interrupt,1);
-	signal(SIGALRM,interrupt,1);
-	signal(SIGTERM,interrupt,1);
-	signal(SIGTSTP,interrupt,1);
-	signal(SIGTTIN,interrupt,1);
-	signal(SIGTTOU,interrupt,1);
-	signal(SIGINT,interrupt,1);
-#endif
-#ifdef	USG3
-	signal(SIGINT,SIG_IGN);
-	signal(SIGQUIT,SIG_IGN);
-	signal(SIGTERM,SIG_IGN);
-	signal(SIGALRM,SIG_IGN);
-#endif
-#ifdef	USG5
-	signal(SIGINT,SIG_IGN);
-	signal(SIGQUIT,SIG_IGN);
-	signal(SIGTERM,SIG_IGN);
-	signal(SIGALRM,SIG_IGN);
-#endif
-	srand((unsigned) time((long *) NULL));	/* prime random numbers */
+	signal(SIGQUIT,interrupt);
+	signal(SIGALRM,interrupt);
+	signal(SIGTERM,interrupt);
+	signal(SIGTSTP,interrupt);
+	signal(SIGTTIN,interrupt);
+	signal(SIGTTOU,interrupt);
+	signal(SIGINT,interrupt);
+
+	srand((unsigned)time((time_t *) NULL));	/* prime random numbers */
 	initscr();
 	noecho();
 	crmode();
@@ -434,12 +411,12 @@ void	init1() 				/* set up for screen updating */
 	refresh();
 }
 
-void	getstring(cp,mx)				/* get a string from the stdscr at current y,x */
-reg	char	*cp;
-reg	int	mx;
+void	getstring(cp,mx)       /* get a string from the stdscr at current y,x */
+	char	*cp;
+	int	mx;
 {
-reg	int	loop = 0, x, y, xorig;
-int	ch;
+int	x, y, xorig;
+reg int	ch, loop = 0;
 
 	getyx(stdscr,y,xorig);
 	clrtoeol();
@@ -494,10 +471,10 @@ FILE	*fp;
 void	kingstuff(stat) 			/* stuff upon entering throne */
 reg	struct 	stats	*stat;
 {
-FILE	*fp;
+reg	FILE	*fp;
 struct	stats	buf;
 struct	nrgvoid	vbuf;
-reg	int	loc = 0;
+int	loc = 0;
 
 	if (stat->typ < 10)	/* check to see if king -- assumes crown */
 		{
@@ -552,8 +529,8 @@ void	cstat() 				/* examine/change stats of a character */
 {
 struct	stats charac;
 char	s[60], flag[2];
-FILE	*fp;
-reg	int	loc = 0;
+reg FILE	*fp;
+int	loc = 0;
 int	c, temp, today;
 long	ltemp;
 double	dtemp;
@@ -864,6 +841,7 @@ void	trunc(str)				/* remove blank spaces at the end of str[] */
 reg	char	*str;
 {
 reg	int	loop;
+
 	loop = strlen(str) - 1;
 	while (str[--loop] == ' ')
 		str[loop] = '\0';
@@ -892,8 +870,8 @@ void	scramble(stat)			/* mix up some stats */
 reg	struct	stats	*stat;
 {
 double	buf[5],	temp;
-reg	int	first, second;
-reg	double	*bp;
+reg int	first, second;
+	double	*bp;
 
 	bp = buf;
 	*bp++ = stat->str;

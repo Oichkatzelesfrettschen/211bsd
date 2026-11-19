@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)lpc.c	5.2.1 (2.11BSD GTE) 1/1/94";
+static char sccsid[] = "@(#)lpc.c	5.2.2 (2.11BSD) 2026/1/27";
 #endif
 
 /*
@@ -20,6 +20,7 @@ static char sccsid[] = "@(#)lpc.c	5.2.1 (2.11BSD GTE) 1/1/94";
 #include <ctype.h>
 #include <setjmp.h>
 #include <syslog.h>
+#include <strings.h>
 
 #include "lpc.h"
 
@@ -29,7 +30,7 @@ char	cmdline[200];
 int	margc;
 char	*margv[20];
 int	top;
-int	intr();
+void	intr();
 struct	cmd *getcmd();
 
 jmp_buf	toplevel;
@@ -70,6 +71,7 @@ main(argc, argv)
 	}
 }
 
+void
 intr()
 {
 	if (!fromatty)
@@ -86,8 +88,7 @@ cmdscanner(top)
 	int top;
 {
 	register struct cmd *c;
-	extern struct cmd cmdtab[];
-	extern int help();
+	register char *cp;
 
 	if (!top)
 		putchar('\n');
@@ -96,8 +97,11 @@ cmdscanner(top)
 			printf("lpc> ");
 			fflush(stdout);
 		}
-		if (gets(cmdline) == 0)
+		if (fgets(cmdline, sizeof(cmdline), stdin) == 0)
 			quit();
+		cp = index(cmdline, '\n');
+		if (cp) *cp = '\0';
+
 		if (cmdline[0] == 0)
 			break;
 		makeargv();

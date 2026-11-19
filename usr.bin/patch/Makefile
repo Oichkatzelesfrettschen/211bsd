@@ -1,11 +1,10 @@
-#       Makefile        2.0 (2.11BSD) 2025/11/25
+#       Makefile        2.1 (2.11BSD) 2026/6/21
 
 DEFS=	
 CFLAGS=	-O ${DEFS}
 LDFLAGS=-i
 
-HDRS=	EXTERN.h INTERN.h common.h config.h inp.h patchlevel.h pch.h \
-	util.h version.h
+HDRS=	EXTERN.h INTERN.h common.h inp.h pch.h util.h
 SRCS=	patch.c pch.c inp.c util.c version.c
 OBJS=	patch.o pch.o inp.o util.o version.o
 
@@ -19,7 +18,7 @@ patch: ${OBJS} patch.0
 
 install: patch patch.0
 	install patch /usr/bin
-	install -m 444 -o root -g staff patch.0 /usr/man/cat1
+	install -c -s -m 444 -o root -g staff patch.0 /usr/man/cat1
 
 clean:
 	rm -f *.o *.orig core tags patch *.0

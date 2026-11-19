@@ -3,13 +3,14 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)open.c	5.2	1/8/86
+ *	@(#)open.c	5.3 (2.11BSD) 2026/8/4
  */
 
 /*
  * open.c  -  f77 file open and I/O library initialization routines
  */
 
+#include	<stdlib.h>
 #include	<sys/types.h>
 #include	<sys/stat.h>
 #include	<errno.h>
@@ -22,10 +23,10 @@
 #define FROM_OPEN	"\2"	/* for use in f_clos() */
 #define BUF_LEN 256
 
+static char xopen[] = "open";
+
 LOCAL char *tmplate = "tmp.FXXXXXX";	/* scratch file template */
 LOCAL char *fortfile = "fort.%d";	/* default file template */
-
-char *getenv();
 
 f_open(a) olist *a;
 {	unit *b;
@@ -39,15 +40,15 @@ f_open(a) olist *a;
 	external = YES;			/* for err */
 	errflag = a->oerr;
 	lunit = a->ounit;
-	if(not_legal(lunit)) err(errflag,F_ERUNIT,"open")
+	if(not_legal(lunit)) err(errflag,F_ERUNIT, xopen)
 	b= &units[lunit];
-	if(a->osta) st = lcase(*a->osta);
+	if(a->osta) st = tolower(*a->osta);
 	else st = 'u';
 	if(SCRATCH)
 	{	strcpy(buf,tmplate);
 		/* make a new temp file name, err if mktemp fails */
 		if( strcmp( mktemp(buf), "/" ) == 0 )
-			err(errflag, F_ERSYS, "open")
+			err(errflag, F_ERSYS, xopen)
 	}
 	else 
 	{
@@ -67,7 +68,7 @@ f_open(a) olist *a;
 		    *p2 = '\0';
 		    if( (env_val = getenv( env_name  )) != NULL ) {
 			if(strlen(env_val) >= BUF_LEN-1 )
-			    err(errflag,F_ERSTAT,"open: file name too long");
+			    err(errflag,F_ERSTAT, "open: name too long");
 			strcpy(buf, env_val);
 		    }
 		 }
@@ -77,9 +78,9 @@ f_open(a) olist *a;
 	{
 		if(!a->ofnm || inode(buf)==b->uinode)
 		{
-			if(a->oblnk) b->ublnk= (lcase(*a->oblnk)== 'z');
+			if(a->oblnk) b->ublnk= (tolower(*a->oblnk)== 'z');
 #ifndef KOSHER
-			if(a->ofm && b->ufmt) b->uprnt = (lcase(*a->ofm)== 'p');
+			if(a->ofm && b->ufmt) b->uprnt = (tolower(*a->ofm)== 'p');
 #endif
 			return(OK);
 		}
@@ -89,9 +90,21 @@ f_open(a) olist *a;
 		if(n=f_clos(&x)) return(n);
 	}
 	exists = (access(buf,0)==NULL);
-	if(!exists && OLD) err(errflag,F_EROLDF,"open");
-	if( exists && NEW) err(errflag,F_ERNEWF,"open");
+	if(!exists && OLD) err(errflag,F_EROLDF, xopen);
+	if( exists && NEW) err(errflag,F_ERNEWF, xopen);
 	errno = F_ERSYS;
+
+	if	(a->oacc == NULL)
+		a->oacc = "seq";
+
+/*
+ * If ACCESS='sequential' AND opneof (apnd=.TRUE. from "ioinit(cctl, bzro,
+ *  apnd, prefix, vrbose)" set b->uapnd.  This flag is used in util.c by
+ * the functions nowreading() and nowwriting().  append mode makes no sense 
+ * with ACCESS='direct' files as a record number is used for each read/write
+*/
+	b->uapnd = (opneof && (tolower(a->oacc) == 's')) ? 1 : 0;
+
 	if(isdev(buf))
 	{	if((b->ufd = fopen(buf,"r")) != NULL) b->uwrt = NO;
 		else	err(errflag,errno,buf)
@@ -99,50 +112,51 @@ f_open(a) olist *a;
 	else
 	{	
 		errno = F_ERSYS;
-		if((b->ufd = fopen(buf, "a")) != NULL)
-		{	if(!opneof)
-			{	if(freopen(buf, "r", b->ufd) != NULL)
-					b->uwrt = NO;
-				else
-					err(errflag, errno, buf)
-			}
-			else
+/*
+ * fopen("a") will create but not truncate the file if it exists.  If that 
+ * succeeds then reopen the file and if uapnd is false use r+ instead of "a".
+ * Set the uwrt state to YES.  The double open looks weird but is necessary
+ * since we can't use "w" on the first open.  If a read is done the runtime 
+ * will call nowreading() in util.c.  If fopen("a") fails then open the file
+ * readonly and set uwrt to NO (write operations will fail/error).
+*/
+		if	(b->ufd = fopen(buf, "a"))
+			{
+			if	(freopen(buf, b->uapnd ? "a" : "r+", b->ufd))
 				b->uwrt = YES;
-		}
-		else if((b->ufd = fopen(buf, "r")) != NULL)
-		{	if (opneof)
-				fseek(b->ufd, 0L, 2);
+			else
+				err(errflag, errno, buf)
+			}
+		else if	(b->ufd = fopen(buf, "r"))
 			b->uwrt = NO;
-		}
-		else	err(errflag, errno, buf)
+		else
+			err(errflag, errno, buf)
 	}
-	if((b->uinode=finode(b->ufd))==-1) err(errflag,F_ERSTAT,"open")
+	if((b->uinode=finode(b->ufd))==-1) err(errflag,F_ERSTAT, xopen)
 	b->ufnm = (char *) calloc(strlen(buf)+1,sizeof(char));
-	if(b->ufnm==NULL) err(errflag,F_ERSPACE,"open")
+	if(b->ufnm==NULL) err(errflag,F_ERSPACE, xopen)
 	strcpy(b->ufnm,buf);
 	b->uscrtch = SCRATCH;
 	b->uend = NO;
 	b->useek = canseek(b->ufd);
-	if (a->oacc == NULL)
-		a->oacc = "seq";
-	if (lcase(*a->oacc)=='s' && a->orl > 0)
+	if (tolower(*a->oacc)=='s' && a->orl > 0)
 	{
-		fputs("Warning: open: record length ignored on sequential access\n", units[0].ufd);
+		fputs("Warn: open: rec len ignored,seq acc\n", units[0].ufd);
 		b->url = 0;
 	}
-	else if (a->orl < 0 || (lcase(*a->oacc)=='d' && a->orl == 0))
-		err(errflag,F_ERARG,"recl on open")
+	else if (a->orl < 0 || (tolower(*a->oacc)=='d' && a->orl == 0))
+		err(errflag,F_ERARG,"recl open")
 	else
 		b->url = a->orl;
 	if (a->oblnk)
-		b->ublnk = (lcase(*a->oblnk)=='z');
+		b->ublnk = (tolower(*a->oblnk)=='z');
 	else if (lunit == STDERR)
 		b->ublnk = NO;
 	else
 		b->ublnk = blzero;
 	if (a->ofm)
 	{
-		switch(lcase(*a->ofm))
+		switch(tolower(*a->ofm))
 		{
 		case 'f':
 			b->ufmt = YES;

@@ -1,4 +1,4 @@
-.\"	@(#)tc.1	6.1 (Berkeley) 4/29/85
+.\"	@(#)tc.1	6.2 (2.11BSD) 2026/9/27
 .\"
 .TH TC 1 "April 29, 1985"
 .AT 3
@@ -21,12 +21,12 @@ L
 file
 ]
 .SH DESCRIPTION
-.I Tc
+.B tc
 interprets its
 input (standard input default)
 as device codes for a Graphic Systems phototypesetter (cat).
 The standard output of
-.I tc
+.B tc
 is intended for a Tektronix 4015 (a 4014 terminal
 with ASCII and APL character sets).
 The sixteen typesetter sizes are mapped into the 4014's
@@ -39,7 +39,7 @@ Typical usage:
 troff \-t file | tc
 .PP
 At the end of each page
-.I tc
+.B tc
 waits for a newline (empty line) from the keyboard before
 continuing on to the next page.
 In this wait state, the command
@@ -79,7 +79,7 @@ by
 .I l/w.
 .SH "SEE ALSO"
 troff(1),
-plot(1G)
+plot(1)
 .SH BUGS
 Font distinctions are lost.
 .br

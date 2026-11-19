@@ -1,7 +1,11 @@
-static char *sccsid = "@(#)join.c	4.2 (Berkeley) 6/30/83";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)join.c	4.3 (2.11BSD) 2026/5/8";
+#endif
+
 /*	join F1 F2 on stuff */
 
 #include	<stdio.h>
+
 #define F1 0
 #define F2 1
 #define	NFLD	20	/* max field per line */
@@ -29,7 +33,6 @@ char *argv[];
 	int i;
 	int n1, n2;
 	long top2, bot2;
-	long ftell();
 
 	while (argc > 1 && argv[1][0] == '-') {
 		if (argv[1][1] == '\0')

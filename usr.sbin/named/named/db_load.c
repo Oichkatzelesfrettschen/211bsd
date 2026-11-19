@@ -10,9 +10,9 @@
  * is provided ``as is'' without express or implied warranty.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)db_load.c	4.26 (Berkeley) 2/28/88";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)db_load.c	4.27 (2.11BSD) 2026/5/10";
+#endif
 
 /*
  * Load data base from ascii backupfile.  Format similar to RFC 883.
@@ -23,6 +23,7 @@ static char sccsid[] = "@(#)db_load.c	4.26 (Berkeley) 2/28/88";
 #include <sys/stat.h>
 #include <netinet/in.h>
 #include <stdio.h>
+#include <string.h>
 #include <syslog.h>
 #include <ctype.h>
 #include <netdb.h>
@@ -30,7 +31,6 @@ static char sccsid[] = "@(#)db_load.c	4.26 (Berkeley) 2/28/88";
 #include "ns.h"
 #include "db.h"
 
-extern char *index();
 u_long getnum();
 extern u_long net_mask();
 extern u_long max_cache_ttl;

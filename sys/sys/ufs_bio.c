@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)ufs_bio.c	2.2 (2.11BSD) 1996/9/13
+ *	@(#)ufs_bio.c	2.3 (2.11BSD) 2026/5/13
  */
 
 #include "param.h"
@@ -17,6 +17,13 @@
 #include "uba.h"
 #include "trace.h"
 #include "ram.h"
+
+/*
+ * moved here from trace.h since all but one entry are used in this file
+*/
+#if defined(KERNEL) && defined(UCB_METER) && !defined(SUPERVISOR)
+u_long tracebuf[TR_NUM_210];
+#endif
 
 /*
  * Read in (if necessary) the block and return a buffer pointer.

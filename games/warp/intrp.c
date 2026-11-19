@@ -349,13 +349,13 @@ getout:
 
 char *
 dointerp(dest,destsize,pattern,stoppers)
-Reg1 char *dest;
-Reg2 int destsize;
-Reg3 char *pattern;
-char *stoppers;
+	char *dest;
+	int destsize;
+	register char *pattern;
+	char *stoppers;
 {
-    Reg4 char *s;
-    Reg5 int i;
+    register char *s;
+    int i;
     char scrbuf[512];
     bool upper = FALSE;
     bool lastcomp = FALSE;
@@ -455,7 +455,9 @@ char *stoppers;
 		    pattern = dointerp(scrbuf,(sizeof scrbuf),pattern+1,"\"");
 		    fputs(scrbuf,stdout);
 		    resetty();
-		    gets(scrbuf);
+		    fgets(scrbuf, sizeof (scrbuf), stdin);
+		    s = index(scrbuf, '\n');
+		    if (s) *s = '\0';
 		    crmode();
 		    raw();
 		    noecho();

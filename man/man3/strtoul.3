@@ -33,123 +33,139 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"     @(#)strtoul.3	8.1.1 (2.11BSD) 1996/1/12
+.\"     @(#)strtoul.3	8.1.2 (2.11BSD) 2026/1/26
 .\"
-.TH STRTOUL 3 "January 12, 1996"
-.UC 7
-.SH NAME
-\fBstrtoul\fP \- convert a string to an unsigned long
-.SH SYNOPSIS
-.B #include <stdlib.h>
-.br
-.B #include <limits.h>
-.sp
-.B unsigned long
-.br
-\fBstrtoul\fP(nptr, endptr, base)
-.br
-.I char *nptr;
-.br
-.I char **endptr;
-.br
-.I int base;
-.SH DESCRIPTION
+.Dd January 21, 2026
+.Dt STRTOUL 3
+.Os
+.Sh NAME
+.Nm strtoul, strtoumax
+.Nd convert a string to an unsigned long or uintmax_t integer
+.Sh SYNOPSIS
+.Fd #include <stdlib.h>
+.Fd #include <limits.h>
+.Ft unsigned long
+.Fn strtoul "const char *nptr" "char **endptr" "int base"
+.Fd #include <inttypes.h>
+.Ft uintmax_t
+.Fn strtoumax "const char *restrict str" "char **restrict endptr" "int base"
+.Sh DESCRIPTION
 The
-.BR strtoul ()
+.Fn strtoul
 function
 converts the string in
-.I nptr
+.Fa nptr
 to an
-.I unsigned long
+.Em unsigned long
+value.
+The
+.Fn strtoumax
+function
+converts the string in
+.Fa nptr
+to an
+.Ft uintmax_t
 value.
 The conversion is done according to the given
-.IR base ,
+.Fa base ,
 which must be between 2 and 36 inclusive,
 or be the special value 0.
-.PP
+.Pp
 The string may begin with an arbitrary amount of white space
 (as determined by
-isspace(3))
+.Xr isspace 3 )
 followed by a single optional
-`+'
+.Ql +
 or
-`\-'
+.Ql -
 sign.
 If
-.I base
+.Fa base
 is zero or 16,
 the string may then include a
-`0x'
+.Ql 0x
 prefix,
 and the number will be read in base 16; otherwise, a zero
-.I base
+.Fa base
 is taken as 10 (decimal) unless the next character is
-`0',
+.Ql 0 ,
 in which case it is taken as 8 (octal).
-.PP
+.Pp
 The remainder of the string is converted to an
-.I unsigned long
+.Em unsigned long
 value in the obvious manner,
 stopping at the end of the string
 or at the first character that does not produce a valid digit
 in the given base.
 (In bases above 10, the letter
-`A'
+.Ql A
 in either upper or lower case
 represents 10,
-`B'
+.Ql B
 represents 11, and so forth, with
-`Z'
+.Ql Z
 representing 35.)
-.PP
+.Pp
 If
-.I endptr
+.Fa endptr
 is non nil,
-.BR strtoul ()
+.Fn strtoul
 stores the address of the first invalid character in
-.I *endptr .
+.Fa *endptr .
 If there were no digits at all, however,
-.BR strtoul ()
+.Fn strtoul
 stores the original value of
-.I nptr
+.Fa nptr
 in
-.I *endptr .
+.Fa *endptr .
 (Thus, if
-.I *nptr
+.Fa *nptr
 is not
-`\e0'
+.Ql \e0
 but
-.I **endptr
+.Fa **endptr
 is
-`\e0'
+.Ql \e0
 on return, the entire string was valid.)
 .SH RETURN VALUES
 The
-.BR strtoul ()
+.Fn strtoul
+and
+.Fn strtoumax
 function
 returns either the result of the conversion
 or, if there was a leading minus sign,
 the negation of the result of the conversion,
 unless the original (non-negated) value would overflow;
 in the latter case,
-.BR strtoul ()
+.Fn strtoul
 returns
-.B ULONG_MAX
-and sets the global variable
-.B errno
+.Dv ULONG_MAX ,
+and
+.Fn strtoumax
+returns
+.Dv UINTMAX_MAX .
+Both sets the global variable
+.Va errno
 to
-.B ERANGE .
-.SH ERRORS
-.TP 15
-[ERANGE]
+.Er ERANGE .
+.Sh ERRORS
+.Bl -tag -width [ERANGE]
 The given string was out of range; the value converted has been clamped.
-.SH SEE ALSO
-strtol(3)
-.SH STANDARDS
+.El
+.Sh SEE ALSO
+.Xr strtol 3 ,
+.Xr strtoimax 3
+.Sh STANDARDS
 The
-.BR strtoul ()
+.Fn strtoul
 function
 conforms to
-ANSI C X3.159-1989 (``ANSI C'').
-.SH BUGS
+.St -ansiC .
+The
+.Fn strtoumax
+function
+conforms to
+.St -isoC-99 .
+.Sh BUGS
 Ignores the current locale.

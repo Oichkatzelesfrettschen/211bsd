@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)pty.4	6.2 (Berkeley) 5/19/86
+.\"	@(#)pty.4	6.3 (2.11BSD) 2026/9/28
 .\"
 .TH PTY 4 "May 19, 1986"
 .UC 5
@@ -17,7 +17,7 @@ pty \- pseudo terminal driver
 .ft R
 .SH DESCRIPTION
 The
-.I pty
+.B pty
 driver provides support for a device-pair termed a
 .IR "pseudo terminal" .
 A pseudo terminal is a pair of character devices, a
@@ -27,10 +27,10 @@ device and a
 device.  The slave device provides processes
 an interface identical
 to that described in
-.IR tty (4).
+.BR tty (4).
 However, whereas all other devices which provide the 
 interface described in
-.IR tty (4)
+.BR tty (4)
 have a hardware device of some sort behind them, the slave
 device has, instead, another process manipulating
 it through the master half of the pseudo terminal.
@@ -44,7 +44,7 @@ In configuring,
 specifies the number of pseudo terminal pairs are configured.
 .PP
 The following 
-.I ioctl
+.B ioctl
 calls apply only to pseudo terminals:
 .TP
 TIOCSTOP
@@ -62,7 +62,7 @@ mode.  Packet mode is enabled by specifying (by reference)
 a nonzero parameter and disabled by specifying (by reference)
 a zero parameter.  When applied to the master side of a pseudo
 terminal, each subsequent 
-.I read 
+.B read 
 from the terminal will return data written on the slave part of
 the pseudo terminal preceded by a zero byte (symbolically
 defined as TIOCPKT_DATA), or a single byte reflecting control
@@ -96,20 +96,20 @@ whenever the start and stop characters are not ^S/^Q.
 .IP
 While this mode is in use, the presence of control status information
 to be read from the master side may be detected by a
-.I select
+.B select
 for exceptional conditions.
 .IP
 This mode is used by
-.IR rlogin (1C)
+.BR rlogin (1)
 and
-.IR rlogind (8C)
+.BR rlogind (8)
 to implement a remote-echoed, locally ^S/^Q flow-controlled
 remote login with proper back-flushing of output; it can be
 used by other similar programs.
 .TP
 TIOCUCNTL
 Enable/disable a mode that allows a small number of simple user
-.I ioctl
+.B ioctl
 commands to be passed through the pseudo-terminal,
 using a protocol similar to that of TIOCPKT.
 The TIOCUCNTL and TIOCPKT modes are mutually exclusive.
@@ -118,21 +118,21 @@ by specifying (by reference)
 a nonzero parameter and disabled by specifying (by reference)
 a zero parameter.
 Each subsequent 
-.I read 
+.B read 
 from the master side will return data written on the slave part of
 the pseudo terminal preceded by a zero byte,
 or a single byte reflecting a user control operation on the slave side.
 A user control command consists of a special
-.I ioctl
+.B ioctl
 operation with no data; the command is given as UIOCCMD(\fIn\fP),
 where \fIn\fP is a number in the range 1-255.
 The operation value \fIn\fP will be received as a single byte on the next
-.I read
+.B read
 from the master side.
-The \fIioctl\fP UIOCCMD(0) is a no-op that may be used to probe for
+The \fBioctl\fP UIOCCMD(0) is a no-op that may be used to probe for
 the existence of this facility.
 As with TIOCPKT mode, command operations may be detected with a
-.I select
+.B select
 for exceptional conditions.
 .TP
 TIOCREMOTE
@@ -151,5 +151,3 @@ is required.
 /dev/pty[p-r][0-9a-f]	master pseudo terminals
 .br
 /dev/tty[p-r][0-9a-f]	slave pseudo terminals
-.SH DIAGNOSTICS
-None.

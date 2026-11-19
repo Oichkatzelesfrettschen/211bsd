@@ -20,7 +20,7 @@ char copyright[] =
 "@(#) Copyright (c) 1985, 1988 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)ftpd.c	5.28.4	(2.11BSD) 2025/12/26";
+static char sccsid[] = "@(#)ftpd.c	5.28.5	(2.11BSD) 2026/9/19";
 #endif
 
 /*
@@ -50,7 +50,9 @@ static char sccsid[] = "@(#)ftpd.c	5.28.4	(2.11BSD) 2025/12/26";
 #include <errno.h>
 #include <strings.h>
 #include <syslog.h>
-#include "pathnames.h"
+#include <paths.h>
+
+#define	_PATH_FTPUSERS	"/etc/ftpusers"
 
 #ifndef MAXHOSTNAMELEN
 #define MAXHOSTNAMELEN 64
@@ -119,8 +121,8 @@ char	remotehost[MAXHOSTNAMELEN];
 int	swaitmax = SWAITMAX;
 int	swaitint = SWAITINT;
 
-int	lostconn();
-int	myoob();
+void	lostconn();
+void	myoob();
 FILE	*getdatasock(), *dataconn();
 
 #ifdef SETPROCTITLE
@@ -216,8 +218,7 @@ nextopt:
 	(void) freopen(_PATH_DEVNULL, "w", stderr);
 	(void) signal(SIGPIPE, lostconn);
 	(void) signal(SIGCHLD, SIG_IGN);
-	if ((int)signal(SIGURG, myoob) < 0)
-		syslog(LOG_ERR, "signal: %m");
+	signal(SIGURG, myoob);
 
 	/* handle urgent data inline */
 	/* Sequent defines this, but it doesn't work */
@@ -247,6 +248,7 @@ nextopt:
 	/* NOTREACHED */
 }
 
+void
 lostconn()
 {
 
@@ -390,7 +392,7 @@ user(name)
 	 * attempt to slow down passwd-guessing programs.
 	 */
 	if (login_attempts)
-		sleep((unsigned) login_attempts);
+		sleep(login_attempts);
 }
 
 /*
@@ -710,7 +712,7 @@ dataconn(name, size, mode)
 	while (connect(data, (struct sockaddr *)&data_dest,
 	    sizeof (data_dest)) < 0) {
 		if (errno == EADDRINUSE && retry < swaitmax) {
-			sleep((unsigned) swaitint);
+			sleep(swaitint);
 			retry += swaitint;
 			continue;
 		}
@@ -1157,6 +1159,7 @@ dologout(status)
 	_exit(status);
 }
 
+void
 myoob()
 {
 	char *cp;

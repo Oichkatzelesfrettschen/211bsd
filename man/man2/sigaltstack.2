@@ -29,34 +29,30 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"     @(#)sigaltstack.2	8.2.1 (2.11BSD) 1997/9/3
+.\"     @(#)sigaltstack.2	8.2.2 (2.11BSD) 2026/9/22
 .\"
 .TH SIGALTSTACK 2 "September 3, 1997"
 .UC 7
 .SH NAME
 \fBsigaltstack\fP \- set and/or get signal stack context
 .SH SYNOPSIS
-.B #include <sys/types.h>
-.br
-.B #include <signal.h>
-.sp
 .nf
-struct sigaltstack {
-	caddr_t ss_base;
-	int	ss_size;
-	int     ss_flags;
-};
+.ft B
+#include <signal.h>
+
+struct sigaltstack
+        {
+        caddr_t ss_base;
+        int	ss_size;
+        int     ss_flags;
+        };
+
+int
+sigaltstack(\fIstruct sigaltstack *ss\fP, \fIstruct sigaltstack *oss\fP);
+.ft R
 .fi
-.sp
-.I int
-.br
-\fBsigaltstack\fP(ss, oss)
-.br
-.I struct sigaltstack *ss;
-.br
-.I struct sigaltstack *oss;
 .SH DESCRIPTION
-.B Sigaltstack
+.B sigaltstack
 allows users to define an alternate stack on which signals
 are to be processed.
 If
@@ -144,7 +140,7 @@ Otherwise, a value of -1 is returned and
 .I errno
 is set to indicate the error.
 .SH ERRORS
-.B Sigaltstack
+.B sigaltstack
 will fail and the signal stack context will remain unchanged
 if one of the following occurs.
 .TP 20

@@ -10,14 +10,13 @@
  * is provided ``as is'' without express or implied warranty.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)ns_stats.c	4.3 (Berkeley) 2/17/88";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ns_stats.c	4.4 (2.11BSD) 2026/5/10";
+#endif
 
 /**************************************************************************/
 /*                simple monitoring of named behavior                     */
 /*            dumps a bunch of values into a well-know file               */
-/*                                                                        */
 /**************************************************************************/
 
 #ifdef STATS

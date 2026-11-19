@@ -1,9 +1,9 @@
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)rcskeys.c 4.3 (2.11BSD) 2026/5/11";
+#endif
 /*
  *                     RCS keyword table and match operation
  */
-#ifndef lint
-static char rcsid[]= "$Id: rcskeys.c,v 4.2 87/10/18 10:36:33 narten Exp $ Purdue CS";
-#endif
 /**********************************************************************************
  **********************************************************************************
  *

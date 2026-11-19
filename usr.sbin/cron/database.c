@@ -15,27 +15,23 @@
  * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
  */
 
-#if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: database.c,v 2.8 1994/01/15 20:43:43 vixie Exp $";
+#if !defined(lint) && defined(DOSCCS)
+char sccsid[] = "@(#)database.c 2.9 (2.11BSD) 2026/5/10"
 #endif
 
 /* vix 26jan87 [RCS has the log]
  */
-
 
 #include "cron.h"
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/file.h>
 
-
 #define TMAX(a,b) ((a)>(b)?(a):(b))
-
 
 static	void		process_crontab __P((char *, char *, char *,
 					     struct stat *,
 					     cron_db *, cron_db *));
-
 
 void
 load_database(old_db)

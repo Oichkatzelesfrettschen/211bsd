@@ -1,12 +1,10 @@
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)worms.c	5.3 (Berkeley) 7/15/85";
-#endif not lint
+static char sccsid[] = "@(#)worms.c	5.4 (2.11BSD) 2026/5/11";
+#endif
 
 #define BSD
 
@@ -28,11 +26,7 @@ static char sccsid[] = "@(#)worms.c	5.3 (Berkeley) 7/15/85";
 
 */
 #include <stdio.h>
-#ifdef USG
-#include <termio.h>
-#else
 #include <sgtty.h>
-#endif
 #include <signal.h>
 int fputchar();
 #define cursor(col,row) tputs(tgoto(CM,col,row),1,fputchar)
@@ -147,7 +141,7 @@ char *argv[];
     char *malloc();
     char *getenv();
     char *tgetstr(), *tgoto();
-    int quit();
+    void quit();
     float ranf();
     register int x, y;
     register int n;
@@ -160,11 +154,8 @@ char *argv[];
     char *tcp;
     register char *term;
     char tcb[100];
-#ifdef USG
-    struct termio sg;
-#else
     struct sgttyb sg;
-#endif
+
     setbuf(stdout,malloc(BUFSIZ));
     for (x=1;x<argc;x++) {
 	register char *p;
@@ -227,13 +218,9 @@ char *argv[];
     SR=tgetstr("sr",&tcp);
     TE=tgetstr("te",&tcp);
     UP=tgetstr("up",&tcp);
-#ifdef USG
-    ioctl(fileno(stdout),TCGETA,&sg);
-    ospeed=sg.c_cflag&CBAUD;
-#else
     gtty(fileno(stdout),&sg);
     ospeed=sg.sg_ospeed;
-#endif
+
     Wrap=tgetflag("am");
     ip=(short *)malloc(LI*CO*sizeof (short));
     for (n=0;n<LI;) {
@@ -344,6 +331,8 @@ char *argv[];
 	fflush(stdout);
     }
 }
+
+void
 quit()
 {
     signal(SIGINT, SIG_IGN);

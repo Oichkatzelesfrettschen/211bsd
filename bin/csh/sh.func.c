@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char *sccsid = "@(#)sh.func.c	5.3 (Berkeley) 5/13/86";
+static char *sccsid = "@(#)sh.func.c	5.4 (2.11BSD) 2026/9/21";
 #endif
 
 #include "sh.h"
@@ -1084,7 +1084,7 @@ setlim(lp, hard, limit)
 dosuspend()
 {
 	int ldisc, ctpgrp;
-	int (*old)();
+	sig_t old;
 
 	if (loginsh)
 		error("Can't suspend a login shell (yet)");

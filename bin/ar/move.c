@@ -35,7 +35,7 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)move.c	5.6 (Berkeley) 3/12/91";
+static char sccsid[] = "@(#)move.c	5.7 (2.11BSD) 2026/10/21";
 #endif
 
 #include <sys/param.h>
@@ -47,7 +47,6 @@ static char sccsid[] = "@(#)move.c	5.6 (Berkeley) 3/12/91";
 #include <ar.h>
 #include "archive.h"
 #include "extern.h"
-#include "pathnames.h"
 
 extern CHDR chdr;			/* converted header */
 extern char *archive;			/* archive name */

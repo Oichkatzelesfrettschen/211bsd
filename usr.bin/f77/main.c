@@ -1,8 +1,9 @@
-char *xxxvers[] = "\nFORTRAN 77 PASS 1, VERSION 1.21,  20 APRIL 1979\n";
+/*
+ * static char xxxvers[] = "f77 pass1 version 1.22 2026/6/29\n";
+*/
 
 #include "defs"
 #include "string_defs"
-
 
 main(argc, argv)
 int argc;
@@ -10,7 +11,7 @@ char **argv;
 {
 char *s;
 int k, retcode;
-FILEP opf();
+FILE *opf();
 
 #define DONE(c)	{ retcode = c; goto finis; }
 
@@ -71,22 +72,22 @@ while(argc>0 && argv[0][0]=='-')
 			break;
 
 		case 'I':
-			if(*++s == '2')
+			if	(*++s == '2')
 				tyint = TYSHORT;
-			else if(*s == '4')
-				{
-				shortsubs = NO;
+			else if	(*s == '4')
 				tyint = TYLONG;
-				}
-			else if(*s == 's')
-				shortsubs = YES;
 			else
-				error("invalid flag -I%c\n", *s,0,FATAL1);
-			tylogical = tyint;
+				error("invalid flag -I%c", *s,0,FATAL1);
+/*
+ * DON'T do this!  Uncommenting the next line brings back, with use of -I4,
+ * the breakage described in src/usr.bin/f77/BUG? and fixed in patch #500.
+ * A caveat regarding the use of -I2 has been added to the f77 manpage.
+*/
+//			tylogical = tyint;
 			break;
 
 		default:
-			error("invalid flag %c\n", *s,0,FATAL1);
+			error("invalid flag %c", *s,0,FATAL1);
 		}
 	--argc;
 	++argv;
@@ -99,7 +100,7 @@ initfile = opf(argv[2]);
 textfile = opf(argv[3]);
 
 initkey();
-if(inilex( copys(argv[0]) ))
+if(inilex(strdup(argv[0])))
 	DONE(1);
 fprintf(diagfile, "%s:\n", argv[0]);
 fileinit();
@@ -119,9 +120,6 @@ if(parstate != OUTSIDE)
 doext();
 preven(ALIDOUBLE);
 prtail();
-#if FAMILY==SCJ
-	puteof();
-#endif
 DONE(0);
 
 
@@ -129,8 +127,6 @@ finis:
 	done(retcode);
 	return(retcode);
 }
-
-
 
 done(k)
 int k;
@@ -145,19 +141,16 @@ if(recurs == NO)
 exit(k);
 }
 
-
-LOCAL FILEP opf(fn)
+LOCAL FILE *opf(fn)
 char *fn;
 {
-FILEP fp;
+FILE *fp;
 if( fp = fopen(fn, "w") )
 	return(fp);
 
 error("cannot open intermediate file %s", fn,0,FATAL1);
 /* NOTREACHED */
 }
-
-
 
 LOCAL clfiles()
 {
@@ -166,9 +159,8 @@ clf(&asmfile);
 clf(&initfile);
 }
 
-
 clf(p)
-FILEP *p;
+register FILE **p;
 {
 if(p!=NULL && *p!=NULL && *p!=stdout)
 	{
@@ -178,4 +170,3 @@ if(p!=NULL && *p!=NULL && *p!=stdout)
 	}
 *p = NULL;
 }
-

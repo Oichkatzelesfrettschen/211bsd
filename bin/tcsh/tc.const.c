@@ -1,4 +1,3 @@
-/* $Header: /home/hyperion/mu/christos/src/sys/tcsh-6.00/RCS/tc.const.c,v 3.0 1991/07/04 21:49:28 christos Exp $ */
 /*
  * sh.const.c: String constants for tcsh.
  */
@@ -35,10 +34,10 @@
  * SUCH DAMAGE.
  */
 #include "config.h"
-#if !defined(lint) && !defined(pdp11)
-static char *rcsid() 
-    { return "$Id: tc.const.c,v 3.0 1991/07/04 21:49:28 christos Exp $"; }
+#if !defined(lint) && defined(DOSCCS)
+    static char *sccsid = "@(#)tc.const.c 3.1 (2.11BSD) 2026/7/23";
 #endif
+
 #include "sh.h"
 
 Char STRlogout[]        = { 'l', 'o', 'g', 'o', 'u', 't', '\0' };
@@ -247,11 +246,3 @@ Char STRTRMCAP[] = { 'T', 'E', 'R', 'M', 'C', 'A', 'P', '\0'};
 #ifdef WARP
 Char STRwarp[] = { 'w', 'a', 'r', 'p', '\0' };
 #endif /* WARP */
-
-#ifdef apollo
-Char STRSYSTYPE[] = { 'S', 'Y', 'S', 'T', 'Y', 'P', 'E', '\0' };
-Char STRoid[] = { 'o', 'i', 'd', '\0' };
-Char STRbsd43[] = { 'b', 's', 'd', '4', '.', '3', '\0' };
-Char STRsys53[] = { 's', 'y', 's', '5', '.', '3', '\0' };
-Char STRver[] = { 'v', 'e', 'r', '\0' };
-#endif /* apollo */

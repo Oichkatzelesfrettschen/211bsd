@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)setpgrp.2	6.1 (Berkeley) 5/9/85
+.\"	@(#)setpgrp.2	6.2 (2.11BSD) 2026/9/20
 .\"
 .TH SETPGRP 2 "May 9, 1985"
 .UC 4
@@ -10,12 +10,13 @@
 setpgrp \- set process group
 .SH SYNOPSIS
 .ft B
-setpgrp(pid, pgrp)
-.br
-int pid, pgrp;
+#include <unistd.h>
+.sp
+int
+setpgrp(\fIpid_t pid\fP, \fIpid_t pgrp\fP)
 .ft R
 .SH DESCRIPTION
-.I Setpgrp
+.B setpgrp
 sets the process group of the specified process
 .I pid
 to the specified
@@ -28,14 +29,14 @@ If the invoker is not the super-user, then the affected process
 must have the same effective user-id as the invoker or be a descendant
 of the invoking process.
 .SH "RETURN VALUE
-.I Setpgrp
+.B setpgrp
 returns when the operation was successful.  If
 the request failed, \-1 is returned and the global
 variable
 .I errno
 indicates the reason.
 .SH ERRORS
-.I Setpgrp
+.B setpgrp
 will fail and the process group will not be altered if
 one of the following occur:
 .TP 15

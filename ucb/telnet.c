@@ -5,7 +5,7 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)telnet.c	5.19 (2.11BSD) 2026/1/5";
+static char sccsid[] = "@(#)telnet.c	5.20 (2.11BSD) 2026/9/21";
 #endif
 
 /*
@@ -47,7 +47,7 @@ static char sccsid[] = "@(#)telnet.c	5.19 (2.11BSD) 2026/1/5";
 #define FD_ZERO(p)	((p)->fds_bits[0] = 0)
 
 #endif
-
+
 #define	strip(x)	((x)&0x7f)
 
 char	ttyobuf[2*BUFSIZ], *tfrontp = ttyobuf, *tbackp = ttyobuf;
@@ -155,7 +155,7 @@ struct {
 } clocks;
 
 #define	settimer(x)	clocks.x = clocks.system++
-
+
 /*
  * Various utility routines.
  */
@@ -269,7 +269,7 @@ register char *argument;
 	argument++;
     }
 }
-
+
 /*
  * Check to see if any out-of-band data exists on a socket (for
  * Telnet "synch" processing).
@@ -354,7 +354,7 @@ netflush(fd)
 	nbackp = nfrontp = netobuf;
     }
 }
-
+
 /*
  * nextitem()
  *
@@ -450,7 +450,7 @@ netclear()
     nfrontp = good;		/* next byte to be sent */
     neturg = 0;
 }
-
+
 /*
  * Send as much data as possible to the terminal.
  */
@@ -476,17 +476,19 @@ ttyflush()
 	tbackp = tfrontp = ttyobuf;
     }
 }
-
+
 /*
  * Various signal handling routines.
  */
 
+void
 deadpeer()
 {
 	setcommandmode();
 	longjmp(peerdied, -1);
 }
 
+void
 intr()
 {
     if (localchars) {
@@ -497,6 +499,7 @@ intr()
     longjmp(toplevel, -1);
 }
 
+void
 intr2()
 {
     if (localchars) {
@@ -505,6 +508,7 @@ intr2()
     }
 }
 
+void
 doescape()
 {
     command(0);
@@ -523,7 +527,7 @@ void sendnaws()
 		printoption(">SENT", naws, TELOPT_NAWS, 1);
 	}
 }
-
+
 /*
  * The following are routines used to print out debugging information.
  */
@@ -592,7 +596,7 @@ printoption(direction, fmt, option, what)
 	}
 	printf(" (%s)\r\n", what ? "reply" : "don't reply");
 }
-
+
 /*
  * Mode - set up terminal to a specific mode.
  */
@@ -697,7 +701,7 @@ mode(f)
 		sigsetmask(sigblock(0L) & ~(1L<<(SIGTSTP-1)));
 	}
 }
-
+
 /*
  * These routines decides on what the mode should be (based on the values
  * of various global variables).
@@ -739,7 +743,7 @@ setcommandmode()
 {
     mode(0);
 }
-
+
 char	sibuf[BUFSIZ], *sbp;
 char	tibuf[BUFSIZ], *tbp;
 int	scc, tcc;
@@ -1014,7 +1018,7 @@ telnet()
 	}
 	setcommandmode();
 }
-
+
 /*
  * Telnet receiver states for fsm
  */
@@ -1205,7 +1209,7 @@ telrcv()
 		}
 	}
 }
-
+
 willoption(option, reply)
 	int option, reply;
 {
@@ -1333,7 +1337,7 @@ suboption()
 	break;
     }
 }
-
+
 /*
  *	The following are data structures and routines for
  *	the "send" command.
@@ -1539,7 +1543,7 @@ char	**argv;
     }
     return !question;
 }
-
+
 /*
  * The following are the routines and data structures referred
  * to by the arguments to the "toggle" command.
@@ -1706,7 +1710,7 @@ char	*argv[];
     }
     return retval;
 }
-
+
 /*
  * The following perform the "set" command.
  */
@@ -1788,7 +1792,7 @@ char	*argv[];
     }
     return 1;
 }
-
+
 /*
  * The following are the data structures and routines for the
  * 'mode' command.
@@ -1861,7 +1865,7 @@ char	*argv[];
     }
     return 1;
 }
-
+
 /*
  * The following data structures and routines implement the
  * "display" command.
@@ -1922,7 +1926,7 @@ char	*argv[];
 #undef	doset
 #undef	dotog
 }
-
+
 /*
  * The following are the data structures, and many of the routines,
  * relating to command processing.
@@ -2334,7 +2338,7 @@ command(top)
 		setconnmode();
 	}
 }
-
+
 /*
  * main.  Parse arguments, invoke the protocol or command parser.
  */

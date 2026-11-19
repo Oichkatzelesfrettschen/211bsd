@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)open.c	5.1 (Berkeley) 5/7/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)open.c     5.2 (2.11BSD) 2026/5/11";
+#endif
 
 /*
  * This accepts plot file formats and produces the appropriate plots
@@ -18,6 +18,7 @@ static char sccsid[] = "@(#)open.c	5.1 (Berkeley) 5/7/85";
 
 #include <signal.h>
 #include "dumb.h"
+#include <stdlib.h>
 
 int minX, rangeX;	/* min and range of x */
 int minY, rangeY;	/* min and range of y */
@@ -29,9 +30,9 @@ char screenmat[MAXCOLS][MAXLINES];
 
 openpl()
 {
-	int closepl();
+	sig_t closepl;
 	int i, j;
-	char *term, *getenv();
+	char *term;
 	char bp[1024];
 
 	term = getenv("TERM");

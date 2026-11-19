@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)boggle.c	5.1.1 (2.11BSD) 1997/10/2";
+static char sccsid[] = "@(#)boggle.c	5.1.2 (2.11BSD) 2026/9/17";
 #endif
 
 #include <ctype.h>
@@ -49,7 +49,7 @@ int master = 1;
 int column;
 int *timept;
 int timeint[] = {60,60,50,7,1,1,1,0};
-long timein;
+time_t timein;
 struct sgttyb origttyb, tempttyb;
 int ctlecho = 0;
 int lctlech = LCTLECH;
@@ -104,6 +104,7 @@ endline ()
 	}
 }
 
+void
 timeout ()
 {
 	if (*timept > 0) {
@@ -113,6 +114,7 @@ timeout ()
 	putchar('\007');
 }
 
+void
 interrupt ()
 {
 	signal(SIGINT, interrupt);
@@ -515,7 +517,7 @@ char **argv;
 	if (setjmp(env) != 0)
 		goodbye(0);
 	signal (SIGINT, interrupt);
-	timein = time(0L);
+	timein = time((time_t *)0);
 	if (argv[0][0] != 'a' && (logfile = open("/usr/games/lib/boglog", 1)) >= 0) {
 		p = &logbuff[5];
 		q = getlogin();

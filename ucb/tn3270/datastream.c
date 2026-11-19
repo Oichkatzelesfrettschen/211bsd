@@ -26,13 +26,14 @@
 #include <sgtty.h>
 #include <stdio.h>
 #include <curses.h>
+#include <stdlib.h>
 
 #include "ascebc.h"
 #include "3270.h"
 #include "screen.h"
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)datastream.c	2.13\t1/1/94";
+static char sccsid[] = "@(#)datastream.c 2.14 (2.11BSD) 2026/9/21";
 #endif
 
 void EmptyTerminal();
@@ -540,7 +541,6 @@ int	control;			/* this buffer terminated block */
     static int	LastWasTerminated = 0;	/* was "control" = 1 last time? */
 
     if (!Initialized) {		/* not initialized */
-	int abort();
 
 	bzero((char *)Host, sizeof Host);
 	DeleteAllFields();

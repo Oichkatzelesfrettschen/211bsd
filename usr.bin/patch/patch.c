@@ -1,10 +1,8 @@
-/*
- * Can't ifdef this out because version.c (-v) uses this string.
-*/
-char rcsid[] = "patch.c 2.0.1.7 (2.11BSD) 2025/12/26";
+#if	!defined(lint) && defined(DOSCCS)
+char rcsid[] = "patch.c 2.1 (2.11BSD) 2026/6/18";
+#endif
 
-/* patch - a program to apply diffs to original files
- *
+/*
  * Copyright 1986, Larry Wall
  *
  * This program may be copied as long as you don't try to make any
@@ -86,16 +84,16 @@ char rcsid[] = "patch.c 2.0.1.7 (2.11BSD) 2025/12/26";
  * 
  * Revision 1.1  84/11/09  17:03:58  lwall
  * Initial revision
- * 
  */
 
 #include "INTERN.h"
 #include "common.h"
 #include "EXTERN.h"
-#include "version.h"
 #include "util.h"
 #include "pch.h"
 #include "inp.h"
+
+static	char losthunk[] = "Lost hunk on alloc error!\n";
 
 /* procedures */
 
@@ -112,7 +110,6 @@ void dump_line();
 bool patch_match();
 bool similar();
 void re_input();
-void my_exit();
 
 /* Apply a set of diffs as appropriate. */
 
@@ -129,13 +126,13 @@ char **argv;
     int failtotal = 0;
     int i;
 
-    setbuf(stderr, serrbuf);
+    setlinebuf(stderr);
     for (i = 0; i<MAXFILEC; i++)
 	filearg[i] = Nullch;
-    Mktemp(TMPOUTNAME);
-    Mktemp(TMPINNAME);
-    Mktemp(TMPREJNAME);
-    Mktemp(TMPPATNAME);
+    mktemp(TMPOUTNAME);
+    mktemp(TMPINNAME);
+    mktemp(TMPREJNAME);
+    mktemp(TMPPATNAME);
 
     /* parse switches */
     Argc = argc;
@@ -191,38 +188,36 @@ char **argv;
 						/* dwim for reversed patch? */
 			if (!pch_swap()) {
 			    if (fuzz == Nulline)
-				say1(
-"Not enough memory to try swapped hunk!  Assuming unswapped.\n");
+				fputs("Not enough memory to try swapped hunk! Assuming unswapped\n", stderr);
 			    continue;
 			}
 			reverse = !reverse;
 			where = locate_hunk(fuzz);  /* try again */
 			if (where == Nulline) {	    /* didn't find it swapped */
 			    if (!pch_swap())         /* put it back to normal */
-				fatal1("Lost hunk on alloc error!\n");
+				fatal(losthunk);
 			    reverse = !reverse;
 			}
 			else if (noreverse) {
 			    if (!pch_swap())         /* put it back to normal */
-				fatal1("Lost hunk on alloc error!\n");
+				fatal(losthunk);
 			    reverse = !reverse;
-			    say1(
-"Ignoring previously applied (or reversed) patch.\n");
+			    fputs("Ignoring previously applied (or reversed) patch\n", stderr);
 			    skip_rest_of_patch = TRUE;
 			}
 			else {
-			    ask3(
-"%seversed (or previously applied) patch detected!  %s -R? [y] ",
+			    sprintf(buf, "%seversed (or previously applied) patch detected!  %s -R? [y] ",
 				reverse ? "R" : "Unr",
 				reverse ? "Assume" : "Ignore");
+			    ask(buf);
 			    if (*buf == 'n') {
-				ask1("Apply anyway? [n] ");
+				ask("Apply anyway? [n] ");
 				if (*buf != 'y')
 				    skip_rest_of_patch = TRUE;
 				where = Nulline;
 				reverse = !reverse;
 				if (!pch_swap())  /* put it back to normal */
-				    fatal1("Lost hunk on alloc error!\n");
+				    fatal(losthunk);
 			    }
 			}
 		    }
@@ -230,7 +225,7 @@ char **argv;
 		    ++fuzz <= mymaxfuzz);
 
 		if (skip_rest_of_patch) {		/* just got decided */
-		    Fclose(ofp);
+		    fclose(ofp);
 		    ofp = Nullfp;
 		}
 	    }
@@ -240,24 +235,24 @@ char **argv;
 		abort_hunk();
 		failed++;
 		if (verbose)
-		    say3("Hunk #%d ignored at %ld.\n", hunk, newwhere);
+		    fprintf(stderr, "Hunk #%d ignored at %ld\n", hunk, newwhere);
 	    }
 	    else if (where == Nulline) {
 		abort_hunk();
 		failed++;
 		if (verbose)
-		    say3("Hunk #%d failed at %ld.\n", hunk, newwhere);
+		    fprintf(stderr, "Hunk #%d failed at %ld\n", hunk, newwhere);
 	    }
 	    else {
 		apply_hunk(where);
 		if (verbose) {
-		    say3("Hunk #%d succeeded at %ld", hunk, newwhere);
+		    fprintf(stderr, "Hunk #%d succeeded at %ld", hunk, newwhere);
 		    if (fuzz)
-			say2(" with fuzz %ld", fuzz);
+			fprintf(stderr, " with fuzz %ld", fuzz);
 		    if (last_offset)
-			say3(" (offset %ld line%s)",
+			fprintf(stderr, " (offset %ld line%s)",
 			    last_offset, last_offset==1L?"":"s");
-		    say1(".\n");
+		    fputs(".\n", stderr);
 		}
 	    }
 	}
@@ -265,7 +260,7 @@ char **argv;
 	if (out_of_mem && using_plan_a) {
 	    Argc = Argc_last;
 	    Argv = Argv_last;
-	    say1("\n\nRan out of memory using Plan A--trying again...\n\n");
+	    fputs("\n\nRan out of memory using Plan A--trying again...\n\n", stderr);
 	    continue;
 	}
     
@@ -285,20 +280,20 @@ char **argv;
 	    else
 		chmod(outname, filemode);
 	}
-	Fclose(rejfp);
+	fclose(rejfp);
 	rejfp = Nullfp;
 	if (failed) {
 	    failtotal += failed;
 	    if (!*rejname) {
-		Strcpy(rejname, outname);
-		Strcat(rejname, REJEXT);
+		strcpy(rejname, outname);
+		strcat(rejname, REJEXT);
 	    }
 	    if (skip_rest_of_patch) {
-		say4("%d out of %d hunks ignored--saving rejects to %s\n",
+		fprintf(stderr, "%d of %d hunks ignored--saving rejects to %s\n",
 		    failed, hunk, rejname);
 	    }
 	    else {
-		say4("%d out of %d hunks failed--saving rejects to %s\n",
+		fprintf(stderr, "%d of %d hunks failed--saving rejects to %s\n",
 		    failed, hunk, rejname);
 	    }
 	    if (move_file(TMPREJNAME, rejname) < 0)
@@ -345,8 +340,11 @@ reinitialize_almost_everything()
 
     get_some_switches();
 
-    if (filec >= 2)
-	fatal1("You may not change to a different patch file.\n");
+/*
+ * if plan A fails we want to use the same patch file if one was specified
+*/
+    if (!using_plan_a && filec >= 2)
+	fatal("You may not change to a different patch file.\n");
 }
 
 /* Process switches and filenames up to next '+' or end of list. */
@@ -354,7 +352,7 @@ reinitialize_almost_everything()
 void
 get_some_switches()
 {
-    Reg1 char *s;
+    register char *s;
 
     rejname[0] = '\0';
     Argc_last = Argc;
@@ -368,7 +366,7 @@ get_some_switches()
 	}
 	if (*s != '-' || !s[1]) {
 	    if (filec == MAXFILEC)
-		fatal1("Too many file arguments.\n");
+		fatal("Too many file arguments.\n");
 	    filearg[filec++] = savestr(s);
 	}
 	else {
@@ -390,7 +388,7 @@ get_some_switches()
 		    s = Argv[0];
 		}
 		if (chdir(s) < 0)
-		    fatal2("Can't cd to %s.\n", s);
+		    fatal("Can't cd to %s\n", s);
 		break;
 	    case 'D':
 	    	do_defines = TRUE;
@@ -399,10 +397,10 @@ get_some_switches()
 		    s = Argv[0];
 		}
 		if (!isalpha(*s))
-		    fatal1("Argument to -D not an identifier.\n");
-		Sprintf(if_defined, "#ifdef %s\n", s);
-		Sprintf(not_defined, "#ifndef %s\n", s);
-		Sprintf(end_defined, "#endif /* %s */\n", s);
+		    fatal("Argument to -D not an identifier.\n");
+		sprintf(if_defined, "#ifdef %s\n", s);
+		sprintf(not_defined, "#ifndef %s\n", s);
+		sprintf(end_defined, "#endif /* %s */\n", s);
 		break;
 	    case 'e':
 		diff_type = ED_DIFF;
@@ -434,7 +432,7 @@ get_some_switches()
 		strippath = atoi(s);
 		break;
 	    case 'r':
-		Strcpy(rejname, Argv[1]);
+		strcpy(rejname, Argv[1]);
 		Argc--,Argv++;
 		break;
 	    case 'R':
@@ -455,7 +453,7 @@ get_some_switches()
 		break;
 #endif
 	    default:
-		fatal2("Unrecognized switch: %s\n", Argv[0]);
+		fatal("Unrecognized switch: %s\n", Argv[0]);
 	    }
 	}
     }
@@ -467,12 +465,12 @@ LINENUM
 locate_hunk(fuzz)
 LINENUM fuzz;
 {
-    Reg1 LINENUM first_guess = pch_first() + last_offset;
-    Reg2 LINENUM offset;
+    register LINENUM first_guess = pch_first() + last_offset;
+    register LINENUM offset;
     LINENUM pat_lines = pch_ptrn_lines();
-    Reg3 LINENUM max_pos_offset = input_lines - first_guess
+    register LINENUM max_pos_offset = input_lines - first_guess
 				- pat_lines + 1; 
-    Reg4 LINENUM max_neg_offset = first_guess - last_frozen_line - 1
+    LINENUM max_neg_offset = first_guess - last_frozen_line - 1
 				+ pch_context();
 
     if (!pat_lines)			/* null range matches always */
@@ -482,13 +480,13 @@ LINENUM fuzz;
     if (first_guess <= input_lines && patch_match(first_guess, Nulline, fuzz))
 	return first_guess;
     for (offset = 1; ; offset++) {
-	Reg5 bool check_after = (offset <= max_pos_offset);
-	Reg6 bool check_before = (offset <= max_neg_offset);
+	bool check_after = (offset <= max_pos_offset);
+	bool check_before = (offset <= max_neg_offset);
 
 	if (check_after && patch_match(first_guess, offset, fuzz)) {
 #ifdef DEBUGGING
 	    if (debug & 1)
-		say3("Offset changing from %ld to %ld\n", last_offset, offset);
+		fprintf(stderr, "Offset changing from %ld to %ld\n", last_offset, offset);
 #endif
 	    last_offset = offset;
 	    return first_guess+offset;
@@ -496,7 +494,7 @@ LINENUM fuzz;
 	else if (check_before && patch_match(first_guess, -offset, fuzz)) {
 #ifdef DEBUGGING
 	    if (debug & 1)
-		say3("Offset changing from %ld to %ld\n", last_offset, -offset);
+		fprintf(stderr, "Offset changing from %ld to %ld\n", last_offset, -offset);
 #endif
 	    last_offset = -offset;
 	    return first_guess-offset;
@@ -511,8 +509,9 @@ LINENUM fuzz;
 void
 abort_hunk()
 {
-    Reg1 LINENUM i;
-    Reg2 LINENUM pat_end = pch_end();
+    register LINENUM i;
+    register LINENUM pat_end = pch_end();
+
     /* add in last_offset to guess the same as the previous successful hunk */
     LINENUM oldfirst = pch_first() + last_offset;
     LINENUM newfirst = pch_newfirst() + last_offset;
@@ -547,7 +546,7 @@ abort_hunk()
 	    fprintf(rejfp, "%c %s", pch_char(i), pfetch(i));
 	    break;
 	default:
-	    say1("Fatal internal error in abort_hunk().\n"); 
+	    fputs("Fatal internal error in abort_hunk().\n", stderr); 
 	    abort();
 	}
     }
@@ -559,16 +558,16 @@ void
 apply_hunk(where)
 LINENUM where;
 {
-    Reg1 LINENUM old = 1;
-    Reg2 LINENUM lastline = pch_ptrn_lines();
-    Reg3 LINENUM new = lastline+1;
+    register LINENUM old = 1;
+    register LINENUM lastline = pch_ptrn_lines();
+    register LINENUM new = lastline+1;
 #define OUTSIDE 0
 #define IN_IFNDEF 1
 #define IN_IFDEF 2
 #define IN_ELSE 3
-    Reg4 int def_state = OUTSIDE;
-    Reg5 bool R_do_defines = do_defines;
-    Reg6 LINENUM pat_end = pch_end();
+    int def_state = OUTSIDE;
+    bool R_do_defines = do_defines;
+    LINENUM pat_end = pch_end();
 
     where--;
     while (pch_char(new) == '=' || pch_char(new) == '\n')
@@ -610,11 +609,11 @@ LINENUM where;
 	}
 	else {
 	    if (pch_char(new) != pch_char(old)) {
-		say3("Out-of-sync patch, lines %ld,%ld--mangled text or line numbers, maybe?\n",
+		fprintf(stderr, "Out-of-sync patch, lines %ld,%ld--mangled text or line numbers, maybe?\n",
 		    pch_hunk_beg() + old,
 		    pch_hunk_beg() + new);
 #ifdef DEBUGGING
-		say3("oldchar = '%c', newchar = '%c'\n",
+		fprintf(stderr, "oldchar = '%c', newchar = '%c'\n",
 		    pch_char(old), pch_char(new));
 #endif
 		my_exit(1);
@@ -682,7 +681,7 @@ char *name;
 {
     ofp = fopen(name, "w");
     if (ofp == Nullfp)
-	fatal2("patch: can't create %s.\n", name);
+	fatal("patch: can't create %s.\n", name);
 }
 
 /* Open a file to put hunks we can't locate. */
@@ -693,19 +692,19 @@ char *name;
 {
     rejfp = fopen(name, "w");
     if (rejfp == Nullfp)
-	fatal2("patch: can't create %s.\n", name);
+	fatal("patch: can't create %s\n", name);
 }
 
 /* Copy input file to output, up to wherever hunk is to be applied. */
 
 void
 copy_till(lastline)
-Reg1 LINENUM lastline;
+register LINENUM lastline;
 {
-    Reg2 LINENUM R_last_frozen_line = last_frozen_line;
+    register LINENUM R_last_frozen_line = last_frozen_line;
 
     if (R_last_frozen_line > lastline)
-	say1("patch: misordered hunks! output will be garbled.\n");
+	fputs("patch: misordered hunks! output will be garbled.\n", stderr);
     while (R_last_frozen_line < lastline) {
 	dump_line(++R_last_frozen_line);
     }
@@ -719,11 +718,11 @@ spew_output()
 {
 #ifdef DEBUGGING
     if (debug & 256)
-	say3("il=%ld lfl=%ld\n",input_lines,last_frozen_line);
+	fprintf(stderr, "il=%ld lfl=%ld\n",input_lines,last_frozen_line);
 #endif
     if (input_lines)
 	copy_till(input_lines);		/* dump remainder of file */
-    Fclose(ofp);
+    fclose(ofp);
     ofp = Nullfp;
 }
 
@@ -733,8 +732,8 @@ void
 dump_line(line)
 LINENUM line;
 {
-    Reg1 char *s;
-    Reg2 char R_newline = '\n';
+    register char *s;
+    register char R_newline = '\n';
 
     /* Note: string is not null terminated. */
     for (s=ifetch(line, 0); putc(*s, ofp) != R_newline; s++) ;
@@ -748,9 +747,9 @@ LINENUM base;
 LINENUM offset;
 LINENUM fuzz;
 {
-    Reg1 LINENUM pline = 1 + fuzz;
-    Reg2 LINENUM iline;
-    Reg3 LINENUM pat_lines = pch_ptrn_lines() - fuzz;
+    register LINENUM pline = 1 + fuzz;
+    register LINENUM iline;
+    register LINENUM pat_lines = pch_ptrn_lines() - fuzz;
 
     for (iline=base+offset+fuzz; pline <= pat_lines; pline++,iline++) {
 	if (canonicalize) {
@@ -771,9 +770,9 @@ LINENUM fuzz;
 
 bool
 similar(a,b,len)
-Reg1 char *a;
-Reg2 char *b;
-Reg3 int len;
+register char *a;
+register char *b;
+register int len;
 {
     while (len) {
 	if (isspace(*b)) {		/* whitespace (or \n) to match? */
@@ -801,13 +800,13 @@ void
 my_exit(status)
 int status;
 {
-    Unlink(TMPINNAME);
+    unlink(TMPINNAME);
     if (!toutkeep) {
-	Unlink(TMPOUTNAME);
+	unlink(TMPOUTNAME);
     }
     if (!trejkeep) {
-	Unlink(TMPREJNAME);
+	unlink(TMPREJNAME);
     }
-    Unlink(TMPPATNAME);
+    unlink(TMPPATNAME);
     exit(status);
 }

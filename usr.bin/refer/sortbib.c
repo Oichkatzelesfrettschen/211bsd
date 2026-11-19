@@ -1,9 +1,11 @@
 #if	!defined(lint) && defined(DOSCCS)
-static char *sccsid = "@(#)sortbib.c	4.2 (2.11BSD) 2025/12/26";
+static char *sccsid = "@(#)sortbib.c	4.3 (2.11BSD) 2026/9/21";
 #endif
 
 #include <stdio.h>
 #include <signal.h>
+#include <stdlib.h>
+
 #define BUF BUFSIZ
 #define MXFILES 16
 
@@ -16,9 +18,9 @@ main(argc, argv)	/* sortbib: sort bibliographic database in place */
 int argc;
 char *argv[];
 {
-	FILE *fp[MXFILES], *tfp, *fopen();
-	int i, onintr();
-	char *mktemp();
+	FILE *fp[MXFILES], *tfp;
+	int i;
+	void onintr();
 
 	if (argc == 1)		/* can't use stdin for seeking anyway */
 	{

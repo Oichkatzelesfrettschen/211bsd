@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)tty_conf.c	1.2 (2.11BSD GTE) 11/30/94
+ *	@(#)tty_conf.c	1.3 (2.11BSD) 2026/5/15
  */
 
 #include "param.h"
@@ -21,12 +21,7 @@ int	nulldev();
 int	ttyopen(),ttylclose(),ttread(),ttwrite(),nullioctl(),ttstart();
 int	ttymodem(), nullmodem(), ttyinput();
 
-/* #include "bk.h" */
-#if NBK > 0
-int	bkopen(),bkclose(),bkread(),bkinput(),bkioctl();
-#endif
-
-/* #include "tb.h" */
+#include "tb.h"
 #if NTB > 0
 int	tbopen(),tbclose(),tbread(),tbinput(),tbioctl();
 #endif
@@ -40,13 +35,8 @@ struct	linesw linesw[] =
 {
 	ttyopen, ttylclose, ttread, ttwrite, nullioctl,	/* 0- OTTYDISC */
 	ttyinput, nodev, nulldev, ttstart, ttymodem,
-#if NBK > 0
-	bkopen, bkclose, bkread, ttwrite, bkioctl,	/* 1- NETLDISC */
-	bkinput, nodev, nulldev, ttstart, nullmodem,
-#else
+	nodev, nodev, nodev, nodev, nodev,		/* 1 - was bk */
 	nodev, nodev, nodev, nodev, nodev,
-	nodev, nodev, nodev, nodev, nodev,
-#endif
 	ttyopen, ttylclose, ttread, ttwrite, nullioctl,	/* 2- NTTYDISC */
 	ttyinput, nodev, nulldev, ttstart, ttymodem,
 #if NTB > 0

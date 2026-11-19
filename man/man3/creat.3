@@ -2,27 +2,26 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)creat.2	6.7 (2.11BSD) 2001/11/19
+.\"	@(#)creat.2	6.8 (2.11BSD) 2026/5/8
 .\"
-.TH CREAT 3 "November 19, 2001"
+.TH CREAT 3 "May 8, 2026"
 .UC 4
 .SH NAME
 creat \- create a new file
 .SH SYNOPSIS
 .nf
 .ft B
-#include <sys/types.h>
 #include <fcntl.h>
-
+.PP
 creat(name, mode)
-    char *name;
+    const char *name;
     int mode;
 .ft R
 .fi
 .SH DESCRIPTION
 \fBThis interface is made obsolete by:\fP open(2).
 .PP
-.BR Creat ()
+.BR creat ()
 is the same as:
 .nf
 

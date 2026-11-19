@@ -2,16 +2,19 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)inet.4f	6.3 (Berkeley) 8/1/87
+.\"	@(#)inet.4	6.4 (2.11BSD) 2026/9/28
 .\"
-.TH INET 4F "August 1, 1987"
+.TH INET 4 "August 1, 1987"
 .UC 5
 .SH NAME
 inet \- Internet protocol family
 .SH SYNOPSIS
-.B #include <sys/types.h>
-.br
-.B #include <netinet/in.h>
+.nf
+.ft B
+#include <sys/types.h>
+#include <netinet/in.h>
+.ft R
+.fi
 .SH DESCRIPTION
 .de _d
 .if t .ta .6i 2.1i 2.6i
@@ -56,9 +59,9 @@ struct sockaddr_in {
 Sockets may be created with the local address INADDR_ANY
 to effect \*(lqwildcard\*(rq matching on incoming messages. 
 The address in a
-.IR connect (2)
+.BR connect (2)
 or
-.IR sendto (2)
+.BR sendto (2)
 call may be given as INADDR_ANY to mean ``this host.''
 The distinguished address INADDR_BROADCAST
 is allowed as a shorthand for the broadcast address on the primary
@@ -89,11 +92,11 @@ Within a subnet, each subnet appears to be an individual network;
 externally, the entire cluster appears to be a single, uniform
 network requiring only a single routing entry.
 Subnet addressing is enabled and examined by the following
-.IR ioctl (2)
+.BR ioctl (2)
 commands on a datagram socket in the Internet domain;
 they have the same form as the
 SIOCIFADDR command (see
-.IR intro (4N)).
+.BR intro (4)).
 .PP
 .TP 20
 SIOCSIFNETMASK
@@ -105,7 +108,7 @@ then subnets are in use.
 SIOCGIFNETMASK
 Get interface network mask.
 .SH SEE ALSO
-ioctl(2), socket(2), intro(4N), tcp(4P), udp(4P), ip(4P), icmp(4P)
+ioctl(2), socket(2), intro(4), tcp(4), udp(4), ip(4), icmp(4)
 .PP
 An Introductory 4.3BSD Interprocess Communication Tutorial (PS1:7).
 .PP

@@ -22,7 +22,12 @@
 ** provided this header is included.
 */
 
+#if     !defined(LINT) && defined(DOSCCS)
+static char sccsid[] = "@(#)cxrfilt.c      1.1 (2.11BSD) 2026/2/2";
+#endif
+
 #include <stdio.h>
+#include <strings.h>
 #include "constdefs.h"
 
 #define MAXFILE		120
@@ -38,9 +43,10 @@ main(argc, argv)
 int argc;
 char **argv;
 {
+	register char *cp;
 	char buf[BUFSIZ];
 	char file1[MAXFILE], file2[MAXFILE];
-	int i;
+	register int i;
 
 	name = basename(argv[0]);
 
@@ -98,8 +104,11 @@ char **argv;
 		exit (3);
 	}
 
-	while (gets(buf) != NULL)
+	while (fgets(buf, sizeof buf, stdin) != NULL)
 	{
+		cp = index(buf, '\n');
+		if (cp) *cp = '\0';
+
 		if (buf[0] != '~')
 			printf("%s\n", buf);
 		else
@@ -248,7 +257,7 @@ intfilter()	/* put sorted ints back into their original bases */
 	int val;
 	int type;
 
-	while (gets(buf) != NULL)
+	while (fgets(buf, sizeof buf, stdin) != NULL)
 	{
 		sscanf(buf, "%d %s %s %d", &val, file, number, &type);
 
@@ -282,7 +291,7 @@ floatfilter()	/* put sorted floats back together */
 	char file[MAXLINE], number[MAXLINE];
 	char mantissa[MAXLINE], exponent[MAXLINE];
 
-	while (gets(buf) != NULL)
+	while (fgets(buf, sizeof buf, stdin) != NULL)
 	{
 		sscanf(buf, "%s %s %s %s", mantissa, exponent, file, number);
 

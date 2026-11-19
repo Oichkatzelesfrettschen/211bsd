@@ -20,15 +20,15 @@
  */
 
 #if !defined(lint) && !defined(NOSCCS)
-static char sccsid[] = "@(#)deliver.c	5.21 (Berkeley) 5/5/88";
+static char sccsid[] = "@(#)deliver.c	5.22 (2.11BSD) 2026/9/19";
 #endif /* not lint */
 
 #include <sendmail.h>
-#include <sys/signal.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <netdb.h>
 #include <errno.h>
+#include <signal.h>
 #include <arpa/nameser.h>
 #include <resolv.h>
 
@@ -565,7 +565,7 @@ markfailure(e, q, rcode)
 		if (pid >= 0)\
 			break;\
 		if (i > 0)\
-			sleep((unsigned) NFORKTRIES - i);\
+			xsleep(NFORKTRIES - i);\
 	}\
 }
 /*

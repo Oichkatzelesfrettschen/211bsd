@@ -5,8 +5,8 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)pl_7.c	5.2 (2.11BSD) 2020/1/7";
-#endif not lint
+static char sccsid[] = "@(#)pl_7.c	5.3 (2.11BSD) 2026/5/12";
+#endif
 
 #include "player.h"
 
@@ -32,12 +32,10 @@ initscreen()
 	(void) leaveok(slot_w, 1);
 	(void) leaveok(stat_w, 1);
 	(void) leaveok(turn_w, 1);
-#ifdef SIGTSTP
 	{
-		int susp();
+		void susp();
 		(void) signal(SIGTSTP, susp);
 	}
-#endif
 	noecho();
 	crmode();
 }
@@ -53,6 +51,7 @@ cleanupscreen()
 	}
 }
 
+void
 newturn()
 {
 	repaired = loaded = fired = changed = 0;
@@ -440,6 +439,7 @@ adjustview()
 }
 
 #ifdef SIGTSTP
+void
 susp()
 {
 	blockalarm();

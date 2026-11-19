@@ -1,18 +1,15 @@
-#ifndef lint
-static char sccsid[] = "@(#)blok.c	4.2 8/11/83";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)blok.c	4.3 (2.11BSD) 2026/5/11";
 #endif
 
-#
 /*
  *	UNIX shell
  *
  *	S. R. Bourne
  *	Bell Telephone Laboratories
- *
  */
 
 #include	"defs.h"
-
 
 /*
  *	storage allocator
@@ -25,8 +22,6 @@ static char sccsid[] = "@(#)blok.c	4.2 8/11/83";
 POS		brkincr=BRKINCR;
 BLKPTR		blokp;			/*current search pointer*/
 BLKPTR		bloktop=BLK(end);	/*top of arena (last blok)*/
-
-
 
 ADDRESS	alloc(nbytes)
 	POS		nbytes;

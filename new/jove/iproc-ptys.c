@@ -1,15 +1,15 @@
-/***************************************************************************
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)iproc-ptys.c 2.0 (2.11BSD) 2026/9/17";
+#endif
+/*
  * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
  * is provided to you without charge, and with no warranty.  You may give  *
  * away copies of JOVE, including sources, provided that this notice is    *
  * included in all the files.                                              *
- ***************************************************************************/
+ */
 
-#ifdef BSD4_2
-#   include <sys/wait.h>
-#else
-#   include <wait.h>
-#endif
+#include <stdlib.h>
+#include <sys/wait.h>
 #include <signal.h>
 #include <sgtty.h>
 #include <errno.h>
@@ -102,7 +102,7 @@ register int	fd;
 		return;
 	}
 
-	n = read(fd, ibuf, sizeof(ibuf) - 1);
+	n = read(fd, (void *)ibuf, sizeof(ibuf) - 1);
 	if (n == -1 && errno == EIO) {
 		if (proc_state(p) == NEW)
 			return;
@@ -189,7 +189,7 @@ char	c;
 	buf[0] = c;
 	buf[1] = '\0';
 	proc_rec(p, buf);
-	(void) write(p->p_fd, &c, 1);
+	(void) write(p->p_fd, (void *)&c, 1);
 }
 
 private
@@ -230,7 +230,7 @@ register Mark	*mp;
 		else
 			strcat(gp, "\n");
 		if (nbytes = strlen(gp))
-			(void) write(p->p_fd, gp, nbytes);
+			(void) write(p->p_fd, (void *)gp, nbytes);
 		line1 = line1->l_next;
 		char1 = 0;
 	}
@@ -376,7 +376,7 @@ out:	if (s == 0 && t == 0)
 		make_argv(argv, ap);
 		va_end(ap);
 		execv(argv[0], &argv[1]);
-		(void) write(1, "execve failed!\n", 15);
+		(void) write(1, (void *)"execve failed!\n", 15);
 		_exit(errno + 1);
 	}
 

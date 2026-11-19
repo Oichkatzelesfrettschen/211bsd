@@ -1,9 +1,9 @@
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)rcsfcmp.c 4.4 (2.11BSD) 2026/5/11";
+#endif
 /*
  *                     RCS file comparison
  */
-#ifndef lint
-static char rcsid[]= "$Id: rcsfcmp.c,v 4.3 87/12/18 11:40:02 narten Exp $ Purdue CS";
-#endif
 /*****************************************************************************
  *                       rcsfcmp()
  *                       Testprogram: define FCMPTEST

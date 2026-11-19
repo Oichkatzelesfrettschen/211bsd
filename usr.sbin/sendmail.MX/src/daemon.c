@@ -14,17 +14,17 @@
 
 # ifndef DAEMON
 #if !defined(lint) && !defined(NOSCCS)
-static char	SccsId[] = "@(#)daemon.c 5.21 (2.11BSD) 1997/10/3 (w/o daemon mode)";
+static char	SccsId[] = "@(#)daemon.c 5.22 (2.11BSD) 2026/9/19 (w/o daemon mode)";
 # endif
 # else
 
 # include <netdb.h>
-# include <sys/signal.h>
+# include <signal.h>
 # include <sys/wait.h>
 # include <sys/resource.h>
 
 #if !defined(lint) && !defined(NOSCCS)
-static char	SccsId[] = "@(#)daemon.c 5.21 (2.11BSD) 1997/10/3 (with daemon mode)";
+static char	SccsId[] = "@(#)daemon.c 5.22 (2.11BSD) 2026/9/19 (with daemon mode)";
 # endif
 
 /*
@@ -85,7 +85,7 @@ getrequests()
 	int t;
 	register struct servent *sp;
 	int on = 1;
-	extern reapchild();
+	extern void reapchild();
 
 	/*
 	**  Set up the address for the mailer.
@@ -162,7 +162,7 @@ getrequests()
 
 		/* see if we are rejecting connections */
 		while (getla() > RefuseLA)
-			sleep(5);
+			xsleep(5);
 
 		/* wait for a connection */
 		do
@@ -174,7 +174,7 @@ getrequests()
 		if (t < 0)
 		{
 			syserr("getrequests: accept");
-			sleep(5);
+			xsleep(5);
 			continue;
 		}
 
@@ -191,7 +191,7 @@ getrequests()
 		if (pid < 0)
 		{
 			syserr("daemon: cannot fork");
-			sleep(10);
+			xsleep(10);
 			(void) close(t);
 			continue;
 		}

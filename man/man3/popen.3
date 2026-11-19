@@ -1,26 +1,23 @@
-.\"	@(#)popen.3	6.1 (Berkeley) 5/15/85
+.\"	@(#)popen.3	6.2 (2.11BSD) 2026/9/27
 .\"
 .TH POPEN 3 "May 15, 1985"
 .AT 3
 .SH NAME
 popen, pclose \- initiate I/O to/from a process
 .SH SYNOPSIS
-.B #include <stdio.h>
-.PP
-.SM
-.B FILE
-.B *popen(command, type)
-.br
-.B char *command, *type;
-.PP
-.B pclose(stream)
-.br
-.SM
-.B FILE
-.B *stream;
+.nf
+.ft B
+#include <stdio.h>
+
+FILE *
+popen(\fIchar *command\fP, \fI char *type\fP)
+
+pclose(\fIFILE *stream\fP)
+.ft R
+.fi
 .SH DESCRIPTION
 The arguments to 
-.I popen
+.B popen
 are pointers to null-terminated strings containing respectively a
 shell command line and an I/O mode, either "r" for reading or "w" for
 writing.  It creates a pipe between the calling process and
@@ -29,9 +26,9 @@ can be used (as appropriate) to write to the standard input
 of the command or read from its standard output.
 .PP
 A stream opened by
-.I popen
+.B popen
 should be closed by
-.IR pclose ,
+.BR pclose ,
 which waits for the associated process to terminate
 and returns the exit status of the command.
 .PP
@@ -39,17 +36,17 @@ Because open files are shared, a type "r" command may be used as an input
 filter, and a type "w" as an output filter.
 .SH "SEE ALSO"
 pipe(2),
-fopen(3S),
-fclose(3S),
+fopen(3),
+fclose(3),
 system(3),
 wait(2),
 sh(1)
 .SH DIAGNOSTICS
-.I Popen
+.B popen
 returns a null pointer if files or processes cannot be created, or the shell 
 cannot be accessed.
 .PP
-.I Pclose
+.B pclose
 returns \-1 if
 .I stream
 is not associated with a `popened' command.
@@ -58,12 +55,12 @@ Buffered reading before opening an input filter
 may leave the standard input of that filter mispositioned.
 Similar problems with an output filter may be
 forestalled by careful buffer flushing, for instance, with
-.I fflush,
+.B fflush,
 see
-.IR fclose (3S).
+.BR fclose (3).
 .LP
-.I Popen
+.B popen
 always calls
-.IR sh ,
+.BR sh ,
 never calls
-.IR csh .
+.BR csh .

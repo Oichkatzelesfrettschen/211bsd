@@ -15,8 +15,8 @@
  * Paul Vixie          <paul@vix.com>          uunet!decwrl!vixie!paul
  */
 
-#if !defined(lint) && !defined(LINT)
-static char rcsid[] = "$Id: compat.c,v 1.6 1994/01/15 20:43:43 vixie Exp $";
+#if !defined(lint) && defined(DOSCCS)
+char sccsid[] = "@(#)compat.c 1.7 (2.11BSD) 2026/5/10"
 #endif
 
 /* vix 30dec93 [broke this out of misc.c - see RCS log for history]

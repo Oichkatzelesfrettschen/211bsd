@@ -1,5 +1,5 @@
-#ifndef lint
-static char *sccsid = "@(#)refer2.c	4.2 (Berkeley) 6/5/84";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)refer2.c	4.3 (2.11BSD) 2026/5/9";
 #endif
 
 #include "refer..c"

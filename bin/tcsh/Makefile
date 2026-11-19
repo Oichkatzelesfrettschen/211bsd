@@ -1,4 +1,4 @@
-#	Makefile	4.6 (2.11BSD) 2025/11/25
+#	Makefile	4.7 (2.11BSD) 2026/6/1
 #
 # C Shell with process control; VM/UNIX VAX Makefile
 # Bill Joy UC Berkeley; Jim Kulp IIASA, Austria
@@ -55,11 +55,11 @@ EDOBJS=	ed.chared.o ed.refresh.o ed.screen.o ed.init.o \
 
 TCSRCS= tc.alloc.c tc.bind.c tc.const.c tc.decls.h tc.disc.c \
 	tc.func.c tc.os.c tc.os.h tc.printf.c tc.prompt.c \
-	tc.sched.c tc.sig.c tc.sig.h tc.str.c sh.types.h tc.vers.c tc.wait.h \
+	tc.sched.c tc.sig.h tc.str.c sh.types.h tc.vers.c tc.wait.h \
 	tc.who.c tc.h
 TCOBJS=	tc.alloc.o tc.bind.o tc.const.o tc.disc.o \
 	tc.func.o tc.os.o tc.printf.o \
-	tc.prompt.o tc.sched.o tc.sig.o tc.str.o \
+	tc.prompt.o tc.sched.o tc.str.o \
 	tc.vers.o tc.who.o 
 
 # STRINGS must be last, to keep in sync with mkstr and xstr ouput 
@@ -100,7 +100,6 @@ BASE=			\
 	tc.os.o		\
 	tc.printf.o	\
 	tc.sched.o	\
-	tc.sig.o	\
 	tc.str.o	\
 	tc.who.o	\
 	tc.vers.o	\
@@ -196,34 +195,20 @@ sh.prof.o:
 	cp sh.c sh.prof.c
 	${CC} -c ${CFLAGS} -DPROF sh.prof.c
 
-lint: tc.const.h ed.defns.h
-	lint ${LFLAGS} sh*.c tw*.c ed*.c tc.*.c ${LIBES}
-
-print:
-	@pr READ_ME
-	@pr makefile makefile.*
-	@(size -l a.out; size *.o) | pr -h SIZES
-	@${CXREF} sh*.c | pr -h XREF
-	@ls -l | pr 
-	@pr sh*.h [a-rt-z]*.h sh*.c alloc.c
-
 # tcsh  tcsh.${CATSECT}
 install: all
 	-mv -f ${BINDIR}/tcsh  ${BINDIR}/tcsh.old
 	install -s -m 755 -o root -g staff tcsh ${BINDIR}/tcsh
-	install -c -m 644 -o root -g staff  ${STRINGFILE} ${STRINGDIR}
-	install -c -m 644 -o root -g staff tcsh.${CATSECT} ${DESTCAT}
+	install -c -m 444 -o root -g staff  ${STRINGFILE} ${STRINGDIR}
+	install -c -m 444 -o root -g staff tcsh.${CATSECT} ${DESTCAT}
 
 tcsh.${CATSECT}:  tcsh.man
 	/usr/man/manroff tcsh.man > tcsh.${CATSECT}
 
 clean:
-	${RM} -f a.out strings x.c xs.c tcsh _MAKE_LOG core ./mkprstr
+	${RM} -f a.out strings x.c xs.c tcsh ./mkprstr
 	${RM} -f *.o sh.prof.c ed.defns.h tc.const.h sh.err.h
 	${RM} -f ${STRINGFILE} tcsh.${CATSECT}
-
-veryclean: clean
-	${RM} -f *~ #*
 
 tags:	/tmp
 	${CTAGS} sh*.c

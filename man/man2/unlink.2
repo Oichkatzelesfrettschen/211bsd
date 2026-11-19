@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)unlink.2	6.2 (Berkeley) 5/22/85
+.\"	@(#)unlink.2	6.3 (2.11BSD) 2026/9/20
 .\"
 .TH UNLINK 2 "May 22, 1985"
 .UC 4
@@ -11,12 +11,14 @@ unlink \- remove directory entry
 .SH SYNOPSIS
 .nf
 .ft B
-unlink(path)
-char *path;
+#include <unistd.h>
+
+int
+unlink(\fIconst char *path\fP)
 .fi
 .ft R
 .SH DESCRIPTION
-.I Unlink
+.B unlink
 removes the entry for the file
 .I path
 from its directory.
@@ -32,7 +34,7 @@ Otherwise, a value of \-1 is returned and
 .I errno
 is set to indicate the error.
 .SH "ERRORS
-The \fIunlink\fP succeeds unless:
+\fBunlink\fP succeeds unless:
 .TP 15
 [ENOTDIR]
 A component of the path prefix is not a directory.
@@ -78,7 +80,7 @@ or deallocating the inode.
 The named file resides on a read-only file system.
 .TP 15
 [EFAULT]
-.I Path
+.I path
 points outside the process's allocated address space.
 .SH "SEE ALSO"
 close(2), link(2), rmdir(2)

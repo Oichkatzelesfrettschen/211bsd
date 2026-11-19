@@ -2,9 +2,9 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)nice.3c	6.1 (Berkeley) 5/9/85
+.\"	@(#)nice.3	6.2 (2.11BSD) 2026/9/27
 .\"
-.TH NICE 3C "May 9, 1985"
+.TH NICE 3 "May 9, 1985"
 .UC 4
 .SH NAME
 nice \- set program priority
@@ -12,7 +12,7 @@ nice \- set program priority
 .B nice(incr)
 .SH DESCRIPTION
 .ft B
-This interface is obsoleted by setpriority(2).
+This interface is obsoleted by and implemented using setpriority(2).
 .ft R
 .PP
 The scheduling
@@ -31,7 +31,7 @@ The priority is limited to the range
 .PP
 The priority of a process is
 passed to a child process by
-.IR fork (2).
+.BR fork (2).
 For a privileged process to return to normal priority
 from an unknown state,
 .I nice

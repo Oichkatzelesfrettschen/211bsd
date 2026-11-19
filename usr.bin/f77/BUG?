@@ -1,3 +1,14 @@
+After 40+ years the bug was fixed in 2.11BSD Patch #500 (also known as
+"2.11BSD 35th Anniversary Edition").
+
+The problem was NOT in c1 as believed in 1985 but rather in f77pass1
+
+Many thanks to Anders Magnusson <ragge@tethuvudet.se> for providing the fix
+during the preparation of 2.11BSD Patch 500.  Solution was to change the
+data type of a 'logical' from TYLONG to TYSHORT.  See #500 66) for more 
+details.
+
+-------------------------original BUG?--------------------------------
 I have discovered what I believe to be a problem in the second pass of
 both the old and the new versions of the C compiler.  The problem is
 attributable to the following ratfor source:

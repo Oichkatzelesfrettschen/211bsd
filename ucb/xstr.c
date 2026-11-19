@@ -4,20 +4,21 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)xstr.c	5.3 (Berkeley) 1/13/86";
-#endif not lint
+static char sccsid[] = "@(#)xstr.c	5.4 (2.11BSD) 2026/5/8";
+#endif
 
 #include <stdio.h>
 #include <ctype.h>
-#include <sys/types.h>
 #include <signal.h>
+#include <stdlib.h>
+#include <string.h>
+
+extern	char	*mktemp();
 
 /*
  * xstr - extract and hash strings in a C program
@@ -28,14 +29,10 @@ static char sccsid[] = "@(#)xstr.c	5.3 (Berkeley) 1/13/86";
 
 #define	ignore(a)	((void) a)
 
-char	*calloc();
 off_t	tellpt;
 off_t	hashit();
-char	*mktemp();
-int	onintr();
+void	onintr();
 char	*savestr();
-char	*strcat();
-char	*strcpy();
 off_t	yankstr();
 
 off_t	mesgpt;
@@ -441,6 +438,7 @@ istail(str, of)
 	return (d);
 }
 
+void
 onintr()
 {
 

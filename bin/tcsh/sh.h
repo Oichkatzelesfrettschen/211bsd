@@ -1,5 +1,6 @@
-/* $Header: src/sys/tcsh-6.00/RCS/sh.h,v 3.1.1 1996/03/21 19:07:20 christos Exp $ */
 /*
+ *       @(#)sh.h 2.0 (2.11BSD) 2026/6/1
+ *
  * sh.h: Catch it all globals and includes file!
  */
 /*-
@@ -38,17 +39,6 @@
 #define _h_sh
 
 
-/*
- * Sanity
- */
-#if defined(_POSIX_SOURCE) && !defined(POSIX)
-# define POSIX
-#endif
-
-#if defined(POSIXJOBS) && !defined(BSDJOBS)
-# define BSDJOBS
-#endif
-
 #ifdef SHORT_STRINGS
 typedef short Char;
 # define SAVE(a) (Strsave(str2short(a)))
@@ -57,31 +47,14 @@ typedef char Char;
 # define SAVE(a) (strsave(a))
 #endif
 
-/*
- * If your comp_r complains, then you can either
- * throw it away and get gcc or, use the following define
- * and get rid of the typedef.
- * [The 4.2/3BSD vax comp_r does not like that]
- */
-#ifdef SIGVOID
-# if defined(vax) && !defined(__GNUC__)
-#  define sigret_t void
-# else
-typedef void sigret_t;
-# endif
-#else
 typedef int sigret_t;
-#endif				/* SIGVOID */
 
 /*
  * Fundamental definitions which may vary from system to system.
  *
- *	BUFSIZ		The i/o buffering size; also limits word size
+ *	BUFSIZ		set in tc.os.h
  *	MAILINTVL	How often to mailcheck; more often is more expensive
  */
-#ifndef BUFSIZ
-#define	BUFSIZ	1024		/* default buffer size */
-#endif				/* BUFSIZ */
 
 #define FORKSLEEP	10	/* delay loop on non-interactive fork failure */
 #define	MAILINTVL	600	/* 10 minutes */
@@ -102,166 +75,44 @@ typedef int sigret_t;
 #endif
 
 #include <sys/types.h>
-#ifdef _SEQUENT_
-# include <sys/procstats.h>
-#endif /* _SEQUENT_ */
-#if defined(POSIX) || SVID > 0
-# include <sys/times.h>
-#endif				/* POSIX || SVID > 0 */
-
-#ifdef NLS
-# include <locale.h>
-#endif
 
 #include <sys/param.h>
 #include <sys/stat.h>
 
-#ifdef BSDTIMES
-# include <sys/time.h>
-# include <sys/resource.h>
-#endif				/* BSDTIMES */
+#include <sys/time.h>
+#include <sys/resource.h>
 
-#ifndef POSIX
-# ifdef TERMIO
-#  ifdef _IBMR2
- /* Aix redefines NOFLSH when _BSD_INCLUDES is defined! */
-#   undef _BSD
-#   undef _BSD_INCLUDES
-#  endif				/* _IBMR2 */
-#  include <termio.h>
-#  ifdef _IBMR2
- /* but we need it.  */
-#   define _BSD
-#   define _BSD_INCLUDES
-#  endif				/* _IBMR2 */
-# else
-#  include <sgtty.h>
-# endif				/* TERMIO */
-#else				/* POSIX */
-# include <termios.h>
-#endif				/* POSIX */
+#include <sgtty.h>
 
-#ifdef POSIX
-/*
- * We should be using setpgid and setpgid
- * by now, but in some systems we use the
- * old routines...
- */
-# define getpgrp __getpgrp
-# define setpgrp __setpgrp
-# include <unistd.h>
-# undef getpgrp
-# undef setpgrp
-extern int getpgrp();
-extern int setpgrp();
-
-/*
- * the gcc+protoize version of <stdlib.h>
- * redefines malloc(), so we define the following
- * to avoid it.
- */
-# define _GNU_STDLIB_H
-# define malloc __malloc
-# define free __free
-# define calloc __calloc
-# define realloc __realloc
-# include <stdlib.h>
-# undef malloc
-# undef free
-# undef calloc
-# undef realloc
-# include <limits.h>
-#endif				/* POSIX */
-
-#if SVID > 0
-# if !defined(pyr) || !defined(aiws)
-#  include <time.h>
-# endif				/* !aiws || !pyr */
-#endif				/* SVID > 0 */
-
-#if !(defined(sun) && defined(TERMIO))
-# include <sys/ioctl.h>
-#endif
-
-#if !defined(FIOCLEX) && defined(sun)
-# include <sys/filio.h>
-#endif				/* !FIOCLEX && sun */
-
-
+#include <sys/ioctl.h>
 #include <sys/file.h>
-
-#if !defined(O_RDONLY) || !defined(O_NDELAY)
-# include <fcntl.h>
-#endif
-
+#include <fcntl.h>
 #include <errno.h>
-
 #include <setjmp.h>
+#include <stdarg.h>
 
-#if __STDC__
-# include <stdarg.h>
-#else
-# include <varargs.h>
-#endif
-
-#ifdef DIRENT
-# include <dirent.h>
-#else
-# include <sys/dir.h>
-# define dirent direct
-#endif				/* DIRENT */
-#ifdef hpux
-# include <stdio.h>	/* So the fgetpwent() prototypes work */
-#endif
+#include <sys/dir.h>
+#include <stdio.h>	/* So the fgetpwent() prototypes work */
 #include <pwd.h>
-#ifdef BSD
-# include <strings.h>
-# define strchr(a, b) index(a, b)
-# define strrchr(a, b) rindex(a, b)
-#else
-# include <string.h>
-#endif				/* BSD */
+#include <strings.h>
 
 typedef int bool;
 
 #include "sh.types.h"
 
-#ifndef lint
 typedef ptr_t memalign_t;
-#else
-typedef union {
-    char    am_ch, *am_char_p;
-    short   am_sh, *am_short_p;
-    int     am_in, *am_int_p;
-    long    am_lo, *am_long_p;
-    float   am_fl, *am_float_p;
-    double  am_do, *am_double_p;
-}      *memalign_t;
 
-# define malloc		lint_malloc
-# define free		lint_free
-# define realloc	lint_realloc
-# define calloc		lint_calloc
-#endif
-
-#ifdef SYSMALLOC
 # define xmalloc(i)  	Malloc(i)
 # define xrealloc(p, i)	Realloc(p, i)
 # define xcalloc(n, s)	Calloc(n, s)
 # define xfree(p)    	Free(p)
-#else
-# define xmalloc(i)  	malloc(i)
-# define xrealloc(p, i)	realloc(p, i)
-# define xcalloc(n, s)	calloc(n, s)
-# define xfree(p)    	free(p)
-#endif /* SYSMALLOC */
+
 #include "sh.char.h"
 #include "sh.err.h"
 #include "sh.dir.h"
 #include "sh.proc.h"
 
 #include "pathnames.h"
-
 
 /*
  * C shell
@@ -285,8 +136,6 @@ typedef union {
 #ifndef MAXHOSTNAMELEN
 # define MAXHOSTNAMELEN	255
 #endif				/* MAXHOSTNAMELEN */
-
-
 
 #define	eq(a, b)	(Strcmp(a, b) == 0)
 
@@ -337,22 +186,8 @@ extern char *seterr;		/* Error message from scanner/parser */
 extern int errno;		/* Error from C library routines */
 Char   *shtemp;			/* Temp name for << shell files in /tmp */
 
-#ifdef BSDTIMES
 struct timeval time0;		/* Time at which the shell started */
 struct rusage ru0;
-#else
-# ifdef _SEQUENT_
-tmval_t time0;		/* Time at which the shell started */
-struct pro_stats ru0;
-# else				/* _SEQUENT_ */
-#  ifndef POSIX
-time_t  time0;			/* time at which shell started */
-#  else				/* POSIX */
-clock_t time0;			/* time at which shell started */
-#  endif			/* POSIX */
-struct tms shtimes;		/* shell and child times for process timing */
-# endif				/* _SEQUENT_ */
-#endif				/* BSDTIMES */
 
 /*
  * Miscellany
@@ -420,8 +255,8 @@ jmp_buf reslab;
 
 Char   *gointr;			/* Label for an onintr transfer */
 
-sigret_t (*parintr) ();		/* Parents interrupt catch */
-sigret_t (*parterm) ();		/* Parents terminate catch */
+sig_t parintr;		/* Parents interrupt catch */
+sig_t parterm;		/* Parents terminate catch */
 
 /*
  * Lexical definitions.
@@ -661,14 +496,14 @@ short   gflag;			/* After tglob -> is globbing needed? */
 /*
  * Variables for filename expansion
  */
-extern Char **gargv;		/* Pointer to the (stack) arglist */
-extern long gargc;		/* Number args in gargv */
+extern	Char **gargv;		/* Pointer to the (stack) arglist */
+extern	int gargc;		/* Number args in gargv */
 
 /*
  * Variables for command expansion.
  */
-extern Char **pargv;		/* Pointer to the argv list space */
-extern long pargc;		/* Count of arguments in pargv */
+extern	Char **pargv;		/* Pointer to the argv list space */
+extern	int pargc;		/* Count of arguments in pargv */
 Char   *pargs;			/* Pointer to start current word */
 long    pnleft;			/* Number of chars left in pargs */
 Char   *pargcp;			/* Cur_ index into pargs */

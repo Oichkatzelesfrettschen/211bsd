@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)crib.c	5.2 (2.11BSD) 2025/12/25";
+static char sccsid[] = "@(#)crib.c	5.3 (2.11BSD) 2026/9/22";
 #endif
 
 # include	<curses.h>
@@ -34,7 +34,7 @@ char	*argv[];
 	FILE			*f;
 	FILE			*fopen();
 	char			*getline();
-	int			bye();
+	void			bye();
 
 	while (--argc > 0) {
 	    if ((*++argv)[0] != '-') {

@@ -35,18 +35,19 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)misc.c	5.2 (Berkeley) 2/26/91";
+static char sccsid[] = "@(#)misc.c	5.3 (2.11BSD) 2026/9/21";
 #endif
 
 #include <sys/param.h>
-#include <sys/signal.h>
+#include <signal.h>
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
-#include "pathnames.h"
+#include <stdlib.h>
 
-extern int errno;
-extern char *archive, *malloc();	/* archive name */
+#define _PATH_RANTMP    "/tmp/ranlib.XXXXXX"
+
+extern char *archive;
 void error();
 char *tname = "temporary file";		/* temporary file "name" */
 

@@ -1,4 +1,4 @@
-/*	dc.h	1.4	2022/10/2	*/
+/*	dc.h	1.5  (2.11BSD) 2026/9/21 */
 
 #define FATAL 0
 #define NFATAL 1
@@ -43,7 +43,7 @@
 #define EMPTYR(x) if(stkerr!=0){pushp(x);printf("stack empty\n");continue;}
 #define EMPTYS if(stkerr != 0){printf("stack empty\n"); return(1);}
 #define EMPTYSR(x) if(stkerr !=0){printf("stack empty\n");pushp(x);return(1);}
-#define error(p)	{printf(p); continue; }
+#define xerror(p)	{printf(p); continue; }
 #define errorrt(p,x)	{printf(p); return(x); }
 struct blk {
 	char	*rd;
@@ -52,7 +52,6 @@ struct blk {
 	char	*last;
 };
 struct	blk *hfree;
-struct	blk *getwd();
 struct	blk *lookwd();
 struct	blk *getdec();
 struct	blk *morehd();
@@ -111,8 +110,6 @@ int	logo;
 int	log10;
 int	count;
 char	*pp;
-int	(*signal())();
-int	onintr();
-char	*malloc();
+void	onintr();
 char	*nalloc();
-char	*realloc();
+struct blk *xgetwd();

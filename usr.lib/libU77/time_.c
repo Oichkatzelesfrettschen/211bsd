@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)time_.c	5.1	6/7/85
+ *	@(#)time_.c	5.2	(2.11BSD) 2026/7/21
  */
 
 /*
@@ -16,9 +16,9 @@
  *	i will receive the current GMT in seconds.
  */
 
-long time();
+#include <time.h>
 
-long time_()
+time_t time_()
 {
-	return(time(0));
+	return(time((time_t *)0));
 }

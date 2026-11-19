@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)play_level.c	5.2 (Berkeley) 9/23/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)play_level.c     5.3 (2.11BSD) 2026/5/12";
+#endif
 
 # include	"robots.h"
 

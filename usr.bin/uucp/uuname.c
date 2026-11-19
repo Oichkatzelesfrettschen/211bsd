@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)uuname.c	5.3 (Berkeley) 10/9/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)uuname.c	5.4 (2.11BSD) 2026/5/9";
 #endif
 
 #include "uucp.h"
@@ -20,7 +20,7 @@ int argc;
 {
 	int ret;
 	int i;
-	int intrEXIT();
+	void intrEXIT();
 	FILE *np;
 /* Increase buffers for s and prev.  cornell!pavel */
 	char prev[1000];

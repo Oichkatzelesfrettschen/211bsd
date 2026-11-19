@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)ti.c	4.2 8/11/83";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ti.c	4.3 (2.11BSD) 2026/5/9";
 #endif
 
  /* ti.c: classify line intersections */

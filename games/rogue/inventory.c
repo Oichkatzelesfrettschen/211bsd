@@ -10,9 +10,9 @@
  *
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)inventory.c	5.2 (Berkeley) 1/2/88";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)inventory.c	5.3 (2.11BSD) 2026/5/12";
+#endif
 
 #include "rogue.h"
 

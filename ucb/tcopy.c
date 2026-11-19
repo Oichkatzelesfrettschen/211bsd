@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1985 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)tcopy.c	1.4 (2.11BSD GTE) 1996/6/4";
+static char sccsid[] = "@(#)tcopy.c	1.5 (2.11BSD) 2026/9/21";
 #endif
 
 #include <stdio.h>
@@ -26,7 +26,7 @@ static char sccsid[] = "@(#)tcopy.c	1.4 (2.11BSD GTE) 1996/6/4";
 char buff[SIZE];
 int filen=1;
 long count, lcount;
-int RUBOUT();
+void RUBOUT();
 int nfile;
 long size, tsize;
 int ln;
@@ -127,6 +127,7 @@ char **argv;
 	printf("total length: %ld bytes\n", tsize);
 }
 
+void
 RUBOUT()
 {
 	if (count > lcount)

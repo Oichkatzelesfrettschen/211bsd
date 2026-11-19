@@ -1,5 +1,5 @@
-#ifndef lint
-static char SccsId[] = "@(#)unixtomh.c	1.1	5/16/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsId[] = "@(#)unixtomh.c	1.2	2026/5/9";
 #endif
 
 /*
@@ -19,9 +19,11 @@ static char SccsId[] = "@(#)unixtomh.c	1.1	5/16/85";
  */
 
 #include <stdio.h>
+#include <strings.h>
 #include <sys/types.h>
 #include <sys/timeb.h>
 #include <ctype.h>
+#include <stdlib.h>
 
 #define SENDMAIL
 
@@ -31,8 +33,7 @@ struct headline {
 	char	*l_date;	/* The entire date string */
 };
 
-char *savestr(), *copyin(), *copy(), *nextword(), *calloc();
-char *index();
+char *savestr(), *copyin(), *copy(), *nextword();
 
 #define	NOSTR		((char *) 0)
 #define	UUCP			/* Undo strange uucp naming */

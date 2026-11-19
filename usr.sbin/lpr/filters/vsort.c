@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)vsort.c	5.2 (2.11BSD) 2025/12/26";
+static char sccsid[] = "@(#)vsort.c	5.3 (2.11BSD) 2026/8/19";
 #endif
 
 /*
@@ -14,10 +14,9 @@ static char sccsid[] = "@(#)vsort.c	5.2 (2.11BSD) 2025/12/26";
 
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 
 #define NULL 0
-
-char *calloc();
 
 FILE *in,*out;
 
@@ -515,8 +514,8 @@ sendline()
 	oback = linep->end.back;
 	head = linep->nextp;
 
-	cfree(linep->codep);
-	cfree(linep);
+	free(linep->codep);
+	free(linep);
 	if(head == NULL)
 		tail = NULL;
 	else

@@ -9,7 +9,7 @@
 */
 
 #if !defined(lint) && !defined(NOSCCS)
-static char	SccsId[] = "@(#)util.c	5.8.3 (2.11BSD GTE) 1997/10/3";
+static char	SccsId[] = "@(#)util.c	5.8.4 (2.11BSD) 2026/9/19";
 #endif
 
 # include <stdio.h>
@@ -58,7 +58,8 @@ stripquotes(s, qf)
 	}
 	*q = '\0';
 }
-/*
+
+/*
 **  QSTRLEN -- give me the string length assuming 0200 bits add a char
 **
 **	Parameters:
@@ -85,7 +86,8 @@ qstrlen(s)
 	}
 	return (l);
 }
-/*
+
+/*
 **  CAPITALIZE -- return a copy of a string, properly capitalized.
 **
 **	Parameters:
@@ -121,7 +123,8 @@ capitalize(s)
 	*p = '\0';
 	return (buf);
 }
-/*
+
+/*
 **  XALLOC -- Allocate memory and bitch wildly on failure.
 **
 **	THIS IS A CLUDGE.  This should be made to give a proper
@@ -152,7 +155,8 @@ xalloc(sz)
 	}
 	return (p);
 }
-/*
+
+/*
 **  COPYPLIST -- copy list of pointers.
 **
 **	This routine is the equivalent of newstr for lists of
@@ -195,7 +199,8 @@ copyplist(list, copycont)
 
 	return (newvp);
 }
-/*
+
+/*
 **  PRINTAV -- print argument vector.
 **
 **	Parameters:
@@ -221,7 +226,8 @@ printav(av)
 	}
 	(void) putchar('\n');
 }
-/*
+
+/*
 **  LOWER -- turn letter into lower case.
 **
 **	Parameters:
@@ -242,7 +248,8 @@ lower(c)
 		c = c - 'A' + 'a';
 	return (c);
 }
-/*
+
+/*
 **  XPUTS -- put string doing control escapes.
 **
 **	Parameters:
@@ -283,7 +290,8 @@ xputs(s)
 	(void) putchar('"');
 	(void) fflush(stdout);
 }
-/*
+
+/*
 **  MAKELOWER -- Translate a line into lower case
 **
 **	Parameters:
@@ -311,7 +319,8 @@ makelower(p)
 		if (isascii(c) && isupper(c))
 			*p = c - 'A' + 'a';
 }
-/*
+
+/*
 **  SAMEWORD -- return TRUE if the words are the same
 **
 **	Ignores case.
@@ -344,7 +353,8 @@ sameword(a, b)
 	} while (ca != '\0' && ca == cb);
 	return (ca == cb);
 }
-/*
+
+/*
 **  BUILDFNAME -- build full name from gecos style entry.
 **
 **	This routine interprets the strange entry that would appear
@@ -386,7 +396,8 @@ buildfname(p, login, buf)
 	}
 	*bp = '\0';
 }
-/*
+
+/*
 **  SAFEFILE -- return true if a file exists and is safe for a user.
 **
 **	Parameters:
@@ -416,7 +427,8 @@ safefile(fn, uid, mode)
 	errno = 0;
 	return (FALSE);
 }
-/*
+
+/*
 **  FIXCRLF -- fix <CR><LF> in line.
 **
 **	Looks for the <CR><LF> combination and turns it into the
@@ -450,7 +462,8 @@ fixcrlf(line, stripnl)
 		*p++ = '\n';
 	*p = '\0';
 }
-/*
+
+/*
 **  DFOPEN -- determined file open
 **
 **	This routine has the semantics of fopen, except that it will
@@ -469,7 +482,7 @@ dfopen(filename, mode)
 
 	for (tries = 0; tries < 10; tries++)
 	{
-		sleep((unsigned) (10 * tries));
+		xsleep(10 * tries);
 		errno = 0;
 		fp = fopen(filename, mode);
 		if (fp != NULL)
@@ -480,7 +493,8 @@ dfopen(filename, mode)
 	errno = 0;
 	return (fp);
 }
-/*
+
+/*
 **  PUTLINE -- put a line like fputs obeying SMTP conventions
 **
 **	This routine always guarantees outputing a newline (or CRLF,
@@ -552,7 +566,8 @@ putline(l, fp, m)
 			l++;
 	} while (l[0] != '\0');
 }
-/*
+
+/*
 **  XUNLINK -- unlink a file, doing logging as appropriate.
 **
 **	Parameters:
@@ -581,7 +596,8 @@ xunlink(f)
 		syslog(LOG_DEBUG, "%s: unlink-fail %d", f, errno);
 # endif LOG
 }
-/*
+
+/*
 **  SFGETS -- "safe" fgets -- times out and ignores random interrupts.
 **
 **	Parameters:
@@ -656,7 +672,8 @@ readtimeout()
 {
 	longjmp(CtxReadTimeout, 1);
 }
-/*
+
+/*
 **  FGETFOLDED -- like fgets, but know about folded lines.
 **
 **	Parameters:
@@ -712,7 +729,8 @@ fgetfolded(buf, n, f)
 	}
 	return (NULL);
 }
-/*
+
+/*
 **  CURTIME -- return current time.
 **
 **	Parameters:
@@ -733,7 +751,8 @@ curtime()
 	(void) time(&t);
 	return (t);
 }
-/*
+
+/*
 **  ATOBOOL -- convert a string representation to boolean.
 **
 **	Defaults to "TRUE"
@@ -757,7 +776,8 @@ atobool(s)
 		return (TRUE);
 	return (FALSE);
 }
-/*
+
+/*
 **  ATOOCT -- convert a string representation to octal.
 **
 **	Parameters:
@@ -780,7 +800,8 @@ atooct(s)
 		i = (i << 3) | (*s++ - '0');
 	return (i);
 }
-/*
+
+/*
 **  WAITFOR -- wait for a particular process id.
 **
 **	Parameters:
@@ -809,7 +830,8 @@ waitfor(pid)
 		st = -1;
 	return (st);
 }
-/*
+
+/*
 **  BITINTERSECT -- tell if two bitmaps intersect
 **
 **	Parameters:
@@ -835,7 +857,8 @@ bitintersect(a, b)
 			return (TRUE);
 	return (FALSE);
 }
-/*
+
+/*
 **  BITZEROP -- tell if a bitmap is all zero
 **
 **	Parameters:
@@ -860,7 +883,8 @@ bitzerop(map)
 			return (FALSE);
 	return (TRUE);
 }
-/*
+
+/*
 **  CLEANSTRCPY -- copy string keeping out bogus characters
 **
 **	Parameters:
@@ -896,7 +920,8 @@ cleanstrcpy(t, f, l)
 	}
 	*t = '\0';
 }
-/*
+
+/*
 **  DENLSTRING -- convert newlines in a string to spaces
 **
 **	Parameters:

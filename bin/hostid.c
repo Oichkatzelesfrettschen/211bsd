@@ -8,7 +8,7 @@
 char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
-static char sccsid[] = "@(#)hostid.c	1.3 (2.11BSD GTE) 96/7/10";
+static char sccsid[] = "@(#)hostid.c	1.4 (2.11BSD) 2026/9/28";
 #endif
 
 #include <sys/types.h>
@@ -18,6 +18,14 @@ static char sccsid[] = "@(#)hostid.c	1.3 (2.11BSD GTE) 96/7/10";
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <signal.h>
+
+void
+catchsigsys(int signo)
+	{
+	
+	exit(0);
+	}
 
 main(argc, argv)
 	int argc;
@@ -32,6 +40,13 @@ main(argc, argv)
 		printf("0x%lx\n", gethostid());
 		exit(0);
 	}
+
+/*
+ * gethostbyname() will attempt to connect(2) to a nameserver.  With a
+ * non-networking (e.g. GENERIC) kernel a SIGSYS will result due to an
+ * illegal system call.  Catch the signal and quietly exit.
+*/
+	signal(SIGSYS, catchsigsys);
 
 	id = argv[1];
 	if (hp = gethostbyname(id)) {

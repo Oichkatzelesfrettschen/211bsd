@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)lpr.1	6.1.1 (2.11BSD) 1996/10/22
+.\"	@(#)lpr.1	6.1.2 (2.11BSD) 2026/9/27
 .\"
 .TH LPR 1 "October 22, 1996"
 .UC 4
@@ -38,7 +38,7 @@ lpr \- off line print
 name ...
 ]
 .SH DESCRIPTION
-.B Lpr
+.B lpr
 uses a spooling daemon to print the named files when facilities
 become available.  If no names appear, the standard input is assumed.
 The
@@ -52,29 +52,28 @@ spooler that the files are not standard text files. The spooling daemon will
 use the appropriate filters to print the data accordingly.
 .IP \fB\-p\fP 5
 Use
-.IR pr (1)
-to format the files (equivalent to
-.IR print ).
+.BR pr (1)
+to format the files.
 .IP \fB\-l\fP 5
 Use a filter which allows control characters to be printed and suppresses
 page breaks.
 .IP \fB\-t\fP 5
 The files are assumed to contain data from
-.IR troff (1)
+.BR troff (1)
 (cat phototypesetter commands).
 .IP \fB\-n\fP 5
 The files are assumed to contain data from
-.I ditroff
+.B ditroff
 (device independent troff).
 .IP \fB\-d\fP 5
 The files are assumed to contain data from
-.IR tex (l)
+.BR tex (l)
 (DVI format from Stanford).
 .IP \fB\-g\fP 5
 The files are assumed to contain standard plot data as produced by the
-.IR plot (3X)
+.BR plot (3)
 routines (see also
-.IR plot (1G)
+.BR plot (1)
 for the filters used by the printer spooler).
 .IP \fB\-v\fP 5
 The files are assumed to contain a raster image for devices like the
@@ -118,7 +117,7 @@ Normally, the first file's name is used.
 The
 .B \-T
 option uses the next argument as the title used by
-.IR pr (1)
+.BR pr (1)
 instead of the file name.
 .PP
 To get multiple copies of output, use the
@@ -154,7 +153,7 @@ the page width for
 The
 .B \-s
 option will use
-.IR symlink (2)
+.BR symlink (2)
 to link data files rather than trying to copy them so large files can be
 printed.  This means the files should
 not be modified or removed until they have been printed.
@@ -170,7 +169,7 @@ will construct a \fI.railmag\fR file referencing
 /etc/passwd	personal identification
 /etc/printcap	printer capabilities data base
 /usr/sbin/lpd	line printer daemon
-/usr/spool/*	directories used for spooling
+Busr/spool/*	directories used for spooling
 /usr/spool/*/cf*	daemon control files
 /usr/spool/*/df*	data files specified in "cf" files
 /usr/spool/*/tf*	temporary copies of "cf" files
@@ -185,23 +184,23 @@ lpc(8),
 lpd(8)
 .SH DIAGNOSTICS
 If you try to spool too large a file, it will be truncated.
-.I Lpr
+.B lpr
 will object to printing binary files.
 If a user other than root prints a file and spooling is disabled,
-.I lpr
+.B lpr
 will print a message saying so and will not put jobs in the queue.
 If a connection to
-.I lpd
+.B lpd
 on the local machine cannot be made,
-.I lpr
+.B lpr
 will say that the daemon cannot be started.
 Diagnostics may be printed in the daemon's log file
 regarding missing spool files by
-.IR lpd .
+.BR lpd .
 .SH BUGS
 Fonts for
-.I troff
+.B troff
 and
-.I tex
+.B tex
 reside on the host with the printer. It is currently not possible to
 use local font libraries.

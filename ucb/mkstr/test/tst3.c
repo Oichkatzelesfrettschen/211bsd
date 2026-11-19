@@ -1,0 +1,1 @@
+main() { fooerror("bar baz");}

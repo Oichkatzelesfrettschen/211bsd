@@ -1,4 +1,3 @@
-/* $Header: $ */
 /*
  * tw.parse.c: Everyone has taken a shot in this futile effort to
  *	       lexically analyze a csh line... Well we cannot good
@@ -38,16 +37,14 @@
  * SUCH DAMAGE.
  */
 #include "config.h"
-#if !defined(lint) && !defined(pdp11)
+#if !defined(lint) && defined(DOSCCS)
 static char *rcsid() 
-    { return "$Id: tw.parse.c,v 3.2 2019/11/27 19:12:00 bqt Exp $"; }
+    { return "$Id: tw.parse.c,v 3.2 2026/6/1 19:12:00 (2.11BSD) Exp $"; }
 #endif
 
 #include "sh.h"
 #include "tw.h"
 #include "ed.h"
-
-/* #define TENEDEBUG */
 
 /* true if the path has relative elements */
 static bool relatives_in_path;
@@ -63,10 +60,6 @@ int     have_sorted = 0;
  */
 int non_unique_match = FALSE;
 
-#ifdef notdef
-int     dirctr = 0;		/* -1 0 1 2 ... */
-
-#endif
 Char    dirflag[5];		/* ' nn\0' - dir #s -  . 1 2 ... */
 
 static bool SearchNoDirErr = 0;	/* t_search returns -2 if dir is unreadable */
@@ -150,23 +143,9 @@ tenematch(in_line, in_li_size, num_read, command)
 
 
 
-#ifdef	masscomp
-    /*
-     * Avoid a nasty message from the RTU 4.1A & RTU 5.0 comp_r concerning
-     * the "overuse of registers". According to the comp_r release notes,
-     * incorrect code may be produced unless the offending expression is
-     * rewritten. Therefore, we can't just ignore it, DAS DEC-90.
-     */
-    space_left = in_li_size;
-    space_left -= word_start - in_line + 1;
-#else
     space_left = in_li_size - (word_start - in_line) - 1;
-#endif
 
     is_a_cmd = starting_a_command(word_start, in_line);
-#ifdef TENEDEBUG
-    xprintf("starting_a_command %d\n", is_a_cmd);
-#endif
 
     /*
      * Quote args
@@ -227,15 +206,6 @@ tenematch(in_line, in_li_size, num_read, command)
 	return (-1);
     *wp = '\0';
 
-
-#ifdef TENEDEBUG
-    xprintf("\ncmd_st:%s:\n", short2str(cmd_st));
-    xprintf("word:%s:\n", short2str(word));
-    xprintf("word:");
-    for (wp = word; *wp; wp++)
-	xprintf("%c", *wp & QUOTE ? '-' : ' ');
-    xprintf(":\n");
-#endif
     switch ((int) command) {
 	Char    buffer[FILSIZ + 1], *bptr;
 	Char   *slshp;
@@ -914,9 +884,6 @@ again:
 	goto again;
     }
     if (look_lognames) {
-#ifdef YPBUGS
-	fix_yp_bugs();
-#endif				/* YPBUGS */
 	(void) endpwent();
     }
     else if (look_file || look_shellvar ||
@@ -1047,47 +1014,6 @@ done_list:
 
 /* stuff for general command line hacking */
 
-/*
- * Strip next directory from path; return ptr to next unstripped directory.
- */
-
-#ifdef notdef
-Char * extct_dir_from_path(path, dir)
-    Char   *path, dir[];
-{
-    register Char *d = dir;
-
-    while (*path && (*path == ' ' || *path == ':'))
-	path++;
-    while (*path && (*path != ' ' && *path != ':'))
-	*(d++) = *(path++);
-    while (*path && (*path == ' ' || *path == ':'))
-	path++;
-
-    ++dirctr;
-    if (*dir == '.')
-	(void) Strcpy(dirflag, STRdotsp);
-    else {
-	dirflag[0] = ' ';
-	if (dirctr <= 9) {
-	    dirflag[1] = '0' + dirctr;
-	    dirflag[2] = '\0';
-	}
-	else {
-	    dirflag[1] = '0' + dirctr / 10;
-	    dirflag[2] = '0' + dirctr % 10;
-	    dirflag[3] = '\0';
-	}
-    }
-    *(d++) = '/';
-    *d = 0;
-
-    return path;
-}
-
-#endif
-
-
 static void
 free_items(items, numitems)
     register Char **items;
@@ -1101,7 +1027,6 @@ free_items(items, numitems)
     xfree((ptr_t) items);
     maxitems = 0;
 }
-
 
 /*
  * parse full path in file into 2 parts: directory and file names
@@ -1133,18 +1058,13 @@ getentry(dir_fd, look_lognames)
     register struct passwd *pw;
     static Char retname[MAXPATHLEN];
 
-    register struct dirent *dirp;
+    register struct direct *dirp;
 
     if (look_lognames) {	/* Is it login names we want? */
 
 	pw = getpwent();
-
-	if (pw == NULL) {
-#ifdef YPBUGS
-	    fix_yp_bugs();
-#endif
+	if (pw == NULL)
 	    return (NULL);
-	}
 	(void) Strcpy(retname, str2short(pw->pw_name));
 	return (retname);
     }
@@ -1461,7 +1381,7 @@ static void
 tw_get_comm_list()
 {				/* stolen from sh.exec.c dohash() */
     register DIR *dirp;
-    register struct dirent *dp;
+    register struct direct *dp;
     register Char *dir;
     register Char **pv;
     struct varent *v = adrof(STRpath);

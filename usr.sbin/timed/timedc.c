@@ -4,21 +4,20 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)timedc.c	2.3 (Berkeley) 6/5/86";
-#endif not lint
+static char sccsid[] = "@(#)timedc.c	2.4 (Berkeley) 2026/1/28";
+#endif
 
 #include "timedc.h"
 #include <signal.h>
 #include <ctype.h>
 #include <setjmp.h>
 #include <syslog.h>
+#include <strings.h>
 
 int	top;
 int	margc;
@@ -26,7 +25,7 @@ int	fromatty;
 char	*margv[20];
 char	cmdline[200];
 jmp_buf	toplevel;
-int	intr();
+void	intr();
 int priv_resources();
 struct	cmd *getcmd();
 
@@ -74,6 +73,7 @@ main(argc, argv)
 	}
 }
 
+void
 intr()
 {
 	if (!fromatty)
@@ -90,16 +90,18 @@ cmdscanner(top)
 	int top;
 {
 	register struct cmd *c;
+	register char *cp;
 
 	if (!top)
 		putchar('\n');
 	for (;;) {
-		if (fromatty) {
+		if (fromatty)
 			printf("timedc> ");
-			(void) fflush(stdout);
-		}
-		if (gets(cmdline) == 0)
+		if (fgets(cmdline, sizeof cmdline, stdin) == 0)
 			quit();
+		cp = index(cmdline, '\n');
+		if (cp) *cp = '\0';
+
 		if (cmdline[0] == 0)
 			break;
 		makeargv();

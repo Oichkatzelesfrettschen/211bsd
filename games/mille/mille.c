@@ -4,10 +4,10 @@
 #include	<time.h>
 
 /*
- * @(#)mille.c	1.4 (2.11BSD) 2018/12/29
+ * @(#)mille.c	1.5 (2.11BSD) 2026/9/22
  */
 
-int	rub();
+void	rub();
 
 char	_sobuf[BUFSIZ];
 
@@ -102,6 +102,7 @@ reg char	*av[]; {
 /*
  *	Routine to trap rubouts, and make sure they really want to quit.
  */
+void
 rub() {
 
 	signal(SIGINT, SIG_IGN);

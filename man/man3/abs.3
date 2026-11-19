@@ -1,4 +1,4 @@
-.\"	@(#)abs.3	6.1 (Berkeley) 5/15/85
+.\"	@(#)abs.3	6.2 (2.11BSD) 2026/9/27
 .\"
 .TH ABS 3 "May 15, 1985"
 .AT 3
@@ -6,18 +6,20 @@
 abs \- integer absolute value
 .SH SYNOPSIS
 .nf
-.B abs(i)
-.B int i;
+.ft B
+abs(\fIint i\fP)
+.ft R
 .fi
 .SH DESCRIPTION
-.I Abs
+.B abs
 returns the absolute value of its integer operand.
 .SH SEE ALSO
-floor(3M) for
-.I fabs
+floor(3) for
+.B fabs
 .SH BUGS
 Applying the \fIabs\fP function to the most negative integer generates a
-result which is the most negative integer.  That is, 
-.IP "abs(0x80000000)"
-.LP
-returns 0x80000000 as a result.
+result which is the most negative integer.  That is:
+.sp
+abs(0x8000)
+.sp
+returns 0x8000 as a result.

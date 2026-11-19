@@ -232,12 +232,12 @@ FILE		*cron_popen __P((char *, char *));
 				 */
 
 #ifdef MAIN_PROGRAM
-# if !defined(LINT) && !defined(lint)
+#if	!defined(lint) && defined(DOSCCS)
 char	*copyright[] = {
 		"@(#) Copyright 1988,1989,1990,1993,1994 by Paul Vixie",
 		"@(#) All rights reserved"
 	};
-# endif
+#endif
 
 char	*MonthNames[] = {
 		"Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -262,8 +262,7 @@ char	*DebugFlagNames[] = {	/* sync with #defines */
 	};
 # endif /* DEBUGGING */
 #else /*MAIN_PROGRAM*/
-extern	char	*copyright[],
-		*MonthNames[],
+extern	char	*MonthNames[],
 		*DowNames[],
 		*ProgramName;
 extern	int	LineNumber;

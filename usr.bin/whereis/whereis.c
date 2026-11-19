@@ -36,7 +36,7 @@ static char copyright[] =
 "@(#) Copyright (c) 1993\n\
 	The Regents of the University of California.  All rights reserved.\n";
 
-static char sccsid[] = "@(#)whereis.c	8.1.1 (2.11BSD) 1996";
+static char sccsid[] = "@(#)whereis.c	8.1.2 (2.11BSD) 2026/9/15";
 #endif
 
 #include <sys/param.h>
@@ -48,7 +48,11 @@ static char sccsid[] = "@(#)whereis.c	8.1.1 (2.11BSD) 1996";
 #include <stdlib.h>
 #include <string.h>
 
-void usage();
+void
+usage()
+{
+	errx(1, "program ...");
+}
 
 int
 main(argc, argv)
@@ -57,14 +61,17 @@ main(argc, argv)
 {
 	struct stat sb;
 	size_t len;
-	int ch, sverrno, mib[2];
+	int ch, mib[2];
 	char *p, *t, *std, path[MAXPATHLEN];
 
-	while ((ch = getopt(argc, argv, "")) != EOF)
-		switch (ch) {
-		case '?':
-		default:
-			usage();
+	while	((ch = getopt(argc, argv, "")) != EOF)
+		{
+		switch (ch)
+			{
+			case '?':
+			default:
+				usage();
+			}
 		}
 	argc -= optind;
 	argv += optind;
@@ -73,22 +80,16 @@ main(argc, argv)
 	mib[0] = CTL_USER;
 	mib[1] = USER_CS_PATH;
 	if (sysctl(mib, 2, NULL, &len, NULL, 0) == -1)
-		return (-1);
-	if (len == 0) {
-		err(1, "user_cs_path: sysctl: zero length\n");
-		/* NOTREACHED */
-	}
-	if ((std = (char *)malloc(len)) == NULL) {
-		err(1, NULL);
-		/* NOTREACHED */
-	}
-	if (sysctl(mib, 2, std, &len, NULL, 0) == -1) {
-		sverrno = errno;
-		free(std);
-		errno = sverrno;
-		err(1, "sysctl: user_cs_path");
-		/* NOTREACHED */
-	}
+		err(1, "sysctl user_cs_path len");
+
+	if (len == 0)
+		errx(1, "user_cs_path zero length");
+
+	if ((std = (char *)malloc(len)) == NULL)
+		errx(1, "malloc(%d) failed", len);
+
+	if (sysctl(mib, 2, std, &len, NULL, 0) == -1)
+		err(1, "sysctl user_cs_path");
 
 	/* For each path, for each program... */
 	for (; *argv; ++argv)
@@ -107,11 +108,5 @@ main(argc, argv)
 			if (p == NULL)
 				break;
 		}
-}
-
-void
-usage()
-{
-	(void)fprintf(stderr, "whereis: program ...\n");
-	exit (1);
+	exit(0);
 }

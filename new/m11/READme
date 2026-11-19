@@ -1,3 +1,5 @@
+macxrf info updated 2026/6/11 2.11BSD
+
 This is the Jim Reeds version of the Harvard m11.
 
 Here is code for 2 programs:
@@ -13,10 +15,9 @@ There are two documentation files:
 
 To install:
 
-	You must put macxrf into /usr/ucb/macxrf.  This path name is
-buried in the m11 source file exec.m11 if you want to change it.  The assembler
-itself can live anywhere.  /usr/new/m11 and /usr/ucb/m11 are two
-likely places to put it.
+	You must put macxrf into /usr/new/macxrf.  This path name is
+in the m11 source file exec.m11 if you want to change it.  The assembler
+itself can live anywhere.
 
 	You might need a copy of the Jim Reeds souped up l11 to link this
 program.  Source is in ../l11.  The changes involved with l11 are minor.

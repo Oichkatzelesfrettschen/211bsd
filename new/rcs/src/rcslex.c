@@ -1,9 +1,9 @@
+#if	!defined(lint) & defined(DOSCCS)
+static char sccsid[] = "@(#)rcslex.c 4.6 (2.11BSD) 2026/5/11";
+#endif
 /*
  *                     RCS file input
  */
-#if	!defined(lint) & defined(DOSCCS)
-static char rcsid[]= "$Id: rcslex.c 4.5 (2.11BSD) 2025/12/26";
-#endif
 /*******************************************************************************
  *                     Lexical Analysis.
  *                     Character mapping table,

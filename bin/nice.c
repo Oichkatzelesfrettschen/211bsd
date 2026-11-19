@@ -4,15 +4,13 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)nice.c	5.2 (Berkeley) 1/12/86";
-#endif not lint
+static char sccsid[] = "@(#)nice.c	5.3 (2.11BSD) 2026/5/7";
+#endif
 
 #include <stdio.h>
 
@@ -23,7 +21,7 @@ main(argc, argv)
 	int argc;
 	char *argv[];
 {
-	int nicarg = 10;
+	register int nicarg = 10;
 
 	if (argc > 1 && argv[1][0] == '-') {
 		nicarg = atoi(&argv[1][1]);

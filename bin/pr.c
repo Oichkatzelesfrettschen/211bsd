@@ -1,5 +1,5 @@
 #if !defined(lint) && defined(DOSCCS)
-static char *sccsid = "@(#)pr.c	4.6 (2.11BSD) 2025/12/25";
+static char *sccsid = "@(#)pr.c	4.7 (2.11BSD) 2026/9/21";
 #endif
 
 /*
@@ -53,7 +53,7 @@ main(argc, argv)
 char **argv;
 {
 	int nfdone;
-	int onintr();
+	void onintr();
 
 	setbuf(stdout, obuf);
 	if (signal(SIGINT, SIG_IGN) != SIG_IGN)
@@ -145,6 +145,7 @@ numeric(str)
 	return(1);
 }
 
+void
 onintr()
 {
 

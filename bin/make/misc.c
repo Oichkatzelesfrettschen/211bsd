@@ -1,9 +1,8 @@
-/* static	char *sccsid = "@(#)misc.c	4.4 (Berkeley) 87/05/21"; */
+/* static	char *sccsid = "@(#)misc.c	4.5 (2.11BSD) 2026/9/15"; */
 #include "defs"
 
 FSTATIC struct nameblock *hashtab[HASHSIZE];
 FSTATIC int nhashed	= 0;
-
 
 /* simple linear hash.  hash function is sum of
    characters mod hash table size.
@@ -29,14 +28,11 @@ for(i=hashval;
 return(i);
 }
 
-
 struct nameblock *srchname(s)
 char *s;
 {
 return( hashtab[hashloc(s)] );
 }
-
-
 
 struct nameblock *makename(s)
 char *s;
@@ -67,8 +63,6 @@ hashtab[hashloc(s)] = p;
 return(p);
 }
 
-
-
 hasslash(s)
 char *s;
 {
@@ -77,8 +71,6 @@ for( ; *s ; ++s)
 		return(YES);
 return(NO);
 }
-
-
 
 char *copys(s)
 register char *s;
@@ -93,8 +85,6 @@ while(*t++ = *s++)
 return(t0);
 }
 
-
-
 char *concat(a,b,c)   /* c = concatenation of a and b */
 register char *a,*b;
 char *c;
@@ -106,8 +96,6 @@ while(*t = *a++) t++;
 while(*t++ = *b++);
 return(c);
 }
-
-
 
 suffix(a,b,p)  /* is b the suffix of a?  if so, set p = prefix */
 register char *a,*b,*p;
@@ -130,11 +118,6 @@ while(a0<a) *p++ = *a0++;
 return(1);
 }
 
-
-
-
-
-
 int *ckalloc(n)
 register int n;
 {
@@ -146,7 +129,7 @@ if( p = (int *) calloc(1,n) )
 fatal("out of memory");
 /* NOTREACHED */
 }
-
+
 /* copy string a into b, substituting for arguments */
 char *subst(a,b)
 register char *a,*b;
@@ -191,7 +174,6 @@ if(a!=0)  while(*a)
 return(b);
 }
 
-
 setvar(v,s)
 char *v, *s;
 {
@@ -231,7 +213,6 @@ for(s=a  ;   *s!='\0' && *s!=':'  ; ++s)
 return(NO);
 }
 
-
 struct varblock *varptr(v)
 char *v;
 {
@@ -249,7 +230,6 @@ vp->varval = 0;
 return(vp);
 }
 
-
 fatal1(s, t)
 char *s, *t;
 {
@@ -258,22 +238,13 @@ sprintf(buf, s, t);
 fatal(buf);
 }
 
-
-
 fatal(s)
 char *s;
 {
 if(s) fprintf(stderr, "Make: %s.  Stop.\n", s);
 else fprintf(stderr, "\nStop.\n");
-#ifdef unix
 exit(1);
-#endif
-#ifdef gcos
-exit(0);
-#endif
 }
-
-
 
 yyerror(s)
 char *s;
@@ -284,8 +255,6 @@ extern int yylineno;
 sprintf(buf, "line %d: %s", yylineno, s);
 fatal(buf);
 }
-
-
 
 struct chain *appendq(head, tail)
 struct chain *head;
@@ -306,10 +275,6 @@ if(head)
 else
 	return(p);
 }
-
-
-
-
 
 char *mkqlist(p)
 struct chain *p;

@@ -5,10 +5,10 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)docmd.c	5.1.2 (2.11BSD GTE) 1995/05/09";
+static char sccsid[] = "@(#)docmd.c	5.1.3 (2.11BSD) 2026/9/21";
 #endif
 
-#include "pathnames.h"
+#include <paths.h>
 #include "defs.h"
 #include <setjmp.h>
 #include <netdb.h>
@@ -17,8 +17,10 @@ FILE	*lfp;			/* log file for recording files updated */
 struct	subcmd *subcmds;	/* list of sub-commands for current cmd */
 jmp_buf	env;
 
-int	cleanup();
-int	lostconn();
+void	cleanup();
+void	lostconn();
+
+#define _PATH_RDIST     "rdist"
 
 /*
  * Do the commands in cmds (initialized by yyparse).
@@ -254,6 +256,7 @@ closeconn()
 	}
 }
 
+void
 lostconn()
 {
 	if (iamremote)

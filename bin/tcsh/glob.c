@@ -36,7 +36,7 @@
  */
 #include "config.h"
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)glob.c	5.13 (2.11BSD) 2022/10/2";
+static char sccsid[] = "@(#)glob.c	5.14 (2.11BSD) 2026/6/1";
 #endif
 /*
  * Glob: the interface is a superset of the one defined in POSIX 1003.2,
@@ -57,40 +57,14 @@ static char sccsid[] = "@(#)glob.c	5.13 (2.11BSD) 2022/10/2";
  *	Number of matches in the current invocation of glob.
  */
 
-#ifdef notdef
-#include <sys/types.h>
-#include <sys/param.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <ctype.h>
-typedef void * ptr_t;
-#endif
-
 #include "sh.h"
 #undef QUOTE
 #undef TILDE
 #undef META
 #undef CHAR
 #undef ismeta
-#undef Strchr
 
 #include <glob.h>
-
-#ifndef S_ISDIR
-#define S_ISDIR(a)	(((a) & S_IFMT) == S_IFDIR)
-#endif
-
-#if !defined(S_ISLNK) && defined(S_IFLNK)
-#define S_ISLNK(a)	(((a) & S_IFMT) == S_IFLNK)
-#endif
-
-#if !defined(S_ISLNK) && !defined(lstat)
-#define lstat stat
-#endif
-
-#ifdef notdef
-typedef unsigned short Char;
-#endif
 
 static	int	 glob1 		__P((Char *, glob_t *, int));
 static	int	 glob2		__P((Char *, Char *, Char *, glob_t *, int));
@@ -100,10 +74,6 @@ static	int	 globextend	__P((Char *, glob_t *));
 static	int	 match		__P((Char *, Char *, Char *, int));
 static	int	 compare	__P((const void *, const void *));
 static 	DIR	*Opendir	__P((Char *));
-#ifdef S_IFLNK
-static	int	 Lstat		__P((Char *, struct stat *));
-#endif
-static 	Char 	*Strchr		__P((Char *, int));
 #ifdef DEBUG
 static	void	 qprintf	__P((Char *));
 #endif
@@ -147,85 +117,18 @@ static	void	 qprintf	__P((Char *));
 #define	ismeta(c)	(((c)&M_META) != 0)
 
 /*
- * Need to dodge two kernel bugs:
+ * Need to dodge a kernel bug:
  * opendir("") != opendir(".")
- * NAMEI_BUG: on plain files trailing slashes are ignored in some kernels.
- *            POSIX specifies that they should be ignored in directories.
  */
 
 static DIR *
 Opendir(str)
     register Char *str;
 {
-    char    buf[MAXPATHLEN];
-    register char *dc = buf;
 
     if (!*str)
 	return (opendir("."));
-    while (*dc++ = *str++);
-    return (opendir(buf));
-}
-
-#ifdef S_IFLNK
-static int
-Lstat(fn, sb)
-    register Char *fn;
-    struct stat *sb;
-{
-    char    buf[MAXPATHLEN];
-    register char *dc = buf;
-
-    while (*dc++ = *fn++);
-# ifdef NAMEI_BUG
-    {
-	int     st;
-
-	st = lstat(buf, sb);
-	if (*buf)
-	    dc--;
-	return (*--dc == '/' && !S_ISDIR(sb->st_mode) ? -1 : st);
-    }
-# else
-    return (lstat(buf, sb));
-# endif	/* NAMEI_BUG */
-}
-#else
-#define Lstat Stat
-#endif /* S_IFLNK */
-
-static int
-Stat(fn, sb)
-    register Char *fn;
-    struct stat *sb;
-{
-    char    buf[MAXPATHLEN];
-    register char *dc = buf;
-
-    while (*dc++ = *fn++);
-#ifdef NAMEI_BUG
-    {
-	int     st;
-
-	st = lstat(buf, sb);
-	if (*buf)
-	    dc--;
-	return (*--dc == '/' && !S_ISDIR(sb->st_mode) ? -1 : st);
-    }
-#else
-    return (stat(buf, sb));
-#endif /* NAMEI_BUG */
-}
-
-static Char *
-Strchr(str, ch)
-    register Char *str;
-    int ch;
-{
-    do
-	if (*str == ch)
-	    return (str);
-    while (*str++);
-    return (NULL);
+    return (opendir(str));
 }
 
 #ifdef DEBUG
@@ -333,7 +236,7 @@ glob(pattern, flags, errfunc, pglob)
 	    if (c == not)
 		++qpatnext;
 	    if (*qpatnext == EOS ||
-		Strchr(qpatnext + 1, RBRACKET) == NULL) {
+		strchr(qpatnext + 1, RBRACKET) == NULL) {
 		*bufnext++ = LBRACKET;
 		if (c == not)
 		    --qpatnext;
@@ -443,17 +346,15 @@ glob2(pathbuf, pathend, pattern, pglob, no_match)
     for (;;) {
 	if (*pattern == EOS) {	/* end of pattern? */
 	    *pathend = EOS;
-	    if (Lstat(pathbuf, &sbuf))
+	    if (lstat(pathbuf, &sbuf))
 		return (0);
 
 	    if (((pglob->gl_flags & GLOB_MARK) &&
 		 pathend[-1] != SEP) &&
 		(S_ISDIR(sbuf.st_mode)
-#ifdef S_IFLNK
 		 || (S_ISLNK(sbuf.st_mode) &&
-		     (Stat(pathbuf, &sbuf) == 0) &&
+		     (stat(pathbuf, &sbuf) == 0) &&
 		     S_ISDIR(sbuf.st_mode))
-#endif
 		 )) {
 		*pathend++ = SEP;
 		*pathend = EOS;
@@ -492,7 +393,7 @@ glob3(pathbuf, pathend, pattern, restpattern, pglob, no_match)
 {
     extern int errno;
     DIR    *dirp;
-    struct dirent *dp;
+    struct direct *dp;
     int     err;
     Char m_not = (pglob->gl_flags & GLOB_ALTNOT) ? M_ALTNOT : M_NOT;
 

@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)ioctl.2	6.3 (Berkeley) 3/4/86
+.\"	@(#)ioctl.2	6.4 (2.11BSD) 2026/9/28
 .\"
 .TH IOCTL 2 "March 4, 1986"
 .UC 4
@@ -12,27 +12,23 @@ ioctl \- control device
 .nf
 .ft B
 #include <sys/ioctl.h>
-.PP
-.ft B
-ioctl(d, request, argp)
-int d;
-unsigned long request;
-char *argp;
-.fi
+
+ioctl(\fIint d\fP, \fIunsigned long request\fP, \fIchar *argp\fP)
 .ft R
+.fi
 .SH DESCRIPTION
-.I Ioctl
+.B ioctl
 performs a variety of functions
 on open descriptors.  In particular, many operating
 characteristics of character special files (e.g. terminals)
 may be controlled with
-.I ioctl
+.B ioctl
 requests.
 The writeups of various devices in section 4 discuss how
-.I ioctl
+.B ioctl
 applies to them.
 .PP
-An  ioctl
+An  \fBioctl\fP
 .I request
 has encoded in it whether the argument is an \*(lqin\*(rq parameter
 or \*(lqout\*(rq parameter, and the size of the argument \fIargp\fP in bytes.
@@ -42,10 +38,10 @@ are located in the file
 .IR <sys/ioctl.h> .
 .SH "RETURN VALUE
 If an error has occurred, a value of \-1 is returned and
-.I errno
+.B errno
 is set to indicate the error.
 .SH ERRORS
-.I Ioctl
+.B ioctl
 will fail if one or more of the following are true:
 .TP 15
 [EBADF]
@@ -62,4 +58,4 @@ of object that the descriptor \fId\fP references.
 [EINVAL]
 \fIRequest\fP or \fIargp\fP is not valid.
 .SH "SEE ALSO"
-execve(2), fcntl(2), mt(4), tty(4), intro(4N)
+execve(2), fcntl(2), mt(4), tty(4), intro(4)

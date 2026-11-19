@@ -2,28 +2,30 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)imp.4p	6.2 (Berkeley) 5/16/86
+.\"	@(#)imp.4	6.3 (2.11BSD) 2026/9/28
 .\"
-.TH IMP 4P "May 16, 1986"
+.TH IMP 4 "May 16, 1986"
 .UC 5
 .SH NAME
 imp \- IMP raw socket interface
 .SH SYNOPSIS
-.B #include <sys/socket.h>
-.br
-.B #include <netinet/in.h>
-.br
-.B #include <netimp/if_imp.h>
-.PP
-.B s = socket(AF_IMPLINK, SOCK_RAW, proto);
+.nf
+.ft B
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netimp/if_imp.h>
+
+socket(AF_IMPLINK, SOCK_RAW, proto);
+.ft R
+.fi
 .SH DESCRIPTION
 The raw imp socket provides direct access to the
-.IR imp (4)
+.BR imp (4)
 network interface.  Users send packets through
 the interface using the 
-.IR send (2)
+.BR send (2)
 calls, and receive packets with the
-.IR recv (2),
+.BR recv (2),
 calls.  All outgoing packets must have an 1822 96-bit
 leader on the front.  Likewise, packets received
 by the user will have this leader on the front.  The
@@ -71,4 +73,4 @@ when an attempt is made to create a
 socket with a network address for which no network interface
 exists.
 .SH SEE ALSO
-intro(4N), inet(4F), imp(4)
+intro(4), inet(4), imp(4)

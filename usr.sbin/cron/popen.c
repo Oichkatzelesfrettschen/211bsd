@@ -24,12 +24,12 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)popen.c	5.7.2 (2.11BSD) 1999/08/05";
+static char sccsid[] = "@(#)popen.c	5.7.3 (2.11BSD) 2026/9/21";
 #endif
 
 #include "cron.h"
 #include <errno.h>
-#include <sys/signal.h>
+#include <signal.h>
 
 #define WANT_GLOBBING 0
 

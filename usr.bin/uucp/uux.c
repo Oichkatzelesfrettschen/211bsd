@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)uux.c	5.6 (Berkeley) 1/24/86";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)uux.c	5.7 (2.11BSD) 2026/5/9";
 #endif
 
 #include "uucp.h"
@@ -71,9 +71,7 @@ char *argv[];
 	umask(WFMASK);
 	Ofn = 1;
 	Ifn = 0;
-#ifdef	VMS
-	arg_fix(argc, argv);
-#endif
+
 	while (argc>1 && argv[1][0] == '-') {
 		switch(argv[1][1]){
 		case 'p':
@@ -479,32 +477,6 @@ char *file, *mode;
 		logent("Fname", "TABLE OVERFLOW");
 	return fopen(subfile(file), mode);
 }
-#ifdef	VMS
-/*
- * EUNICE bug:
- *	quotes are not stripped from DCL.  Do it here.
- *	Note if we are running under Unix shell we don't
- *	do the right thing.
- */
-arg_fix(argc, argv)
-char **argv;
-{
-	register char *cp, *tp;
-
-	for (; argc > 0; --argc, argv++) {
-		cp = *argv;
-		if (cp == (char *)0 || *cp++ != '"')
-			continue;
-		tp = cp;
-		while (*tp++) ;
-		tp -= 2;
-		if (*tp == '"') {
-			*tp = '\0';
-			*argv = cp;
-		}
-	}
-}
-#endif VMS
 
 /*
  *	split into system and file part

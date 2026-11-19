@@ -1,5 +1,5 @@
 #if !defined(lint) && defined(DOSCCS)
-static	char sccsid[] = "@(#)cc.c 5.1 (2.11BSD) 2025/8/16";
+static	char sccsid[] = "@(#)cc.c 5.2 (2.11BSD) 2026/8/29";
 #endif
 
 /*
@@ -24,7 +24,7 @@ char	tmp0[30];		/* big enough for /tmp/ctm%05.5d */
 char	*tmp1, *tmp2, *tmp3, *tmp4, *tmp5;
 char	*outfile;
 char	*savestr(), *strspl(), *setsuf();
-int	idexit();
+void	idexit();
 char	**av, **clist, **llist, **plist;
 int	cflag, eflag, oflag, pflag, sflag, wflag, exflag, proflag;
 int	Mflag, debug;
@@ -84,9 +84,6 @@ main(argc, argv)
 			exflag++;
 		case 'P':
 			pflag++;
-			if (argv[i][1]=='P')
-				fprintf(stderr,
-	"cc: warning: -P option obsolete; you should use -E instead\n");
 			plist[np++] = argv[i];
 		case 'c':
 			cflag++;
@@ -117,7 +114,7 @@ main(argc, argv)
 				error("-B overwrites earlier option", 0);
 			npassname = argv[i]+2;
 			if (npassname[0]==0)
-				npassname = "/usr/c/o";
+				npassname = "/usr/c/";
 			continue;
 		case 'd':
 			if (argv[i][2] == '\0') {
@@ -141,7 +138,7 @@ main(argc, argv)
 	if (npassname && chpass ==0)
 		chpass = "012p";
 	if (chpass && npassname==0)
-		npassname = "/usr/new";
+		npassname = "/usr/new/";
 	if (chpass)
 	for (t=chpass; *t; t++) {
 		switch (*t) {
@@ -281,6 +278,7 @@ nocom:
 	dexit();
 }
 
+void
 idexit()
 {
 

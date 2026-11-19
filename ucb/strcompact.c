@@ -1,17 +1,18 @@
 /*
  *	Program Name:   strcompact.c
- *	Date: February 12, 1994
+ *	Date: March 29, 2026
  *	Author: S.M. Schultz
  *
  *	-----------------   Modification History   ---------------
  *      Version Date            Reason For Modification
- *      1.0     21Jan94         1. Initial release into the public domain.
- *	2.0	12Feb94		2. Rewrite.  Use new utility program 'symdump'
+ *      1.0     21Jan1994       1. Initial release into the public domain.
+ *	2.0	12Feb1994	2. Rewrite.  Use new utility program 'symdump'
  *				   and a multi-key sort to not only create
  *				   shared symbol strings but remove identical
  *				   symbols (identical absolute local symbols 
  *				   are quite common).  Execution speed was
- *				   speed up by about a factor of 4.
+ *				   sped up by about a factor of 4.
+ *	2.1	29Mar2026	3. Minor cleanup.
 */
 
 /*
@@ -35,7 +36,8 @@
 #include <sysexits.h>
 #include <sys/file.h>
 
-	char	*Pgm;
+extern	char	*__progname;
+
 	char	*Sort = "/usr/bin/sort";
 	char	*Symdump = "/usr/ucb/symdump";
 static	char	strfn[32], symfn[32];
@@ -54,37 +56,35 @@ register FILE	*fpin;
 	unsigned short	type, value, ovly;
 	void	cleanup();
 
-	Pgm = argv[0];
 	signal(SIGQUIT, cleanup);
 	signal(SIGINT, cleanup);
 	signal(SIGHUP, cleanup);
 
 	if	(argc != 2)
 		{
-		fprintf(stderr, "%s: missing filename argument\n", Pgm);
+		fprintf(stderr, "%s: need a filename\n", __progname);
 		exit(EX_USAGE);
 		}
 	fpin = fopen(argv[1], "r+");
 	if	(!fpin)
 		{
-		fprintf(stderr, "%s: can not open '%s' for update\n", 
-			Pgm, argv[1]);
+		fprintf(stderr, "%s: can not open '%s' for update\n", __progname, argv[1]);
 		exit(EX_NOINPUT);
 		}
 	if	(fread(&xhdr, 1, sizeof (xhdr), fpin) < sizeof (xhdr.e))
 		{
-		fprintf(stderr, "%s: premature EOF\n", Pgm);
+		fprintf(stderr, "%s: '%s' premature EOF\n", __progname, argv[1]);
 		exit(EX_DATAERR);
 		}
 	if	(N_BADMAG(xhdr.e))
 		{
-		fprintf(stderr, "%s: Bad magic number\n", Pgm);
+		fprintf(stderr, "%s: '%s' Bad magic number\n", __progname, argv[1]);
 		exit(EX_DATAERR);
 		}
 	nsyms = xhdr.e.a_syms / sizeof (struct nlist);
 	if	(!nsyms)
 		{
-		fprintf(stderr, "%s: '%s' stripped\n", Pgm, argv[1]);
+		fprintf(stderr, "%s: '%s' stripped\n", __progname, argv[1]);
 		exit(EX_OK);
 		}
 
@@ -98,7 +98,7 @@ register FILE	*fpin;
 	sortfp = popen(buf1, "r");
 	if	(!sortfp)
 		{
-		fprintf(stderr, "%s: symdump | sort failed\n", Pgm);
+		fprintf(stderr, "%s: '%s' failed\n", __progname, buf1);
 		exit(EX_SOFTWARE);
 		}
 	symfp = fopen(symfn, "w+");

@@ -4,15 +4,13 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)tip.c	5.6 (Berkeley) 10/22/87";
-#endif not lint
+static char sccsid[] = "@(#)tip.c	5.7 (2.11BSD) 2026/5/9";
+#endif
 
 /*
  * tip - UNIX link to other systems
@@ -31,9 +29,9 @@ int bauds[] = {
 };
 
 int	disc = OTTYDISC;		/* tip normally runs this way */
-int	intprompt();
-int	timeout();
-int	cleanup();
+void	intprompt();
+void	timeout();
+void	cleanup();
 char	*sname();
 char	PNbuf[256];			/* This limits the size of a number */
 
@@ -198,6 +196,7 @@ cucommon:
 	/*NOTREACHED*/
 }
 
+void
 cleanup()
 {
 
@@ -281,7 +280,7 @@ prompt(s, p)
 	register char *p;
 {
 	register char *b = p;
-	int (*oint)(), (*oquit)();
+	sig_t oint, oquit;
 
 	stoprompt = 0;
 	oint = signal(SIGINT, intprompt);
@@ -302,6 +301,7 @@ prompt(s, p)
 /*
  * Interrupt service routine during prompting
  */
+void
 intprompt()
 {
 

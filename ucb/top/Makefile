@@ -9,14 +9,11 @@ MANSRC=	top.1
 
 all: top ${MAN}
 
-top: top.o psdb.o
-	cc ${LDFLAGS} -o top top.o psdb.o -lcurses -ltermcap
+top: top.o
+	cc ${LDFLAGS} -o top top.o -lcurses -ltermcap
 
-top.o: top.c psdb.h
+top.o: top.c
 	cc ${CFLAGS} -c top.c
-
-psdb.o: psdb.c psdb.h
-	cc ${CFLAGS} -c psdb.c
 
 top.0: top.1
 	/usr/man/manroff ${MANSRC} > ${MAN}
@@ -26,4 +23,4 @@ install: all
 	install -c -o root -g staff -m 444 ${MAN} /usr/man/cat1
 
 clean:
-	rm -f top.o psdb.o top ${MAN}
+	rm -f top.o top ${MAN}

@@ -1,5 +1,5 @@
 #if	!defined(lint) && defined(DOSCCS)
-static char *sccsid = "@(#)write.c	4.13.2 1996/11/16";
+static char *sccsid = "@(#)write.c	4.13.3 (2.11BSD) 2026/9/21";
 #endif
 /*
  * write to another user
@@ -30,7 +30,7 @@ char	ttybuf[32];
 char	*histtya;
 int	logcnt;
 int	eof();
-int	timout();
+void	timout();
 FILE	*tf;
 
 main(argc, argv)
@@ -195,6 +195,7 @@ cont:
 	}
 }
 
+void
 timout()
 {
 
@@ -236,7 +237,7 @@ out:
 }
 
 sigs(sig)
-	int (*sig)();
+	sig_t sig;
 {
 	register i;
 

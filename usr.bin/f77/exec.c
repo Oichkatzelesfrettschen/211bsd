@@ -1,9 +1,9 @@
+/* "@(#)exec.c 1.1 (2.11BSD) 2026/6/28"; */
+
 #include "defs"
 #include "string_defs"
 
-/*   Logical IF codes
-*/
-
+/*   Logical IF codes */
 
 exif(p)
 expptr p;
@@ -12,8 +12,6 @@ pushctl(CTLIF);
 ctlstack->elselabel = newlabel();
 putif(p, ctlstack->elselabel);
 }
-
-
 
 exelif(p)
 expptr p;
@@ -31,10 +29,6 @@ if(ctlstack->ctltype == CTLIF)
 else	error("elseif out of place", 0,0,EXECERR);
 }
 
-
-
-
-
 exelse()
 {
 if(ctlstack->ctltype==CTLIF)
@@ -48,7 +42,6 @@ if(ctlstack->ctltype==CTLIF)
 
 else	error("else out of place", 0,0,EXECERR);
 }
-
 
 exendif()
 {
@@ -69,8 +62,6 @@ else
 	error("endif out of place", 0,0,EXECERR);
 }
 
-
-
 LOCAL pushctl(code)
 int code;
 {
@@ -84,15 +75,12 @@ for(i = 0 ; i < 4 ; ++i)
 ++blklevel;
 }
 
-
 LOCAL popctl()
 {
 if( ctlstack-- < ctls )
 	error("control stack empty",0,0,FATAL);
 --blklevel;
 }
-
-
 
 LOCAL poplab()
 {
@@ -111,23 +99,14 @@ for(lp = labeltab ; lp < highlabtab ; ++lp)
 		lp->blklevel = blklevel;
 		}
 }
-
 
-
-/*  BRANCHING CODE
-*/
+/*  BRANCHING CODE */
 
 exgoto(lab)
 struct labelblock *lab;
 {
 putgoto(lab->labelno);
 }
-
-
-
-
-
-
 
 exequals(lp, rp)
 register struct primblock *lp;
@@ -153,8 +132,6 @@ else
 	puteq(mklhs(lp), rp);
 	}
 }
-
-
 
 mkstfunct(lp, rp)
 struct primblock *lp;
@@ -189,8 +166,6 @@ for( ; args ; args = args->nextp)
 		}
 }
 
-
-
 excall(name, args, nstars, labels)
 struct hashentry *name;
 struct listblock *args;
@@ -206,8 +181,6 @@ if(nstars > 0)
 	putcmgo(p, nstars, labels);
 else putexpr(p);
 }
-
-
 
 exstop(stop, p)
 int stop;
@@ -249,7 +222,7 @@ else	p = mkstrcon(0, 0);
 
 putexpr( call1(TYSUBR, (stop ? "s_stop" : "s_paus"), p) );
 }
-
+
 /* DO LOOP CODE */
 
 #define DOINIT	par[0]
@@ -259,7 +232,6 @@ putexpr( call1(TYSUBR, (stop ? "s_stop" : "s_paus"), p) );
 #define VARSTEP	0
 #define POSSTEP	1
 #define NEGSTEP	2
-
 
 exdo(range, spec)
 int range;
@@ -339,7 +311,7 @@ ctlstack->dobodylabel = newlabel();
 if( ISCONST(DOLIMIT) )
 	ctlstack->domax = mkconv(dotype, DOLIMIT);
 else
-	ctlstack->domax = mktemp(dotype, NULL);
+	ctlstack->domax = mktmp(dotype, NULL);
 
 if( ISCONST(DOINCR) )
 	{
@@ -350,7 +322,7 @@ if( ISCONST(DOINCR) )
 	}
 else
 	{
-	ctlstack->dostep = mktemp(dotype, NULL);
+	ctlstack->dostep = mktmp(dotype, NULL);
 	ctlstack->dostepsign = VARSTEP;
 	ctlstack->doposlabel = newlabel();
 	ctlstack->doneglabel = newlabel();
@@ -416,8 +388,6 @@ if(dostgp)
 frexpr(dovarp);
 }
 
-
-
 enddo(here)
 int here;
 {
@@ -465,7 +435,7 @@ while(here == dorange)
 			}
 	}
 }
-
+
 exassign(vname, labelval)
 struct nameblock *vname;
 struct labelblock *labelval;
@@ -511,8 +481,6 @@ else
 	}
 }
 
-
-
 LOCAL exar2(op, e, l1, l2)
 int op;
 expptr e;
@@ -521,7 +489,6 @@ int l1, l2;
 putif( mkexpr(op, e, ICON(0)), l2);
 putgoto(l1);
 }
-
 
 exreturn(p)
 register expptr p;
@@ -542,8 +509,6 @@ if(p)
 else
 	putgoto(proctype==TYSUBR ? ret0label : retlabel);
 }
-
-
 
 exasgoto(labvar)
 struct hashentry *labvar;

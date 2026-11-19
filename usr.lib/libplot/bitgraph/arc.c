@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)arc.c	5.2.1 (2.11BSD GTE) 1/1/94";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)arc.c     5.2.2 (2.11BSD) 2026/5/11";
+#endif
 
 
 #include "bg.h"

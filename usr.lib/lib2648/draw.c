@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)draw.c	5.1 (Berkeley) 4/26/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)draw.c     5.2 (2.11BSD) 2026/5/11";
+#endif
 
 /*
  * draw a line from the current place to (x,y).  Such lines are

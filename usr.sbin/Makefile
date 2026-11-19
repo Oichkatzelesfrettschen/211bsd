@@ -1,13 +1,13 @@
 #
 # Public domain - 1996/10/24 - sms
 #
-#	@(#)Makefile	1.5 (2.11BSD) 2025/11/25
+#	@(#)Makefile	1.6 (2.11BSD) 2026/5/13
 
-SUBDIR=	ac accton arp bad144 catman chown chroot cron dev_mkdb \
+SUBDIR=	ac accton arp bad144 chown chroot cron dev_mkdb \
 	edquota inetd \
-	lpr makewhatis mkhosts mklost+found mkproto named nc ntp pstat quot \
+	lpr makewhatis mkhosts named nc ntp pstat quot \
 	quotaon repquota rmt rwhod rxformat sa sendmail sysgen syslogd timed \
-	traceroute trpt trsp update vipw
+	tracebuf traceroute trpt trsp update vipw
 
 all:	${SUBDIR}
 

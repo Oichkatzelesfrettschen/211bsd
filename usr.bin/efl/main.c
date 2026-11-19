@@ -1,11 +1,12 @@
-static char xxxvers[ ] = "\n@(#)EFL VERSION 1.14,  19 AUGUST 1980";
+/*
+ * static char xxxvers[ ] = "@(#)efl 1.15 (2.11BSD) 2026/7/15";
+*/
 
 /* Compiler for the EFL Programming Language.  Written by:
 		Stuart I. Feldman
 		Bell Laboratories
 		Murray Hill, New Jersey
 */
-
 
 /* Flags:
 	-d	EFL debugging output
@@ -17,11 +18,10 @@ static char xxxvers[ ] = "\n@(#)EFL VERSION 1.14,  19 AUGUST 1980";
 	-#	do not pass comments through to output
 */
 
-
 #include "defs"
+#include <signal.h>
 
-int sysflag;
-
+int sysflag	= UNIX;
 int nerrs	= 0;
 int nbad	= 0;
 int nwarns	= 0;
@@ -117,10 +117,6 @@ struct system systab[] =
 	{
 		{ "portable", 0,	1, 10, 7, 15},
 		{ "unix", UNIX,	4, 10, 7, 15 },
-		{ "gcos", GCOS,	4, 10, 7, 15 },
-		{ "gcosbcd", GCOSBCD,	6, 10, 7, 15},
-		{ "cray", CRAY,	8, 10, 7, 15},
-		{ "ibm", IBM,	4, 10, 7, 15 },
 		{ NULL }
 	};
 
@@ -137,18 +133,10 @@ int indifs[MAXINDIFS];
 int nxtindif;
 int afterif	= 0;
 
-#ifdef	gcos
-#	define BIT(n)	(1 << (36 - 1 - n) )
-#	define FORTRAN	BIT(1)
-#	define FDS	BIT(4)
-#	define EXEC	BIT(5)
-#	define FORM	BIT(14)
-#	define LNO	BIT(15)
-#	define BCD	BIT(16)
-#	define OPTZ	BIT(17)
-	int	compile	= FORTRAN | FDS;
-#endif
-
+void intrupt()
+	{
+	done(0);
+	}
 
 main(argc,argv)
 register int argc;
@@ -158,24 +146,8 @@ FILE *fd;
 register char *p;
 int neflnm0;
 
-#ifdef unix
-	int intrupt();
-	sysflag = UNIX;
-
-/*
-	meter();
-*/
-	if( (signal(2,1) & 01) == 0)
-		signal(2, intrupt);
-#endif
-
-#ifdef gcos
-/*
-	meter();
-*/
-	sysflag = (intss() ? GCOS : GCOSBCD);
-#endif
-
+	if	(signal(SIGINT, SIG_IGN) != SIG_IGN)
+		signal(SIGINT, intrupt);
 
 crii();
 --argc;
@@ -237,18 +209,6 @@ while(argc>0 && ( (argv[0][0]=='-' && argv[0][1]!='\0') || eqlstrng(argv[0]) ))
 			nocommentflag = NO;
 			break;
 
-#ifdef gcos
-		case 'O':
-		case 'o':
-			compile |= OPTZ;
-			break;
-
-		case 'E':
-		case 'e':
-			compile = 0;
-			break;
-#endif
-
 		default:
 			fprintf(diagfile, "Illegal EFL flag %c\n", *p);
 			exit(1);
@@ -263,15 +223,6 @@ knowninit();
 init();
 implinit();
 neflnm0 = neflnames;
-
-#ifdef gcos
-	if( intss() )
-		compile = 0;
-	else
-		gcoutf();
-#endif
-
-/*	fprintf(diagfile, "EFL 1.10\n");	*/
 
 if(argc==0)
 	{
@@ -323,25 +274,15 @@ prhisto();
 /* */
 rmiis();
 
-#ifdef gcos
-	gccomp();
-#endif
-
 done(nbad);
 }
 
-
 dofile(fd)
 FILE *fd;
 {
 int k;
 
 fprintf(diagfile, "File %s:\n", filenames[0]);
-
-#ifdef gcos
-	if( fd==stdin && intss() && inquire(stdin, _TTY) )
-		freopen("*src", "rt", stdin);
-#endif
 
 yyin = fileptrs[0] = fd;
 yylineno = filelines[0] = 1;
@@ -409,7 +350,7 @@ do	{
 
 	} while(graal!=PARSEOF && !ateof);
 }
-
+
 ptr bgnproc()
 {
 ptr bgnexec();
@@ -516,67 +457,12 @@ eflftn[TYFIELD] = FTNINT;
 eflftn[TYLCOMPLEX] = FTNDOUBLE;
 }
 
-
-
-
-#ifdef gcos
-meter()
-{
-FILE *mout;
-char *cuserid(), *datime(), *s;
-if(equals(s = cuserid(), "efl")) return;
-mout = fopen("efl/eflmeter", "a");
-if(mout == NULL)
-	fprintf(diagfile,"cannot open meter file");
-
-else	{
-	fprintf(mout, "%s user %s at %s\n",
-		( rutss()? "tss  " : "batch"), s, datime() );
-	fclose(mout);
-	}
-}
-#endif
-
-
-
-#ifdef unix
-meter()	/* temporary metering of non-SIF usage */
-{
-FILE *mout;
-int tvec[2];
-int uid;
-char *ctime(), *p;
-
-uid = getuid() & 0377;
-if(uid == 91) return;	/* ignore sif uses */
-mout = fopen("/usr/sif/efl/Meter", "a");
-if(mout == NULL)
-	fprintf(diagfile, "cannot open meter file");
-else	{
-	time(tvec);
-	p = ctime(tvec);
-	p[16] = '\0';
-	fprintf(mout,"User %d, %s\n",  uid, p+4);
-	fclose(mout);
-	}
-}
-
-intrupt()
-{
-done(0);
-}
-#endif
-
-
 done(k)
 int k;
 {
 rmiis();
 exit(k);
 }
-
-
-
 
 
 /* if string has an embedded equal sign, set option with it*/
@@ -597,66 +483,3 @@ for(t = s; *t; ++t)
 
 return(NO);
 }
-
-#ifdef gcos
-
-/* redirect output unit */
-
-gcoutf()
-{
-if (!intss())
-	{
-	fputs("\t\t    Version 2.10 : read INFO/EFL (03/27/80)\n", stderr);
-	if (compile)
-		{
-		static char name[80] = "s*", opts[20] = "yw";
-		char *opt = (char *)inquire(stdout, _OPTIONS);
-		if (!strchr(opt, 't'))
-			{ /* if stdout is diverted */
-			sprintf(name, "%s\"s*\"",
-				(char *)inquire(stdout, _FILENAME));
-			strcpy(&opts[1], opt);
-			}
-		if (freopen(name, opts, stdout) == NULL)
-			cant(name);
-		}
-	}
-}
-
-
-
-/* call in fortran compiler if necessary */
-
-gccomp()
-{
-if (compile)
-	{
-	if (nbad > 0)	/* abort */
-		cretsw(EXEC);
-
-	else	{ /* good: call forty */
-		FILE *dstar; /* to intercept "gosys" action */
-
-		if ((dstar = fopen("d*", "wv")) == NULL)
-			cant("d*");
-		fputs("$\tforty\tascii", dstar);
-		if (fopen("*1", "o") == NULL)
-			cant("*1");
-		fclose(stdout, "rl");
-		cretsw(FORM | LNO | BCD);
-		if (! tailor.ftncontnu)
-			compile |= FORM;
-		csetsw(compile);
-		gosys("forty");
-		}
-	}
-}
-
-
-cant(s)
-char *s;
-{
-ffiler(s);
-done(1);
-}
-#endif

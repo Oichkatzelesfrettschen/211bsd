@@ -1,3 +1,7 @@
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)mkmanifest.c 2.1 (2.11BSD) 2026/3/21";
+#endif
+
 /*
  * A program to create a manifest (shiping list) that is a shell script
  * to return a Unix file name to it's original state after it has been
@@ -6,20 +10,17 @@
  *	This code also used in arc, mtools, and pcomm
  */
 
-#ifdef BSD
-#define strrchr rindex
-#endif /* BSD */
-
 #include <stdio.h>
 #include <ctype.h>
+#include <string.h>
+#include <strings.h>
 
 main(argc, argv)
 int argc;
 char *argv[];
 {
 	int i;
-	char *name, *new_name, *dos_name(), *strrchr();
-	void exit();
+	char *name, *new_name, *dos_name();
 
 	if (argc == 1) {
 		fprintf(stderr, "Usage: mkmanifest <list-of-files>\n");
@@ -47,7 +48,7 @@ char *name;
 {
 	static char *dev[9] = {"con", "aux", "com1", "com2", "lpt1", "prn",
 	"lpt2", "lpt3", "nul"};
-	char *s, *temp, *ext, *strcpy(), *strpbrk(), *strcat();
+	register char *s, *temp, *ext;
 	char buf[15];
 	int i, dot;
 	static char ans[13];
@@ -94,28 +95,3 @@ char *name;
 	}
 	return(ans);
 }
-
-#ifdef BSD
-/*
- * Return ptr to first occurrence of any character from `brkset'
- * in the character string `string'; NULL if none exists.
- */
-
-char *
-strpbrk(string, brkset)
-register char *string, *brkset;
-{
-	register char *p;
-
-	if (!string || !brkset)
-		return(0);
-	do {
-		for (p = brkset; *p != '\0' && *p != *string; ++p)
-			;
-		if (*p != '\0')
-			return(string);
-	}
-	while (*string++);
-	return(0);
-}
-#endif /* BSD */

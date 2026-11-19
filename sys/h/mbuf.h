@@ -9,7 +9,7 @@
  * software without specific prior written permission. This software
  * is provided ``as is'' without express or implied warranty.
  *
- *	@(#)mbuf.h	7.8.2 (2.11BSD GTE) 12/31/93
+ *	@(#)mbuf.h	7.8.3 (2.11BSD) 2026/7/16
  */
 
 /*
@@ -102,13 +102,14 @@ struct mbuf {
 #define	MGET(m, i, t) \
 	{ int ms = splimp(); \
 	  if ((m)=mfree) \
-		{ if ((m)->m_type != MT_FREE) panic("mget"); (m)->m_type = t; \
+		{ if ((m)->m_type != MT_FREE) panic(mgetStr); (m)->m_type = t; \
 		  mbstat.m_mtypes[MT_FREE]--; mbstat.m_mtypes[t]++; \
 		  mfree = (m)->m_next; (m)->m_next = 0; \
 		  (m)->m_off = MMINOFF; } \
 	  else \
 		(m) = m_more((((ms&0340) <= 0100) && (i==M_DONTWAIT)) ? M_DONTWAITLONG : i, t); \
 	  splx(ms); }
+
 /*
  * Mbuf page cluster macros.
  * MCLALLOC allocates mbuf page clusters.
@@ -150,7 +151,7 @@ struct mbuf {
 	}
 #define	MFREE(m, n) \
 	{ int ms = splimp(); \
-	  if ((m)->m_type == MT_FREE) panic("mfree"); \
+	  if ((m)->m_type == MT_FREE) panic(mfreeStr); \
 	  mbstat.m_mtypes[(m)->m_type]--; mbstat.m_mtypes[MT_FREE]++; \
 	  (m)->m_type = MT_FREE; \
 	  if (M_HASCL(m)) { \
@@ -188,6 +189,15 @@ struct	mbuf *mfree, *mclfree;
 char	mclrefcnt[NMBCLUSTERS + 1];
 int	m_want;
 struct	mbuf *m_get(),*m_getclr(),*m_free(),*m_more(),*m_copy(),*m_pullup();
+
+/*
+ * These are defined in uipc_mbuf.c
+ * 
+ * Each MGET() used 5 bytes of D space for the panic string.  Each MFREE()
+ * used 6 bytes.
+*/
+extern	char	mgetStr[], mfreeStr[];
+
 #ifndef	pdp11
 caddr_t	m_clalloc();
 #endif

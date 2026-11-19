@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)gethostname.2	6.4 (Berkeley) 5/22/86
+.\"	@(#)gethostname.2	6.5 (2.11BSD) 2026/9/20
 .\"
 .TH GETHOSTNAME 2 "May 22, 1986"
 .UC 5
@@ -11,20 +11,20 @@ gethostname, sethostname \- get/set name of current host
 .SH SYNOPSIS
 .nf
 .ft B
-gethostname(name, namelen)
-char *name;
-int namelen;
-.PP
-.ft B
-sethostname(name, namelen)
-char *name;
-int namelen;
+#include <unistd.h>
+
+int
+gethostname(\fIchar *name\fP, \fIint namelen\fP)
+
+int
+sethostname(\fIchar *name\fP, \fIint namelen\fP)
+.ft R
 .fi
 .SH DESCRIPTION
-.I Gethostname
+.B gethostname
 returns the standard host name for the current processor, as
 previously set by
-.IR sethostname . 
+.BR sethostname . 
 The parameter
 .I namelen
 specifies the size of the 
@@ -32,7 +32,7 @@ specifies the size of the
 array.  The returned name is null-terminated unless insufficient
 space is provided.
 .PP
-.I Sethostname
+.B sethostname
 sets the name of the host machine to be
 .IR name ,
 which has length

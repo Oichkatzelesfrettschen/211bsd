@@ -3,66 +3,19 @@
 #	@(#)netstart	5.5 (2.11BSD) 2026/1/12
 
 INET=`testnet`
+
 if [ $INET = YES ]; then
 	echo Assuming NETWORKING system ...		>/dev/console 2>&1
 else
 	echo Assuming non-networking system ...		>/dev/console 2>&1
 fi
-export INET
-
-# DON'T EVEN THINK ABOUT RUNNING ROUTED ON A PDP-11!!!  Just set routedflags
-# to "NO" and set up a default gateway below.
-#
-routedflags=NO
-rwhod=YES
-named=NO
-
-# Host definitions and network interface selection. IMPORTANT: The values
-# set here also require changes to /etc/hosts and /etc/resolv.conf
-
-# hostname is the symbolic name of this host (address set in /etc/hosts)
-# netmask is network mask, generally assigned by your ISP or router
-# Broadcast is the broadcast address for your local LAN, generally assigned
-#	by your ISP or router
-# gateway should be set to the IP address where this host will send packets
-#	to hosts not on your local LAN, generally assigned by your ISP or
-#	router
-#
-
-hostname=211bsd.example.com
-netmask=255.255.255.0
-broadcast=192.168.0.255
-gateway=192.168.0.1
 
 hostname $hostname					>/dev/console 2>&1
 hostid $hostname					>/dev/console 2>&1
 
 if [ $INET = YES ]; then
-	# Un-comment the ifconfig line below for your specific network adapter
-	#
-	# DEC DEUNA/DELUA Unibus Ethernet
-	# ifconfig de0 inet netmask $netmask $hostname broadcast $broadcast up >/dev/console 2>&1
-	#
-	# DEC DEQNA Q-bus Ethernet
-	# ifconfig qe0 inet netmask $netmask $hostname broadcast $broadcast up >/dev/console 2>&1
-	#
-	# DEC DELQA/DEQTA improved Q-bus Ethernet (missing manpage)
-	# ifconfig qt0 inet netmask $netmask $hostname broadcast $broadcast up >/dev/console 2>&1
-	#
-	# It is very unlikely you will have any of the following, many of which
-	# have received limited (or no) testing in recent 2BSD releases
-	#
-	# ARPAnet IMP 1822 interface (limited manpage, API only)
-	# ifconfig imp0 inet netmask $netmask $hostname broadcast $broadcast up >/dev/console 2>&1
-	# 
-	# Xerox 3 Mb/s Ethernet
-	# ifconfig en0 inet netmask $netmask $hostname broadcast $broadcast up >/dev/console 2>&1
-	#
-	# 3Com 10 Mb/s Ethernet
-	# ifconfig ec0 inet netmask $netmask $hostname broadcast $broadcast up >/dev/console 2>&1
-	#
-	# Interlan NI1010 10 Mb/s Ethernet
-	# ifconfig il0 inet netmask $netmask $hostname broadcast $broadcast up >/dev/console 2>&1
+	ifconfig $interface inet netmask $netmask $address up >/dev/console 2>&1
+
 	#
 	# SLIP (Serial Line Internet Protocol) (missing manpage)
 	# The first address is your local IP address, the second is the address
@@ -70,11 +23,12 @@ if [ $INET = YES ]; then
 	# ifconfig sl0 inet 192.254.254.2 192.254.254.1 -arp >/dev/console 2>&1
 	# slattach /dev/ttyS6 9600
 	#
-	# Loopback interface, should always be left alone
+	# Loopback interface. Leave this line alone.
 	ifconfig lo0 inet localhost up >/dev/console 2>&1
 
-	# This is not routing (as warned about above), just definitions of
-	# where to send packets, should always be left alone
-	route add $hostname localhost 0		>/dev/console 2>&1
-	route add default $gateway 1		>/dev/console 2>&1
+	# This is not routing, as explained in rc.conf. Leave these lines alone.
+	route add $address localhost 0		>/dev/console 2>&1
+	if [ ${gateway-NO} != NO ]; then
+		route add default $gateway 1		>/dev/console 2>&1
+	fi
 fi

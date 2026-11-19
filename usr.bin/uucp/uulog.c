@@ -1,22 +1,16 @@
-#ifndef lint
-static char sccsid[] = "@(#)uulog.c	5.4 (Berkeley) 6/23/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)uulog.c	5.5 (2.11BSD) 2026/5/9";
 #endif
 
 #include "uucp.h"
-
-#ifndef	SYSBUF
-static char SYSBUF[BUFSIZ];
-#endif
 
 main(argc, argv)
 char *argv[];
 {
 	FILE *plogf;
 	char *sys, *user;
-
 	char buf[BUFSIZ], u[64], s[64];
 
-	setbuf(stdout, SYSBUF);
 	strcpy(Progname, "uulog");
 	sys = user = NULL;
 

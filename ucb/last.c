@@ -4,15 +4,13 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)last.c	5.3 (Berkeley) 5/15/86";
-#endif not lint
+static char sccsid[] = "@(#)last.c	5.4 (2.11BSD) 2026/5/8";
+#endif
 
 /*
  * last
@@ -21,6 +19,7 @@ static char sccsid[] = "@(#)last.c	5.3 (Berkeley) 5/15/86";
 #include <stdio.h>
 #include <signal.h>
 #include <sys/stat.h>
+#include <time.h>
 #include <utmp.h>
 
 #define NMAX	sizeof(buf[0].ut_name)
@@ -42,8 +41,8 @@ struct	utmp buf[128];
 char	ttnames[MAXTTYS][LMAX+1];
 long	logouts[MAXTTYS];
 
-char	*ctime(), *strspl();
-int	onintr();
+char	*strspl();
+void	onintr();
 
 main(ac, av)
 	char **av;
@@ -182,6 +181,7 @@ main(ac, av)
 	exit(0);
 }
 
+void
 onintr(signo)
 	int signo;
 {

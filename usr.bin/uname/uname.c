@@ -36,15 +36,14 @@ static char copyright[] =
 "@(#) Copyright (c) 1993\n\
 	The Regents of the University of California.  All rights reserved.\n";
 
-static char sccsid[] = "@(#)uname.c	8.1.1 (2.11BSD GTE) 2/4/95";
-#endif /* not lint */
+static char sccsid[] = "@(#)uname.c	8.1.2 (2.11BSD) 2026/9/24";
+#endif
 
 #include <sys/param.h>
 #include <sys/sysctl.h>
-
 #include <stdio.h>
-
-extern	int	optind;
+#include <stdlib.h>
+#include <err.h>
 
 void usage();
 
@@ -156,6 +155,5 @@ main(argc, argv)
 void
 usage()
 {
-	(void)fprintf(stderr, "usage: uname [-amnrsv]\n");
-	exit(1);
+	errx(1, "usage: uname [-amnrsv]");
 }

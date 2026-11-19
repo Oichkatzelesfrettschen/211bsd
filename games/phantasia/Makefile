@@ -1,9 +1,5 @@
-# Makefile for Phantasia 3.3 (1.4 2.11BSD - 2025/11/25)
+# Makefile for Phantasia 3.3 (1.5 2.11BSD - 2026/7/12)
 
-# MODIFIED TO COMPILE WITHOUT 'XSTR'.
-
-# To create game:
-#
 # 1)  Set up a directory where the game and its support files will live.
 #        (It is suggested that the source be kept somewhere else.)
 # 2)  Set up the variables in Makefile to reflect your particular situation.
@@ -11,17 +7,12 @@
 #        code to restrict access at certain times.
 # 4)  'make install' and watch it fly.
 
-RM =		-rm
-
-# Add '-ljobs' to LIBS if 4.1bsd
 LIBS =		-lm -lcurses -ltermlib
-# May need '-I/usr/include/sys' for 4.2bsd
 CFLAGS =	-I. -Dpdp11
 LDFLAGS=	-i
 
-# DEST is where the program and its support files reside
-#   If this changes then the symbolic link in the 'install' target must change.
-DEST =		/usr/games/lib/phantasia
+# DEST is where the support files reside
+DEST =	/usr/games/lib/phantasia
 
 # The following are program constants which are implementation dependent.
 #
@@ -33,58 +24,32 @@ DEST =		/usr/games/lib/phantasia
 #		32768.0		(for 15 bit rand())
 #		65536.0		(for 16 bit rand())
 #		2147483648.0	(for 31 bit rand())
-# ACCESS is fopen() access to open a file for writing, but no
-#	clearing the file,  e.g. "a", or "r+".  (Use "r+" if you have it.)
+#
 # define OK_TO_PLAY to restrict playing access.  Also see function ok_to_play()
 #	in main.c, and tailor to your own needs.
 # define ENEMY to include code for checking of a 'hit list' of resricted 
 #	accounts.  The list of logins goes in the file 'enemy'.
-# define BSD41 for 4.1bsd
-# define BSD42 for 4.2bsd
-# define USG3 for System III, or similar
-# define USG5 for System V
+
 FLAGS = 	-DPATH=\"${DEST}\" \
 		-DWIZARD=\"daemon\" \
 		-DUID=1 \
 		-DRAND=32768.0 \
-		-DACCESS=\"r+\" \
-		-DENEMY \
-		-DBSD42
+		-DENEMY
 
 OFILES =	main.o func0.o func1.o func2.o
 NOOPT=		fight.o
 
 all:		phantasia setfiles phant.help phantasia.0
 
-# need separate i/d space on small machines
-#phantasia:	${OFILES} ${NOOPT} strings.o
 phantasia:	${OFILES} ${NOOPT}
-#		${CC} ${OFILES} ${NOOPT} strings.o ${LIBS} -o phantasia
-		-if [ X${LDFLAGS} = "X-i" ]; then \
-			${CC} main.o fight.o -Z func0.o -Z func1.o \
-				-Z func2.o -Y ${LIBS} -i -o phantasia; \
-		elif [ X${LDFLAGS} = "X-n" ]; then \
-			@echo "Need overlay scheme (HA!)"; \
-		else \
-			${CC} ${OFILES} ${NOOPT} ${LIBS} -o phantasia; \
-		fi
+		${CC} main.o fight.o -Z func0.o -Z func1.o \
+			-Z func2.o -Y ${LIBS} -i -o phantasia
 
 ${OFILES}:	phant.h
 		${CC} -O -c ${CFLAGS} ${FLAGS} $*.c
-#		${CC} -E ${CFLAGS} ${FLAGS} $*.c | ${XSTR} -c -
-#		${CC} -O -c ${CFLAGS} x.c
-#		mv x.o $*.o
 
 ${NOOPT}:	phant.h
 		${CC} -c ${CFLAGS} ${FLAGS} $*.c
-#		${CC} -E ${CFLAGS} ${FLAGS} $*.c | ${XSTR} -c -
-#		${CC} -c ${CFLAGS} x.c
-#		mv x.o $*.o
-
-strings.o:	${OFILES} ${NOOPT} strings
-		${XSTR}
-		${CC} -c xs.c
-		mv xs.o strings.o
 
 setfiles:	phant.h setfiles.c
 		${CC} ${CFLAGS} ${FLAGS} setfiles.c -o setfiles -lm
@@ -93,22 +58,17 @@ setfiles:	phant.h setfiles.c
 phant.help:	phant.nr
 		tbl -TX phant.nr | nroff -man -Ttn300 > phant.help
 
-# DO NOT use an absolute pathname in the symbolic link below.  Figure out
-#   what the relative path is.
-
-install:	all phantasia.0
-	rm -f /usr/games/phantasia
-	ln -s lib/phantasia/phantasia /usr/games/phantasia
+install:	all
+	install -c -s -m 4711 -o daemon phantasia /usr/games
 	-mkdir ${DEST}
-	cp phantasia monsters phant.help ${DEST}
 	chmod 755 ${DEST}
-	chmod 4711 ${DEST}/phantasia
-	chmod 644 ${DEST}/phant.help
+	install -c -m 444  monsters phant.help ${DEST}
 	./setfiles
 	install -c -m 444 -o root -g staff  phantasia.0 /usr/man/cat6
+	chown -R daemon ${DEST}
 
 phantasia.0: phant.nr
 	/usr/man/manroff phant.nr > phantasia.0
 
 clean:
-	${RM} -f *.o phantasia phant.help strings x.c xs.c setfiles phantasia.0
+	rm -f *.o phantasia phant.help strings setfiles phantasia.0

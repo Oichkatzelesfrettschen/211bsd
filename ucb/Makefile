@@ -3,14 +3,14 @@
 # All rights reserved.  The Berkeley software License Agreement
 # specifies the terms and conditions for redistribution.
 #
-#	@(#)Makefile	5.19 (2.11BSD) 2025/11/25
+#	@(#)Makefile	5.20 (2.11BSD) 2026/9/13
 #
 CFLAGS=	-O
 LDFLAGS= -i
 
 # Programs that live in subdirectories, and have makefiles of their own.
 #
-SUBDIR=	Mail compress error ex finger ftp indent lock man \
+SUBDIR=	Mail compress error ex finger ftp indent lock man mkstr \
 	more msgs netstat pascal rdist rlogin sendbug talk tftp \
 	tn3270 top tset vgrind window
 
@@ -22,14 +22,14 @@ CSHSCRIPT= which
 # explicit make lines.
 #
 STD=	apply biff checknr colcrt colrm ctags expand fold \
-	from grep head last lastcomm leave logger mkstr \
-	printenv ruptime rwho sccs script soelim strings strcompact \
-	symcompact symdump symorder tail tcopy telnet unexpand unifdef users \
+	from head last lastcomm leave logger \
+	printenv ruptime rwho script soelim strings strcompact \
+	symdump symorder tail tcopy telnet unexpand unifdef users \
 	whois what wc xstr yes
 
 # C programs that live in the current directory and need explicit make lines.
 #
-NSTD=	clear ul vacation
+NSTD=	clear ul vacation symcompact
 
 # Programs that must run setuid to root
 #
@@ -96,6 +96,9 @@ clear:
 
 ul:
 	${CC} -o ul ${LDFLAGS} ${CFLAGS} ul.c -ltermlib
+
+symcompact:
+	${CC} -o symcompact ${LDFLAGS} ${CFLAGS} symcompact.c -lvmf
 
 vacation: vacation.c
 	${CC} -o vacation ${LDFLAGS} ${CFLAGS} vacation.c -ldbm

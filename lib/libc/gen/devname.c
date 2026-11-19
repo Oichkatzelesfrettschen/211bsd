@@ -32,14 +32,17 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)devname.c	8.1.1 (2.11BSD GTE) 2/3/95";
-#endif /* LIBC_SCCS and not lint */
+static char sccsid[] = "@(#)devname.c	8.1.2 (2.11BSD) 2026/5/27";
+#endif
 
 #include <sys/types.h>
 #include <ndbm.h>
 #include <fcntl.h>
 #include <paths.h>
 #include <stdio.h>
+
+	static DBM *db;
+	static int failure;
 
 char *
 devname(dev, type)
@@ -51,8 +54,6 @@ devname(dev, type)
 		dev_t dev;
 	} bkey;
 	char	*devdb = _PATH_DEVDB;
-	static DBM *db;
-	static int failure;
 	datum data, key;
 
 	if (!db && !failure &&
@@ -76,3 +77,20 @@ devname(dev, type)
 	data = dbm_fetch(db, key);
 	return(data.dptr == NULL ? "??" : (char *)data.dptr);
 }
+
+/*
+ * New for 2.11BSD 35th Anniversary Edition.  
+ *
+ * Programs such as 'top' need to map dev_t(s) to name(s) at startup but have
+ * high D space needs.  This interface frees the DBM memory for other uses.
+*/
+
+void
+devname_close()
+	{
+
+	if	(db)
+		dbm_close(db);
+	db = NULL;
+	failure = 0;
+	}

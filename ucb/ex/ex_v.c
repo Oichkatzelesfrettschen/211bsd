@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char *sccsid = "@(#)ex_v.c	7.8.2 (2.11BSD) 2025/3/14";
+static char *sccsid = "@(#)ex_v.c	7.8.3 (2.11BSD) 2026/9/22";
 #endif
 
 #include "ex.h"
@@ -55,7 +55,7 @@ static char *sccsid = "@(#)ex_v.c	7.8.2 (2.11BSD) 2025/3/14";
  */
 
 jmp_buf venv;
-int	winch();
+void	winch();
 
 /*
  * Enter open mode
@@ -380,6 +380,7 @@ vok(atube)
 }
 
 #ifdef CBREAK
+void
 vintr()
 {
 	extern jmp_buf readbuf;
@@ -417,6 +418,7 @@ vsetsiz(size)
 	basWLINES = WBOT - b + 1;
 }
 
+void
 winch()
 {
 	vsave();

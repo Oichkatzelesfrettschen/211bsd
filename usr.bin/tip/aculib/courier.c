@@ -5,7 +5,7 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)courier.c	5.2.1 (2.11BSD GTE) 1/1/94";
+static char sccsid[] = "@(#)courier.c	5.2.2 (2.11BSD) 2026/9/21";
 #endif
 
 #define write cour_write
@@ -18,7 +18,7 @@ static char sccsid[] = "@(#)courier.c	5.2.1 (2.11BSD GTE) 1/1/94";
 
 #define	MAXRETRY	5
 
-static	int sigALRM();
+static	void sigALRM();
 static	int timeout = 0;
 static	int connected = 0;
 static	jmp_buf timeoutbuf, intbuf;
@@ -93,7 +93,7 @@ cour_abort()
 	cour_disconnect();
 }
 
-static int
+static void
 sigALRM()
 {
 	printf("\07timeout waiting for reply\n");
@@ -106,7 +106,7 @@ cour_swallow(match)
   register char *match;
   {
 	char c;
-	int (*f)();
+	sig_t f;
 
 	f = signal(SIGALRM, sigALRM);
 	timeout = 0;
@@ -154,7 +154,7 @@ cour_connect()
 	struct sgttyb sb;
 	char dialer_buf[64];
 	struct baud_msg *bm;
-	int (*f)();
+	sig_t f;
 
 	if (cour_swallow("\r\n") == 0)
 		return (0);
@@ -323,7 +323,7 @@ static int ringring;
 cour_nap()
 {
 	
-	int cour_napx();
+	void cour_napx();
 	long omask;
         struct itimerval itv, oitv;
         register struct itimerval *itp = &itv;
@@ -348,7 +348,7 @@ cour_nap()
 	(void) sigsetmask(omask);
 }
 
-static
+static void
 cour_napx()
 {
         ringring = 1;

@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)open.c	5.2 (Berkeley) 4/30/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)open.c     5.3 (2.11BSD) 2026/5/11";
+#endif
 
 
 /*
@@ -24,7 +24,7 @@ double scale = 1.0;
 
 openpl()
 {
-	int closepl();
+	sig_t closepl;
 
 	/* catch interupts */
 	signal(SIGINT, closepl);

@@ -2,9 +2,9 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)tip.1c	6.3 (Berkeley) 5/5/86
+.\"	@(#)tip.1	6.4 (2.11BSD) 2026/9/28
 .\"
-.TH TIP 1C "May 5, 1986"
+.TH TIP 1 "May 5, 1986"
 .UC 4
 .SH NAME
 tip, cu \- connect to a remote system
@@ -40,21 +40,21 @@ phone-number
 .B \-#
 ]
 .SH DESCRIPTION
-.I Tip
+.B tip
 and
-.I cu
+.B cu
 establish a full-duplex connection to another machine,
 giving the appearance of being logged in directly on the
 remote cpu.  It goes without saying that you must have a login
 on the machine (or equivalent) to which you wish to connect.
 The preferred interface is
-.IR tip .
+.bR tip .
 The
-.I cu
+.B cu
 interface is included for those people attached to the
 ``call UNIX'' command of version 7.  This manual page
 describes only 
-.IR tip .
+.BR tip .
 .PP
 Typed characters are normally transmitted directly to the remote
 machine (which does the echoing as well).  A tilde (`~') appearing
@@ -76,19 +76,19 @@ return you to tip).
 .TP 10
 .B ~>
 Copy file from local to remote.
-.I Tip
+.B tip
 prompts for the name of a local file to transmit.
 .TP 10
 .B ~<
 Copy file from remote to local.
-.I Tip
+.B tip
 prompts first for the name of the file to be sent, then for
 a command to be executed on the remote machine.
 .TP 10
 \fB~p\fP \fIfrom\fP [ \fIto\fP ]
 Send a file to a remote UNIX host.  The put command causes the remote UNIX
 system to run the command string ``cat > 'to''', while
-.I tip
+.B tip
 sends it the ``from''
 file.  If the ``to'' file isn't specified the ``from'' file name is used.
 This command is actually a UNIX specific version of the ``~>'' command.
@@ -99,7 +99,7 @@ As in the put command the ``to'' file
 defaults to the ``from'' file name if it isn't specified. 
 The remote host
 executes the command string ``cat 'from';echo ^A'' to send the file to
-.IR tip .
+.BR tip .
 .TP 10
 .B ~|
 Pipe the output from a remote command to a local UNIX process.
@@ -113,7 +113,7 @@ The command string sent to the local UNIX system is processed by the shell.
 Send a BREAK to the remote system. 
 For systems which don't support the
 necessary
-.I ioctl
+.B ioctl
 call the break is simulated by a sequence of line speed changes
 and DEL characters.
 .TP 10
@@ -122,54 +122,54 @@ Set a variable (see the discussion below).
 .TP 10
 .B ~^Z
 Stop
-.I tip
+.B tip
 (only available with job control).
 .TP 10
 .B ~^Y
 Stop only the ``local side'' of
-.I tip
+.B tip
 (only available with job control);
 the ``remote side'' of
-.IR tip ,
+.BR tip ,
 the side that displays output from the remote host, is left running.
 .TP 10
 .B ~?
 Get a summary of the tilde escapes
 .sp
 .PP
-.I Tip
+.B tip
 uses the file /etc/remote to find how to reach a particular
 system and to find out how it should operate while talking
 to the system;
 refer to
-.IR remote (5)
+.BR remote (5)
 for a full description.
 Each system has a default baud rate with which to
 establish a connection.  If this value is not suitable, the baud rate
 to be used may be specified on the command line, e.g. ``tip -300 mds''.
 .PP
 When
-.I tip
+.B tip
 establishes a connection it sends out a
 connection message to the remote system; the default value, if any,
 is defined in /etc/remote.
 .PP
 When
-.I tip
+.B tip
 prompts for an argument (e.g. during setup of
 a file transfer) the line typed may be edited with the standard
 erase and kill characters.  A null line in response to a prompt,
 or an interrupt, will abort the dialogue and return you to the
 remote machine.
 .PP
-.I Tip
+.B tip
 guards against multiple users connecting to a remote system
 by opening modems and terminal lines with exclusive access,
 and by honoring the locking protocol used by
-.IR uucp (1C).
+.BR uucp (1).
 .PP
 During file transfers 
-.I tip
+.B tip
 provides a running count of the number of lines transferred.
 When using the ~> and ~< commands, the ``eofread'' and ``eofwrite''
 variables are used to recognize end-of-file when reading, and
@@ -177,15 +177,15 @@ specify end-of-file when writing (see below).  File transfers
 normally depend on tandem mode for flow control.  If the remote
 system does not support tandem mode, ``echocheck'' may be set
 to indicate
-.I tip
+.B tip
 should synchronize with the remote system on the echo of each
 transmitted character.
 .PP
 When
-.I tip
+.B tip
 must dial a phone number to connect to a system it will print
 various messages indicating its actions.
-.I Tip
+.B tip
 supports the DEC DN-11 and Racal-Vadic 831 auto-call-units;
 the DEC DF02 and DF03, Ventel 212+, Racal-Vadic 3451, and
 Bizcomp 1031 and 1032 integral call unit/modems.
@@ -193,7 +193,7 @@ Bizcomp 1031 and 1032 integral call unit/modems.
 .SM
 .B VARIABLES
 .PP
-.I Tip
+.B tip
 maintains a set of
 .I variables
 which control its operation.
@@ -201,9 +201,9 @@ Some of these variable are read-only to normal users (root is allowed
 to change anything of interest).  Variables may be displayed
 and set through the ``s'' escape.  The syntax for variables is patterned
 after
-.IR vi (1)
+.BR vi (1)
 and
-.IR Mail (1).
+.BR Mail (1).
 Supplying ``all''
 as an argument to the set command displays all variables readable by
 the user.  Alternatively, the user may request display of a particular
@@ -222,7 +222,7 @@ Variables may be initialized at run time by placing set commands
 in one's home directory).  The
 .B \-v
 option causes
-.I tip
+.B tip
 to display the sets as they are made.
 Certain common variables have abbreviations. 
 The following is a list of common variables,
@@ -267,7 +267,7 @@ a ~> file transfer command; abbreviated
 .B eol
 .br
 (str) The set of characters which indicate an end-of-line.
-.I Tip
+.B tip
 will recognize escape characters only after an end-of-line.
 .TP
 .B escape
@@ -318,7 +318,7 @@ default value is
 .IR off .
 When this mode is enabled, all lower case letters will be mapped to
 upper case by
-.I tip
+.B tip
 for transmission to the remote machine.
 .TP
 .B raisechar
@@ -345,7 +345,7 @@ When
 .I script
 is 
 .IR true ,
-.I tip
+.B tip
 will record everything transmitted by the remote machine in
 the script record file specified in
 .IR record .
@@ -373,7 +373,7 @@ Each tab is expanded to 8 spaces.
 default is 
 .IR true .
 When verbose mode is enabled, 
-.I tip
+.B tip
 prints messages while dialing, shows the current number
 of lines transferred during a file transfer operations,
 and more.

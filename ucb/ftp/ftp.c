@@ -16,7 +16,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)ftp.c	5.30 (2.11BSD) 2025/12/26";
+static char sccsid[] = "@(#)ftp.c	5.31 (2.11BSD) 2026/9/21";
 #endif
 
 #include <sys/param.h>
@@ -223,6 +223,7 @@ login(host)
 	return (1);
 }
 
+void
 cmdabort()
 {
 	extern jmp_buf ptabort;
@@ -238,7 +239,8 @@ cmdabort()
 command(char *fmt, ...)
 {
 	va_list ap;
-	int r, (*oldintr)(), cmdabort();
+	int r;
+	sig_t oldintr, cmdabort;
 
 	abrtflag = 0;
 	if (debug) {
@@ -254,7 +256,7 @@ command(char *fmt, ...)
 		code = -1;
 		return (0);
 	}
-	oldintr = signal(SIGINT,cmdabort);
+	oldintr = signal(SIGINT, cmdabort);
 	va_start(ap, fmt);
 	vfprintf(cout, fmt, ap);
 	va_end(ap);
@@ -263,7 +265,7 @@ command(char *fmt, ...)
 	cpend = 1;
 	r = getreply(!strcmp(fmt, "QUIT"));
 	if (abrtflag && oldintr != SIG_IGN)
-		(*oldintr)();
+		(*oldintr)(0);
 	(void) signal(SIGINT, oldintr);
 	return(r);
 }
@@ -278,7 +280,8 @@ getreply(expecteof)
 	register int c, n;
 	register int dig;
 	register char *cp;
-	int originalcode = 0, continuation = 0, (*oldintr)(), cmdabort();
+	int originalcode = 0, continuation = 0;
+	sig_t oldintr, cmdabort;
 	int pflag = 0;
 	char *pt = pasv;
 
@@ -368,7 +371,7 @@ getreply(expecteof)
 		if (code == 421 || originalcode == 421)
 			lostpeer();
 		if (abrtflag && oldintr != cmdabort && oldintr != SIG_IGN)
-			(*oldintr)();
+			(*oldintr)(0);
 		return (n - '0');
 	}
 }
@@ -402,9 +405,10 @@ sendrequest(cmd, local, remote, printnames)
 	char *cmd, *local, *remote;
 	int printnames;
 {
-	FILE *fin, *dout = 0, *popen();
-	int (*closefunc)(), pclose(), fclose(), (*oldintr)(), (*oldintp)();
-	int abortsend();
+	FILE *fin, *dout = 0;
+	int (*closefunc)();
+	sig_t oldintr, oldintp;
+	sig_t abortsend;
 	char buf[BUFSIZ], *bufp;
 	long bytes = 0, hashbytes = HASHBYTES;
 	register int c, d;
@@ -647,8 +651,9 @@ recvrequest(cmd, local, remote, mode, printnames)
 	char *cmd, *local, *remote, *mode;
 {
 	FILE *fout, *din = 0, *popen();
-	int (*closefunc)(), pclose(), fclose(), (*oldintr)(), (*oldintp)(); 
-	int abortrecv(), oldverbose, oldtype = 0, is_retr, tcrflag, nfnd;
+	int (*closefunc)();
+	sig_t oldintr, oldintp, abortrecv;
+	int oldverbose, oldtype = 0, is_retr, tcrflag, nfnd;
 	char *bufp, *gunique(), msg;
 	static char *buf;
 	static long bufsize;
@@ -1209,6 +1214,7 @@ tvsub(tdiff, t1, t0)
 		tdiff->tv_sec--, tdiff->tv_usec += 1000000;
 }
 
+void
 psabort()
 {
 	extern int abrtflag;
@@ -1220,7 +1226,7 @@ pswitch(flag)
 	int flag;
 {
 	extern int proxy, abrtflag;
-	int (*oldintr)();
+	sig_t oldintr;
 	static struct comvars {
 		int connect;
 		char name[MAXHOSTNAMELEN];
@@ -1305,7 +1311,7 @@ pswitch(flag)
 	(void) signal(SIGINT, oldintr);
 	if (abrtflag) {
 		abrtflag = 0;
-		(*oldintr)();
+		(*oldintr)(0);
 	}
 }
 
@@ -1325,7 +1331,8 @@ abortpt()
 proxtrans(cmd, local, remote)
 	char *cmd, *local, *remote;
 {
-	int (*oldintr)(), abortpt(), tmptype, oldtype = 0, secndflag = 0, nfnd;
+	sig_t oldintr, abortpt;
+	int tmptype, oldtype = 0, secndflag = 0, nfnd;
 	extern jmp_buf ptabort;
 	char *cmd2;
 	struct fd_set mask;
@@ -1709,8 +1716,7 @@ char *prompt;
 	register c;
 	FILE *fi;
 	static char pbuf[129];
-	int (*signal())();
-	int (*sig)();
+	sig_t sig;
 
 	if ((fi = fdopen(open("/dev/tty", 2), "r")) == NULL)
 		fi = stdin;

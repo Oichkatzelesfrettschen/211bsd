@@ -1,16 +1,14 @@
 /*
- * 1995/06/09.  sprintf() returns an int (since patch #233) rather
+ * 2026/06/30: use defined(BINARY) instead of OUTPUT==BINARY
+ *	       remove excess whitespace.
+ *
+ * 1995/06/09:  sprintf() returns an int (since patch #233) rather
  * 	   a "char *".  
 */
 
 #include "defs"
 #include "string_defs"
-#if FAMILY == DMR
-#	include "dmrdefs"
-#endif
-#if FAMILY==SCJ && OUTPUT==BINARY
-#	include "scjdefs"
-#endif
+#include "dmrdefs"
 
 /*
       PDP 11-SPECIFIC PRINTING ROUTINES
@@ -20,27 +18,11 @@ int maxregvar = 0;
 static char textline[50];
 int regnum[] = { 3, 2 };
 
-
-prsave()
-{
-}
-
-
-
 goret(type)
 int type;
 {
-#if  FAMILY == DMR
 	p2op(P2RETURN);
-#endif
-#if FAMILY==SCJ
-	sprintf(textline, "\tjmp\tcret");
-	p2pass(textline);
-#endif
 }
-
-
-
 
 /*
  * move argument slot arg1 (relative to ap)
@@ -55,13 +37,9 @@ if(type == TYLONG)
 	mvarg1(arg1+6, arg2+2);
 }
 
-
-
-
 mvarg1(m, n)
 int m, n;
 {
-#if FAMILY == DMR
 	p2reg(ARGREG, P2SHORT|P2PTR);
 	p2op2(P2ICON, P2SHORT);
 	p2i(n);
@@ -74,27 +52,17 @@ int m, n;
 	p2op2(P2INDIRECT, P2SHORT);
 	p2op2(P2ASSIGN, P2SHORT);
 	putstmt();
-#endif
-#if FAMILY == SCJ
-	sprintf(textline, "\tmov\t%d.(r5),%d.(r4)", m, n);
-	p2pass(textline);
-#endif
 }
 
-
-
-
 prlabel(fp, k)
-FILEP fp;
+FILE *fp;
 int k;
 {
 fprintf(fp, "L%d:\n", k);
 }
 
-
-
 prconi(fp, type, n)
-FILEP fp;
+FILE *fp;
 int type;
 ftnint n;
 {
@@ -106,24 +74,15 @@ else
 	fprintf(fp, "\t%d.\n", np[1]);
 }
 
-
-
 prcona(fp, a)
-FILEP fp;
+FILE *fp;
 ftnint a;
 {
 fprintf(fp, "L%ld\n", a);
 }
 
-
-
-#if HERE!=PDP11
-BAD NEWS
-#endif
-
-#if HERE==PDP11
 prconr(fp, type, x)
-FILEP fp;
+FILE *fp;
 int type;
 double x;
 {
@@ -134,10 +93,6 @@ fprintf(fp, "\t");
 while(--k >= 0)
 	fprintf(fp, "%d.%c", *n++, (k==0 ? '\n' : ';') );
 }
-#endif
-
-
-
 
 preven(k)
 int k;
@@ -145,85 +100,6 @@ int k;
 if(k > 1)
 	fprintf(asmfile, "\t.even\n", k);
 }
-
-
-
-#if FAMILY == SCJ
-
-prcmgoto(p, nlab, skiplabel, labarray)
-expptr p;
-int nlab, skiplabel, labarray;
-{
-int regno;
-
-putforce(p->vtype, p);
-
-if(p->vtype == TYLONG)
-	{
-	regno = 1;
-	sprintf(textline, "\ttst\tr0");
-	p2pass(textline);
-	sprintf(textline, "\tbne\tL%d", skiplabel);
-	p2pass(textline);
-	}
-else
-	regno = 0;
-
-sprintf(textline, "\tcmp\tr%d,$%d.", regno, nlab);
-p2pass(textline);
-sprintf(textline, "\tbhi\tL%d", skiplabel);
-p2pass(textline);
-sprintf(textline, "\tasl\tr%d", regno);
-p2pass(textline);
-sprintf(textline, "\tjmp\t*L%d(r%d)", labarray, regno);
-p2pass(textline);
-}
-
-
-prarif(p, neg,zer,pos)
-expptr p;
-int neg, zer, pos;
-{
-register int ptype;
-
-putforce( ptype = p->vtype, p);
-if( ISINT(ptype) )
-	{
-	sprintf(textline, "\ttst\tr0");
-	p2pass(textline);
-	sprintf(textline, "\tjlt\tL%d", neg);
-	p2pass(textline);
-	sprintf(textline, "\tjgt\tL%d", pos);
-	p2pass(textline);
-	if(ptype != TYSHORT)
-		{
-		sprintf(textline, "\ttst\tr1");
-		p2pass(textline);
-		sprintf(textline, "\tjeq\tL%d", zer);
-		p2pass(textline);
-		}
-	sprintf(textline, "\tjbr\tL%d", pos);
-	p2pass(textline);
-	}
-else
-	{
-	sprintf(textline, "\ttstf\tr0");
-	p2pass(textline);
-	sprintf(textline, "\tcfcc");
-	p2pass(textline);
-	sprintf(textline, "\tjeq\tL%d", zer);
-	p2pass(textline);
-	sprintf(textline, "\tjlt\tL%d", neg);
-	p2pass(textline);
-	sprintf(textline, "\tjmp\tL%d", pos);
-	p2pass(textline);
-	}
-}
-
-#endif
-
-
-
 
 char *memname(stg, mem)
 int stg, mem;
@@ -256,7 +132,6 @@ switch(stg)
 return(s);
 }
 
-
 prlocvar(s, len)
 char *s;
 ftnint len;
@@ -264,8 +139,6 @@ ftnint len;
 fprintf(asmfile, "%s:", s);
 prskip(asmfile, len);
 }
-
-
 
 prext(name, leng, init)
 char *name;
@@ -278,25 +151,14 @@ else
 	fprintf(asmfile, "\t.comm\t_%s,%ld.\n", name, leng);
 }
 
-
-
 prendproc()
 {
 }
 
-
-
 prtail()
 {
-#if FAMILY == SCJ
-	sprintf(textline, "\t.globl\tcsv,cret");
-	p2pass(textline);
-#else
 	p2op(P2EOF);
-#endif
 }
-
-
 
 prolog(ep, argvec)
 struct entrypoint *ep;
@@ -323,27 +185,12 @@ if(procclass == CLBLOCK)
 	return;
 if(profileflag)
 	proflab = newlabel();
-#if FAMILY == SCJ
-	sprintf(textline, "\tjsr\tr5,csv");
-	p2pass(textline);
-	if(profileflag)
-		{
-		fprintf(asmfile, ".data\nL%d:\t_%s+1\n.bss\n", proflab, funcname);
-		sprintf(textline, "\tmov\t$L%d,r0", proflab);
-		p2pass(textline);
-		sprintf(textline, "\tjsr\tpc,mcount");
-		p2pass(textline);
-		}
-	sprintf(textline, "\tsub\t$.F%d,sp", procno);
-	p2pass(textline);
-#else
 	p2op(P2SAVE);
 	if(profileflag) {
 		p2op2(P2PROFIL, proflab);
 		p2str(funcname);
 	}
 	p2op2(P2SETSTK, ( (((int) autoleng)+1) & ~01) );
-#endif
 
 if(argvec == NULL)
 	addreg(argloc = 4);
@@ -399,33 +246,17 @@ if(typeaddr)
 putgoto(ep->entrylabel);
 }
 
-
-
 prentry(s)
 char *s;
 {
-#if FAMILY == SCJ
-	sprintf(textline, "_%s:", s);
-	p2pass(textline);
-#else
 	p2op(P2RLABEL);
 	putc('_', textfile);
 	p2str(s);
-#endif
 }
-
-
-
 
 addreg(k)
 int k;
 {
-#if FAMILY == SCJ
-	sprintf(textline, "\tmov\tr5,r4");
-	p2pass(textline);
-	sprintf(textline, "\tadd\t$%d.,r4", k);
-	p2pass(textline);
-#else
 	p2reg(ARGREG, P2SHORT);
 	p2reg(AUTOREG, P2SHORT);
 	p2op2(P2ICON, P2SHORT);
@@ -433,28 +264,8 @@ int k;
 	p2op2(P2PLUS, P2SHORT);
 	p2op2(P2ASSIGN, P2SHORT);
 	putstmt();
-#endif
 }
 
-
-
-
-
-prhead(fp)
-FILEP fp;
-{
-#if FAMILY==SCJ
-#	if OUTPUT == BINARY
-		p2triple(P2LBRACKET, ARGREG-1-highregvar, procno);
-		p2word( (long) (BITSPERCHAR*autoleng) );
-		p2flush();
-#	else
-		fprintf(fp, "[%02d\t%06ld\t%02d\t\n", procno,
-			BITSPERCHAR*autoleng, ARGREG-1-highregvar);
-#	endif
-#endif
-}
-
 prdbginfo()
 {
 register char *s;
@@ -470,7 +281,7 @@ else
 	return;
 
 /*
- *!Remove wierd symbol definition so f77 code may be overlayed. wfj 11/80
+ * Remove weird symbol definition so f77 code may be overlayed. wfj 11/80
 if(procclass != CLBLOCK)
 	fprintf(asmfile, "~~%s = _%s\n", s, s);
  * This code equiv's a tilde name to the external name, which is normally

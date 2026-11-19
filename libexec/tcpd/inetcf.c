@@ -5,8 +5,8 @@
   * Author: Wietse Venema, Eindhoven University of Technology, The Netherlands.
   */
 
-#ifndef lint
-static char sccsid[] = "@(#) inetcf.c 1.5 95/01/30 19:51:48";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#) inetcf.c 1.6 (2.11BSD) 2026/5/11";
 #endif
 
 #include <sys/types.h>
@@ -14,9 +14,7 @@ static char sccsid[] = "@(#) inetcf.c 1.5 95/01/30 19:51:48";
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
-
-extern int errno;
-extern void exit();
+#include <stdlib.h>
 
 #include "tcpd.h"
 #include "inetcf.h"

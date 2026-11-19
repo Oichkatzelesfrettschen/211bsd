@@ -4,14 +4,14 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)cu.c	5.5 (Berkeley) 10/22/87";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)cu.c	5.6 (2.11BSD) 2026/5/9";
+#endif
 
 #include "tip.h"
 
-int	cleanup();
-int	timeout();
+void	cleanup();
+void	timeout();
 
 /*
  * Botch the interface to look like cu's

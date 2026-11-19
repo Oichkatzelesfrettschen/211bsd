@@ -1,20 +1,24 @@
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)quot.c 1.1 (2.11BSD) 2026/5/26";
+#endif
 
 /*
  * Disk usage by user
  */
+
 #include <stdio.h>
 #include <ctype.h>
 #include <pwd.h>
 #include <sys/param.h>
 #include <sys/inode.h>
 #include <sys/fs.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 char	*dargv[] = {
-#ifndef MENLO
-	"/dev/rrp3",
-#else
-	"/dev/rrp0",  /* /we -- pag 7/1/79 */
-#endif
+	"/dev/rxp0a",
+	"/dev/rxp0h",
 	0
 };
 
@@ -26,10 +30,11 @@ struct	dinode	itab[ITABSZ];
 struct du
 {
 	long	blocks;
-	long	nfiles;
-	int	uid;
+	u_int 	nfiles;
+	uid_t	uid;
 	char	*name;
 } du[NUID];
+
 #define	TSIZE	500
 int	sizes[TSIZE];
 long	overflow;
@@ -42,49 +47,83 @@ int	fi;
 unsigned	ino;
 unsigned	nfiles;
 
-struct	passwd	*getpwent();
-char	*malloc();
-char	*copy();
+void	usage(), xacct();
+extern	char *__progname;
+
+/*
+ * after processing a filesystem du[] is sorted by username not indexed by
+ * userid.  the memory allocated for names needs to be released and the
+ * array reinitialized before the next filesystem is processed.  easiest
+ * way to initialize is read the passwd file again.
+*/
+init_du()
+	{
+	register int n, i;
+	register struct passwd *lp;
+
+	for	(i = 0; i < NUID; i++)
+		{
+		if	(du[i].name)
+			free(du[i].name);
+		}
+	bzero(du, sizeof du);
+	bzero(sizes, sizeof (sizes));
+
+	setpassent(1);
+	while	(lp=getpwent())
+		{
+		n = lp->pw_uid;
+		if	(n > NUID)
+			continue;
+		du[n].name = strdup(lp->pw_name);
+		}
+	}
 
 main(argc, argv)
 char **argv;
 {
 	register int n;
-	register struct passwd *lp;
 	register char **p;
 
-	for(n=0; n<NUID; n++)
-		du[n].uid = n;
-	while((lp=getpwent()) != 0) {
-		n = lp->pw_uid;
-		if (n>NUID)
-			continue;
-		if(du[n].name)
-			continue;
-		du[n].name = copy(lp->pw_name);
-	}
-	if (argc == 1) {
-		for (p = dargv; *p;) {
-			check(*p++);
-			report();
-		}
-		return(0);
-	}
-	while (--argc) {
-		argv++;
-		if (argv[0][0]=='-') {
-			if (argv[0][1]=='n')
+	while	((n = getopt(argc, argv, "nfc")) != EOF)
+		{
+		switch	(n)
+			{
+			case	'n':
 				nflg++;
-			else if (argv[0][1]=='f')
+				break;
+			case	'f':
 				fflg++;
-			else if (argv[0][1]=='c')
+				break;
+			case	'c':
 				cflg++;
-		} else {
-			check(*argv);
-			report();
+				break;
+			case	'?':
+			default:
+				usage();
+			}
 		}
-	}
-	return(0);
+	argc -= optind;
+	argv += optind;
+
+	if	(argc == 0)
+		{
+		for	(p = dargv; *p; p++)
+			{
+			init_du();
+			check(*p);
+			report();
+			}
+		exit(0);
+		}
+
+	for	(; --argc >= 0; argv++)
+		{
+		init_du();
+		check(*argv);
+		report();
+		}
+	exit(0);
 }
 
 check(file)
@@ -113,12 +152,14 @@ char *file;
 		bread(i, (char *)itab, sizeof itab);
 		for (j=0; j<ITABSZ && ino<nfiles; j++) {
 			ino++;
-			acct(&itab[j]);
+			xacct(&itab[j]);
 		}
 	}
+	close(fi);
 }
 
-acct(ip)
+void
+xacct(ip)
 register struct dinode *ip;
 {
 	register n;
@@ -212,9 +253,9 @@ report()
 	for (i=0; i<NUID; i++) {
 		if (du[i].blocks==0)
 			return;
-		printf("%5D\t", du[i].blocks);
+		printf("%D\t", du[i].blocks);
 		if (fflg)
-			printf("%5D\t", du[i].nfiles);
+			printf("%u\t", du[i].nfiles);
 		if (du[i].name)
 			printf("%s\n", du[i].name);
 		else
@@ -222,17 +263,9 @@ report()
 	}
 }
 
-char *
-copy(s)
-char *s;
-{
-	register char *p;
-	register n;
-
-	for(n=0; s[n]; n++)
-		;
-	p = malloc((unsigned)n+1);
-	for(n=0; p[n] = s[n]; n++)
-		;
-	return(p);
-}
+void
+usage()
+	{
+	fprintf(stderr, "%s: usage: [-c][-f][-n] [rdiskdev]\n", __progname);
+	exit(1);
+	}

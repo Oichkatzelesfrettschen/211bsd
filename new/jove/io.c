@@ -1,39 +1,26 @@
-/***************************************************************************
- * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
- * is provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is    *
- * included in all the files.                                              *
- ***************************************************************************/
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)io.c 2.0 (2.11BSD) 2026/9/17";
+#endif
+
+/*
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE
+ * is provided to you without charge, and with no warranty.  You may give
+ * away copies of JOVE, including sources, provided that this notice is
+ * included in all the files.
+ */
  
 #include "jove.h"
 #include "io.h"
 #include "termcap.h"
 
-#ifdef IPROCS
-#   include <signal.h>
-#endif
-
-#ifdef MAC
-#	include "mac.h"
-#else
-#	include <sys/stat.h>
-#endif
-
-#ifdef UNIX
+#include <signal.h>
+#include <sys/stat.h>
 #include <sys/file.h>
+#include <stdlib.h>
 #ifdef YP_PASSWD
 #include <rpcsvc/ypclnt.h>
 #endif
-#endif
-
-#ifdef MSDOS
-#include <fcntl.h>
-#include <io.h>
-#ifdef CHDIR
-#include <direct.h>
-#include <dos.h>
-#endif
-#endif /* MSDOS */
+#include <strings.h>
 #include <errno.h>
 
 #ifdef MAC
@@ -354,7 +341,7 @@ setCWD(d)
 char	*d;
 {
 	if (PWD == 0)
-		PWD = malloc((unsigned) strlen(d) + 1);
+		PWD = (char *)malloc((unsigned) strlen(d) + 1);
 	else {
 		extern char	*ralloc();
 
@@ -450,7 +437,7 @@ Popd()
 	if (DirSP == 0)
 		complain("popd: directory stack is empty.");
 	UpdModLine = YES;
-	free(PWD);
+	free((void *)PWD);
 	PWD = 0;
 	DirSP -= 1;
 #ifdef MSDOS
@@ -928,13 +915,9 @@ tmpinit()
 {
 	char	buf[FILESIZE];
 
-#ifdef MAC
-	sprintf(buf, "%s/%s", HomeDir, d_tempfile);
-#else
 	sprintf(buf, "%s/%s", TmpFilePath, d_tempfile);
-#endif
 	tfname = copystr(buf);
-	tfname = mktemp(tfname);
+	tfname = (char *)mktemp(tfname);
 	(void) close(creat(tfname, 0600));
 #ifndef MSDOS
 	tmpfd = open(tfname, 2);
@@ -1407,8 +1390,8 @@ char *fname;
 		(void) close(fd1);
 		return;
 	}
-	while ((i = read(fd1, tmp1, sizeof(tmp1))) > 0)
-		write(fd2, tmp1, i);
+	while ((i = read(fd1, (void *)tmp1, sizeof(tmp1))) > 0)
+		write(fd2, (void *)tmp1, i);
 #ifdef BSD4_2
 	(void) fsync(fd2);
 #endif

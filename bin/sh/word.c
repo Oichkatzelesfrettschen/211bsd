@@ -1,22 +1,18 @@
-#ifndef lint
-static char sccsid[] = "@(#)word.c	4.6 10/31/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)word.c	4.7 (2.11BSD) 2026/5/11";
 #endif
 
-#
 /*
  * UNIX shell
  *
  * S. R. Bourne
  * Bell Telephone Laboratories
- *
  */
 
 #include	"defs.h"
 #include	"sym.h"
 
-
 /* ========	character handling for command lines	========*/
-
 
 word()
 {

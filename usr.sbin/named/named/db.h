@@ -9,7 +9,7 @@
  * software without specific prior written permission. This software
  * is provided ``as is'' without express or implied warranty.
  *
- *	@(#)db.h	4.13 (Berkeley) 2/17/88
+ *	@(#)db.h	4.14 (2.11BSD) 2026/5/10
  */
 
 /*
@@ -106,4 +106,3 @@ extern struct databuf *rm_datum();
 extern struct hashbuf *savehash();
 extern struct invbuf *saveinv();
 extern char *savestr();
-extern char *malloc(), *realloc(), *calloc();

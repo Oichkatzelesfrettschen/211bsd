@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)text.h	1.2 (2.11BSD GTE) 1/19/95
+ *	@(#)text.h	1.3 (2.11BSD) 2026/1/27
  */
 
 #ifndef	_SYS_TEXT_H_
@@ -39,7 +39,6 @@ int	ntext;
 #define	XLOAD	0x04		/* Currently being read from file */
 #define	XLOCK	0x08		/* Being swapped in or out */
 #define	XWANT	0x10		/* Wanted for swapping */
-#define	XPAGI	0x20		/* Page in on demand from inode */
 #define	XUNUSED	0x40		/* unused since swapped out for cache */
 
 /* arguments to xswap: */

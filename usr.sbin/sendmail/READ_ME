@@ -18,9 +18,6 @@ A brief tour:
 	adb	  A set of adb(1) scripts for printing out certain
 		  sendmail data structures.
 	adm	  Administrativia.
-	aux	  Files that represent programs that are not really
-		  "part" of sendmail, or old versions of some files
-		  in src for use by people on other system types.
 	cf	  The configuration files for Berkeley, plus a few
 		  prototype configurations for basic installation
 		  types.
@@ -32,8 +29,6 @@ A brief tour:
 		  for libc.a.
 	md	  Some m4 files used to isolate machine dependencies.
 	src	  The source for the sendmail program itself.
-	test	  Some files used for testing -- mostly these are
-		  shell files intended as the targets for aliasing.
 
 The following are the known major problems and their Problem Report
 number:
@@ -61,4 +56,4 @@ that I am unable to accept phone calls.  I can be contacted as:
 Eric Allman
 Britton-Lee, Inc.
 
-@(#)READ_ME	4.1		7/25/83
+@(#)READ_ME 4.2 (2.11BSD) 2026/5/1

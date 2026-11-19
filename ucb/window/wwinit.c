@@ -1,5 +1,5 @@
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)wwinit.c	3.26.1 1996/3/22";
+static char sccsid[] = "@(#)wwinit.c	3.26.2 (2.11BSD) 2026/9/21";
 #endif
 
 /*
@@ -10,7 +10,7 @@ static char sccsid[] = "@(#)wwinit.c	3.26.1 1996/3/22";
 
 #include "ww.h"
 #include "tt.h"
-#include <sys/signal.h>
+#include <signal.h>
 #include <fcntl.h>
 #include "char.h"
 

@@ -5,7 +5,7 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)startdaemon.c	5.1.2 (2.11BSD GTE) 1996/3/22";
+static char sccsid[] = "@(#)startdaemon.c	5.1.3 (2.11BSD) 2026/9/21";
 #endif
 
 /*
@@ -13,11 +13,11 @@ static char sccsid[] = "@(#)startdaemon.c	5.1.2 (2.11BSD GTE) 1996/3/22";
  */
 
 #include <stdio.h>
-#include <sys/errno.h>
-#include <sys/signal.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <errno.h>
+#include <signal.h>
 #include "lp.local.h"
 
 startdaemon(printer)

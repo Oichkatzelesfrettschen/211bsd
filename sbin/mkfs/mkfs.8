@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)mkfs.8	2.2 (2.11BSD) 1996/11/16
+.\"	@(#)mkfs.8	2.3 (2.11BSD) 2026/10/23
 .\"
 .TH MKFS 8 "November 16, 1996"
 .UC 2
@@ -26,10 +26,10 @@ mkfs \- construct a file system
 .SH DESCRIPTION
 .B N.B.:
 file systems are normally created with the
-.IR newfs (8)
+.BR newfs (8)
 command.
 .PP
-.I Mkfs
+.B mkfs
 constructs a file system
 by writing on the special file
 .IR special .
@@ -43,7 +43,7 @@ Logical blocks are 1K (2 sectors) under 2.11BSD.
 \fBNOTE:\fP The 
 .BR newfs (8)
 program's \fB\-s\fP option is in units of \fBsectors\fP.    
-.BR Newfs (8)
+.BR newfs (8)
 converts this to filesystem (logical) blocks for
 .BR mkfs (8) .
 .br
@@ -71,17 +71,16 @@ typically one cylinder.
 The optimal values for
 these parameters vary with the speed and geometry of the disk,
 as well as the speed of the processor.  
-.BR Newfs (8)
+.BR newfs (8)
 will calculate the correct values in almost all cases from the disklabel.
 .SH "SEE ALSO"
 fs(5),
 dir(5),
 disklabel(8),
 fsck(8),
-mkproto(8)
 newfs(8)
 .SH BUGS
 The
 .I lost+found
-directory is created but the boot block is left uninitialized (see
-.BR disklabel (8).)
+directory is created but the boot block is left uninitialized.  See
+.BR disklabel (8).

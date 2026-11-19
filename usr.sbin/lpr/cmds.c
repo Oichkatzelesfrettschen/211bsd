@@ -5,8 +5,8 @@
  */
 
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)cmds.c	5.2.1 (2.11BSD GTE) 1/1/94";
-#endif not lint
+static char sccsid[] = "@(#)cmds.c	5.2.2 (2.11BSD) 2026/9/13";
+#endif
 
 /*
  * lpc -- line printer control program -- commands:
@@ -18,7 +18,7 @@ static char sccsid[] = "@(#)cmds.c	5.2.1 (2.11BSD GTE) 1/1/94";
 /*
  * kill an existing daemon and disable printing.
  */
-abort(argc, argv)
+xabort(argc, argv)
 	char *argv[];
 {
 	register int c, status;

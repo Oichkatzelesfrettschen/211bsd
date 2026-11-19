@@ -1,10 +1,10 @@
 exec:	  iffable
-	| SDO end_spec intonlyon label intonlyoff dospec
+	| SDO end_spec intonlyon label intonlyoff opt_comma dospec
 		{
 		if($4->labdefined)
 			error("no backward DO loops",0,0,EXECERR);
 		$4->blklevel = blklevel+1;
-		exdo($4->labelno, $6);
+		exdo($4->labelno, $7);
 		}
 	| logif iffable
 		{ exendif();  thiswasbranch = NO; }

@@ -4,31 +4,26 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)script.c	5.4 (Berkeley) 11/13/85";
-#endif not lint
+static char sccsid[] = "@(#)script.c	5.5 (2.11BSD) 2026/5/8";
+#endif
 
 /*
  * script
  */
 #include <stdio.h>
 #include <signal.h>
-#include <sys/types.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <time.h>
+#include <fcntl.h>
 #include <sys/stat.h>
-#include <sys/ioctl.h>
 #include <sgtty.h>
-#include <sys/time.h>
-#include <sys/file.h>
 
-char	*getenv();
-time_t	time();
-char	*ctime();
 char	*shell;
 FILE	*fscript;
 int	master;
@@ -36,7 +31,7 @@ int	slave;
 int	child;
 int	subchild;
 char	*fname = "typescript";
-int	finish();
+void	finish();
 
 struct	sgttyb b;
 struct	tchars tc;
@@ -113,6 +108,7 @@ doinput()
 
 #include <sys/wait.h>
 
+void
 finish()
 {
 	union wait status;

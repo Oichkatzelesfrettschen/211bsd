@@ -20,8 +20,8 @@ char copyright[] =
 "@(#) Copyright (c) 1983 The Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)rcp.c	5.20.2 (2.11BSD) 2025/8/30";
-#endif /* not lint */
+static char sccsid[] = "@(#)rcp.c	5.20.3 (2.11BSD) 2026/9/21";
+#endif
 
 /*
  * rcp
@@ -32,8 +32,8 @@ static char sccsid[] = "@(#)rcp.c	5.20.2 (2.11BSD) 2025/8/30";
 #include <sys/time.h>
 #include <sys/ioctl.h>
 #include <sys/dir.h>
-#include <sys/signal.h>
 #include <netinet/in.h>
+#include <signal.h>
 #include <pwd.h>
 #include <netdb.h>
 #include <errno.h>
@@ -76,7 +76,7 @@ main(argc, argv)
 	int ch, fflag, tflag;
 	char *targ, *colon();
 	struct passwd *getpwuid();
-	int lostconn();
+	void lostconn();
 
 #ifdef KERBEROS
 	sp = getservbyname("kshell", "tcp");
@@ -396,7 +396,7 @@ susystem(s)
 	char *s;
 {
 	int status, pid, w;
-	register int (*istat)(), (*qstat)();
+	register sig_t istat, qstat;
 
 	if ((pid = vfork()) == 0) {
 		(void)setuid(userid);
@@ -581,6 +581,7 @@ response()
 	/*NOTREACHED*/
 }
 
+void
 lostconn()
 {
 	if (!iamremote)

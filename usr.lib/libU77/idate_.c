@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)idate_.c	5.1	6/7/85
+ *	@(#)idate_.c	5.2	(2.11BSD) 2026/7/21
  */
 
 /*
@@ -16,16 +16,16 @@
  *	iarray will receive the current date; day, mon, year.
  */
 
-#include <sys/types.h>
+#include <time.h>
 #include <sys/time.h>
 
 idate_(iar)
 struct { long iday; long imon; long iyer; } *iar;
 {
-	struct tm *localtime(), *lclt;
-	long int time(), t;
+	struct tm *lclt;
+	time_t t;
 
-	t = time(0);
+	t = time((time_t *)0);
 	lclt = localtime(&t);
 	iar->iday = lclt->tm_mday;
 	iar->imon = lclt->tm_mon + 1;

@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)sync.c	5.2 (Berkeley) 1/21/86";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)sync.c     5.3 (2.11BSD) 2026/5/12";
+#endif
 
 #include "externs.h"
 #include <sys/file.h>
@@ -110,12 +110,11 @@ Write(type, ship, isstr, a, b, c, d)
 
 Sync()
 {
-	int (*sighup)(), (*sigint)();
+	sig_t sighup, sigint;
 	register n;
 	int type, shipnum, isstr, a, b, c, d;
 	char buf[80];
 	char erred = 0;
-	extern errno;
 
 	sighup = signal(SIGHUP, SIG_IGN);
 	sigint = signal(SIGINT, SIG_IGN);

@@ -9,7 +9,7 @@
  * software without specific prior written permission. This software
  * is provided ``as is'' without express or implied warranty.
  *
- *	@(#)in.h	7.5.3 (2.11BSD GTE) 1995/10/09
+ *	@(#)in.h	7.5.4 (2.11BSD) 2026/7/10
  */
 
 /*
@@ -153,7 +153,8 @@ struct sockaddr_in {
 #define	IPCTL_DEFMTU		4	/* default MTU */
 #endif
 #define	IPCTL_FORWSRCRT		5	/* forward source-routed dgrams */
-#define	IPCTL_MAXID		6
+#define	IPCTL_FW2TIMEOUT	6	/* fin_wait_2 timeout */
+#define	IPCTL_MAXID		7
 
 #ifndef	KERNEL
 #define	IPCTL_NAMES { \
@@ -163,6 +164,7 @@ struct sockaddr_in {
 	{ "ttl", CTLTYPE_INT }, \
 	{ "mtu", CTLTYPE_INT }, \
 	{ "forwsrcrt", CTLTYPE_INT }, \
+	{ "tcp_fw2timeout", CTLTYPE_INT }, \
 }
 #endif /* KERNEL */
 

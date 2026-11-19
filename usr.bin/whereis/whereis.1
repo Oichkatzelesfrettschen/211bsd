@@ -29,33 +29,33 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"	@(#)whereis.1	8.2.1 (2.11BSD) 1996/11/27
+.\"	@(#)whereis.1	8.2.2 (2.11BSD) 2026/9/15
 .\"
 .TH WHEREIS 1 "November 27, 1996"
 .UC 3
 .SH NAME
-whereis \- locate programs
+whereis \- programs
 .SH SYNOPSIS
 .B whereis
-program ...
+\fIprograms\fP
 .SH DESCRIPTION
 The
-.I whereis
-utility checks the standard binary directories for the specified programs,
-printing out the paths of any it finds.
+.B whereis
+utility searches the standard binary directories for \fIprograms\fP
+printing out the paths of \fIprograms\fP that are found.
 .PP
-The path searched is the string returned by the
-.IR sysctl (8)
-utility for the
-``user.cs_path''
-string.
+The path searched is the string returned by
+.IR sysctl (3)
+for the MIB 'user.cs_path'
+.SH NOTES
+It is not an error if \fIprograms\fP are not found.
 .SH SEE ALSO
-.IR sysctl (8),
+.IR sysctl (3),
 .SH COMPATIBILITY
 The historic flags and arguments for the
-.I whereis
+.B whereis
 utility are no longer available in this version.
 .SH HISTORY
 The
-.I whereis
+.B whereis
 command appeared in 3.0BSD.

@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)chdir.2	6.3.1 (2.11BSD GTE) 4/21/94
+.\"	@(#)chdir.2	6.3.2 (2.11BSD) 2026/9/20
 .\"
 .TH CHDIR 2 "April 21, 1994"
 .UC 4
@@ -11,29 +11,31 @@ chdir, fchdir \- change current working directory
 .SH SYNOPSIS
 .nf
 .ft B
-chdir(path)
-char *path;
+#include <unistd.h>
 
-fchdir(fd)
-int fd;
+int
+chdir(\fIchar *path\fP)
+
+int
+fchdir(\fIint fd\fP)
 .ft R
 .fi
 .SH DESCRIPTION
 The
-.B path
+.I path
 argument points to the pathname of a directory.
 The
-.B fd
+.I fd
 argument is a file descriptor which references a directory.
 The
-.I chdir
+.B chdir
 function causes this directory
 to become the current working directory,
 the starting point for path names not beginning with ``/''.
 .PP
 The
-.I fchdir
-function causes the directory referenced by \fBfd\fP to become
+.B fchdir
+function causes the directory referenced by \fIfd\fP to become
 the current working directory, the starting point for path searches of
 pathnames not beginning with a slahs, '/'.
 .PP
@@ -44,7 +46,7 @@ Upon successful completion, a value of 0 is returned.
 Otherwise, a value of \-1 is returned and \fIerrno\fP is set to indicate
 the error.
 .SH ERRORS
-.I Chdir
+.B chdir
 will fail and the current working directory will be unchanged if
 one or more of the following are true:
 .TP 15

@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)reboot.2	6.2 (2.11BSD) 2024/9/20
+.\"	@(#)reboot.2	6.3 (2.11BSD) 2026/9/20
 .\"
 .TH REBOOT 2 "Sep 20, 2024"
 .UC 4
@@ -10,16 +10,19 @@
 reboot \- reboot system or halt processor
 .SH SYNOPSIS
 .nf
-.B #include <sys/reboot.h>
-.PP
-.B reboot(howto)
-.B int howto;
+.ft B
+#include <unistd.h>
+#include <sys/reboot.h>
+
+int
+reboot(\fIint howto\fP)
+.ft R
 .fi
 .SH DESCRIPTION
-.I Reboot
+.B reboot
 reboots the system, and is invoked automatically
 in the event of unrecoverable system failures.
-.I Howto
+.I howto
 is a mask of options passed to the bootstrap program.
 The system call interface permits only RB_HALT or RB_AUTOBOOT
 to be passed to the reboot program; the other flags
@@ -49,7 +52,7 @@ check and then multi-user operations.  RB_SINGLE prevents the consistency
 check, rather simply booting the system with a single-user shell on
 the console.
 RB_SINGLE is interpreted by the
-.IR init (8)
+.BR init (8)
 program in the newly booted system.
 This switch is not available from the system call interface.
 .PP

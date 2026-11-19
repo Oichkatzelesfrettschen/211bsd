@@ -4,20 +4,20 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)rwho.c	5.2 (Berkeley) 6/18/85";
-#endif not lint
+static char sccsid[] = "@(#)rwho.c	5.3 (2.11BSD) 2026/5/8";
+#endif
 
 #include <sys/param.h>
 #include <stdio.h>
 #include <sys/dir.h>
 #include <protocols/rwhod.h>
+#include <strings.h>
+#include <time.h>
 
 DIR	*dirp;
 
@@ -38,7 +38,6 @@ int	nusers;
  */
 #define	down(w,now)	((now) - (w)->wd_recvtime > 11L * 60L)
 
-char	*ctime(), *strcpy();
 time_t	now;
 int	aflg;
 
@@ -143,7 +142,7 @@ again:
 }
 
 utmpcmp(u1, u2)
-	struct myutmp *u1, *u2;
+	register struct myutmp *u1, *u2;
 {
 	int rc;
 

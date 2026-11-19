@@ -1,8 +1,24 @@
-Current Patch Level: 499
-Date: January 2, 2026
+Current Patch Level: 500
+Date: October 11, 2026
 
+			2.11BSD 35th Anniversary Edition
+
+	Many changes have been made since the 2.11BSD release announcement
+	by the CSRG was made in January 1991.  
+
+	Listing all the improvements, enhancements, fixes and  contributors
+	is nigh unto impossible.  Since patch #1 was posted May 4, 1991 
+	the patches have usually given credit to the contributor.  If you're
+	wondering who has contributed (and what they submitted) download the
+	patches from these http and ftp sites:
+
+	ftp://ftp.dfupdate.se/pub/pdp11/2.11BSD
+	https://www.tuhs.org/Archive/Distributions/UCB/2.11BSD/Patches
+	ftp://ftp.2bsd.com/2.11BSD
+	http://www.2bsd.com/2.11BSD
+
+============== The original VERSION file from 1991=================
 2.11 BSD
-============
 NOTE --
 	This would have been the third release of 2.10BSD; but since
 	the filesystem has changed and a coldstart is required

@@ -14,8 +14,8 @@
   * Author: Wietse Venema, Eindhoven University of Technology, The Netherlands.
   */
 
-#ifndef lint
-static char sccsid[] = "@(#) tcpdchk.c 1.6 95/01/30 19:51:51";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#) tcpdchk.c 1.7 (2.11BSD) 2026/5/11";
 #endif
 
 /* System libraries. */
@@ -30,11 +30,8 @@ static char sccsid[] = "@(#) tcpdchk.c 1.6 95/01/30 19:51:51";
 #include <errno.h>
 #include <netdb.h>
 #include <string.h>
-
-extern int errno;
-extern void exit();
-extern int optind;
-extern char *optarg;
+#include <errno.h>
+#include <stdlib.h>
 
 #ifndef INADDR_NONE
 #define INADDR_NONE     (-1)		/* XXX should be 0xffffffff */

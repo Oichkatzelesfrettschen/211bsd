@@ -7,21 +7,20 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <ctype.h>
+#include <stdlib.h>
+#include <time.h>
+#include <errno.h>
+#include <fcntl.h>
 
-#ifndef lint
-static	char	sccsid[] = "@(#)shar.c 2.0 (Usenet) 3/11/86";
+#if	!defined(lint) && defined(DOSCCS)
+static	char	sccsid[] = "@(#)shar.c 2.1 (2.11BSD) 2026/1/29";
 #endif
-
-typedef	int 	Boole;
-#define	TRUE	((Boole) 1)
-#define	FALSE	((Boole) 0)
-typedef	int 	Status;
-#define	SUCCESS	0
-#define	FAILURE	1
 
 /* GLOBALS */
 int 	Lastchar;   /* the last character printed */
 int 	Ctrlcount;  /* how many bad control characters are in file */
+
+extern int isdir(char *);
 
 /* COMMANDS */
 #define	EXTRACT "#! /bin/sh"          /* magic exec string at shar file start */
@@ -36,36 +35,58 @@ int 	Ctrlcount;  /* how many bad control characters are in file */
 #define	ECHO    "echo shar:"          /* echo a message to extractor */
 #define	DECODE  "uudecode"            /* used to decode uuencoded files */
 
-/*FUNCTION main: traverse files to make archive to standard output */
-main (argc, argv) char **argv;	
+/*FUNCTION main: traverse files to make archive to standard output */
+main(argc, argv) char **argv;	
 	{
-	int 	shar ();
-	int 	optind;
+	int 	shar();
+	int	home;
 
-	if ((optind = initial (argc, argv)) < 0)
-		exit (FAILURE);
+	home = open(".", O_RDONLY);
+	if	(home < 0)
+		{
+		fprintf(stderr, "open(.) error: %s\n", strerror(errno));
+		exit(1);
+		}
 
-	if (header (argc, argv, optind))
-		exit (FAILURE);
+	if	((optind = initial(argc, argv)) < 0)
+		exit(1);
 
-	while (optind < argc)
-		traverse (argv[optind++], shar);
+	if	(header(argc, argv, optind))
+		exit(1);
 
-	footer ();
+	for	(; optind < argc; optind++)
+		{
+		traverse(argv[optind], shar);
+		fchdir(home);
+/*
+ * after processing a relative path (./a/b/c/d) it is necessary to go back 
+ * to the "home directory" because sh will have  done "cd .." back to
+ * next to last component (c).  Any future relative files will be looked for
+ * in 'c' and not from the starting directory.  System patches are usually
+ * generated relative to /.  Installing ./usr/src/bin/mkdir via a shar file
+ * would leave 'sh' in ./usr/src/bin instead of /
+ *
+ * We do not check if the argument is relative or not. This may cause an
+ * extra but harmless "chdir $STARTDIR" to be output.
+ */
+		if	(isdir(argv[optind]))
+			printf("%s $STARTDIR\n", CHDIR);
+		}
 
-	exit (SUCCESS);
+	footer();
+	exit(0);
 	}
 
-/* OPTIONS */
-Boole	Verbose = FALSE;       /* provide append/extract feedback */
-Boole	Basename = FALSE;      /* extract into basenames */
-Boole	Count = FALSE;         /* count characters to check transfer */
-Boole	Overcheck = TRUE;      /* check overwriting */
-Boole	Uucode = FALSE;        /* uuencode the file */
+/* OPTIONS */
+int	Verbose = 0;       /* provide append/extract feedback */
+int	Basename = 0;      /* extract into basenames */
+int	Count = 0;         /* count characters to check transfer */
+int	Overcheck = 1;      /* check overwriting */
+int	Uucode = 0;        /* uuencode the file */
 char	*Delim = "SHAR_EOF";   /* put after each file */
 char	Filter[100] = CAT;     /* used to extract archived files */
 char	*Prefix = NULL;        /* line prefix to avoid funny chars */
-Boole	Modeset = FALSE;       /* set exact modes on extraction */
+int	Modeset = 0;       /* set exact modes on extraction */
 
 /*FUNCTION: initial: do option parsing and any setup */
 int /* returns the index of the first operand file */
@@ -81,26 +102,26 @@ initial (argc, argv) char **argv;
 	while ((C = getopt (argc, argv, optstring)) != EOF)
 		switch (C)
 			{
-			case 'u': Uucode = TRUE; break;
-			case 'b': Basename = TRUE; break;
-			case 'c': Count = TRUE; break;
+			case 'u': Uucode = 1; break;
+			case 'b': Basename = 1; break;
+			case 'c': Count = 1; break;
 			case 'd': Delim = optarg; break;
-			case 'm': Modeset = TRUE; break;
+			case 'm': Modeset = 1; break;
 			case 's': /* silent running */
-				Overcheck = FALSE;
-				Verbose = FALSE;
-				Count = FALSE;
+				Overcheck = 0;
+				Verbose = 0;
+				Count = 0;
 				Prefix = NULL;
 				break;
 			case 'a': /* all the options */
-				Verbose = TRUE;
-				Count = TRUE;
-				Basename = TRUE;
+				Verbose = 1;
+				Count = 1;
+				Basename = 1;
 				/* fall through to set prefix */
 				optarg = "	X";
 				/* FALLTHROUGH */
 			case 'p': (void) sprintf (Filter, SED, Prefix = optarg); break;
-			case 'v': Verbose = TRUE; break;
+			case 'v': Verbose = 1; break;
 			default: errflg++;
 			}
 
@@ -115,15 +136,13 @@ initial (argc, argv) char **argv;
 	return (optind);
 	}
 
-/*FUNCTION header: print header for archive */
+/*FUNCTION header: print header for archive */
 header (argc, argv, optind)
 char	**argv;
 	{
 	int 	i;
-	Boole	problems = FALSE;
+	int	problems = 0;
 	long	clock;
-	char	*ctime ();
-	char	*getenv ();
 	char	*NAME = getenv ("NAME");
 	char	*ORG = getenv ("ORGANIZATION");
 
@@ -135,7 +154,7 @@ char	**argv;
 			}
 
 	if (problems)
-		return (FAILURE);
+		return(1);
 
 	printf ("%s\n", EXTRACT);
 	printf ("# This is a shell archive, meaning:\n");
@@ -149,7 +168,8 @@ char	**argv;
 	if (NAME)
 		printf ("# By:\t%s (%s)\n", NAME, ORG ? ORG : "");
 	printf ("export PATH; PATH=%s\n", PATH);
-	return (SUCCESS);
+	printf ("export STARTDIR; STARTDIR=`pwd`\n");
+	return(0);
 	}
 
 /*FUNCTION footer: print end of shell archive */
@@ -159,18 +179,18 @@ footer ()
 	printf ("#\tEnd of shell archive\n");
 	}
 
-/* uuencode options available to send cntrl and non-ascii chars */
+/* uuencode options available to send cntrl and non-ascii chars */
 /* really, this is getting to be too much like cpio or tar */
 
 /* ENC is the basic 1 character encoding function to make a char printing */
 #define ENC(c) (((c) & 077) + ' ')
 
 /*FUNCTION uuarchive: simulate uuencode to send files */
-Status
+int
 uuarchive (input, protection, output)
-char	*input;
-int 	protection;
-char	*output;
+	char	*input;
+	int 	protection;
+	char	*output;
 	{
 	FILE	*in;
 	if (in = fopen (input, "r"))
@@ -180,9 +200,9 @@ char	*output;
 		uuencode (in, stdout);
 		printf ("end\n");
 		fclose (in);
-		return (SUCCESS);
+		return(0);
 		}
-	return (FAILURE);
+	return(1);
 	}
 
 uuencode (in, out)
@@ -218,7 +238,7 @@ FILE	*ioptr;
 	putc (ENC(c4), ioptr);
 	}
 
-/*FUNCTION archive: make archive of input file to be extracted to output */
+/*FUNCTION archive: make archive of input file to be extracted to output */
 archive (input, output)
 char	*input, *output;
 	{
@@ -245,23 +265,23 @@ char	*input, *output;
 		if (Lastchar != '\n') /* incomplete last line */
 			putchar ('\n');   /* Delim MUST begin new line! */
 
-		if (Count == TRUE && Lastchar != '\n')
+		if (Count == 1 && Lastchar != '\n')
 			printf ("%s \"a missing newline was added to '%s'\"\n", ECHO, input);
-		if (Count == TRUE && Ctrlcount)
+		if (Count == 1 && Ctrlcount)
 			printf ("%s \"%d control character%s may be missing from '%s'\"\n",
 				ECHO, Ctrlcount, Ctrlcount > 1 ? "s" : "", input);
 
 		(void) fclose (ioptr);
-		return (SUCCESS);
+		return(0);
 		}
 	else
 		{
 		fprintf (stderr, "shar: Can't open '%s'\n", input);
-		return (FAILURE);
+		return(1);
 		}
 	}
 
-/*FUNCTION copyout: copy ioptr to stdout */
+/*FUNCTION copyout: copy ioptr to stdout */
 /*
 	Copyout copies its ioptr almost as fast as possible
 	except that it has to keep track of the last character
@@ -283,7 +303,7 @@ register	FILE	*ioptr;
 
 	while ((C = getc (ioptr)) != EOF)
 		{
-		if (count == TRUE && badctrl (C))
+		if (count == 1 && badctrl (C))
 			Ctrlcount++;
 		L = putchar (C);
 		}
@@ -299,14 +319,14 @@ register	char	*s;
 		{
 		while (*s)
 			{
-			if (Count == TRUE && badctrl (*s)) Ctrlcount++;
+			if (Count == 1 && badctrl (*s)) Ctrlcount++;
 			putchar (*s++);
 			}
 		Lastchar = *(s-1);
 		}
 	}
 
-/*FUNCTION shar: main archiving routine passed to directory traverser */
+/*FUNCTION shar: main archiving routine passed to directory traverser */
 shar (file, type, pos)
 char	*file;     /* file or directory to be processed */
 int 	type;      /* either 'f' for file or 'd' for directory */
@@ -324,7 +344,7 @@ int 	pos;       /* 0 going in to a file or dir, 1 going out */
 	else
 		protection = statbuf.st_mode & 07777;
 
-	if (Basename == TRUE)
+	if (Basename == 1)
 		{
 		while (*basefile) basefile++; /* go to end of name */
 		while (basefile > file && *(basefile-1) != '/')
@@ -338,19 +358,19 @@ int 	pos;       /* 0 going in to a file or dir, 1 going out */
 			{
 			if (Uucode)
 				{
-				if (uuarchive (file, protection, basefile) != SUCCESS)
-					exit (FAILURE);
+				if (uuarchive (file, protection, basefile) != 0)
+					exit(1);
 				}
 			else
-				if (archive (file, basefile) != SUCCESS)
-					exit (FAILURE);
+				if (archive (file, basefile) != 0)
+					exit(1);
 			}
 		}
 	else /* pos == 1, after the file is archived */
 		endfile (basefile, type, statbuf.st_size, protection);
 	}
 
-/*FUNCTION beginfile: do activities before packing up a file */
+/*FUNCTION beginfile: do activities before packing up a file */
 beginfile (basefile, type, size, protection)
 char	*basefile;  /* name of the target file */
 int 	type;       /* either 'd' for directory, or 'f' for file */
@@ -361,21 +381,21 @@ int 	protection; /* chmod protection bits */
 		{
 		printf ("if %s ! -d '%s'\n", TEST, basefile);
 		printf ("then\n");
-		if (Verbose == TRUE)
+		if (Verbose == 1)
 			printf ("	%s \"creating directory '%s'\"\n", ECHO, basefile);
 		printf ("	%s '%s'\n", MKDIR, basefile);
 		printf ("fi\n");
-		if (Verbose == TRUE)
+		if (Verbose == 1)
 			printf ("%s \"entering directory '%s'\"\n", ECHO, basefile);
 		printf ("%s '%s'\n", CHDIR, basefile);
 		}
 	else /* type == 'f' */
 		{
-		if (Verbose == TRUE)
+		if (Verbose == 1)
 			printf ("%s \"extracting '%s'\" '(%ld character%s)'\n",
 				ECHO, basefile, size, size == 1 ? "" : "s");
 
-		if (Overcheck == TRUE)
+		if (Overcheck == 1)
 			{
 			printf ("if %s -f '%s'\n", TEST, basefile);
 			printf ("then\n");
@@ -387,7 +407,7 @@ int 	protection; /* chmod protection bits */
 		}
 	}
 
-/*FUNCTION endfile: do activities after packing up a file */
+/*FUNCTION endfile: do activities after packing up a file */
 endfile (basefile, type, size, protection)
 char	*basefile;  /* name of the target file */
 int 	type;       /* either 'd' for directory, or 'f' for file */
@@ -396,16 +416,16 @@ int 	protection; /* chmod protection bits */
 	{
 	if (type == 'd')
 		{
-		if (Modeset == TRUE)
+		if (Modeset == 1)
 			printf ("%s %o .\n", CHMOD, protection);
-		if (Verbose == TRUE)
+		if (Verbose == 1)
 			printf ("%s \"done with directory '%s'\"\n", ECHO, basefile);
 		printf ("%s ..\n", CHDIR);
 		}
 	else /* type == 'f' (plain file) */
 		{
 		printf ("%s\n", Delim);
-		if (Count == TRUE)
+		if (Count == 1)
 			{
 			printf ("if %s %ld -ne \"`%s '%s'`\"\n", TEST, size, WC_C, basefile);
 			printf ("then\n");
@@ -414,15 +434,15 @@ int 	protection; /* chmod protection bits */
 				size, size == 1 ? "" : "s");
 			printf ("fi\n");
 			}
-		if (Uucode == FALSE) /* might have to chmod by hand */
+		if (Uucode == 0) /* might have to chmod by hand */
 			{
-			if (Modeset == TRUE) /* set all protection bits (W McKeeman) */
+			if (Modeset == 1) /* set all protection bits (W McKeeman) */
 				printf ("%s %o '%s'\n",
 						CHMOD, protection, basefile);
 			else if (protection & 0111) /* executable -> chmod +x */
 				printf ("%s +x '%s'\n", CHMOD, basefile);
 			}
-		if (Overcheck == TRUE)
+		if (Overcheck == 1)
 			printf ("fi\n");
 		}
 	}

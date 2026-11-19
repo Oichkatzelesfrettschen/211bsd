@@ -4,15 +4,15 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)biz22.c	5.1 (Berkeley) 6/6/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)biz22.c	5.2 (2.11BSD) 2026/5/9";
+#endif
 
 #include "tip.h"
 
 #define DISCONNECT_CMD	"\20\04"	/* disconnection string */
 
-static	int sigALRM();
+static	void sigALRM();
 static	int timeout = 0;
 static	jmp_buf timeoutbuf;
 
@@ -103,7 +103,7 @@ biz22_abort()
 	write(FD, "\02", 1);
 }
 
-static int
+static void
 sigALRM()
 {
 
@@ -116,7 +116,7 @@ cmd(s)
 	register char *s;
 {
 	char c;
-	int (*f)();
+	sig_t f;
 
 	write(FD, s, strlen(s));
 	f = signal(SIGALRM, sigALRM);
@@ -138,7 +138,7 @@ detect(s)
 	register char *s;
 {
 	char c;
-	int (*f)();
+	sig_t f;
 
 	f = signal(SIGALRM, sigALRM);
 	timeout = 0;

@@ -1,14 +1,15 @@
-.TH VMSPREP LOCAL "4/10/85 UCB Local"
+.\"     @(#)vmsprep.1       1.1 (2.11BSD) 2026/6/23
+.TH VMSPREP 1 "April 10, 1985"
 .SH NAME
-vmsprep - VMS tape preperation aid
+vmsprep - VMS tape preparation aid
 .SH SYNOPSIS
 .B vmsprep
 [-] [name ...]
 .SH DESCRIPTION
-.I Vmsprep
+.I vmsprep
 traverses hierarchies of files and prepares them for
 transportation to VMS.
-Since ANSI stardard tapes (the VMS standard) do
+Since ANSI standard tapes (the VMS standard) do
 not allow hierarchy, this program provides a
 method of flattening the hierarchy onto a tape
 in such a way that it can be unpacked on VMS
@@ -41,9 +42,9 @@ A typical sequence would be:
 .RS
 vmsprep - tree1 tree2 file | ansitape cln trees -
 .RE
-.br
-.I Then on a VMS machine
-.br
+.sp
+Then on a VMS machine
+.sp
 .RS
 mount MFA0: trees
 .br
@@ -65,7 +66,7 @@ The offending character is replaced by 'Z' and
 continues.
 .br
 .SH "SEE ALSO"
-ansitape(l)
+ansitape(1)
 .SH BUGS
 Extra periods in file names may not be dealt with optimally.
 .br
@@ -78,4 +79,3 @@ Since vmsprep uses find(1) internally, it does not follow symbolic links.
 The exclusion of RCS and SCCS files should be controlled by a command line flag.
 .br
 Assumes VMS v4.0 or greater for long file names.
-.br

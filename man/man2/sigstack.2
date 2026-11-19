@@ -2,28 +2,32 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)sigstack.2	6.2.1 (2.11BSD) 97/9/3
+.\"	@(#)sigstack.2	6.2.2 (2.11BSD) 2026/9/22
 .\"
 .TH SIGSTACK 2 "September 3, 1997"
-.UC 5
+.UC 2
 .SH NAME
-sigstack \- set and/or get signal stack context
+\fBsigstack\fP \- set and/or get signal stack context
 .SH SYNOPSIS
 .nf
-.B #include <signal.h>
-.PP
-.B struct sigstack {
-.B	caddr_t	ss_sp;
-.B	int	ss_onstack;
-.B };
-.PP
-.B sigstack(ss, oss);
-.B struct sigstack *ss, *oss;
+.ft B
+#include <signal.h>
+
+struct sigstack
+       {
+       caddr_t ss_sp;
+       int     ss_onstack;
+       };
+
+int
+sigstack(\fIstruct sigstack *ss\fP, \fIstruct sigstack *oss\fP);
+.ft R
+.fi
 .SH DESCRIPTION
-.B This interface has been made obsolete by:
-sigaltstack(2).
+.B This interface is made obsolete by:
+.BR sigaltstack (2) .
 .sp
-.I Sigstack
+.B sigstack
 allows users to define an alternate stack on which signals
 are to be processed.  If
 .I ss
@@ -34,7 +38,7 @@ on which to deliver signals
 and tells the system if the process is currently executing
 on that stack.  When a signal's action indicates its handler
 should execute on the signal stack (specified with a
-.IR sigvec (2)
+.BR sigvec (2)
 call), the system checks to see
 if the process is currently executing on that stack.  If the
 process is not currently executing on the signal stack,
@@ -53,7 +57,7 @@ Otherwise, a value of \-1 is returned and
 .I errno
 is set to indicate the error.
 .SH ERRORS
-.I Sigstack
+.B sigstack
 will fail and the signal stack context will remain unchanged
 if one of the following occurs.
 .TP 15

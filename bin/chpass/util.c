@@ -16,7 +16,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)util.c	5.9.1 (2.11BSD) 1996/1/12";
+static char sccsid[] = "@(#)util.c	5.9.2 (2.11BSD) 2026/5/31";
 #endif
 
 #include <sys/types.h>
@@ -26,7 +26,7 @@ static char sccsid[] = "@(#)util.c	5.9.1 (2.11BSD) 1996/1/12";
 #include <chpass.h>
 #include <strings.h>
 #include <ctype.h>
-#include "pathnames.h"
+#include <paths.h>
 
 static char dmsize[] =
 	{ -1, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };

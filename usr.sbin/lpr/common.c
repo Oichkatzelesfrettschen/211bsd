@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)common.c	5.2 (Berkeley) 5/6/86";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)common.c	5.3 (2.11BSD) 2026/5/10";
+#endif
 
 /*
  * Routines and data common to all the line printer functions.

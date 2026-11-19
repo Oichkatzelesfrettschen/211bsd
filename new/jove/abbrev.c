@@ -1,20 +1,21 @@
-/***************************************************************************
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)abbrev.c 2.0 (2.11BSD) 2026/9/17";
+#endif
+/*
  * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
  * is provided to you without charge, and with no warranty.  You may give  *
  * away copies of JOVE, including sources, provided that this notice is    *
  * included in all the files.                                              *
- ***************************************************************************/
+ */
 
 #include "jove.h"
+#include <strings.h>
 
 #ifdef ABBREV
 
 #include "io.h"
 #include "ctype.h"
 
-#ifdef MSDOS
-#include <io.h>
-#endif
 #define HASHSIZE	20
 
 struct abbrev {
@@ -120,7 +121,7 @@ char	*abbrev,
 		ap->a_cmdhook = 0;
 		table[h] = ap;
 	} else
-		free(ap->a_phrase);
+		free((void *)ap->a_phrase);
 	ap->a_phrase = copystr(phrase);
 }
 

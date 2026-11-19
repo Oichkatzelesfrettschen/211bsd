@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)fcntl.2	6.4.1 (2.11BSD GTE) 11/30/94
+.\"	@(#)fcntl.2	6.4.1 (2.11BSD) 2026/9/24
 .\"
 .TH FCNTL 2 "Nov 30, 1994"
 .UC 5
@@ -12,14 +12,13 @@ fcntl \- file control
 .nf
 .ft B
 #include <fcntl.h>
-.PP
-.ft B
-res = fcntl(fd, cmd, arg)
-int res;
-int fd, cmd, arg;
+
+int
+fcntl(\fIint fd\fP, \fIint cmd\fP, \fIint arg\fP)
 .ft R
+.nf
 .SH DESCRIPTION
-.I Fcntl
+.B fcntl
 provides for control over descriptors.
 The argument
 .I fd
@@ -31,7 +30,7 @@ F_DUPFD
 Return a new descriptor as follows:
 .IP
 Lowest numbered available descriptor greater than or equal to
-.I arg.
+.IR arg .
 .IP
 Same object references as the original descriptor.
 .IP
@@ -45,16 +44,16 @@ share the same file status flags).
 .IP
 The close-on-exec flag associated with the new file descriptor
 is set to remain open across
-.IR execv (2)
+.BR execv (2)
 system calls.
 .TP 15
 F_GETFD
 Get the close-on-exec flag associated with the file descriptor
 .IR fd .
 If the low-order bit is 0, the file will remain open across
-.IR exec ,
+.BR exec (2),
 otherwise the file will be closed upon execution of
-.I exec.
+.BR exec .
 .TP 15
 F_SETFD
 Set the close-on-exec flag associated with
@@ -88,14 +87,14 @@ The flags for the F_GETFL and F_SETFL flags are as follows:
 .TP 15
 O_NONBLOCK
 Non-blocking I/O; if no data is available to a
-.I read
+.BR read (2)
 call, or if a write operation would block,
 the call returns -1 with the error EWOULDBLOCK.
 .TP
 O_APPEND
 Force each write to append at the end of file;
 corresponds to the O_APPEND flag of
-.IR open (2).
+.BR open (2).
 .TP
 O_ASYNC
 Enable the SIGIO signal to be sent to the process group
@@ -105,7 +104,7 @@ upon availability of data to be read.
 Upon successful completion, the value returned depends on
 .I cmd
 as follows:
-.sp .5v
+.sp
 .nf
 .ta .25i 1.25i
 	F_DUPFD	A new file descriptor.
@@ -114,12 +113,12 @@ as follows:
 	F_GETOWN	Value of file descriptor owner.
 	other	Value other than \-1.
 .fi
-.sp .5v
+.sp
 Otherwise, a value of \-1 is returned and
-.I errno
+.B errno
 is set to indicate the error.
 .SH ERRORS
-.I Fcntl
+.B fcntl
 will fail if one or more of the following are true:
 .TP 15
 [EBADF]
@@ -127,20 +126,20 @@ will fail if one or more of the following are true:
 is not a valid open file descriptor.
 .TP 15
 [EMFILE]
-.I Cmd
+.I cmd
 is F_DUPFD and the maximum allowed number of file descriptors are currently
 open.
 .TP 15
 [EINVAL]
-.I Cmd
+.I cmd
 is F_DUPFD and
 .I arg
 is negative or greater than the maximum allowable number
 (see
-.IR getdtablesize (2)).
+.BR getdtablesize (2)).
 .TP 15
 [ESRCH]
-.I Cmd
+.I cmd
 is F_SETOWN and
 the process ID given as argument is not in use.
 .SH "SEE ALSO

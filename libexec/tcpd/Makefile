@@ -1,9 +1,8 @@
-# @(#) Makefile 1.21 (2.11BSD) 2025/12/8
+# @(#) Makefile 1.22 (2.11BSD) 2026/1/13
 
 REAL_DAEMON_DIR=/usr/libexec
 RANLIB	= ranlib	# have ranlib (BSD-ish UNIX)
 ARFLAGS	= rv		# most systems
-AUX_OBJ= environ.o
 FACILITY= LOG_DAEMON	# LOG_MAIL is what most sendmail daemons use
 SEVERITY= LOG_INFO	# LOG_INFO is normally not logged to the console
 
@@ -39,7 +38,7 @@ CFLAGS	= -O -i -DFACILITY=$(FACILITY) $(ACCESS) $(PARANOID) $(AUTH) $(UMASK) \
 	$(HOSTNAME)
 
 LIB_OBJ= hosts_access.o options.o shell_cmd.o rfc931.o eval.o \
-	hosts_ctl.o refuse.o percent_x.o clean_exit.o $(AUX_OBJ) \
+	hosts_ctl.o refuse.o percent_x.o clean_exit.o \
 	fix_options.o socket.o tli.o workarounds.o \
 	update.o misc.o diag.o percent_m.o
 
@@ -122,7 +121,7 @@ tcpd_lint:
 	-DREAL_DAEMON_DIR=\"$(REAL_DAEMON_DIR)\" \
 	tcpd.c fromhost.c socket.c tli.c hosts_access.c \
 	shell_cmd.c refuse.c rfc931.c eval.c percent_x.c clean_exit.c \
-	options.c setenv.c fix_options.c workarounds.c update.c misc.c \
+	options.c fix_options.c workarounds.c update.c misc.c \
 	diag.c percent_m.c
 
 miscd_lint:
@@ -133,7 +132,7 @@ miscd_lint:
 	-DREAL_DAEMON_DIR=\"$(REAL_DAEMON_DIR)\" \
 	miscd.c fromhost.c socket.c tli.c hosts_access.c \
 	shell_cmd.c refuse.c rfc931.c eval.c percent_x.c clean_exit.c \
-	options.c setenv.c fix_options.c workarounds.c update.c misc.c \
+	options.c fix_options.c workarounds.c update.c misc.c \
 	diag.c percent_m.c
 
 match_lint:
@@ -141,7 +140,7 @@ match_lint:
 	-DPARANOID $(TABLES) -DNETGROUP -DPROCESS_OPTIONS -DRFC931_TIMEOUT=10 \
 	-DREAL_DAEMON_DIR=\"$(REAL_DAEMON_DIR)\" \
 	tcpdmatch.c hosts_access.c eval.c percent_x.c options.c workarounds.c \
-	update.c socket.c misc.c diag.c percent_m.c setenv.c \
+	update.c socket.c misc.c diag.c percent_m.c \
 	inetcf.c scaffold.c
 
 chk_lint:
@@ -149,26 +148,7 @@ chk_lint:
 	-DPARANOID $(TABLES) -DNETGROUP -DPROCESS_OPTIONS -DRFC931_TIMEOUT=10 \
 	-DREAL_DAEMON_DIR=\"$(REAL_DAEMON_DIR)\" \
 	tcpdchk.c eval.c percent_x.c options.c update.c workarounds.c \
-	setenv.c misc.c diag.c percent_m.c inetcf.c scaffold.c
-
-printfck:
-	printfck -f printf.ck \
-	tcpd.c fromhost.c socket.c tli.c hosts_access.c \
-	shell_cmd.c refuse.c rfc931.c eval.c percent_x.c clean_exit.c \
-	options.c setenv.c fix_options.c workarounds.c update.c misc.c \
-	diag.c percent_m.c >aap.c
-	lint -DFACILITY=LOG_MAIL -DHOSTS_ACCESS -DPARANOID -DNETGROUP \
-	-DGETPEERNAME_BUG -DDAEMON_UMASK=022 -DSEVERITY=$(SEVERITY) \
-	$(TABLES) -DKILL_IP_OPTIONS -DPROCESS_OPTIONS \
-	-DRFC931_TIMEOUT=$(RFC931_TIMEOUT) -DALWAYS_RFC931 \
-	-DREAL_DAEMON_DIR=\"$(REAL_DAEMON_DIR)\" aap.c
-	printfck -f printf.ck \
-	tcpdchk.c eval.c percent_x.c options.c update.c workarounds.c \
-	setenv.c misc.c diag.c percent_m.c inetcf.c scaffold.c \
-	>aap.c
-	lint -DFACILITY=LOG_MAIL -DSEVERITY=$(SEVERITY) -DHOSTS_ACCESS \
-	-DPARANOID $(TABLES) -DNETGROUP -DPROCESS_OPTIONS -DRFC931_TIMEOUT=10 \
-	-DREAL_DAEMON_DIR=\"$(REAL_DAEMON_DIR)\"
+	misc.c diag.c percent_m.c inetcf.c scaffold.c
 
 # Internal compilation dependencies.
 
@@ -177,7 +157,6 @@ clean_exit.o: tcpd.h
 diag.o: cflags
 diag.o: mystdarg.h
 diag.o: tcpd.h
-environ.o: cflags
 eval.o: cflags
 eval.o: tcpd.h
 fakelog.o: cflags
@@ -216,12 +195,10 @@ safe_finger.o: cflags
 scaffold.o: cflags
 scaffold.o: scaffold.h
 scaffold.o: tcpd.h
-setenv.o: cflags
 shell_cmd.o: cflags
 shell_cmd.o: tcpd.h
 socket.o: cflags
 socket.o: tcpd.h
-strcasecmp.o: cflags
 tcpd.o: cflags
 tcpd.o: patchlevel.h
 tcpd.o: tcpd.h
@@ -242,6 +219,5 @@ try-from.o: tcpd.h
 update.o: cflags
 update.o: mystdarg.h
 update.o: tcpd.h
-vfprintf.o: cflags
 workarounds.o: cflags
 workarounds.o: tcpd.h

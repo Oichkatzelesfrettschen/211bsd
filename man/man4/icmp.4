@@ -2,18 +2,21 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)icmp.4p	6.1 (Berkeley) 5/16/86
+.\"	@(#)icmp.4	6.2 (2.11BSD) 2026/9/28
 .\"
-.TH ICMP 4P "May 16, 1986"
+.TH ICMP 4 "May 16, 1986"
 .UC 6
 .SH NAME
 icmp \- Internet Control Message Protocol
 .SH SYNOPSIS
-.B #include <sys/socket.h>
-.br
-.B #include <netinet/in.h>
-.PP
-.B s = socket(AF_INET, SOCK_RAW, proto);
+.nf
+.ft B
+#include <sys/socket.h>
+#include <netinet/in.h>
+
+socket(\fIAF_INET\fP, \fISOCK_RAW\fP, \fIint proto\fP);
+.ft R
+.fi
 .SH DESCRIPTION
 ICMP is the error and control message protocol used
 by IP and the Internet protocol family.  It may be accessed
@@ -23,23 +26,23 @@ The
 .I proto
 parameter to the socket call to create an ICMP socket
 is obtained from
-.IR getprotobyname (3N).
+.BR getprotobyname (3).
 ICMP sockets are connectionless,
 and are normally used with the
-.I sendto 
+.B sendto 
 and
-.I recvfrom 
+.B recvfrom 
 calls, though the
-.IR connect (2)
+.BR connect (2)
 call may also be used to fix the destination for future
 packets (in which case the 
-.IR read (2)
+.bR read (2)
 or
-.IR recv (2)
+.BR recv (2)
 and 
-.IR write (2)
+.BR write (2)
 or
-.IR send (2)
+.BR send (2)
 system calls may be used).
 .PP
 Outgoing packets automatically have an IP header prepended to
@@ -67,4 +70,4 @@ when an attempt is made to create a
 socket with a network address for which no network interface
 exists.
 .SH SEE ALSO
-send(2), recv(2), intro(4N), inet(4F), ip(4P)
+send(2), recv(2), intro(4), inet(4), ip(4)

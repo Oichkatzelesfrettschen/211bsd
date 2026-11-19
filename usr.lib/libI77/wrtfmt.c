@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)wrtfmt.c	5.1	6/7/85
+ *	@(#)wrtfmt.c	5.2 (2.11BSD) 2026/8/6
  */
 
 /*
@@ -33,13 +33,13 @@ w_ed(p,ptr,len) char *ptr; struct syl *p; ftnlen len;
 	case AW:
 		return(wrt_AW(ptr,p->p1,len));
 	case D:
-		return(wrt_E(ptr,p->p1,p->p2,2,len,'d'));
+		return(wrt_E(ptr,p->p1,p->p2,2,len,'D'));
 	case DE:
-		return(wrt_E(ptr,p->p1,(p->p2)&0xff,((p->p2)>>8)&0xff,len,'d'));
+		return(wrt_E(ptr,p->p1,(p->p2)&0xff,((p->p2)>>8)&0xff,len,'D'));
 	case E:
-		return(wrt_E(ptr,p->p1,p->p2,2,len,'e'));
+		return(wrt_E(ptr,p->p1,p->p2,2,len,'E'));
 	case EE:
-		return(wrt_E(ptr,p->p1,(p->p2)&0xff,((p->p2)>>8)&0xff,len,'e'));
+		return(wrt_E(ptr,p->p1,(p->p2)&0xff,((p->p2)>>8)&0xff,len,'E'));
 	case G:
 		return(wrt_G(ptr,p->p1,p->p2,2,len));
 	case GE:
@@ -148,17 +148,31 @@ wrt_H(a,b)
 	return(OK);
 }
 
-wrt_L(l,width,len) uint *l; ftnlen len;
-{	int i,n;
-	for(i=0;i<width-1;i++) PUT(' ')
-	if(len == sizeof (short))
+wrt_L(l,width,len) uint *l; int width; ftnlen len;
+	{
+	int i,n;
+
+	for	(i=0; i < width-1; i++) PUT(' ')
+
+// logicals on a pdp11 are 'long' (two shorts) with the true/false status
+// in the first (low) short. The order is correct in DATA statements but
+// reversed when generating I/O calls.  Until the bug is fixed use entire long.
+
+#ifdef	SHORT_LOGICAL
+//	i = l->is;
+	i = l->il ? 1: 0;
+#else
+	if	(len == sizeof (short))
 		i = l->is;
 	else
 		i = l->il;
-	if(i) PUT('t')
-	else PUT('f')
+#endif
+	if	(i)
+		PUT('T')
+	else
+		PUT('F')
 	return(OK);
-}
+	}
 
 LOCAL
 wrt_AW(p,w,len) char * p; ftnlen len;
@@ -266,7 +280,7 @@ zero:			oldscale=scale;
 		}
 		/* falling off the bottom implies E format */
 	}
-	return(wrt_E(p,w,d,e,len,'e'));
+	return(wrt_E(p,w,d,e,len,'E'));
 }
 
 wrt_F(p,w,d,len) ufloat *p; ftnlen len;

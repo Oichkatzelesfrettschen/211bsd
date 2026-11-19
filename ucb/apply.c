@@ -4,15 +4,13 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)apply.c	5.1 (Berkeley) 5/31/85";
-#endif not lint
+static char sccsid[] = "@(#)apply.c	5.2 (2.11BSD) 2026/5/8";
+#endif
 
 /*%cc -s -O %
  * apply - apply a command to a set of arguments
@@ -22,6 +20,8 @@ static char sccsid[] = "@(#)apply.c	5.1 (Berkeley) 5/31/85";
  *	apply "ln %1 /usr/fred/dir" *  duplicates a directory
  */
 #include <stdio.h>
+#include <stdlib.h>
+
 char	*cmdp;
 #define	NCHARS 512
 char	cmd[512];
@@ -29,7 +29,6 @@ char	defargs=1;
 #define	DEFARGCHAR	'%'
 char	argchar=DEFARGCHAR;
 int	nchars;
-extern	char *getenv();
 
 main(argc, argv)
 	char *argv[];

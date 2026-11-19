@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)fperr.h	1.2 (2.11BSD) 1997/8/28
+ *	@(#)fperr.h	1.3 (2.11BSD) 2026/9/21
  */
 
 /*
@@ -16,7 +16,7 @@ struct fperr {
 
 /*
  * These are not used any where and are present here merely for reference.
- * All the of the VAX oriented FP codes were removed from signal.h and the
+ * All of the VAX oriented FP codes were removed from signal.h and the
  * kernel.  The kernel now passes the unaltered contents of the FEC register to
  * the application.  The values below were taken from the PDP-11/70 processor
  * handbook.
@@ -30,4 +30,4 @@ struct fperr {
 #define	FPE_FLTUND_TRAP	0xa	/* FP underflow */
 #define	FPE_UNDEF_TRAP	0xc	/* FP Undefined variable */
 #define	FPE_MAINT_TRAP	0xe	/* FP Maint trap */
-#endif /* notnow */
+#endif

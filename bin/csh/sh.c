@@ -5,7 +5,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char *sccsid = "@(#)sh.c	5.3 (Berkeley) 3/29/86";
+static char *sccsid = "@(#)sh.c	5.4 (2.11BSD) 2026/9/21";
 #endif
 
 #include "sh.h"
@@ -279,8 +279,8 @@ retry:
 			    tpgrp != -1) {
 				int ldisc;
 				if (tpgrp != shpgrp) {
-					int (*old)() = signal(SIGTTIN, SIG_DFL);
-					(void) kill(0, SIGTTIN);
+					sig_t old = signal(SIGTTIN, SIG_DFL);
+					(void) kill((pid_t)0, SIGTTIN);
 					(void) signal(SIGTTIN, old);
 					goto retry;
 				}
@@ -604,6 +604,7 @@ exitstat()
 /*
  * in the event of a HUP we want to save the history
  */
+void
 phup()
 {
 	rechist();
@@ -618,6 +619,7 @@ char	*jobargv[2] = { "jobs", 0 };
  * and finally go through the normal error mechanism, which
  * gets a chance to make the shell go away.
  */
+void
 pintr()
 {
 	pintr1(1);

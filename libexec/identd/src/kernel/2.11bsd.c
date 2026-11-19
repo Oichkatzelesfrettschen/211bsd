@@ -1,10 +1,10 @@
 /*
-** kernel/2.11bsd.c		Low level kernel access functions for 2.11BSD
+** kernel/2.11bsd.c - Low level kernel access functions for 2.11BSD
 **
 ** This program is in the public domain and may be used freely by anyone
 ** who wants to. 
 **
-** Last update: 05 December 1999
+** Last update: 17 June 2026 use swapdevname(3) in place of fixed swap device
 **
 ** Please send bug fixes/bug reports to: Steven Schultz <sms@moe.2bsd.com>
 */
@@ -62,10 +62,6 @@
 #define	_PATH_MEM	"/dev/mem"
 #endif
 
-#ifndef	_PATH_SWAP
-#define	_PATH_SWAP	"/dev/swap"
-#endif
-
 #ifndef	_PATH_UNIX
 #define	_PATH_UNIX	"/unix"
 #endif
@@ -79,7 +75,7 @@
 	static	char	Msg_sysctl[] = "sysctl %s";
 	static	char	Msg_readu[] = "can't read u pid %d";
 	static	char	Msg_malloc[] = "malloc(%d)";
-	static	char	Swap[] = _PATH_SWAP;
+	static	char	Swap[20];
 	static	char	Netnix[] = _PATH_NETNIX;
 
 	static	struct	file	*sockp2fp();
@@ -99,6 +95,7 @@ k_open()
 	if	(memfd < 0)
     		error1(Msg_open, p);
 
+	swapdevname(Swap, sizeof (Swap));
 	swapfd = open(Swap, O_RDONLY);
 	if	(swapfd < 0)
 		error1(Msg_open, Swap);

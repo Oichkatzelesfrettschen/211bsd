@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)vv.4	6.2 (Berkeley) 8/20/87
+.\"	@(#)vv.4	6.3 (2.11BSD) 2026/9/26
 .\"
 .TH VV 4 "August 20, 1987"
 .UC 2
@@ -17,7 +17,7 @@ vv \- Proteon proNET 10 Megabit ring
 .ft R
 .SH DESCRIPTION
 The
-.I vv
+.B vv
 interface provides access to a 10 Mb/s Proteon proNET ring network.
 .PP
 The network address of the interface must be specified with an
@@ -35,11 +35,6 @@ Lost input interrupts are checked for when packets are sent out.
 If the installation is running CTL boards which use the old broadcast
 address of 0 instead of the new address of 0xff, the define OLD_BROADCAST
 should be specified in the driver.
-.PP
-The driver can use ``trailer'' encapsulation to minimize copying
-data on input and output.
-This may be disabled, on a per-interface basis,
-by setting the IFF_NOTRAILERS flag with an SIOCSIFFLAGS ioctl.
 .SH DIAGNOSTICS
 .PP
 \fBvv%d: host %d\fP.  The software announces the host
@@ -67,9 +62,4 @@ handed a message with a preposterous length.  This results in
 an immediate 
 .IR "panic: vs_olen" .
 .SH SEE ALSO
-intro(4N), inet(4F)
-.SH BUGS
-The encapsulation of trailer packets in the 4.2BSD version of this driver
-was incorrect (the packet type was in VAX byte order).
-As a result, the trailer encapsulation in this version is not compatible
-with the 4.2BSD VAX version.
+intro(4), inet(4)

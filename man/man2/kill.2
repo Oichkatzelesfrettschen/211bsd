@@ -2,25 +2,29 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)kill.2	6.5 (Berkeley) 5/14/86
+.\"	@(#)kill.2	6.6 (2.11BSD) 2026/9/21
 .\"
 .TH KILL 2 "May 14, 1986"
 .UC 4
 .SH NAME
 kill \- send signal to a process
 .SH SYNOPSIS
+.nf
 .ft B
-kill(pid, sig)
-.br
-int pid, sig;
+#include <signal.h>
+
+int
+kill(\fIpid_t pid\fP, \fIint sig\fP)
+.ft R
+.fi
 .SH DESCRIPTION
-.I Kill
+.B kill
 sends the signal \fIsig\fP
 to a process, specified by the process number
 .IR pid .
-.I Sig
+.I sig
 may be one of the signals specified in
-.IR sigvec (2),
+.BR sigvec (2),
 or it may be 0, in which case
 error checking is performed but no
 signal is actually sent. 
@@ -36,7 +40,7 @@ to any descendant of the current process.
 If the process number is 0,
 the signal is sent to all processes in the
 sender's process group; this is a variant of
-.IR killpg (2).
+.BR killpg (2).
 .PP
 If the process number is \-1
 and the user is the super-user,
@@ -55,21 +59,21 @@ if the process number is negative but not \-1,
 the signal is sent to all processes whose process group ID
 is equal to the absolute value of the process number.
 This is a variant of
-.IR killpg (2).
+.BR killpg (2).
 .PP
 Processes may send signals to themselves.
 .SH "RETURN VALUE
 Upon successful completion, a value of 0 is returned.
 Otherwise, a value of \-1 is returned and
-.I errno
+.B errno
 is set to indicate the error.
 .SH "ERRORS
-.I Kill
+.B kill
 will fail and no signal will be sent if any of the following
 occur:
 .TP 15
 [EINVAL]
-\fISig\fP is not a valid signal number.
+\fIsig\fP is not a valid signal number.
 .TP 15
 [ESRCH]
 No process can be found corresponding to that specified by \fIpid\fP.

@@ -1,0 +1,9 @@
+# minimal .profile for use by sh after being started by init (single user mode)
+echo 'erase ^H kill ^U intr ^C'
+stty dec
+stty erase \^H kill \^U intr \^C
+PATH=/bin:/sbin:/usr/sbin:/etc:/usr/ucb:/usr/bin
+export PATH
+HOME=/
+export HOME
+umask 22

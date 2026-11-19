@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)dh.c	1.6 (2.11BSD) 2025/8/11
+ *	@(#)dh.c	1.7 (2.11BSD) 2026/5/14
  */
 
 /*
@@ -285,17 +285,7 @@ dhrint(dh)
 			if (tp->t_flags & RAW)
 				c = 0;
 			else
-#ifdef	OLDWAY
-				c = tp->t_intrc;
-#else
 				c = tp->t_brkc;	/* why have brkc if not used? */
-#endif
-#if NBK > 0
-		if (tp->t_line == NETLDISC) {
-			c &= 0177;
-			BKINPUT(c, tp);
-		} else
-#endif
 			(*linesw[tp->t_line].l_rint)(c, tp);
 	}
 }

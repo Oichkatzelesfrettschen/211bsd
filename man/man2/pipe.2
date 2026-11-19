@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)pipe.2	6.2 (Berkeley) 8/26/85
+.\"	@(#)pipe.2	6.3 (2.11BSD) 2026/9/20
 .\"
 .TH PIPE 2 "August 26, 1985"
 .UC 4
@@ -11,13 +11,15 @@ pipe \- create an interprocess communication channel
 .SH SYNOPSIS
 .nf
 .ft B
-pipe(fildes)
-int fildes[2];
+#include <unistd.h>
+
+int
+pipe(\fIint fildes[2]\fP)
 .fi
 .ft R
 .SH DESCRIPTION
 The
-.I pipe
+.B pipe
 system call
 creates an I/O mechanism called a pipe.
 The file descriptors returned can
@@ -35,13 +37,13 @@ pipe has been set up,
 two (or more)
 cooperating processes
 (created by subsequent
-.I fork
+.B fork
 calls)
 will pass data through the
 pipe with
-.I read
+.B read
 and
-.I write
+.B write
 calls.
 .PP
 The shell has a syntax
@@ -52,10 +54,6 @@ Read calls on an empty
 pipe (no buffered data) with only one end
 (all write file descriptors closed)
 returns an end-of-file.
-.PP
-Pipes are really a special case of the 
-.IR socketpair (2)
-call and, in fact, are implemented as such in the system.
 .PP
 A signal is generated if a write on a pipe with only one end is attempted.
 .SH "RETURN VALUE

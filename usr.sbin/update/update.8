@@ -1,4 +1,4 @@
-.\"	@(#)update.8	6.1.1 (2.11BSD) 1996/11/17
+.\"	@(#)update.8	6.1.2 (2.11BSD) 2026/9/19
 .\"
 .TH UPDATE 8 "November 17, 1996"
 .AT 3
@@ -7,7 +7,7 @@ update \- periodically update the super block
 .SH SYNOPSIS
 .B update
 .SH DESCRIPTION
-.I Update
+.B update
 is a program that executes
 the
 .IR sync (2)
@@ -21,7 +21,7 @@ initialization shell command file.
 sync(2), sync(8), init(8), rc(8)
 .SH BUGS
 With
-.I update
+.B update
 running,
 if the CPU is
 halted just as
@@ -31,9 +31,3 @@ is executed,
 a file system can be damaged.
 This is partially due to DEC hardware that
 writes zeros when NPR requests fail.
-A fix would be to have
-.IR sync (8)
-temporarily increment the system time by at
-least 30 seconds to trigger the execution of
-.I update.
-This would give 30 seconds grace to halt the CPU.

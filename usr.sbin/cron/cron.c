@@ -16,13 +16,13 @@
  */
 
 #if !defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)cron.c 2.11.1 (2.11BSD) 1999/08/05";
+static char sccsid[] = "@(#)cron.c 2.11.2 (2.11BSD) 2026/9/19";
 #endif
 
 #define	MAIN_PROGRAM
 
 #include "cron.h"
-#include <sys/signal.h>
+#include <signal.h>
 #include <sys/time.h>
 
 static	void	usage __P((void)),
@@ -222,7 +222,7 @@ cron_sleep() {
 	while (seconds_to_wait > 0) {
 		Debug(DSCH, ("[%d] sleeping for %d seconds\n",
 			getpid(), seconds_to_wait))
-		seconds_to_wait = (int) sleep((unsigned int) seconds_to_wait);
+		seconds_to_wait = sleep(seconds_to_wait);
 	}
 }
 

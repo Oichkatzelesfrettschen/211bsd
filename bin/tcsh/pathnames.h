@@ -1,4 +1,4 @@
-/* $Header: /home/hyperion/mu/christos/src/sys/tcsh-6.00/RCS/pathnames.h,v 3.0 1991/07/04 21:54:11 christos Exp $ */
+/* $Header: /home/hyperion/mu/christos/src/sys/tcsh-6.00/RCS/pathnames.h,v 3.1 2026/5/31 21:54:11 (2.11BSD) Exp $ */
 /*
  * pathnames.h: Location of things to find
  */
@@ -37,26 +37,12 @@
 #ifndef _h_pathnames
 #define _h_pathnames
 
-#ifdef CMUCS
-#define _PATH_LOCAL		"/usr/cs/bin"
-#else
-#define _PATH_LOCAL		"/usr/local"
-#endif
+#include <paths.h>
 
+#define _PATH_LOCAL		"/usr/local"
 #define _PATH_USRBIN		"/usr/bin"
 #define _PATH_USRUCB		"/usr/ucb"
-#define _PATH_USRBSD		"/usr/bsd"
 #define _PATH_BIN		"/bin"
-
-#if defined(convex) || defined(__convex__)
-# define _PATH_DOTLOGIN		"/etc/login"
-# define _PATH_DOTLOGOUT	"/etc/logout"
-# define _PATH_DOTCSHRC		"/etc/cshrc"
-#endif /* convex || __convex__ */
-
-#if defined(IRIS4D) || defined(OREO)
-# define _PATH_DOTLOGIN		"/etc/cshrc"
-#endif /* IRIS4D || OREO */
 
 #ifndef _PATH_DOTLOGIN
 # define _PATH_DOTCSHRC		"/etc/csh.cshrc"
@@ -65,17 +51,7 @@
 #endif
 
 #define _PATH_DEVNULL		"/dev/null"
-
-#define _PATH_BSHELL		"/bin/sh"
-#ifdef notdef
-# define _PATH_CSHELL 		"/bin/csh"
-#endif
 #define _PATH_TCSHELL		"/bin/tcsh"
 
 #define _PATH_LOGIN		"/bin/login"
-#ifdef NEWGRP
-# define _PATH_BIN_NEWGRP	"/bin/newgrp"
-# define _PATH_USRBIN_NEWGRP	"/usr/bin/newgrp"
-#endif
-
 #endif /* _h_pathnames */

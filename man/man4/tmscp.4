@@ -2,27 +2,24 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)tmscp.4	1.2 (2.11BSD) 1995/12/22
+.\"	@(#)tmscp.4	1.3 (2.11BSD) 2026/9/11
 .\"
 .TH TMSCP 4 "December 22, 1995"
 .UC 2
 .SH NAME
 tmscp \- DEC TMSCP magtape interface
 .SH SYNOPSIS
-.ft B
 .nf
 /sys/conf/SYSTEM:
 
-        NTMSCP       1     # TMSCP controllers
-        NTMS         1     # TMSCP drives
-        TMSCP_DEBUG  NO    # debugging code in in TMSCP drive (EXPENSIVE)
-
+      NTMSCP  1     # TMSCP controllers
+      NTMS    1     # TMSCP drives
+.sp
 /etc/dtab:
-.ta .5i +\w'#Name 'u +\w'Unit# 'u +\w'177777 'u +\w'Vector 'u +\w'Br 'u +\w'xxxxxxx 'u +\w'xxxxxxx 'u
-	#Name	Unit#	Addr	Vector	Br	Handler(s)		# Comments
-	tms	?	174500	260	5	tmsintr		# tmscp driver
-	tms	?	164334	0	5	tmsintr		# alternate
-.DT
+.sp
+      #Name Unit#  Addr     Vector    Br       Handler(s)    # Comments
+      tms    ?     174500      260     5       tmsintr       # tmscp driver
+      tms    ?     164334        0     5       tmsintr       # alternate
 
 major device number(s):
 
@@ -40,7 +37,6 @@ bit:    |7 | 6 | 5 | 4 | 3 | 2 | 1 | 0|
        N = Norewind on close
        U = Unit (drive) number (max of 4 drives per controller)
 .fi
-.ft R
 .SH DESCRIPTION
 Tape controllers compatible with the DEC
 Tape Mass Storage Control Protocol (TMSCP) architecture
@@ -54,6 +50,55 @@ Consult the file
 .IR < pdp/tmscp.h >
 for a detailed 
 description of this protocol.
+.PP
+\fBsysctl\fP(8) may be used to view and modify the diagnostic messages logged
+by the driver via the MIB \fBmachdep.tmscp.printf\fP
+.sp
+The following bits are defined:
+.sp
+.nf
+/*
+ * Bit 0 = print all non-successful response packets _except_ hitting
+ *         a tapemark (which really isn't an error)  (default)
+ * Bit 1 = print datagram arrival message
+ * Bit 2 = print status of all response packets except datagrams
+ * Bit 3 = enable debugging print and log statements not covered above
+*/
+.fi
+.sp
+\fBsysctl\fP(8) may be used to view and modify drive cache enabled state via
+the MIB \fBmachdep.tmscp.cache\fP.
+.sp
+.nf
+/*
+ * This is settable via "sysctl -w machdep.tmscp.cache=N".  There is one
+ * bit per drive.  Bit 0 is the first drive on the first controller, bit 4 is
+ * the first drive on the second controller, and so on.  \fBN\fP is decimal
+ * not hex.
+*/
+.fi
+.SH EXAMPLES
+.PP
+To view the current logging state of the driver:
+.sp
+.in +1.0i
+sysctl machdep.tmscp.printf
+.br
+.in -1.0i
+.PP
+To set the logging state of the driver:
+.sp
+.in +1.0i
+sysctl -w machdep.tmscp.printf=3
+.br
+.in -1.0i
+.PP
+To enable the cache on the first drive:
+.sp
+.in +1.0i
+sysctl -w machdep.tmscp.cache=1
+.br
+.in -1.0i
 .SH FILES
 .ta \w'/dev/MAKEDEV.local  'u
 /dev/MAKEDEV	script to create special files
@@ -139,7 +184,7 @@ removed in favor of a shorter message.  In the future an error
 log daemon will be written and the datagrams from the MSCP and TMSCP
 drivers passed to it for analysis.
 .SH "SEE ALSO"
-mt(1), tar(1), tp(1), mtio(4), tm(4), ts(4), ut(4), dmesg(8), dtab(5),
+mt(1), tar(1), tp(1), mtio(4), tm(4), ts(4), dmesg(8), dtab(5), sysctl(8),
 autoconfig(8)
 .SH BUGS
 If any non-data error is encountered on non-raw tape, it refuses to do anything

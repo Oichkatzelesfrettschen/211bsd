@@ -2,39 +2,41 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)idp.4p	1.1 (Berkeley) 7/30/85
+.\"	@(#)idp.4	1.2 (2.11BSD) 2026/9/28
 .\"
-.TH IDP 4P "July 30, 1985"
+.TH IDP 4 "July 30, 1985"
 .UC 6
 .SH NAME
 idp \- Xerox Internet Datagram Protocol
 .SH SYNOPSIS
-.B #include <sys/socket.h>
-.br
-.B #include <netns/ns.h>
-.br
-.B #include <netns/idp.h>
-.PP
-.B s = socket(AF_NS, SOCK_DGRAM, 0);
+.nf
+.ft B
+#include <sys/socket.h>
+#include <netns/ns.h>
+#include <netns/idp.h>
+
+socket(AF_NS, SOCK_DGRAM, 0);
+.ft R
+.fi
 .SH DESCRIPTION
 IDP is a simple, unreliable datagram protocol which is used
 to support the SOCK_DGRAM abstraction for the Internet
 protocol family.  IDP sockets are connectionless, and are
 normally used with the
-.I sendto 
+.B sendto 
 and
-.IR recvfrom 
+.BR recvfrom 
 calls, though the
-.IR connect (2)
+.BR connect (2)
 call may also be used to fix the destination for future
 packets (in which case the 
-.IR recv (2)
+.BR recv (2)
 or
-.IR read (2)
+.BR read (2)
 and 
-.IR send (2)
+.BR send (2)
 or
-.IR write(2)
+.BR write(2)
 system calls may be used).
 .PP
 Xerox protocols are built vertically on top of IDP.
@@ -124,5 +126,5 @@ It is useful in constructing Packet Exchange Protocol packets.
 .SH SEE ALSO
 send(2),
 recv(2),
-intro(4N),
-ns(4F)
+intro(4),
+ns(4)

@@ -32,8 +32,8 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)signal.c	8.1 (Berkeley) 6/4/93";
-#endif /* LIBC_SCCS and not lint */
+static char sccsid[] = "@(#)signal.c	8.2 (2.11BSD) 2026/9/21";
+#endif
 
 /*
  * Almost backwards compatible signal.
@@ -55,6 +55,6 @@ signal(s, a)
 	if (!sigismember(&_sigintr, s))
 		sa.sa_flags |= SA_RESTART;
 	if (sigaction(s, &sa, &osa) < 0)
-		return (SIG_ERR);
+		return ((sig_t)SIG_ERR);
 	return (osa.sa_handler);
 }

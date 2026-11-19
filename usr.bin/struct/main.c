@@ -1,26 +1,24 @@
-#ifndef lint
-static char sccsid[] = "@(#)main.c	4.1	(Berkeley)	2/11/83";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)main.c	4.2	(2.11BSD)	2026/5/9";
+#endif
 
 #include <signal.h>
 #include <stdio.h>
 #include "1.defs.h"
 #include "def.h"
 
-
 char (*input)(), (*unput)();
 FILE *outfd	= stdout;
-
-
 
 main(argc,argv)
 int argc;
 char *argv[];
 	{
 	int anyoutput;
-	int dexit();
+	void dexit();
 	char *getargs();
 	char input1(), unput1(), input2(), unput2();
+
 	anyoutput = FALSE;
 	getargs(argc,argv);
 	if (debug == 2) debfd = stderr;
@@ -66,7 +64,7 @@ char *argv[];
 		exit(1);
 	}
 
-
+void
 dexit()
 	{
 	exit(1);

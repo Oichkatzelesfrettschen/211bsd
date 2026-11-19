@@ -1,9 +1,13 @@
-/***************************************************************************
- * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
- * is provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is    *
- * included in all the files.                                              *
- ***************************************************************************/
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)util.c 2.0 (2.11BSD) 2026/7/27";
+#endif
+
+/*
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE
+ * is provided to you without charge, and with no warranty.  You may give
+ * away copies of JOVE, including sources, provided that this notice is
+ * included in all the files.
+ */
 
 /*
  * Modified 1/16/95.  The loadaverage method has changed.  You will need
@@ -14,16 +18,8 @@
 #include "ctype.h"
 #include "termcap.h"
 #include <signal.h>
-
-#ifdef MAC
-#	include "mac.h"
-#else
-#	include <varargs.h>
-#endif
-
-#ifdef MSDOS
-#include <time.h>
-#endif
+#include <strings.h>
+#include <varargs.h>
 
 struct cmd *
 FindCmd(proc)
@@ -105,33 +101,19 @@ slowpoke()
 	f_mess(key_strokes);
 }
 
-#ifdef UNIX
-# ifdef BSD4_2
-#  define N_SEC	1	/* will be precisely 1 second on 4.2 */
-# else
-#  define N_SEC	2	/* but from 1 to 2 seconds otherwise */
-# endif
-#else /* MSDOS or MAC */
-# define N_SEC	1
-int in_macro();
-#endif /* UNIX */
+#define N_SEC	1	/* will be precisely 1 second on 4.2 */
 
 int
 waitchar(slow)
 int	*slow;
 {
-#ifdef UNIX
 	unsigned int	old_time;
 	int	c;
 	int	(*oldproc)();
-#else /* MSDOS or MAC */
-	long sw, time();
-#endif /* UNIX */
 
 	slowp = slow;
 	if (slow)
 		*slow = NO;
-#ifdef UNIX
 	oldproc = signal(SIGALRM, slowpoke);
 
 	if ((old_time = alarm((unsigned) N_SEC)) == 0)
@@ -139,24 +121,7 @@ int	*slow;
 	c = getch();
 	(void) alarm(old_time);
 	(void) signal(SIGALRM, oldproc);
-
 	return c;
-#else /* MSDOS or MAC */
-#ifdef MAC
-	Keyonly = 1;
-	if(charp() || in_macro()) return getch();	/* to avoid flicker */
-#endif
-	time(&sw);
-	sw += N_SEC;
-	while(time(NULL) <= sw)
-		if (charp() || in_macro())
-			return getch();
-#ifdef MAC
-	menus_off();
-#endif
-	slowpoke();
-	return getch();
-#endif /* UNIX */
 }
 
 /* dir > 0 means forward; else means backward. */
@@ -622,7 +587,6 @@ char	*err, *file;
 	return sprint("Couldn't %s \"%s\".", err, file);
 }
 
-#ifdef UNIX
 void
 pclose(p)
 int	*p;
@@ -639,19 +603,16 @@ int	p[];
 		complain("[Pipe failed]");
 }
 
-#endif /* UNIX */
-/* NOSTRICT */
-
 char *
 emalloc(size)
 {
 	register char	*ptr;
 
-	if (ptr = malloc((unsigned) size))
+	if (ptr = (char *)malloc((unsigned) size))
 		return ptr;
 	/* Try garbage collecting lines */
 	GCchunks();
-	if (ptr = malloc((unsigned) size))
+	if (ptr = (char *)malloc((unsigned) size))
 		return ptr;
 	/* Uh ... Oh screw it! */
 	error("[Out of memory] ");
@@ -669,13 +630,6 @@ register char	*f;
 	if (cp = rindex(f, '/'))
 		return cp + 1;
 	else
-#ifdef MSDOS
-		if (cp = rindex(f, '\\'))
-			return cp + 1;
-	else
-		if (cp = rindex(f, ':'))
-			return cp + 1;
-#endif /* MSDOS */
 		return f;
 }
 
@@ -716,11 +670,7 @@ time_t	*timep;
 	else
 		(void) time(&now);
 	cp = ctime(&now) + from;
-#ifndef MSDOS
 	if (to == -1)
-#else /* MSDOS */
-	if ((to == -1) && (cp[strlen(cp)-1] == '\n'))
-#endif /* MSDOS */
 		cp[strlen(cp) - 1] = '\0';		/* Get rid of \n */
 	else
 		cp[to - from] = '\0';
@@ -730,23 +680,6 @@ time_t	*timep;
 	} else
 		return cp;
 }
-
-#if !(defined(MSDOS) || defined(MAC))
-
-int
-strcmp(s1, s2)
-register char	*s1,
-		*s2;
-{
-	if (!s1 || !s2)
-		return 1;	/* which is not zero ... */
-	while (*s1 == *s2++)
-		if (*s1++ == '\0')
-			return 0;
-	return (*s1 - *--s2);
-}
-
-#endif
 
 int
 casecmp(s1, s2)
@@ -785,55 +718,14 @@ char	*to,
 }
 
 /* Tries to pause for delay/10 seconds OR until a character is typed
-   at the keyboard.  This works well on BSD4_2 and not so well on the
-   rest.  Returns 1 if it returned because of keyboard input, or 0
-   otherwise. */
-
-#ifdef MAC
-void
-SitFor(delay)
-unsigned int	delay;
-{
-	long	start,
-		end;
-
-#define Ticks (long *) 0x16A	/* 1/60 sec */
-	Keyonly = 1;
-	redisplay();
-	start = *Ticks;
-
-	end = start + delay * 6;
-	do
-		if (InputPending = charp())
-			break;
-	while (*Ticks < end);
-}
-#else	/* not MAC */
+   at the keyboard.  Returns 1 if it returned because of keyboard input,
+   0 otherwise
+ */
 
 void
 SitFor(delay)
 unsigned int	delay;
 {
-#ifndef MSDOS
-#if defined(BSD4_2) && !defined(pdp11)
-#include <sys/time.h>
-
-	struct timeval	timer;
-	long	readfds = 1;
-
-	timer.tv_sec = (delay / 10);
-	timer.tv_usec = (delay % 10) * 100000;
-
-	if (charp())
-		return;
-	/* gross that I had to snarf this from getch() */
-	if (!UpdMesg && !Asking) {	/* Don't erase if we are asking */
-		if (mesgbuf[0] && !errormsg)
-			message(NullStr);
-	}
-	redisplay();
-	select(1, &readfds, (long *)0, (long *)0, &timer);
-#else
 	static int cps[] = {
 		0,
 		5,
@@ -852,8 +744,7 @@ unsigned int	delay;
 		1920,
 		1920,
 	};
-	register int	nchars,
-			check_cnt;
+	register int	nchars, check_cnt;
 
 	if (charp())
 		return;
@@ -867,41 +758,7 @@ unsigned int	delay;
 			InputPending = charp();
 		}
 	}
-#endif
-#else /* MSDOS */
-#include <bios.h>
-#include <dos.h>
-
-	long	start,
-		end;
-#ifndef IBMPC
-	struct dostime_t tc;
-#endif	
-
-	redisplay();
-#ifdef IBMPC
-	_bios_timeofday(_TIME_GETCLOCK, &start);
-#else
-	_dos_gettime(&tc);
-	start = (long)(tc.hour*60L*60L*10L)+(long)(tc.minute*60L*10L)+
-            (long)(tc.second*10)+(long)(tc.hsecond/10);
-#endif
-	end = (start + delay);
-	do  {
-		if (InputPending = charp())
-			break;
-#ifdef IBMPC
-        if (_bios_timeofday(_TIME_GETCLOCK, &start))
-		    break;	/* after midnight */
-#else
-	    start = (long)(tc.hour*60L*60L*10L)+(long)(tc.minute*60L*10L)+
-                (long)(tc.second*10)+(long)(tc.hsecond/10);
-#endif
-	}
-	while (start < end);
-#endif /* MSDOS */
 }
-#endif /* MAC */
 
 int
 sindex(pattern, string)

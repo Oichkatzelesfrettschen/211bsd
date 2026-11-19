@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)lpf.c	5.1 (Berkeley) 5/15/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)lpf.c	5.2 (2.11BSD) 2026/5/10";
+#endif
 
 /*
  * 	filter which reads the output of nroff and converts lines

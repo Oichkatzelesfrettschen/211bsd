@@ -16,13 +16,14 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "%W% (Berkeley) %G%";
-#endif /* LIBC_SCCS and not lint */
+static char sccsid[] = "@(#)logout.c 5.3 (2.11BSD) 2026/5/30";
+#endif 
 
 #include <sys/types.h>
 #include <sys/file.h>
 #include <sys/time.h>
 #include <utmp.h>
+#include <unistd.h>
 
 typedef struct utmp UTMP;
 
@@ -32,8 +33,6 @@ logout(line)
 	register int fd;
 	UTMP ut;
 	int rval;
-	off_t lseek();
-	time_t time();
 
 	if ((fd = open(_PATH_UTMP, O_RDWR)) < 0)
 		return(0);

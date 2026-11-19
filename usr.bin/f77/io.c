@@ -1,14 +1,15 @@
+/* "@(#)io.c 1.1 (2.11BSD) 2026/7/31"; */
+
 /* Routines to generate code for I/O statements.
-   Some corrections and improvements due to David Wasley, U. C. Berkeley
-   Compile with -DKOSHER to force exact conformity with the ANSI std.
-*/
-/*
+ * Some corrections and improvements due to David Wasley, U. C. Berkeley
+ * Compile with -DKOSHER to force exact conformity with the ANSI std.
+ *
  * This module supports the ucb fixed libI77. Since it was done
  * on a Vax, some of the naming conventions were different. These were
  * changed to allow compilation on the 11/70 version. wfj 3/26/80
  * <UNTESTED>
- */
-/* Modified to handle encode/decode statements.  
+ *
+ * Modified to handle encode/decode statements.  
  * Other files modified to support this feature:
  *	lex.c	    "encode" & "decode" added to key[]
  *	tokens	    SENCODE & SDECODE added
@@ -174,7 +175,7 @@ LOCAL struct ioclist
 #define XNEXTREC	SZFLAG + 9*SZIOINT + 13*SZADDR
 #define XQBLANK	SZFLAG + 9*SZIOINT + 14*SZADDR
 #define XQBLANKLEN	SZFLAG + 9*SZIOINT + 15*SZADDR
-
+
 fmtstmt(lp)
 register struct labelblock *lp;
 {
@@ -196,8 +197,6 @@ else if(lp->labtype != LABFORMAT)
 return(lp->labelno);
 }
 
-
-
 setfmt(lp)
 struct labelblock *lp;
 {
@@ -211,8 +210,6 @@ putstr(asmfile, s, n);
 flline();
 }
 
-
-
 startioctl()
 {
 register int i;
@@ -225,15 +222,11 @@ for(i = 1 ; i<=NIOS ; ++i)
 	V(i) = NULL;
 }
 
-
-
 iosetecdc(e)						/* E-D */
 expptr e;						/* E-D */
 {							/* E-D */
 	ioecdc = e;					/* E-D */
 }							/* E-D */
-
-
 
 endioctl()
 {
@@ -300,7 +293,7 @@ else if(ioerrlab && ioendlab)
 		jumplab = ioerrlab;
 	else
 		{
-		if(!IOSTP) IOSTP = mktemp(TYINT, NULL);
+		if(!IOSTP) IOSTP = mktmp(TYINT, NULL);
 		jumplab = newlabel();
 		skiplab = YES;
 		}
@@ -315,7 +308,6 @@ else if(ioerrlab && ioendlab)
 /*		}
 /*	}
  */
-
 
 ioset(TYIOINT, XERR, ICON(ioerrlab!=0 || iosreturn) );
 
@@ -351,8 +343,6 @@ for(i = 1 ; i<=NIOS ; ++i)
 		frexpr(V(i));
 }
 
-
-
 iocname()
 {
 register int i;
@@ -371,7 +361,6 @@ else
 	error("unknown iocontrol %s", varstr(toklen, token),0,ERR1 );
 return(IOSBAD);
 }
-
 
 ioclause(n, p)
 register int n;
@@ -428,10 +417,6 @@ ioroutine[0] = 'e';
 putiocall( call0(TYINT, ioroutine) );
 }
 
-
-
-
-
 LOCAL doiolist(p0)
 chainp p0;
 {
@@ -472,7 +457,7 @@ for (p = p0 ; p ; p = p->nextp)
 			{
 			if(iostmt == IOWRITE)
 				{
-				tp = mktemp(qe->vtype, qe->vleng);
+				tp = mktmp(qe->vtype, qe->vleng);
 				puteq( cpexpr(tp), qe);
 				putio(ICON(1), tp);
 				}
@@ -558,7 +543,6 @@ if(jumplab)
 else
 	putexpr(q);
 }
-
 
 startrw()
 {
@@ -673,8 +657,6 @@ ioroutine[6] = '\0';
 putiocall( call1(TYINT, ioroutine, cpexpr(ioblkp) ));
 }
 
-
-
 LOCAL dofopen()
 {
 register expptr p;
@@ -707,7 +689,6 @@ iosetc(XBLANK, V(IOSBLANK));
 putiocall( call1(TYINT, "f_open", cpexpr(ioblkp) ));
 }
 
-
 LOCAL dofclose()
 {
 register expptr p;
@@ -721,7 +702,6 @@ if( (p = V(IOSUNIT)) && ISINT(p->vtype) )
 else
 	error("bad unit in close statement",0,0,ERR);
 }
-
 
 LOCAL dofinquire()
 {
@@ -753,8 +733,6 @@ iosetlc(IOSBLANK, XQBLANK, XQBLANKLEN);
 putiocall( call1(TYINT,  "f_inqu", cpexpr(ioblkp) ));
 }
 
-
-
 LOCAL dofmove(subname)
 char *subname;
 {
@@ -769,8 +747,6 @@ else
 	error("bad unit in I/O motion statement",0,0,ERR);
 }
 
-
-
 LOCAL ioset(type, offset, p)
 int type, offset;
 expptr p;
@@ -783,9 +759,6 @@ q->memoffset = fixtype( mkexpr(OPPLUS, q->memoffset, ICON(offset)) );
 puteq(q, p);
 }
 
-
-
-
 LOCAL iosetc(offset, p)
 int offset;
 register expptr p;
@@ -797,8 +770,6 @@ else if(p->vtype == TYCHAR)
 else
 	error("non-character control clause",0,0,ERR);
 }
-
-
 
 LOCAL iosetip(i, offset)
 int i, offset;
@@ -814,8 +785,6 @@ if(p = V(i))
 else
 	ioset(TYADDR, offset, ICON(0) );
 }
-
-
 
 LOCAL iosetlc(i, offp, offl)
 int i, offp, offl;

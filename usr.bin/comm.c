@@ -1,5 +1,9 @@
-static char *sccsid = "@(#)comm.c	4.2 (Berkeley) 4/29/83";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)comm.c	4.3 (2.11BSD) 2026/5/8";
+#endif
+
 #include <stdio.h>
+
 #define LB 256
 int	one;
 int	two;
@@ -10,6 +14,7 @@ char	*ldr[3];
 FILE *ib1;
 FILE *ib2;
 FILE *openfil();
+
 main(argc,argv)
 char	*argv[];
 {

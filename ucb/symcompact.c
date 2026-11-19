@@ -1,12 +1,13 @@
 /*
  *	Program Name:   symcompact.c
- *	Date: January 21, 1994
+ *	Date: March 24, 2026
  *	Author: S.M. Schultz
  *
  *	-----------------   Modification History   ---------------
  *      Version Date            Reason For Modification
- *      1.0     21Jan94         1. Initial release into the public domain.
- *	1.1	11Feb94		2. Remove register symbols to save memory.
+ *      1.0     21Jan1994       1. Initial release into the public domain.
+ *	1.1	11Feb1994	2. Remove register symbols to save memory.
+ *	2.0     24Mar2026       3. Rewrite to use libvmf to hold symbol table.
 */
 
 /*
@@ -20,19 +21,17 @@
  * number of symbols greatly speeds up 'nlist' processing as well as 
  * cutting down memory requirements for programs such as 'adb' and 'nm'.
  *
- * NOTE: This program attempts to hold both the string and symbol tables
- * in memory.  For the kernel which has not been 'strcompact'd this
- * amounts to about 49kb.  IF this program runs out of memory you should
- * run 'strcompact' first - that program removes redundant strings, 
- * significantly reducing the amount of memory needed.  Alas, this program
- * will undo some of strcompact's work and you may/will need to run
- * strcompact once more after removing excess symbols.
+ * NOTE: This program holds the string table in memory and uses vmf routines
+ * with 12 segments (12KB) for the symbol table.  More than 12 makes no speed
+ * difference and reduces the string table size that can be handled.
  *
- * Register symbols are removed to save memory.  This program was initially
- * used with a smaller kernel, adding an additional driver caused the symbol
- * table to grow enough that memory couldn't be allocated for strings.  See
- * the comments in 'symorder.c' - they explain why register variables are
- * no big loss.
+ * register symbols (N_REG) are removed.  See comments in 'symorder.c' for the
+ * the explaination.
+ *
+ * filename symbols (N_FN) are removed. There were exactly 3 uses of N_FN in
+ * the system: ld generates them, nm lists them, and adb ignores them.  Now
+ * there are 4 uses as symcompact.c will also ignore N_FN symbols.
+ * 
 */
 
 #include <stdio.h>
@@ -42,58 +41,85 @@
 #include <string.h>
 #include <sysexits.h>
 #include <sys/file.h>
+#include <vmf.h>
 
-	char	*Pgm;
-static	char	strtmp[20];
+extern	char	*__progname;
+
+/*
+ * Compute a symbol's virtual address from its index number.
+*/
+
+#define	SYMSPERSEG (BYTESPERSEG / sizeof (struct nlist))
+#define sym2va(x) (((x % SYMSPERSEG) * sizeof (struct nlist)) + ((long) (x / SYMSPERSEG) << LOG2BPS))
+
+void	cleanup();
+
+	struct	vspace Vspace;	/* Virtual address space for symbol table */
+
+	VADDR	vsym, vsym2;
+	FILE	*fp, *strfp;
+	off_t	symoff, stroff, ltmp;
+	u_short	maxsymno, i2;
+	char	*strtab, strtmp[20];
+	int	segmapped, segmapped2, vsg;
+	int	cnt, esyms, osyms, nsyms, len, symsremoved = 0;
+	long	strsiz;
+	struct	nlist	syment;
+	struct	xexec	xhdr;
+	struct	vseg	*seg, *seg2;
 
 main(argc, argv)
 	int	argc;
 	char	**argv;
 	{
-	FILE	*fp, *strfp;
-	int	cnt, nsyms, len, c, symsremoved = 0, i;
-	void	cleanup();
-	char	*strtab;
-	char	fbuf1[BUFSIZ], fbuf2[BUFSIZ];
-	off_t	symoff, stroff, ltmp;
-	long	strsiz;
+	register u_short	i;
 	register struct	nlist	*sp, *sp2;
-	struct	nlist	*symtab, *symtabend, syment;
-	struct	xexec	xhdr;
+	char	fbuf1[BUFSIZ], fbuf2[BUFSIZ];
 
-	Pgm = argv[0];
 	signal(SIGQUIT, cleanup);
 	signal(SIGINT, cleanup);
 	signal(SIGHUP, cleanup);
 
+	if	(vminit(12) < 0)
+		{
+		fprintf(stderr, "%s: vminit failed\n", __progname);
+		exit(EX_OSERR);
+		}
+	if	(vmopen(&Vspace, (char *)NULL) < 0)
+		{
+		fprintf(stderr, "%s: vmopen failed\n", __progname);
+		exit(EX_OSERR);
+		}
+
 	if	(argc != 2)
 		{
-		fprintf(stderr, "%s: filename argument missing\n", Pgm);
+		fprintf(stderr, "%s: filename argument missing\n", __progname);
 		exit(EX_USAGE);
 		}
 	fp = fopen(argv[1], "r+");
 	if	(!fp)
 		{
-		fprintf(stderr, "%s: can't open '%s' for update\n", Pgm,
+		fprintf(stderr, "%s: can't open '%s' for update\n", __progname,
 			argv[1]);
 		exit(EX_NOINPUT);
 		}
 	setbuf(fp, fbuf1);
+
 	cnt = fread(&xhdr, 1, sizeof (xhdr), fp);
 	if	(cnt < sizeof (xhdr.e))
 		{
-		fprintf(stderr, "%s: Premature EOF reading header\n", Pgm);
+		fprintf(stderr, "%s: Premature EOF reading header\n", __progname);
 		exit(EX_DATAERR);
 		}
 	if	(N_BADMAG(xhdr.e))
 		{
-		fprintf(stderr, "%s: Bad magic number\n", Pgm);
+		fprintf(stderr, "%s: Bad magic number\n", __progname);
 		exit(EX_DATAERR);
 		}
-	nsyms = xhdr.e.a_syms / sizeof (struct nlist);
-	if	(!nsyms)
+	osyms = xhdr.e.a_syms / sizeof (struct nlist);
+	if	(!osyms)
 		{
-		fprintf(stderr, "%s: '%s' stripped\n", Pgm);
+		fprintf(stderr, "%s: '%s' stripped\n", __progname);
 		exit(EX_OK);
 		}
 	stroff = N_STROFF(xhdr);
@@ -107,13 +133,13 @@ main(argc, argv)
 	fread(&strsiz, sizeof (long), 1, fp);
 	if	(strsiz > 48 * 1024L)
 		{
-		fprintf(stderr, "%s: string table > 48kb\n", Pgm);
+		fprintf(stderr, "%s: string table > 48kb\n", __progname);
 		exit(EX_DATAERR);
 		}
 	strtab = (char *)malloc((int)strsiz);
 	if	(!strtab)
 		{
-		fprintf(stderr, "%s: no memory for strings\n", Pgm);
+		fprintf(stderr, "%s: no memory for strings\n", __progname);
 		exit(EX_OSERR);
 		}
 /*
@@ -125,50 +151,45 @@ main(argc, argv)
 	cnt = fread(strtab + sizeof (long), 1, (int)strsiz - sizeof (long), fp);
 	if	(cnt != (int)strsiz - sizeof (long))
 		{
-		fprintf(stderr, "%s: Premature EOF reading strings\n", Pgm);
+		fprintf(stderr, "%s: Premature EOF reading strings\n", __progname);
 		exit(EX_DATAERR);
 		}
+
 /*
- * Seek to the symbol table.  Scan it and count how many symbols are 
- * significant.
+ * NOTE: vmmapseg() is very expensive!  Access to the symbol table in this
+ *       program is not random but sequential.  vmmapseg() need only be 
+ *       called when crossing a segment boundary. Within a segment increment
+ *       the 'struct nlist' pointer.
+*/
+
+/*
+ * Read symbols excluding nonsignificant ones. Assign in-memory string address.
 */
 	fseek(fp, symoff, L_SET);
-	cnt = 0;
-	for	(i = 0; i < nsyms; i++)
+
+	for	(segmapped = -1, esyms = 0, maxsymno = 0, i = 0; i < osyms; i++)
 		{
 		fread(&syment, sizeof (syment), 1, fp);
 		if	(exclude(&syment))
+			{
+			esyms++;
 			continue;
-		cnt++;
-		}
-
-/*
- * Allocate memory for the symbol table.
-*/
-	symtab = (struct nlist *)malloc(cnt * sizeof (struct nlist));
-	if	(!symtab)
-		{
-		fprintf(stderr, "%s: no memory for symbols\n", Pgm);
-		exit(EX_OSERR);
-		}
-
-/*
- * Now read the symbols in, excluding the same ones as before, and
- * assign the in-memory string addresses at the same time
-*/
-	sp = symtab;
-	fseek(fp, symoff, L_SET);
-
-	for	(i = 0; i < nsyms; i++)
-		{
-		fread(&syment, sizeof (syment), 1, fp);
-		if	(exclude(&syment))
-			continue;
+			}
+		vsym = sym2va(maxsymno);
+		vsg = VSEG(vsym);
+		if	(vsg != segmapped)
+			{
+			segmapped = vsg;
+			seg = vmmapseg(&Vspace, vsg);
+			sp = (struct nlist *)(seg->s_cinfo + VOFF(vsym));
+			VMMODIFY(seg);
+			}
+		else
+			sp++;
 		bcopy(&syment, sp, sizeof (syment));
 		sp->n_un.n_name = strtab + (int)sp->n_un.n_strx;
-		sp++;
+		maxsymno++;
 		}
-	symtabend = &symtab[cnt];
 
 /*
  * Now look for symbols with overlay numbers of 0 (root/base segment) and
@@ -176,21 +197,44 @@ main(argc, argv)
  * and '_' prefixed form of the symbol.  Preserve the '_' form and clear
  * the '~' entry by zeroing the string address of the '~' symbol.
 */
-	for	(sp = symtab; sp < symtabend; sp++)
+	segmapped = -1;
+
+	for	(i = 0; i < maxsymno; i++)
 		{
+		vsym = sym2va(i);
+		vsg = VSEG(vsym);
+		if	(vsg != segmapped)
+			{
+			seg = vmmapseg(&Vspace, vsg);
+			sp = (struct nlist *)(seg->s_cinfo + VOFF(vsym));
+			segmapped = vsg;
+			}
+		else
+			sp++;
 		if	(sp->n_ovly)
 			continue;
 		if	((sp->n_type & N_TYPE) != N_TEXT)
 			continue;
 		if	(sp->n_un.n_name[0] != '~')
 			continue;
+		vmlock(seg);
 /*
  * At this point we have the '~' form of a non overlaid text symbol.  Look
  * thru the symbol table for the '_' form.  All of 1) symbol type, 2) Symbol
  * value and 3) symbol name (starting after the first character) must match.
 */
-		for	(sp2 = symtab; sp2 < symtabend; sp2++)
+		for	(segmapped2 = -1, i2 = 0; i2 < maxsymno; i2++)
 			{
+			vsym2 = sym2va(i2);
+			vsg = VSEG(vsym2);
+			if	(vsg != segmapped2)
+				{
+				seg2 = vmmapseg(&Vspace, vsg);
+				sp2 = (struct nlist *)(seg2->s_cinfo + VOFF(vsym2));
+				segmapped2 = vsg;
+				}
+			else
+				sp2++;
 			if	(sp2->n_ovly)
 				continue;
 			if	((sp2->n_type & N_TYPE) != N_TEXT)
@@ -202,12 +246,15 @@ main(argc, argv)
 			if	(strcmp(sp->n_un.n_name+1, sp2->n_un.n_name+1))
 				continue;
 /*
- * Found a match.  Null out the '~' symbol's string address.
+ * Found a match.  Null out the '~' symbol's string table offset and in memory 
+ * string address (n_strx & n_name are a union).
 */
 			symsremoved++;
 			sp->n_un.n_strx = NULL;
+			VMMODIFY(seg);
 			break;
 			}
+		vmunlock(seg);
 		}
 /*
  * Done with the nested scanning of the symbol table.  Now create a new
@@ -218,7 +265,7 @@ main(argc, argv)
 	strfp = fopen(strtmp, "w+");
 	if	(!strfp)
 		{
-		fprintf(stderr, "%s: can't create '%s'\n", Pgm, strtmp);
+		fprintf(stderr, "%s: can't create '%s'\n", __progname, strtmp);
 		exit(EX_CANTCREAT);
 		}
 	setbuf(strfp, fbuf2);
@@ -228,8 +275,20 @@ main(argc, argv)
  * is updated with the new file string table offset.
 */
 	ltmp = sizeof (long);
-	for	(sp = symtab; sp < symtabend; sp++)
+
+	for	(segmapped = -1, i = 0; i < maxsymno; i++)
 		{
+		vsym = sym2va(i);
+		vsg = VSEG(vsym);
+		if	(vsg != segmapped)
+			{
+			seg = vmmapseg(&Vspace, vsg);
+			sp = (struct nlist *)(seg->s_cinfo + VOFF(vsym));
+			segmapped = vsg;
+			VMMODIFY(seg);
+			}
+		else
+			sp++;
 		if	(!sp->n_un.n_name)
 			continue;
 		len = strlen(sp->n_un.n_name) + 1;
@@ -249,11 +308,21 @@ main(argc, argv)
  * the file.  Write out the valid symbols, counting each one so that the 
  * a.out header can be updated when we're done.
 */
-	nsyms = 0;
 	fseek(fp, symoff, L_SET);
 	ftruncate(fileno(fp), ftell(fp));
-	for	(sp = symtab; sp < symtabend; sp++)
+
+	for	(segmapped = -1, nsyms = 0, i = 0; i < maxsymno; i++)
 		{
+		vsym = sym2va(i);
+		vsg = VSEG(vsym);
+		if	(vsg != segmapped)
+			{
+			seg = vmmapseg(&Vspace, VSEG(vsym));
+			sp = (struct nlist *)(seg->s_cinfo + VOFF(vsym));
+			segmapped = vsg;
+			}
+		else
+			sp++;
 		if	(sp->n_un.n_strx == 0)
 			continue;
 		nsyms++;
@@ -264,18 +333,20 @@ main(argc, argv)
 */
 	fwrite(&ltmp, sizeof (long), 1, fp);
 /*
- * We're done with the in memory symbol table, release it.  Then append
+ * We're done with the virtual address space, release it.  Then append
  * the string table to the executable file.
 */
-	free(symtab);
-	while	((c = getc(strfp)) != EOF)
-		putc(c, fp);
+	vmclose(&Vspace);
+
+	while	((i = getc(strfp)) != EOF)
+		putc(i, fp);
 	fclose(strfp);
+
 	rewind(fp);
 	xhdr.e.a_syms = nsyms * sizeof (struct nlist);
 	fwrite(&xhdr.e, sizeof (xhdr.e), 1, fp);
 	fclose(fp);
-	printf("%s: %d symbols removed\n", Pgm, symsremoved);
+	printf("%s: initial(%d)/excluded(%d)/removed(%d)/current(%d) symbols, old(%ld)/new(%ld) strings sbrk(0): %u\n", __progname, osyms, esyms, symsremoved, nsyms, strsiz, ltmp, sbrk(0));
 	cleanup();
 	}
 
@@ -296,7 +367,7 @@ exclude(sp)
 	register struct nlist *sp;
 	{
 
-	if	(sp->n_type == N_REG)
+	if	((sp->n_type == N_REG) || (sp->n_type == N_FN))
 		return(1);
 	if	(sp->n_un.n_strx == 0)
 		return(1);

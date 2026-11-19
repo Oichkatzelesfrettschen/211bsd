@@ -1,4 +1,3 @@
-/* $Header: /home/hyperion/mu/christos/src/sys/tcsh-6.00/RCS/sh.err.c,v 3.0 1991/07/04 21:49:28 christos Exp $ */
 /*
  * sh.err.c: Error printing routines. There are lots of them
  *	     and none does the right thing!
@@ -36,9 +35,9 @@
  * SUCH DAMAGE.
  */
 #include "config.h"
-#if !defined(lint) && !defined(pdp11)
-static char *rcsid() 
-    { return "$Id: sh.err.c,v 3.0 1991/07/04 21:49:28 christos Exp $"; }
+
+#if defined(LIBC_SCCS) && !defined(lint)
+static char sccsid[] = "@(#)sh.err.c      3.1 (2.11BSD) 2026/7/26";
 #endif
 
 #define _h_tc_err		/* Don't redefine the errors	 */
@@ -195,11 +194,7 @@ static char *errorlist[] =
 #define ERR_SYNC	64
     "Sunc fault: Process %d not found",
 #define ERR_STOPPED	65
-#ifdef SUSPENDED
     "%sThere are suspended jobs",
-#else
-    "%sThere are stopped jobs",
-#endif				/* SUSPENDED */
 #define ERR_NODIR	66
     "No other directory",
 #define ERR_EMPTY	67

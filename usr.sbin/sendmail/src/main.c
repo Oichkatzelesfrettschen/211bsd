@@ -13,7 +13,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char	SccsId[] = "@(#)main.c	5.11.3 (2.11BSD GTE) 1996/10/24";
+static char	SccsId[] = "@(#)main.c	5.11.4 (2.11BSD) 2026/9/22";
 #endif
 
 # define  _DEFINE
@@ -111,7 +111,7 @@ main(argc, argv, envp)
 	extern time_t convtime();
 	extern putheader(), putbody();
 	extern ENVELOPE *newenvelope();
-	extern intsig();
+	extern void intsig();
 	extern char **myhostname();
 	extern char *arpadate();
 	extern char **environ;
@@ -773,6 +773,7 @@ finis()
 **		Unlocks the current job.
 */
 
+void
 intsig()
 {
 	FileName = NULL;

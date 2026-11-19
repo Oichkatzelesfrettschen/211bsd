@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)prof.1	6.1 (Berkeley) 4/29/85
+.\"	@(#)prof.1	6.2 (2.11BSD) 2026/9/28
 .\"
 .TH PROF 1 "April 29, 1985"
 .UC 4
@@ -28,7 +28,7 @@ prof \- display profile data
 [ a.out
 [ mon.out ... ] ]
 .SH DESCRIPTION
-.I Prof
+.B prof
 interprets the file
 produced by the
 .I monitor
@@ -57,8 +57,6 @@ the
 option of
 .I cc,
 .I f77
-or
-.I pc
 must have been given when the file containing the
 routine was compiled.
 This option also arranges for the
@@ -87,7 +85,7 @@ all printing is suppressed
 and a graphic version of the profile
 is produced
 on the standard output for display by the
-.IR  plot (1)
+.BR  plot (1)
 filters.
 When plotting, the numbers
 .I low
@@ -108,10 +106,10 @@ a.out		for namelist
 .br
 mon.sum	for summary profile
 .SH "SEE ALSO"
-monitor(3), profil(2), cc(1), plot(1G)
+monitor(3), profil(2), cc(1), plot(1)
 .SH BUGS
 Beware of quantization errors.
 .PP
 Is confused by
-.I f77
+.B f77
 which puts the entry points at the bottom of subroutines and functions.

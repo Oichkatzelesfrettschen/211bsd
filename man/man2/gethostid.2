@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)gethostid.2	6.3 (Berkeley) 11/28/85
+.\"	@(#)gethostid.2	6.4 (2.11BSD) 2026/9/20
 .\"
 .TH GETHOSTID 2 "November 28, 1985"
 .UC 5
@@ -11,22 +11,24 @@ gethostid, sethostid \- get/set unique identifier of current host
 .SH SYNOPSIS
 .nf
 .ft B
-hostid = gethostid()
-long hostid;
-.PP
-.ft B
-sethostid(hostid)
-long hostid;
+#include <unistd.h>
+
+long
+gethostid(\fIvoid\fP)
+
+void
+sethostid(\fIlong hostid\fP)
 .fi
+.ft R
 .SH DESCRIPTION
-.I Sethostid
+.B sethostid
 establishes a 32-bit identifier for the
 current processor that is intended to be unique among all
 UNIX systems in existence.  This is normally a DARPA Internet
 address for the local machine.  This call is allowed only to the
 super-user and is normally performed at boot time.
 .PP
-.I Gethostid
+.B gethostid
 returns the 32-bit identifier for the current processor.
 .SH SEE ALSO
 hostid(1), gethostname(2)

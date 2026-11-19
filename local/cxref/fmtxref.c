@@ -13,8 +13,13 @@
 ** provided this header is included.
 */
 
+#if     !defined(LINT) && defined(DOSCCS)
+static char sccsid[] = "@(#)fmtxref.c      1.1 (2.11BSD) 2026/2/2";
+#endif
+
 #include <stdio.h>
 #include <ctype.h>
+#include <strings.h>
 
 #define TRUE	1
 #define FALSE	0
@@ -48,7 +53,6 @@ int argc;
 char **argv;
 {
 	char inline[BUFSIZ];
-	char *gets();
 	int val;
 
 	name = basename(argv[0]);
@@ -71,7 +75,7 @@ char **argv;
 	/* else
 		use default width */
 
-	if(gets(inline) == NULL)
+	if (fgets(inline, sizeof inline, stdin) == NULL)
 	{
 		fprintf(stderr, "%s: standard input is empty.\n", name);
 		exit(1);
@@ -85,7 +89,7 @@ char **argv;
 
 	output(val);		/* does proper formatting */
 
-	while(gets(inline) != NULL && val != ERROR)
+	while(fgets(inline, sizeof inline, stdin) != NULL && val != ERROR)
 	{
 		val = breakup(inline);
 		output(val);
@@ -104,7 +108,11 @@ breakup(text)
 char *text;
 {
 	int retval;
-	int i, j;
+	register int i, j;
+	char *cp;
+
+	cp = index(text, '\n');
+	if (cp) *cp = '\0';
 
 	if(text[0] == '"' || text[0] == '\'')
 	{

@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)gio.c	5.6 (Berkeley) 10/9/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)gio.c	5.7 (Berkeley) 2026/5/9";
 #endif
 
 #include "uucp.h"
@@ -97,12 +97,9 @@ FILE *fp1;
 		return FAIL;
 	bytes = 0L;
 	Retries = 0;
-#ifdef USG
-	time(&t1.time);
-	t1.millitm = 0;
-#else !USG
+
 	ftime(&t1);
-#endif !USG
+
 	while ((len = read(fileno(fp1), bufr, BUFSIZ)) > 0) {
 		bytes += len;
 		ret = gwrblk(bufr, len, fn);
@@ -113,12 +110,9 @@ FILE *fp1;
 			break;
 	}
 	ret = gwrblk(bufr, 0, fn);
-#ifdef USG
-	time(&t2.time);
-	t2.millitm = 0;
-#else !USG
+
 	ftime(&t2);
-#endif !USG
+
 	Now = t2;
 	t2.time -= t1.time;
 	mil = t2.millitm - t1.millitm;
@@ -128,7 +122,6 @@ FILE *fp1;
 	}
 	sprintf(text, "sent data %ld bytes %ld.%02d secs",
 				bytes, (long)t2.time, mil/10);
-	sysacct(bytes, t2.time);
 	if (Retries > 0) 
 		sprintf((char *)text+strlen(text)," %d retries", Retries);
 	DEBUG(1, "%s\n", text);
@@ -150,12 +143,9 @@ FILE *fp2;
 		return FAIL;
 	bytes = 0L;
 	Retries = 0;
-#ifdef USG
-	time(&t1.time);
-	t1.millitm = 0;
-#else !USG
+
 	ftime(&t1);
-#endif !USG
+
 	for (;;) {
 		len = grdblk(bufr, BUFSIZ, fn);
 		if (len < 0) {
@@ -167,12 +157,9 @@ FILE *fp2;
 		if (len < BUFSIZ)
 			break;
 	}
-#ifdef USG
-	time(&t2.time);
-	t2.millitm = 0;
-#else !USG
+
 	ftime(&t2);
-#endif !USG
+
 	Now = t2;
 	t2.time -= t1.time;
 	mil = t2.millitm - t1.millitm;
@@ -182,19 +169,12 @@ FILE *fp2;
 	}
 	sprintf(text, "received data %ld bytes %ld.%02d secs",
 				bytes, (long)t2.time, mil/10);
-	sysacct(bytes, t2.time);
 	if (Retries > 0) 
 		sprintf((char *)text+strlen(text)," %d retries", Retries);
 	DEBUG(1, "%s\n", text);
 	syslog(text);
 	return SUCCESS;
 }
-
-#if !defined(BSD4_2) && !defined(USG)
-/* call ultouch every TC calls to either grdblk or gwrblk */
-#define	TC	20
-static	int tc = TC;
-#endif !BSD4_2 && !USG
 
 /*ARGSUSED*/
 grdblk(blk, len,  fn)
@@ -203,13 +183,6 @@ char *blk;
 {
 	register int i, ret;
 
-#if !defined(BSD4_2) && !defined(USG)
-	/* call ultouch occasionally */
-	if (--tc < 0) {
-		tc = TC;
-		ultouch();
-	}
-#endif !BSD4_2 && !USG
 	for (i = 0; i < len; i += ret) {
 		ret = pkread(Pk, blk, len - i);
 		if (ret < 0)
@@ -225,12 +198,5 @@ char *blk;
 gwrblk(blk, len, fn)
 register char *blk;
 {
-#if !defined(BSD4_2) && !defined(USG)
-	/* call ultouch occasionally */
-	if (--tc < 0) {
-		tc = TC;
-		ultouch();
-	}
-#endif !BSD4_2 && !USG
 	return  pkwrite(Pk, blk, len);
 }

@@ -1,9 +1,10 @@
-#ifndef lint
-static char sccsid[] = "@(#)dounit.c	4.2	(Berkeley)	4/25/83";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)dounit.c	4.3	(2.11BSD)	2026/1/27";
+#endif
 
 #include "stdio.h"
 #include "lrnref.h"
+#include <strings.h>
 
 int	remind = 2;		/* to remind user of "again" and "bye" */
 extern	int	noclobber;
@@ -11,6 +12,7 @@ extern	int	noclobber;
 dounit()
 {
 	char tbuff[100];
+	register char *cp;
 
 	if (todo == 0)
 		return;
@@ -48,7 +50,10 @@ retry:
 			wrong > 1 ? "still " : "");
 		fflush(stdout);
 		for(;;) {
-			gets(tbuff);
+			tbuff[0] = '\0';
+			(void)fgets(tbuff, sizeof tbuff, stdin);
+			cp = index(tbuff, '\n');
+			if (cp) *cp = '\0';
 			if (tbuff[0] == 'y') {
 				printf("Try the problem again.\n");
 				if (remind--) {

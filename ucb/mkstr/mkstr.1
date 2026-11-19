@@ -1,0 +1,201 @@
+.\"	@(#)mkstr.1	7.0 (2.11BSD) 2026/6/30
+.\"
+.TH MKSTR 1 "August 30, 2026"
+.UC
+.SH NAME
+mkstr \- create message file from C source
+.SH SYNOPSIS
+.B mkstr
+[\fB-d\fP]
+[\fB-l\fP]
+[\fB-e\fP func] ...
+[\fB-\fP]
+strfile prefix file ...
+.SH DESCRIPTION
+.B mkstr
+is used to create files of messages.  Usually these are error messages but may
+be any string literal used as the first argument to a function.
+Its use can save much D space in programs with large numbers of 
+error, help, diagnostic strings.
+.PP
+.B mkstr
+processes each \fIfile\fP, adding found strings to \fIstrfile\fP,
+and placing a modified version of the input file in an output file with 
+a name formed by catenating \fIprefix\fP and \fIfile\fP.
+.PP
+Options:
+.TP
+.B -d
+Enable debug output. This displays the function names, append mode,
+offset mode and files that would be processed.  No files are modified 
+or created.
+.TP
+.B -l
+Enable long offset mode.  The \fIlseek\fP offset that replaces the string
+string literal is a \fBint\fP by default.  Use of \fB-l\fP generates
+a \fBlong\fP offset.  Thus "error(91);" becomes "error(91L);".  This allows
+a very large string file.  \fBbattlestar\fP(6) used this technique to create
+its string file.
+.TP
+.B -e
+name
+adds a function name to processed for a string argument.  The trailing '('
+should not be given.  Use of \fB-e\fP 
+overrides the default \fBerror(\fP.  If \fBerror(\fP is to be matched add
+an explicit \fB-e error\fP.
+.TP
+.B -
+causes the strings to be appended to \fIstrfile\fP
+This is used when recompiling parts of a program with multiple files.
+.PP
+.B mkstr
+looks for the start of a string ('\fB"\fP') and if found does
+a search for the names given by \fB-e\fP or the default \fBerror\fP.
+If a match is found the C string (characters between opening and 
+closing '\fB"\fP' including the null) is placed
+in \fIstrfile\fP followed by a new-line character.
+The new-line character makes it possible to sensibly
+.B cat
+\fIstrfile\fP
+.sp
+The modified copy of the input file contains in place of the string a
+.I lseek
+offset (either int or long depending on the \fB-l\fP flag) into the 
+file which is used to retrieve the string.
+.SH EXAMPLES
+The examples are intentionally simplistic.  There are numerous programs
+in the system sources that use \fBmkstr\fP that can be consulted.
+.sp
+A sample program tst1.c:
+.IP
+.nf
+#include <stdio.h>
+foobar(char *str) {puts(str);}
+bazfoo(char *str) {puts(str);}
+error(char *str)  {puts(str);}
+
+main() 
+	{ foobar("abc"); error("def"); bazfoo("ghi"); }
+.fi
+.PP
+Typical usage:
+.IP
+	mkstr stringfile x tst1.c
+.PP
+This command would cause the characters \fBdef\\0\\n\fP
+to be placed in the file \fIstringfile\fP,
+and the line in the output file xtst1.c changed to:
+.IP
+foobar("abc"); error(0); bazfoo("ghi");
+.PP
+The function \fBerror(\fP is changed to use the string file:
+.IP
+.nf
+.sp
+error(a1)
+	int	a1;
+	{
+	int	efil;
+	char buf[256];
+
+	efil = open("stringfile", 0);
+	lseek(efil, (long) a1, 0);
+	read(efil, buf, 256);
+	puts(buf);
+	close(efil);
+	}
+.fi
+.sp
+If the \fB-l\fP option was used when creating \fIstringfile\fP then the
+function would change to:
+.IP
+.nf
+error(a1)
+	off_t	a1;
+	{
+	int	efil;
+	char buf[256];
+
+	efil = open("stringfile", 0);
+	lseek(efil, a1, 0);
+	read(efil, buf, 256)
+	puts(buf);
+	close(efil);
+	}
+.fi
+.PP
+To extract strings from functions in addition to \fBerror("\fP:
+.IP
+.nf
+main() 
+	{
+	foobar("abc"); error("def"); bazfoo("ghi");
+	}
+.fi
+.PP
+Use \fB-e\fP thus:
+.IP
+.B mkstr -e
+foobar
+.B -e
+error
+.B -e
+bazfoo stringfile x tst1.c
+.PP
+Of course the functions \fBfoobar(\fP and \fBbazfoo(\fP need to be
+updated to use the string file.
+.SH NOTES
+The function name, its opening paren and the double quote must be adjacent:
+\fBerror("\fP
+NOT
+\fBerror ("\fP
+OR
+\fBerror( "\fP
+.PP
+Previous versions of \fBmkstr\fP only looked for the 
+function \fBerror("...")\fP.  The current version of \fBmkstr\fP 
+allows 16 functions to be specified with \fB-e\fP.  The functions must 
+be, of course, modified to open/lseek/read the string file as shown in the
+example.
+.SH BUGS
+The parse is simplistic.  The default usage (no \fP-e\fP) means \fBerror(\fP
+will match:
+.sp
+\fBstrsrerror("foo");\fP
+.sp
+This may not be expected but there are scripts in the system 
+that depend on this behaviour.  Also
+.sp
+\fBcp = "error(";\fP
+.sp
+will match and produce corrupt output that will fail to compile.
+.PP
+The \fB-e\fP arguments are sorted by string length from longest to shortest.
+.PP
+It is now possible to match
+\fBstrsrerror("foo");\fP
+without matching \fBerror("foo");\fP by using \fB-e\fP:
+.sp
+\fBmkstr \fB-e\fP strsrerror ...
+.sp
+.PP
+Continuation lines without a trailing backslash are rejected by the C
+compiler but were accepted by the previous version of \fBmkstr\fP.  A
+new-line was inserted into the string file at the break in the string.
+This version of \fBmkstr\fP preserves that 
+behaviour for backward compatibilty.  Proper continuation lines will not have 
+the new-line inserted.
+.IP
+error("abc
+.br
+def");
+.sp
+produces: abc\\ndef);\\0\\n
+.sp
+error("abc\\
+.br
+def);
+.sp
+produces: abcdef);\\0\\n
+.SH SEE ALSO
+open(2), lseek(2), fgetln(3), read(2)

@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)rcmd.3	6.7 (Berkeley) 5/14/86
+.\"	@(#)rcmd.3	6.8 (2.11BSD) 2026/9/27
 .\"
 .TH RCMD 3 "May 14, 1986"
 .UC 5
@@ -10,43 +10,41 @@
 rcmd, rresvport, ruserok \- routines for returning a stream to a remote command
 .SH SYNOPSIS
 .nf
-.PP
-.B "rem = rcmd(ahost, inport, locuser, remuser, cmd, fd2p);"
-.B char **ahost;
-.B int inport;
-.B "char *locuser, *remuser, *cmd;"
-.B int *fd2p;
-.PP
-.B s = rresvport(port);
-.B int *port;
-.PP
-.B "ruserok(rhost, superuser, ruser, luser);"
-.B char *rhost;
-.B int superuser;
-.B char *ruser, *luser;
+.ft B
+
+int
+rcmd(\fIchar **ahost\fP, \fIint inport\fP, \fIchar *locuser\fP,
+             \fIchar *remuser\fP, \fIchar *cmd\fP, \fIint *fd2p\fP);
+
+int
+rresvport(\fIint *port\fP);
+
+int
+ruserok(\fIchar *rhost\fP, \fIint superuser\fP, \fIchar *ruser\fP, \fIchar *luser\fP);
+.ft R
 .fi
 .SH DESCRIPTION
-.I Rcmd
+.B rcmd
 is a routine used by the super-user to execute a command on
 a remote machine using an authentication scheme based
 on reserved port numbers.
-.I Rresvport
+.B rresvport
 is a routine which returns a descriptor to a socket
 with an address in the privileged port space.
-.I Ruserok
+.B ruserok
 is a routine used by servers
 to authenticate clients requesting service with
-.IR rcmd .
+.BR rcmd .
 All three functions are present in the same file and are used
 by the
-.IR rshd (8C)
+.BR rshd (8)
 server (among others).
 .PP
-.I Rcmd
+.B rcmd
 looks up the host
 .I *ahost
 using
-.IR gethostbyname (3N),
+.BR gethostbyname (3),
 returning \-1 if the host does not exist.
 Otherwise
 .I *ahost
@@ -84,34 +82,34 @@ provision is made for sending arbitrary signals to the remote process,
 although you may be able to get its attention by using out-of-band data.
 .PP
 The protocol is described in detail in
-.IR rshd (8C).
+.BR rshd (8).
 .PP
 The
 .I rresvport
 routine is used to obtain a socket with a privileged
 address bound to it.  This socket is suitable for use
 by 
-.I rcmd
+.B rcmd
 and several other routines.  Privileged Internet ports are those
 in the range 0 to 1023.  Only the super-user
 is allowed to bind an address of this sort to a socket.
 .PP
-.I Ruserok
+.B Ruserok
 takes a remote host's name, as returned by a
-.IR gethostbyaddr (3N)
+.BR gethostbyaddr (3)
 routine, two user names and a flag indicating whether
 the local user's name is that of the super-user.  It then
 checks the files 
-.I /etc/hosts.equiv
+.B /etc/hosts.equiv
 and, possibly, 
-.I .rhosts
+.B .rhosts
 in the current working directory (normally the local
 user's home directory) to see if the request for
 service is allowed.  A 0 is returned if the machine
 name is listed in the ``hosts.equiv'' file, or the
 host and remote user name are found in the ``.rhosts''
 file; otherwise 
-.I ruserok
+.B ruserok
 returns \-1.  If the
 .I superuser
 flag is 1, the checking of the ``host.equiv'' file is
@@ -119,21 +117,21 @@ bypassed.
 If the local domain (as obtained from \fIgethostname\fP\|(2))
 is the same as the remote domain, only the machine name need be specified.
 .SH SEE ALSO
-rlogin(1C),
-rsh(1C),
+rlogin(1),
+rsh(1),
 intro(2),
 rexec(3),
-rexecd(8C),
-rlogind(8C),
-rshd(8C)
+rexecd(8),
+rlogind(8),
+rshd(8)
 .SH DIAGNOSTICS
-.I Rcmd
+.B rcmd
 returns a valid socket descriptor on success.
 It returns -1 on error and prints a diagnostic message on the standard error.
 .PP
-.I Rresvport
+.B rresvport
 returns a valid, bound socket descriptor on success.
 It returns -1 on error with the global value
-.I errno
+.B errno
 set according to the reason for failure.
 The error code EAGAIN is overloaded to mean ``All network ports in use.''

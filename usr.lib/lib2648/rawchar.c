@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)rawchar.c	5.1 (Berkeley) 4/26/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)rawchar.c     5.2 (2.11BSD) 2026/5/11";
+#endif
 
 /*
  * get a character from the terminal, with no line buffering.

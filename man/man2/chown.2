@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)chown.2	6.6 (Berkeley) 5/22/86
+.\"	@(#)chown.2	6.7 (2.11BSD) 2026/9/20
 .\"
 .TH CHOWN 2 "May 22, 1986"
 .UC 4
@@ -11,14 +11,15 @@ chown \- change owner and group of a file
 .SH SYNOPSIS
 .nf
 .ft B
-chown(path, owner, group)
-char *path;
-int owner, group;
-.PP
-.ft B
-fchown(fd, owner, group)
-int fd, owner, group;
+#include <unistd.h>
+
+int
+chown(\fIconst char *path\fP, \fIuid_t owner\fP, \fIgid_t group\fP)
+
+int
+fchown(\fIint fd\fP, \fIuid_t owner\fP, \fIgid_t group\fP)
 .fi
+.ft R
 .SH DESCRIPTION
 The file
 that is named by \fIpath\fP or referenced by \fIfd\fP
@@ -35,16 +36,16 @@ The owner of the file may change the group
 to a group of which he is a member.
 .PP
 On some systems,
-.I chown
+.B chown
 clears the set-user-id and set-group-id bits
 on the file
 to prevent accidental creation of
 set-user-id and set-group-id programs.
 .PP
-.I Fchown
+.B fchown
 is particularly useful when used in conjunction
 with the file locking primitives (see
-.IR flock (2)).
+.BR flock (2)).
 .PP
 One of the owner or group id's
 may be left unchanged by specifying it as \-1.
@@ -59,7 +60,7 @@ Zero is returned if the operation was successful;
 \-1 is returned if an error occurs, with a more specific
 error code being placed in the global variable \fIerrno\fP.
 .SH "ERRORS
-.I Chown
+.B chown
 will fail and the file will be unchanged if:
 .TP 15
 [ENOTDIR]
@@ -88,21 +89,21 @@ The effective user ID is not the super-user.
 The named file resides on a read-only file system.
 .TP 15
 [EFAULT]
-.I Path
+.I path
 points outside the process's allocated address space.
 .TP 15
 [EIO]
 An I/O error occurred while reading from or writing to the file system.
 .PP
-.I Fchown
+.B fchown
 will fail if:
 .TP 15
 [EBADF]
-.I Fd
+.I fd
 does not refer to a valid descriptor.
 .TP 15
 [EINVAL]
-.I Fd
+.I fd
 refers to a socket, not a file.
 .TP 15
 [EPERM]

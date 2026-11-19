@@ -1,3 +1,7 @@
+/*
+ * static char sccsid[] = "@(#)gram.io     1.1     (2.11BSD)      2026/8/11";
+*/
+
   /*  Input/Output Statements */
 
 io:	  io1
@@ -74,7 +78,7 @@ ioctl:	  SLPAR fexpr SRPAR
 		{ endioctl(); }
 	;
 
-ctllist:  ioclause SCOMMA ioclause
+ctllist:  ioclause
 	| ctllist SCOMMA ioclause
 	;
 

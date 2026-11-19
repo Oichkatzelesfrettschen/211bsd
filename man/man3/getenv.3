@@ -1,11 +1,13 @@
-.\"	@(#)getenv.3	6.4.1 (2.11BSD) 2001/2/22
+.\"	@(#)getenv.3	6.4.2 (2.11BSD) 2026/5/8
 .\"
-.TH GETENV 3 "February 22, 2001"
+.TH GETENV 3 "May 8, 2026"
 .AT 3
 .SH NAME
 getenv, setenv, unsetenv \- manipulate environmental variables
 .SH SYNOPSIS
 .nf
+.B #include <stdlib.h>
+.PP
 .B char *getenv(name)
 .B char *name;
 .PP
@@ -17,7 +19,7 @@ getenv, setenv, unsetenv \- manipulate environmental variables
 .B char *name;
 .fi
 .SH DESCRIPTION
-\fIGetenv\fP searches the environment list (see \fIenviron\fP(7))
+\fIgetenv\fP searches the environment list (see \fIenviron\fP(7))
 for a string of the form \fIname\fP\fB=\fP\fIvalue\fP and returns
 a pointer to the string \fIvalue\fP if such a string is present,
 and 0 (NULL) if it is not.
@@ -30,7 +32,7 @@ found, and \fIoverwrite\fP is non-zero, its value is changed to
 where failure is caused by an inability to allocate space for the
 environment.
 .PP
-\fIUnsetenv\fP removes all occurrences of the string \fIname\fP from
+\fIunsetenv\fP removes all occurrences of the string \fIname\fP from
 the environment.  There is no library provision for completely removing
 the current environment.  It is suggested that the following code be
 used to do so.

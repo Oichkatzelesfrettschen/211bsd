@@ -19,34 +19,25 @@
 char copyright[] =
 "@(#) Copyright (c) 1987 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif
 
-#ifndef lint
-static char sccsid[] = "@(#)man.c	5.17.1 (2.11BSD) 1999/11/26";
-#endif /* not lint */
+static char sccsid[] = "@(#)man.c	5.17.2 (2.11BSD) 2026/4/1";
+#endif
 
 #include <sys/param.h>
 #include <sys/file.h>
 #include <sys/dir.h>
-#include <sys/utsname.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
+#include <err.h>
 
 #define	DEF_PAGER	"/usr/ucb/more -s"
 #define	DEF_PATH	"/usr/man:/usr/new/man:/usr/local/man"
-#define	LOCAL_PATH	"/usr/local/man"
-#define	NEW_PATH	"/usr/new/man"
-
-#define	NO	0
-#define	YES	1
 
 static char	*command,		/* command buffer */
 		*defpath,		/* default search path */
-		*locpath,		/* local search path */
-		*machine,		/* machine type */
 		*manpath,		/* current search path */
-		*newpath,		/* new search path */
 		*pager,			/* requested pager */
 		how;			/* how to display */
 
@@ -58,10 +49,7 @@ main(argc, argv)
 	int argc;
 	register char **argv;
 {
-	extern char *optarg;
-	extern int optind;
 	int ch;
-	char *getenv(), *malloc();
 
 	while ((ch = getopt(argc, argv, "-M:P:afkw")) != EOF)
 		switch((char)ch) {
@@ -81,10 +69,8 @@ main(argc, argv)
 		 */
 		case 'f':
 			jump(argv, "-f", "whatis");
-			/*NOTREACHED*/
 		case 'k':
 			jump(argv, "-k", "apropos");
-			/*NOTREACHED*/
 		/*
 		 * Deliberately undocumented; really only useful when
 		 * you're moving man pages around.  Not worth adding.
@@ -122,24 +108,18 @@ main(argc, argv)
 				 * allocate space to add the "-s"
 				 */
 				if (!(pager = malloc((u_int)(strlen(opager) 
-				    + sizeof("-s") + 1)))) {
-					fputs("man: out of space.\n", stderr);
-					exit(1);
-				}
+				    + sizeof("-s") + 1))))
+				   errx(1, "man: out of space.");
 				(void)sprintf(pager, "%s %s", opager, "-s");
 			}
 		}
 		else
 			pager = DEF_PAGER;
-	if (!(machine = getenv("MACHINE")))
-		setmachine();
 	if (!defpath && !(defpath = getenv("MANPATH")))
 		defpath = DEF_PATH;
-	locpath = LOCAL_PATH;
-	newpath = NEW_PATH;
 	man(argv);
 	/* use system(3) in case someone's pager is "pager arg1 arg2" */
-	if (command)
+	if	(command)
 		(void)system(command);
 	exit(0);
 }
@@ -147,14 +127,18 @@ main(argc, argv)
 typedef struct {
 	char	*name, *msg;
 } MANDIR;
-static MANDIR	list1[] = {		/* section one list */
+static MANDIR	list1[] = 
+	{		/* section one list */
 	"cat1", "1st",		"cat8", "8th",		"cat6", "6th",
-	"cat.old", "old",	NULL, NULL,
-},		list2[] = {		/* rest of the list */
+	NULL, NULL,
+	};
+static MANDIR	list2[] =
+	{		/* rest of the list */
 	"cat2", "2nd",		"cat3", "3rd",		"cat4", "4th",
 	"cat5", "5th", 		"cat7", "7th",		"cat3f", "3rd (F)",
 	NULL, NULL,
-},		list3[2];		/* single section */
+	};
+static	MANDIR	list3[2];		/* single section */
 
 static
 man(argv)
@@ -168,38 +152,6 @@ man(argv)
 		manpath = defpath;
 		section = NULL;
 		switch(**argv) {
-		case 'l':				/* local */
-			/* support the "{l,local,n,new}###"  syntax */
-			for (p = *argv; isalpha(*p); ++p);
-			if (!strncmp(*argv, "l", p - *argv) ||
-			    !strncmp(*argv, "local", p - *argv)) {
-				++argv;
-				manpath = locpath;
-				section = getsect(p);
-			}
-			break;
-		case 'n':				/* new */
-			for (p = *argv; isalpha(*p); ++p);
-			if (!strncmp(*argv, "n", p - *argv) ||
-			    !strncmp(*argv, "new", p - *argv)) {
-				++argv;
-				manpath = newpath;
-				section = getsect(p);
-			}
-			break;
-		/*
-		 * old isn't really a separate section of the manual,
-		 * and its entries are all in a single directory.
-		 */
-		case 'o':				/* old */
-			for (p = *argv; isalpha(*p); ++p);
-			if (!strncmp(*argv, "o", p - *argv) ||
-			    !strncmp(*argv, "old", p - *argv)) {
-				++argv;
-				list3[0] = list1[3];
-				section = list3;
-			}
-			break;
 		case '1': case '2': case '3': case '4':
 		case '5': case '6': case '7': case '8':
 			if (section = getsect(*argv))
@@ -225,10 +177,6 @@ man(argv)
 			fputs("what do you want from the ", stderr);
 		if (section)
 			fprintf(stderr, "%s section of the ", section->msg);
-		if (manpath == locpath)
-			fputs("local ", stderr);
-		else if (manpath == newpath)
-			fputs("new ", stderr);
 		if (*argv)
 			fputs("manual.\n", stderr);
 		else
@@ -240,8 +188,7 @@ man(argv)
 /*
  * manual --
  *	given a directory list and a file name find a file that
- *	matches; check ${directory}/${dir}/{file name} and
- *	${directory}/${dir}/${machine}/${file name}.
+ *	matches; check ${directory}/${dir}/{file name}
  */
 static
 manual(section, name)
@@ -260,12 +207,8 @@ manual(section, name)
 			*end = '\0';
 		for (dp = section; dp->name; ++dp) {
 			(void)sprintf(fname, "%s/%s/%s.0", beg, dp->name, name);
-			if (access(fname, R_OK)) {
-				(void)sprintf(fname, "%s/%s/%s/%s.0", beg,
-				    dp->name, machine, name);
-				if (access(fname, R_OK))
-					continue;
-			}
+			if (access(fname, R_OK))
+			   continue;
 			if (how & WHERE)
 				printf("man: found in %s.\n", fname);
 			else if (how & CAT)
@@ -280,7 +223,6 @@ manual(section, name)
 			return(res);
 		*end = ':';
 	}
-	/*NOTREACHED*/
 }
 
 /*
@@ -294,19 +236,13 @@ cat(fname)
 	register int fd, n;
 	char buf[BUFSIZ];
 
-	if (!(fd = open(fname, O_RDONLY, 0))) {
-		perror("man: open");
-		exit(1);
-	}
-	while ((n = read(fd, buf, sizeof(buf))) > 0)
-		if (write(1, buf, n) != n) {
-			perror("man: write");
-			exit(1);
-		}
-	if (n == -1) {
-		perror("man: read");
-		exit(1);
-	}
+	if	(!(fd = open(fname, O_RDONLY, 0)))
+		err(1, "open");
+	while	((n = read(fd, buf, sizeof(buf))) > 0)
+		if	(write(1, buf, n) != n)
+			err(1, "write");
+	if	(n == -1)
+		err(1, "read");
 	(void)close(fd);
 }
 
@@ -322,22 +258,17 @@ add(fname)
 	static int len;
 	static char *cp;
 	int flen;
-	char *malloc(), *realloc(), *strcpy();
 
 	if (!command) {
-		if (!(command = malloc(buflen = 1024))) {
-			fputs("man: out of space.\n", stderr);
-			exit(1);
-		}
+		if	(!(command = malloc(buflen = 1024)))
+			errx(1, "out of space.", stderr);
 		len = strlen(strcpy(command, pager));
 		cp = command + len;
 	}
 	flen = strlen(fname);
 	if (len + flen + 2 > buflen) {		/* +2 == space, EOS */
-		if (!(command = realloc(command, buflen += 1024))) {
-			fputs("man: out of space.\n", stderr);
-			exit(1);
-		}
+		if (!(command = realloc(command, buflen += 1024)))
+			errx(1, "man: out of space.");
 		cp = command + len;
 	}
 	*cp++ = ' ';
@@ -352,7 +283,7 @@ add(fname)
  */
 static MANDIR *
 getsect(s)
-	char *s;
+	register char *s;
 {
 	switch(*s++) {
 	case '1':
@@ -427,22 +358,8 @@ jump(argv, flag, name)
 	for (; *arg; ++arg)
 		arg[0] = arg[1];
 	execvp(name, argv);
-	fprintf(stderr, "%s: Command not found.\n", name);
-	exit(1);
+	errx(1, "%s: Command not found.", name);
 }
-
-/*
- * This is done in a function by itself because 'uname()' uses a 640
- * structure which we do not want permanently allocated on main()'s stack.
-*/
-setmachine()
-        {
-        struct  utsname foo;
-
-        if      (uname(&foo) < 0)
-                strcpy(foo.machine, "?");
-        machine = strdup(foo.machine);
-        }
 
 /*
  * usage --
@@ -451,6 +368,5 @@ setmachine()
 static
 usage()
 {
-	fputs("usage: man [-] [-a] [-M path] [section] title ...\n", stderr);
-	exit(1);
+	errx(1, "usage: man [-] [-a] [-M path] [section] title ...");
 }

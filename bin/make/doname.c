@@ -1,4 +1,4 @@
-/* static	char *sccsid = "@(#)doname.c	4.9.2 (2.11BSD) 2000/2/12"; */
+/* static	char *sccsid = "@(#)doname.c	4.9.3 (2.11BSD) 2026/9/15"; */
 #include "defs"
 #include <strings.h>
 #include <signal.h>
@@ -29,14 +29,13 @@ struct nameblock *p1, *p2;
 struct shblock *implcom, *explcom;
 register struct lineblock *lp;
 struct lineblock *lp1, *lp2;
-#ifdef pdp11
-/* temp and sourcename are mutually exclusive - save 254 bytes of stack by
+
+/*
+ * temp and sourcename are mutually exclusive - save 254 bytes of stack by
  * reusing sourcename's buffer
 */
 char sourcename[256], prefix[256], *temp = sourcename, concsuff[20];
-#else
-char sourcename[BUFSIZ], prefix[BUFSIZ], temp[BUFSIZ], concsuff[20];
-#endif
+
 char *pnamep, *p1namep, *cp, *savenamep = NULL;
 char *mkqlist();
 struct chain *qchain, *appendq();
@@ -217,13 +216,18 @@ if(errstat==0 && (ptime<tdep || (ptime==0 && tdep==0) ) )
 					break;
 					}
 			}
-		else if(keepgoing)
+		else if	(keepgoing)
 			{
-			printf("Don't know how to make %s\n", p->namep);
+/*
+ * output the newline explicitly.  xstr can then share the string
+ * literals in the printf and fatal1 calls
+*/
+			printf("Don't know how to make %s", p->namep);
+			fputc('\n', stdout);
 			++errstat;
 			}
 		else
-			fatal1(" Don't know how to make %s", p->namep);
+			fatal1("Don't know how to make %s", p->namep);
 
 	setvar("@", (char *) NULL);
 	if(noexflag || (ptime = exists(p)) == 0)
@@ -245,7 +249,7 @@ p->modtime = ptime;
 *tval = ptime;
 return(errstat);
 }
-
+
 docom(q)
 struct shblock *q;
 {
@@ -299,7 +303,7 @@ if(comstring[0] == '\0') return(0);
 
 if(!silflag && (!noprint || noexflag) )
 	{
-	printf("%s%s\n", (noexflag ? "" : prompt), comstring);
+	printf("%s\n", comstring);
 	fflush(stdout);
 	}
 
@@ -326,7 +330,6 @@ if( status = dosys(comstring, nohalt) )
 
 return(status);
 }
-
 
 /*
    If there are any Shell meta characters in the name,

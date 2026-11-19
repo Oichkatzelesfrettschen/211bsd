@@ -17,15 +17,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif /* not lint */
 
-#ifndef lint
-static char sccsid[] = "@(#)main.c	5.9 (Berkeley) 6/1/90";
-#endif /* not lint */
+static char sccsid[] = "@(#)main.c	6.0 (2.11BSD) 2026/1/14";
+#endif
 
 /* Many bug fixes are from Jim Guyton <guyton@rand-unix> */
 
@@ -44,6 +42,7 @@ static char sccsid[] = "@(#)main.c	5.9 (Berkeley) 6/1/90";
 #include <setjmp.h>
 #include <ctype.h>
 #include <netdb.h>
+#include <strings.h>
 
 #define	TIMEOUT		5		/* secs between rexmt's */
 
@@ -52,9 +51,6 @@ int	f;
 short   port;
 int	trace;
 int	verbose;
-#ifdef	pdp11
-#define	connected Xconnected
-#endif
 int	connected;
 char	mode[32];
 char	line[200];
@@ -62,7 +58,7 @@ int	margc;
 char	*margv[20];
 char	*prompt = "tftp";
 jmp_buf	toplevel;
-int	intr();
+void	intr();
 struct	servent *sp;
 
 int	quit(), help(), setverbose(), settrace(), status();
@@ -110,8 +106,17 @@ struct cmd cmdtab[] = {
 
 struct	cmd *getcmd();
 char	*tail();
-char	*index();
-char	*rindex();
+
+/* This works because the buffer is global */
+void cmdgets()
+	{
+	register int s = strlen(line);
+	register char *cp;
+
+	fgets(&line[s], sizeof (line) - s, stdin);
+	if      (cp = index(line, '\n'))
+		*cp = '\0';
+	}
 
 main(argc, argv)
 	char *argv[];
@@ -158,7 +163,7 @@ setpeer(argc, argv)
 	if (argc < 2) {
 		strcpy(line, "Connect ");
 		printf("(to) ");
-		gets(&line[strlen(line)]);
+		cmdgets();
 		makeargv();
 		argc = margc;
 		argv = margv;
@@ -273,7 +278,7 @@ put(argc, argv)
 	if (argc < 2) {
 		strcpy(line, "send ");
 		printf("(file) ");
-		gets(&line[strlen(line)]);
+		cmdgets();
 		makeargv();
 		argc = margc;
 		argv = margv;
@@ -364,7 +369,7 @@ get(argc, argv)
 	if (argc < 2) {
 		strcpy(line, "get ");
 		printf("(files) ");
-		gets(&line[strlen(line)]);
+		cmdgets();
 		makeargv();
 		argc = margc;
 		argv = margv;
@@ -444,7 +449,7 @@ setrexmt(argc, argv)
 	if (argc < 2) {
 		strcpy(line, "Rexmt-timeout ");
 		printf("(value) ");
-		gets(&line[strlen(line)]);
+		cmdgets();
 		makeargv();
 		argc = margc;
 		argv = margv;
@@ -470,7 +475,7 @@ settimeout(argc, argv)
 	if (argc < 2) {
 		strcpy(line, "Maximum-timeout ");
 		printf("(value) ");
-		gets(&line[strlen(line)]);
+		cmdgets();
 		makeargv();
 		argc = margc;
 		argv = margv;
@@ -499,6 +504,7 @@ status(argc, argv)
 		rexmtval, maxtimeout);
 }
 
+void
 intr()
 {
 	signal(SIGALRM, SIG_IGN);
@@ -530,18 +536,24 @@ command(top)
 	int top;
 {
 	register struct cmd *c;
+	register char *cp;
 
 	if (!top)
 		putchar('\n');
 	for (;;) {
 		printf("%s> ", prompt);
-		if (gets(line) == 0) {
+		line[0] = '\0';
+		if (fgets(line, sizeof (line), stdin) == 0) {
 			if (feof(stdin)) {
 				quit();
 			} else {
 				continue;
 			}
 		}
+
+		cp = index(line, '\n');
+		if (cp) *cp = '\0';
+
 		if (line[0] == 0)
 			continue;
 		makeargv();

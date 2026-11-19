@@ -16,14 +16,14 @@
  */
 
 #if defined(LIBC_SCCS) && !defined(lint)
-static char sccsid[] = "@(#)login.c	5.2 (Berkeley) 4/18/89";
-#endif /* LIBC_SCCS and not lint */
+static char sccsid[] = "@(#)login.c	5.3 (2.11BSD) 2026/5/30";
+#endif
 
 #include <sys/types.h>
 #include <sys/file.h>
 #include <utmp.h>
 #include <stdio.h>
-#include "pathnames.h"
+#include <unistd.h>
 
 void
 login(ut)
@@ -31,7 +31,6 @@ login(ut)
 {
 	register int fd;
 	int tty;
-	off_t lseek();
 
 	tty = ttyslot();
 	if (tty > 0 && (fd = open(_PATH_UTMP, O_WRONLY, 0)) >= 0) {

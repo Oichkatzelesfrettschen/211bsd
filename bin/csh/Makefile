@@ -3,7 +3,7 @@
 # All rights reserved.  The Berkeley Software License Agreement
 # specifies the terms and conditions for redistribution.
 #
-#	@(#)Makefile	5.5 (2.11BSD) 2025/12/25
+#	@(#)Makefile	5.5 (2.11BSD) 2026/4/25
 #
 # C Shell with process control; VM/UNIX VAX Makefile
 # Bill Joy UC Berkeley; Jim Kulp IIASA, Austria
@@ -54,11 +54,8 @@ strings.o: strings
 	mv -f xs.o strings.o
 	rm -f xs.c
 
-lint:
-	lint -z ${DEFS} sh*.c alloc.c
-
 install: csh
-	install -m 755 -o bin -g bin -s csh ${DESTDIR}/bin/csh
+	install -m 755 -o bin -g bin -s csh /bin/csh
 
 clean:
 	rm -f a.out strings x.c xs.c csh errs *.o

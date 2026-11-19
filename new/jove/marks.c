@@ -1,9 +1,12 @@
-/***************************************************************************
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)marks.c 2.0 (2.11BSD) 2026/9/17";
+#endif
+/*
  * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
  * is provided to you without charge, and with no warranty.  You may give  *
  * away copies of JOVE, including sources, provided that this notice is    *
  * included in all the files.                                              *
- ***************************************************************************/
+ */
 
 int	MarksShouldFloat = 1;
 
@@ -32,7 +35,7 @@ Buffer	*b;
 	m = b->b_marks;
 	while (m != 0) {
 		next = m->m_next;
-		free((char *) m);
+		free((void *) m);
 		m = next;
 	}
 }
@@ -52,7 +55,7 @@ register Mark	*m;
 			complain("Unknown mark!");
 		mp->m_next = m->m_next;
 	}
-	free((char *) m);
+	free((void *) m);
 }
 
 void

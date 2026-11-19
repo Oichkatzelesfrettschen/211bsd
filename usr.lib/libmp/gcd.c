@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)gcd.c	5.2 (Berkeley) 3/13/86";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)gcd.c     5.3 (2.11BSD) 2026/5/11";
+#endif
 
 #include <mp.h>
 gcd(a,b,c) MINT *a,*b,*c;

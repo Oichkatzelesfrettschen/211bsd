@@ -1,5 +1,5 @@
 /*
- * ddd.c - double dd 2.1 (2.11BSD) 2025/12/26
+ * ddd.c - double dd 2.2 (2.11BSD) 2026/9/22
  *
  * Copyright 1988 Helsinki University of Technology.
  * All rights reserved.
@@ -80,7 +80,7 @@ void perror();
 #define DEFBS 512      /* default block size */
 
 /* forward declarations */
-int doerror();
+void doerror();
 
 /* global variables */
 static int
@@ -136,6 +136,7 @@ catchsignals()
     (void) signal(*sigp, doerror);
 }      /* end of catchsignals() */
 
+void
 doerror()
 /* what we do if we get an error or catch a signal */
 {

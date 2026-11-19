@@ -33,7 +33,7 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"     @(#)printf.3	8.2 (2.11BSD) 2025/12/26
+.\"     @(#)printf.3	8.3 (2.11BSD) 2026/06/18
 .\"
 .Dd June 4, 1993
 .Dt PRINTF 3
@@ -77,7 +77,7 @@ The
 family of functions produces output according to a
 .Fa format
 as described below.
-.Fn Printf
+.Fn printf
 and
 .Fn vprintf
 write output to
@@ -133,7 +133,7 @@ used to end output to strings).
 .\" will return
 .\" .SM
 .\" .BR
-.Fn Snprintf
+.Fn snprintf
 and
 .Fn vsnprintf
 will write at most
@@ -147,7 +147,7 @@ if the return value is greater than or equal to the
 .Fa size
 argument, the string was too short
 and some of the printed characters were discarded.
-.Fn Sprintf
+.Fn sprintf
 and
 .Fn vsprintf
 effectively assume an infinite
@@ -228,7 +228,7 @@ For all conversions except
 .Cm n ,
 the converted value is padded on the left with zeros rather than blanks.
 If a precision is given with a numeric conversion
-.Pf ( Mc d ,
+.Pf ( Cm d ,
 .Cm i ,
 .Cm o ,
 .Cm u ,
@@ -376,12 +376,7 @@ or
 .Cm G
 conversion corresponds to a
 .Em long double
-argument (but note that long double values are not currently supported
-by the
-.Tn VAX
-and
-.Tn Tahoe
-compilers).
+argument.
 .It
 A character that specifies the type of conversion to be applied.
 .El
@@ -422,7 +417,7 @@ are used for
 conversions; the letters
 .Cm ABCDEF
 are used for
-.m X
+.Cm X
 conversions.
 The precision, if any, gives the minimum number of digits that must
 appear; if the converted value requires fewer digits, it is padded on
@@ -518,10 +513,8 @@ character.
 .It Cm p
 The
 .Dq Em void *
-pointer argument is printed in hexadecimal (as if by
-.Ql %#x
-or
-.Ql %#lx ) .
+pointer argument is printed in octal (as if by
+.Ql %#o ) .
 .It Cm n
 The number of characters written so far is stored into the
 integer indicated by the

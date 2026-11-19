@@ -1,5 +1,5 @@
 #if !defined(lint) && defined(DOSCCS)
-static char *sccsid = "@(#)dd.c	5.2 (2.11BSD) 2025/11/25";
+static char *sccsid = "@(#)dd.c	5.3 (2.11BSD) 2026/9/21";
 #endif
 
 #include <sys/file.h>
@@ -167,7 +167,8 @@ char	**argv;
 	int (*conv)();
 	register char *ip;
 	register c;
-	int ebcdic(), ibm(), ascii(), null(), cnull(), term(), stats();
+	void term(), stats();
+	int ebcdic(), ibm(), ascii(), null(), cnull();
 	int block(), unblock();
 	unsigned long number();
 	int a;
@@ -683,6 +684,7 @@ block(cc)
 		null(c);
 }
 
+void
 term(status)
 int status;
 {
@@ -691,6 +693,7 @@ int status;
 	exit(status);
 }
 
+void
 stats()
 {
 	char buf[100];

@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)canfield.c	5.4.2 (2.11BSD GTE) 1/16/95";
+static char sccsid[] = "@(#)canfield.c	5.4.3 (2.11BSD) 2026/9/22";
 #endif
 
 /*
@@ -1560,6 +1560,7 @@ finish()
 /*
  * Field an interrupt.
  */
+void
 askquit()
 {
 	move(msgrow, msgcol);
@@ -1576,6 +1577,7 @@ askquit()
 /*
  * procedure to clean up and exit
  */
+void
 cleanup()
 {
 

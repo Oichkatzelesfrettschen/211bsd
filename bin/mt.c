@@ -11,14 +11,14 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)mt.c	2.2 (2.11BSD) 1999/3/20";
-#endif not lint
+static char sccsid[] = "@(#)mt.c	2.3 (2.11BSD) 2026/9/13";
+#endif
 
 /*
- * mt --
- *   magnetic tape manipulation program
+ * mt -- magnetic tape manipulation program
  */
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/mtio.h>
@@ -54,7 +54,7 @@ char *tape;
 main(argc, argv)
 	char **argv;
 {
-	char line[80], *getenv();
+	char line[80];
 	register char *cp;
 	register struct commands *comp;
 
@@ -103,28 +103,10 @@ main(argc, argv)
 	}
 }
 
-#ifdef vax
-#include <vaxmba/mtreg.h>
-#include <vaxmba/htreg.h>
-
-#include <vaxuba/utreg.h>
-#include <vaxuba/tmreg.h>
-#undef b_repcnt		/* argh */
-#include <vaxuba/tsreg.h>
-#endif
-
-#ifdef sun
-#include <sundev/tmreg.h>
-#include <sundev/arreg.h>
-#endif
-
-#ifdef pdp11
 #include <pdpuba/htreg.h>
 #include <pdpuba/tmreg.h>
-#undef b_repcnt		/* argh */
 #include <pdpuba/tsreg.h>
 #include <pdpuba/tmscpreg.h>
-#endif
 
 struct tape_desc {
 	short	t_type;		/* type of magtape device */
@@ -132,23 +114,10 @@ struct tape_desc {
 	char	*t_dsbits;	/* "drive status" register */
 	char	*t_erbits;	/* "error" register */
 } tapes[] = {
-#ifdef vax
-	{ MT_ISTS,	"ts11",		0,		TSXS0_BITS },
-	{ MT_ISHT,	"tm03",		HTDS_BITS,	HTER_BITS },
-	{ MT_ISTM,	"tm11",		0,		TMER_BITS },
-	{ MT_ISMT,	"tu78",		MTDS_BITS,	0 },
-	{ MT_ISUT,	"tu45",		UTDS_BITS,	UTER_BITS },
-#endif
-#ifdef sun
-	{ MT_ISCPC,	"TapeMaster",	TMS_BITS,	0 },
-	{ MT_ISAR,	"Archive",	ARCH_CTRL_BITS,	ARCH_BITS },
-#endif
-#ifdef pdp11
 	{ MT_ISTS,	"ts11",		0,		TSXS0_BITS },
 	{ MT_ISHT,	"tm03",		HTFS_BITS,	HTER_BITS },
 	{ MT_ISTM,	"tm11",		0,		TMER_BITS },
 	{ MT_ISTMSCP,	"tmscp",	0,		0 },
-#endif
 	{ 0 }
 };
 

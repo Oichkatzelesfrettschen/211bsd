@@ -1,5 +1,5 @@
-#ifndef lint
-static char *sccsid = "@(#)tee.c	5.4 (Berkeley) 12/14/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)tee.c	5.5 (2.11BSD) 2026/5/7";
 #endif
 /*
  * tee-- pipe fitting
@@ -9,6 +9,7 @@ static char *sccsid = "@(#)tee.c	5.4 (Berkeley) 12/14/85";
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <unistd.h>
 
 #define	BUFSIZ	8192
 int openf[20] = { 1 };
@@ -19,9 +20,6 @@ int aflag;
 char in[BUFSIZ];
 
 char out[BUFSIZ];
-
-extern errno;
-long	lseek();
 
 main(argc,argv)
 char **argv;
@@ -83,9 +81,10 @@ char **argv;
 
 stash(p)
 {
-	int k;
-	int i;
-	int d;
+	register int k;
+	register int i;
+	register int d;
+
 	d = t ? 16 : p;
 	for(i=0; i<p; i+=d)
 		for(k=0;k<n;k++)
@@ -93,7 +92,7 @@ stash(p)
 }
 
 puts(s)
-char *s;
+register char *s;
 {
 	while(*s)
 		write(2,s++,1);

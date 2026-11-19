@@ -20,7 +20,7 @@ char copyright[] =
 "@(#) Copyright (c) 1985, 1989 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)main.c	based on 5.15 (2.11BSD) 2026/1/5";
+static char sccsid[] = "@(#)main.c	based on 5.16 (2.11BSD) 2026/9/21";
 #endif
 
 /*
@@ -42,8 +42,8 @@ static char sccsid[] = "@(#)main.c	based on 5.15 (2.11BSD) 2026/1/5";
 #include <stdlib.h>
 #include <unistd.h>
 
-int	intr();
-int	lostpeer();
+void	intr();
+void	lostpeer();
 extern	char *home;
 
 main(argc, argv)
@@ -145,12 +145,14 @@ main(argc, argv)
 	}
 }
 
+void
 intr()
 {
 
 	longjmp(toplevel, 1);
 }
 
+void
 lostpeer()
 {
 	extern FILE *cout;

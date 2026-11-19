@@ -1,4 +1,4 @@
-#       Makefile        2.1 (2.11BSD) 2025/11/27
+#       Makefile        2.2 (2.11BSD) 2026/6/28
 
 # Fortran 77 compiler generating code for the PDP11 using the Ritchie pass 2
 
@@ -6,14 +6,13 @@
 #	2020/2/8 - remove unused malloc.c from SRCS
 #		   Add -O to CFLAGS.  "Don't use -O here" was a historical relic
 #       2025/11/27 - cleanup
+#	2026/6/28 - Don't use -O and then run /lib/c2 on the assembly file.
+#		    That runs the optimizer twice.  Borrow from pascal/pi and
+#		    use tmp/ as the prefix for mkstr.
 
-AS=		as -V
-C2=		/lib/c2
 LD=		ld
 STRINGS=	f77_strings
-CFL=		-DTARGET=PDP11 -DFAMILY=DMR -DHERE=PDP11 -DOUTPUT=BINARY \
-		-DPOLISH=POSTFIX -DC_OVERLAY
-CFLAGS=		-O -w ${CFL}
+CFLAGS=		-O -I. -w
 LDFLAGS= -i
 
 SRCS= 	data.c driver.c equiv.c error.c exec.c expr.c gram.c init.c \
@@ -24,70 +23,66 @@ PASS1OBJECTS=	data.o equiv.o error.o exec.o expr.o gram.o init.o \
 		intr.o io.o lex.o main.o misc.o pdp11.o pdp11x.o proc.o \
 		put.o putdmr.o
 
-all:		f77 f77pass1
+all:	tmp f77 f77pass1
 
-f77:		driver.o pdp11x.o
-		${CC} ${LDFLAGS} driver.o pdp11x.o -o f77
-		@size f77
+f77:	driver.o pdp11x.o
+	${CC} ${LDFLAGS} driver.o pdp11x.o -o f77
+	@size f77
 
 f77pass1:	${PASS1OBJECTS}
-		${LD} /lib/crt0.o ${LDFLAGS} -o f77pass1 \
-			main.o misc.o gram.o lex.o \
-			-Z proc.o init.o \
-			-Z equiv.o data.o error.o \
-			-Y io.o expr.o intr.o exec.o \
-			put.o putdmr.o pdp11.o pdp11x.o -lc
-		@size f77pass1
+	${LD} /lib/crt0.o ${LDFLAGS} -o f77pass1 \
+		main.o misc.o gram.o lex.o \
+		-Z proc.o init.o \
+		-Z equiv.o data.o error.o \
+		-Y io.o expr.o intr.o exec.o \
+		put.o putdmr.o pdp11.o pdp11x.o -lc
+	@size f77pass1
 
-gram.o:		gram.c
-		mkstr - f77_strings xx gram.c
-		${CC} -S ${CFLAGS} xxgram.c 
-		mv xxgram.s gram.s
-		rm xxgram.c
-		${AS} -u -o gram.o gram.s
-		rm gram.s
+gram.o:	gram.c
+	rm -f tmp/gram.c
+	mkstr - f77_strings tmp/ gram.c
+	${CC} ${CFLAGS} -c tmp/gram.c 
+	rm -f tmp/gram.c
 
-gram.c:		gram.head gram.dcl gram.expr gram.exec gram.io tokdefs
-		( sed <tokdefs "s/#define/%token/" ;\
-		cat gram.head gram.dcl gram.expr gram.exec gram.io ) >gram.in
-		${YACC} ${YFLAGS} gram.in
-		mv y.tab.c gram.c
-		rm gram.in
+gram.c:	gram.head gram.dcl gram.expr gram.exec gram.io tokdefs
+	( sed <tokdefs "s/#define/%token/" ;\
+	cat gram.head gram.dcl gram.expr gram.exec gram.io ) >gram.in
+	${YACC} ${YFLAGS} gram.in
+	mv y.tab.c gram.c
+	rm gram.in
+
+tmp:
+	-mkdir tmp
 
 .c.o:
-#	Remove error strings
-		mkstr - f77_strings xx $*.c
-		${CC} -S ${CFLAGS} xx$*.c
-		${C2} xx$*.s | ${AS} -u -o $*.o
-		rm xx$*.c xx$*.s
+	rm -f tmp/$*.c
+	mkstr - f77_strings tmp/ $*.c
+	${CC} ${CFLAGS} -c tmp/$*.c
+	rm -f tmp/$*.c
 
 driver.o:
-pdp11x.o:
-		${CC} -c ${CFLAGS} $*.c
+	${CC} -c ${CFLAGS} $*.c
 
-defs:		ftypes defines locdefs
-		touch defs
+pdp11x.o:
+	${CC} -c ${CFLAGS} $*.c
+
+defs:	ftypes defines
+	touch defs
 
 tokdefs:	tokens
-		grep -n . <tokens | sed "s/\([^:]*\):\(.*\)/#define \2 \1/" >tokdefs
-
-locdefs:	pdp11defs
-		cp pdp11defs locdefs
+	grep -n . <tokens | sed "s/\([^:]*\):\(.*\)/#define \2 \1/" >tokdefs
 
 install: all
-		install -c -s -m 755 -o root f77 /usr/bin
-		install -c -s -m 755 -o root f77pass1 /usr/libexec
-		install -c -m 644 ${STRINGS} /usr/share/misc
+	install -c -s -m 755 -o root f77 /usr/bin
+	install -c -s -m 755 -o root f77pass1 /usr/libexec
+	install -c -m 644 ${STRINGS} /usr/share/misc
 
 clean:
-		-rm -f f77 f77pass1 *.o gram.c x.c xs.c f77_strings strings
+	rm -f f77 f77pass1 *.o gram.c f77_strings
+	rm -fr tmp
 
 tags:
-	cwd=`pwd`; \
-	for i in ${SRCS}; do \
-		ctags -a -f tags $$cwd/$$i; \
-	done
-
+	ctags ${SRCS}
 
 data.o:		defs string_defs data.c
 driver.o:	defs drivedefs driver.c

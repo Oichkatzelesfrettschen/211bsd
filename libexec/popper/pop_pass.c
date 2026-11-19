@@ -4,15 +4,16 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 static char copyright[] = "Copyright (c) 1990 Regents of the University of California.\nAll rights reserved.\n";
-static char SccsId[] = "@(#)@(#)pop_pass.c	2.3  2.3 4/2/91";
-#endif not lint
+static char SccsId[] = "@(#)@(#)pop_pass.c	2.4 (2.11BSD) 2026/5/12";
+#endif
 
 #include <stdio.h>
 #include <sys/types.h>
 #include <strings.h>
 #include <pwd.h>
+#include <unistd.h>
 #include "popper.h"
 
 /* 
@@ -23,7 +24,6 @@ int pop_pass (p)
 POP     *   p;
 {
     register struct passwd  *   pw;
-    char *crypt();
 
     /*  Look for the user in the password file */
     if ((pw = getpwnam(p->user)) == NULL)

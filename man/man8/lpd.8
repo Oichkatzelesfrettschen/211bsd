@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)lpd.8	6.3.1 (2.11BSD) 1996/10/23
+.\"	@(#)lpd.8	6.3.2 (2.11BSD) 2026/9/28
 .\"
 .TH LPD 8 "October 23, 1996"
 .UC 5
@@ -15,43 +15,43 @@ lpd \- line printer daemon
 .B \-l
 ] [ port # ]
 .SH DESCRIPTION
-.I Lpd
+.B lpd
 is the line printer daemon (spool area handler) and is normally invoked
 at boot time from the
-.IR rc (8)
+.BR rc (8)
 file.  It makes a single pass through the
-.IR printcap (5)
+.BR printcap (5)
 file to find out about the existing printers and
 prints any files left after a crash. It then uses the system calls
-.IR listen (2)
+.BR listen (2)
 and
-.IR accept (2)
+.BR accept (2)
 to receive requests to print files in the queue,
 transfer files to the spooling area, display the queue,
 or remove jobs from the queue.  In each case, it forks a child to handle
 the request so the parent can continue to listen for more requests.
 The Internet port number used to rendezvous
 with other processes is normally obtained with
-.IR getservbyname (3)
+.BR getservbyname (3)
 but can be changed with the
 .IR port #
 argument.
 The
 .B \-l
 flag causes
-.I lpd
+.B lpd
 to log valid requests received from the network. This can be useful
 for debugging purposes.
 .PP
 Access control is provided by two means. First, All requests must come from
 one of the machines listed in the file
-.I /etc/hosts.equiv
+.B /etc/hosts.equiv
 or
-.IR /etc/hosts.lpd .
+.BR /etc/hosts.lpd .
 Second, if the ``rs'' capability is specified in the
-.I printcap
+.B printcap
 entry for the printer being accessed,
-.I lpr
+.B lpr
 requests will only be honored for those users with accounts on the
 machine with the printer.
 .PP
@@ -68,10 +68,10 @@ The file
 in each spool directory is used to prevent multiple daemons from
 becoming active simultaneously, and to store information
 about the daemon process for
-.IR lpr (1),
-.IR lpq (1),
+.BR lpr (1),
+.BR lpq (1),
 and
-.IR lprm (1).
+.BR lprm (1).
 After the daemon has successfully set the lock, it scans the directory
 for files beginning with 
 .IR cf .
@@ -91,16 +91,16 @@ Literal.  The line contains identification info from
 the password file and causes the banner page to be printed.
 .IP T
 Title.  String to be used as the title for
-.IR pr (1).
+.BR pr (1).
 .IP H
 Host Name.  Name of the machine where
-.I lpr
+.B lpr
 was invoked.
 .IP P
 Person.  Login name of the person who invoked
-.IR lpr .
+.BR lpr .
 This is used to verify ownership by
-.IR lprm .
+.BR lprm .
 .IP M
 Send mail to the specified user when the current print job completes.
 .IP f
@@ -109,22 +109,22 @@ Formatted File.  Name of a file to print which is already formatted.
 Like ``f'' but passes control characters and does not make page breaks.
 .IP p
 Name of a file to print using
-.IR pr (1)
+.BR pr (1)
 as a filter.
 .IP t
 Troff File.  The file contains
-.IR troff (1)
+.BR troff (1)
 output (cat phototypesetter commands).
 .IP n
 Ditroff File.  The file contains device independent troff
 output.
 .IP d
 DVI File.  The file contains
-.IR Tex (l)
+.BR tex (l)
 output (DVI format from Standford).
 .IP g
 Graph File.  The file contains data produced by
-.IR plot (3X).
+.BR plot (3).
 .IP c
 Cifplot File. The file contains data produced by
 .IR cifplot .
@@ -142,7 +142,7 @@ Troff Font B. Name of the font file to use instead of the default.
 Troff Font S. Name of the font file to use instead of the default.
 .IP W
 Width. Changes the page width (in characters) used by
-.IR pr (1)
+.BR pr (1)
 and the text filters.
 .IP I
 Indent.  The number of characters to indent the output by (in ascii).
@@ -151,23 +151,23 @@ Unlink.  Name of file to remove upon completion of printing.
 .IP N
 File name.  The name of the file which is being printed, or a blank
 for the standard input (when 
-.I lpr
+.B lpr
 is invoked in a pipeline).
 .in -5
 .PP
 If a file can not be opened, a message will be logged via
-.IR syslog (3)
+.BR syslog (3)
 using the
 .I LOG_LPR
 facility.
-.I Lpd
+.B lpd
 will try up to 20 times
 to reopen a file it expects to be there, after which it will
 skip the file to be printed.
 .PP
-.I Lpd
+.B lpd
 uses
-.IR flock (2)
+.BR flock (2)
 to provide exclusive access to the lock file and to prevent multiple
 deamons from becoming active simultaneously.  If the daemon should be killed
 or die unexpectedly, the lock file need not be removed.
@@ -176,11 +176,11 @@ and contains two lines.
 The first is the process id of the daemon and the second is the control
 file name of the current job being printed.  The second line is updated to
 reflect the current status of
-.I lpd
+.B lpd
 for the programs
-.IR lpq (1)
+.BR lpq (1)
 and
-.IR lprm (1).
+.BR lprm (1).
 .SH FILES
 .nf
 .ta \w'/etc/printcap           'u

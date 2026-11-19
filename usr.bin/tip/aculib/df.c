@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)df.c	5.1 (Berkeley) 6/6/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)df.c	5.2 (2.11BSD) 2026/5/9";
+#endif
 
 /*
  * Dial the DF02-AC or DF03-AC
@@ -15,7 +15,7 @@ static char sccsid[] = "@(#)df.c	5.1 (Berkeley) 6/6/85";
 #include "tip.h"
 
 static jmp_buf Sjbuf;
-static timeout();
+static void timeout();
 
 df02_dialer(num, acu)
 	char *num, *acu;
@@ -97,7 +97,7 @@ df_abort()
 }
 
 
-static
+static void
 timeout()
 {
 

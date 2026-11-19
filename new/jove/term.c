@@ -1,9 +1,12 @@
-/***************************************************************************
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)term.c 2.0 (2.11BSD) 2026/9/17";
+#endif
+/*
  * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
  * is provided to you without charge, and with no warranty.  You may give  *
  * away copies of JOVE, including sources, provided that this notice is    *
  * included in all the files.                                              *
- ***************************************************************************/
+ */
 
 #include "jove.h"
 #include <ctype.h>
@@ -111,7 +114,7 @@ static void
 gets(buf)
 char	*buf;
 {
-	buf[read(0, buf, 12) - 1] = 0;
+	buf[read(0, (void *)buf, 12) - 1] = 0;
 }	
 
 /* VARARGS1 */

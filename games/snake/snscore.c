@@ -4,17 +4,18 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)snscore.c	5.1 (Berkeley) 5/30/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)snscore.c	5.2 (2.11BSD) 2026/5/11";
+#endif
 
 #include <stdio.h>
 #include <pwd.h>
+#include <stdlib.h>
+
 char *recfile = "/usr/games/lib/snakerawscores";
 #define MAXPLAYERS 256
 
 struct	passwd	*getpwuid();
-char	*malloc();
 
 struct	player	{
 	short	uids;

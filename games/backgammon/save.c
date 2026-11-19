@@ -4,13 +4,12 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)save.c	5.1 (Berkeley) 5/29/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)save.c	5.2 (2.11BSD) 2026/5/11";
+#endif
 
 #include "back.h"
-
-extern int	errno;
+#include <errno.h>
 
 static char	confirm[] = "Are you sure you want to leave now?";
 static char	prompt[] = "Enter a file name:  ";
@@ -25,7 +24,6 @@ static char	cantrec[] = "Can't recover file:  ";
 
 save (n)
 register int	n;
-
 {
 	register int	fdesc;
 	register char	*fs;
@@ -113,10 +111,9 @@ register int	n;
 		clend();
 	getout ();
 }
-
+
 recover (s)
 char	*s;
-
 {
 	register int	i;
 	int		fdesc;
@@ -140,7 +137,6 @@ char	*s;
 
 norec (s)
 register char	*s;
-
 {
 	register char	*c;
 

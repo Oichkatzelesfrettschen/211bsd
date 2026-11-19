@@ -1,5 +1,4 @@
-
-static char sccsid[] = "	quiz.c	4.3 (2.11BSD) 2025/12/25";
+/* quiz.c	4.4 (2.11BSD) 2026/9/22 */
 
 #include <stdio.h>
 #include <signal.h>
@@ -307,7 +306,7 @@ char *argv[];
 	char *info;
 	int tvec[2];
 	char *t;
-	extern done();
+	extern void done();
 	int count;
 	info = "/usr/games/lib/quiz.k/index";
 	time(tvec);
@@ -420,6 +419,7 @@ next()
 	return(ptr);
 }
 
+void
 done()
 {
 	printf("\nRights %d, wrongs %d, ", rights, wrongs);

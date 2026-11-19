@@ -1,7 +1,7 @@
 #
 # Public domain - 1997/1/10 - sms
 #
-#	@(#)Makefile	1.1 (2.11BSD) 2025/11/25
+#	@(#)Makefile	1.2 (2.11BSD) 2026/9/23
 #
 # This file is not intended to be run but rather to serve as a guide when
 # (manually) creating a distribution image.  To guard against corrupting a
@@ -13,10 +13,17 @@ OWN=root
 GRP=wheel
 
 SUBDIR= root uucp
-FILES= aliases crontab disktab dtab fstab ftpusers gettytab group hosts \
-	hosts.allow hosts.deny inetd.conf inetd.conf.nowrappers \
-	motd netstart networks ntp.conf passwd phones printcap protocols \
-	rc rc.local remote services shells syslog.conf ttys
+
+FILES=	acctd.cf aliases crontab disktab dtab fstab ftpusers gettytab group \
+	hosts hosts.allow hosts.deny inetd.conf inetd.conf.nowrappers \
+	motd netstart networks ntp.conf printcap protocols rc rc.conf \
+	rc.local remote sendmail.cf services shells syslog.conf ttys
+
+# The phones file can contain sensitive information (see phones(5)) so is
+# installed readable only by uucp/tip and group daemon.  A local site can use 
+# less restrictive permissions.
+
+PHONES= phones
 
 # NOP targets
 all install depend lint clean tags:
@@ -33,14 +40,21 @@ distribution:
 	@chown ${OWN}.${GRP} ${DESTDIR}/usr/spool/mqueue
 
 	install -c -o ${OWN} -g ${GRP} -m 644 ${FILES} ${DESTDIR}/etc
-	install -c -o root -g wheel -m  600 master.passwd ${DESTDIR}/etc
+
+	install -c -m 440 -o uucp -g daemon ${PHONES} ${DESTDIR}/etc
+
+	mkpasswd -p master.passwd
+	install -c -o root -g wheel -m 600 master.passwd ${DESTDIR}/etc
+	install -c -o root -g wheel -m 644 master.passwd.dir ${DESTDIR}/etc/passwd.dir
+	install -c -o root -g wheel -m 644 master.passwd.pag ${DESTDIR}/etc/passwd.pag
+	install -c -o root -g wheel -m 644 master.passwd.orig ${DESTDIR}/etc/passwd
+	rm -f master.passwd.dir master.passwd.pag master.passwd.orig
+
 	install -c -o ${OWN} -g ${GRP} -m 600 hosts.equiv ${DESTDIR}/etc
 	install -c -o ${OWN} -g ${GRP} -m 555 MAKEDEV.local MAKEDEV \
 		${DESTDIR}/dev
 	install -c -o ${OWN} -g operator -m 664 /dev/null \
 		${DESTDIR}/etc/dumpdates
-	install -c -o ${OWN} -g operator -m 664 /dev/null \
-		${DESTDIR}/etc/sendmail.cw
 	install -c -o ${OWN} -g operator -m 664 /dev/null \
 		${DESTDIR}/etc/sendmail.fc
 	-@mkdir -p ${DESTDIR}/usr/adm ${DESTDIR}/var/run ${DESTDIR}/var/db

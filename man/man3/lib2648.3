@@ -2,63 +2,67 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)lib2648.3x	6.2 (Berkeley) 5/27/86
+.\"	@(#)lib2648.3	6.3 (2.11BSD) 2026/9/27
 .\"
-.TH LIB2648 3X "May 27, 1986"
+.TH LIB2648 3 "May 27, 1986"
 .UC 5
 .SH NAME
 lib2648 \- subroutines for the HP 2648 graphics terminal
 .SH SYNOPSIS
-.B #include <stdio.h>
+.nf
+.ft B
+#include <stdio.h>
+
+typedef char *bitmat;
 .sp
-.B "typedef char"
-.RB * bitmat ;
-.br
 FILE *trace;
-.sp
-cc file.c
-.B \-l2648
+
+cc file.c \-l2648
+.ft R
+.fi
 .SH DESCRIPTION
-.I Lib2648
+.B lib2648
 is a general purpose library of subroutines useful
 for interactive graphics on the Hewlett-Packard 2648 graphics terminal.
 To use it you must call the routine
-.IR ttyinit ()
+.BR ttyinit ()
 at the beginning of execution,
 and
-.IR done ()
+.BR done ()
 at the end of execution.
 All terminal input and output must go through the routines
-.IR rawchar ,
-.IR readline ,
-.IR outchar ,
+.BR rawchar ,
+.BR readline ,
+.BR outchar ,
 and
-.IR outstr .
+.BR outstr .
 .PP
-.I Lib2648
+.B lib2648
 does the necessary ^E/^F handshaking if
-.I "getenv(``TERM'')"
-returns ``hp2648'', as it will if set by
-.IR tset (1).
-Any other value, including for example ``2648'', will disable handshaking.
+.br
+.B getenv
+("TERM")
+returns `hp2648', as it will if set by
+.BR tset (1).
+Any other value, including for example `2648', will disable handshaking.
 .PP
 Bit matrix routines are provided to model the graphics memory of the 2648.
 These routines are generally useful, but are specifically useful for the
-.I update
+.B update
 function which efficiently changes what is on the screen to what is
 supposed to be on the screen.
 The primative bit matrix routines are
-.IR newmat ,
-.IR mat ,
+.BR newmat ,
+.BR mat ,
 and
-.IR setmat .
+.BR setmat .
 .PP
 The file
-.IR trace ,
+.BR trace ,
 if non-null, is expected to be a file descriptor as returned by
-.IR fopen .
+.BR fopen .
 If so,
-.I lib2648
+.B lib2648
 will trace the progress of the output by writing onto
 this file.
 It is provided to make debugging output feasible for graphics programs without
@@ -471,5 +475,5 @@ Nonetheless, I/O errors sometimes still occur.
 .PP
 There is no way to control the amount of debugging output generated
 on
-.I trace
+.B trace
 without modifying the source to the library.

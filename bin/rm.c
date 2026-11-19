@@ -1,4 +1,6 @@
-static char *sccsid = "@(#)rm.c	4.18 (Berkeley) 1/6/86";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)rm.c	4.19 (2.11BSD) 2026/7/31";
+#endif
 
 /*
  * rm - for ReMoving files, directories & trees.
@@ -9,64 +11,59 @@ static char *sccsid = "@(#)rm.c	4.18 (Berkeley) 1/6/86";
 #include <sys/stat.h>
 #include <sys/dir.h>
 #include <sys/file.h>
+#include <strings.h>
+#include <stdlib.h>
+#include <err.h>
+
+extern	char	*__progname;
 
 int	fflg;		/* -f force - supress error messages */
 int	iflg;		/* -i interrogate user on each file */
-int	rflg;		/* -r recurse */
-
+int	rflg;		/* -r or -R recurse */
 int	errcode;	/* true if errors occured */
-
-char	*strcpy(), *malloc(), *realloc();
-
+		
 main(argc, argv)
-	char *argv[];
-{
-	register char *arg;
+	int	argc;
+	char	*argv[];
+	{
+	register int c;
 
 	fflg = !isatty(0);
 	iflg = 0;
 	rflg = 0;
-	while (argc > 1 && argv[1][0] == '-') {
-		arg = *++argv;
-		argc--;
 
-		/*
-		 *  all files following a null option are considered file names
-		 */
-		if (arg[1] == '\0')
-			break;
-
-		while (*++arg != '\0')
-			switch(*arg) {
+	while	((c = getopt(argc, argv, "fiRr")) != EOF)
+		{
+		switch	(c)
+			{
 			case 'f':
 				fflg++;
 				break;
-
 			case 'i':
 				iflg++;
 				break;
-
 			case 'R':
 			case 'r':
 				rflg++;
 				break;
-
 			default:
-				fprintf(stderr, "usage: rm [-rif] file ...\n");
-				exit(1);
+				errx(1, "%s: invalid option '%c'", __progname, c);
 			}
-	}
+		}
+	argc -= optind;
+	argv += optind;
 
-	if (argc < 2 && !fflg) {
-		fprintf(stderr, "usage: rm [-rif] file ...\n");
-		exit(1);
-	}
+/*
+ * argc = 0 obviously not enough arguments
+*/
+	if	(argc == 0)
+		errx(1, "usage: %s [-Rrif] file ...", __progname);
 
-	while (--argc > 0)
-		(void) rm(*++argv, 0);
+	while	(argc-- > 0)
+		(void) rm(*argv++, 0);
 
 	exit(errcode != 0);
-}
+	}
 
 char	*path;		/* pointer to malloc'ed buffer for path */
 char	*pathp;		/* current pointer to end of path */
@@ -80,10 +77,10 @@ rm(arg, level)
 {
 	int ok;				/* true if recursive rm succeeded */
 	struct stat buf;		/* for finding out what a file is */
-	struct direct *dp;		/* for reading a directory */
+	register struct direct *dp;		/* for reading a directory */
 	DIR *dirp;			/* for reading a directory */
 	char prevname[MAXNAMLEN + 1];	/* previous name for -r */
-	char *cp;
+	register char *cp;
 
 	if (dotname(arg)) {
 		fprintf(stderr, "rm: cannot remove `.' or `..'\n");

@@ -41,7 +41,7 @@ static char sccsid[] = "@(#)cmds.c	5.18.3 (2.11BSD) 2026/1/5";
 #include <netinet/in.h>
 
 #include "ftp_var.h"
-#include "pathnames.h"
+#include <paths.h>
 
 extern	char *globerr;
 extern	char **glob();
@@ -267,7 +267,7 @@ setebcdic()
  * Set file transfer mode.
  */
 /*ARGSUSED*/
-setmode(argc, argv)
+xsetmode(argc, argv)
 	char *argv[];
 {
 
@@ -370,7 +370,8 @@ mput(argc, argv)
 	char *argv[];
 {
 	register int i;
-	int ointer, (*oldintr)(), mabort();
+	int ointer;
+	sig_t oldintr, mabort;
 	extern jmp_buf jabort;
 	char *tp;
 
@@ -665,7 +666,8 @@ mget(argc, argv)
 	char *argv[];
 {
 	char *cp, *tp, *tp2, tmpbuf[MAXPATHLEN];
-	int ointer, (*oldintr)(), mabort();
+	int ointer;
+	sig_t oldintr, mabort;
 	extern jmp_buf jabort;
 
 	if (argc < 2) {
@@ -763,7 +765,7 @@ remglob(argv,doswitch)
 		return (cp);
 	}
 	if (ftemp == NULL) {
-		(void) strcpy(temp, _PATH_TMP);
+		(void) sprintf(temp, "%sftpXXXXXX", _PATH_TMP);
 		(void) mktemp(temp);
 		oldverbose = verbose, verbose = 0;
 		oldhash = hash, hash = 0;
@@ -1071,7 +1073,8 @@ mdelete(argc, argv)
 	char *argv[];
 {
 	char *cp;
-	int ointer, (*oldintr)(), mabort();
+	int ointer;
+	sig_t oldintr, mabort;
 	extern jmp_buf jabort;
 
 	if (argc < 2) {
@@ -1186,7 +1189,8 @@ mls(argc, argv)
 	char *argv[];
 {
 	char *cmd, mode[1], *dest;
-	int ointer, i, (*oldintr)(), mabort();
+	int ointer, i;
+	sig_t oldintr, mabort;
 	extern jmp_buf jabort;
 
 	if (argc < 2) {
@@ -1245,7 +1249,8 @@ mls(argc, argv)
 shell(argc, argv)
 	char *argv[];
 {
-	int pid, (*old1)(), (*old2)();
+	int pid;
+	sig_t old1, old2;
 	char shellnam[40], *shell, *namep; 
 	union wait status;
 
@@ -1680,7 +1685,7 @@ doproxy(argc,argv)
 	int argc;
 	char *argv[];
 {
-	int (*oldintr)(), proxabort();
+	sig_t oldintr, proxabort;
 	register struct cmd *c;
 	struct cmd *getcmd();
 	extern struct cmd cmdtab[];

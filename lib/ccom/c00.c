@@ -7,7 +7,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static	char	sccsid[] = "@(#)c00.c	2.4 (2.11BSD) 2024/9/24";
+static	char	sccsid[] = "@(#)c00.c	2.5 (2.11BSD) 2026/1/26";
 #endif
 
 #include "c0.h"
@@ -57,6 +57,7 @@ struct kwtab {
 	"const",	CONST,
 	"volatile",	VOLATIL,
 	"signed",	SIGNED,
+	"restrict",	RESTR,
 	0,		0,
 };
 
@@ -293,13 +294,9 @@ loop:
 		return(subseq('=',EXCLA,NEQUAL));
 
 	case BSLASH:
-		if (subseq('/', 0, 1))
-			return(MAX);
 		goto unkn;
 
 	case DIVIDE:
-		if (subseq('\\', 0, 1))
-			return(MIN);
 		if (subseq('*',1,0))
 			return(DIVIDE);
 		while ((c = spnextchar()) != EOFC) {

@@ -22,8 +22,8 @@ char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)tftpd.c	5.12.1 (2.11BSD GTE) 1/1/94";
-#endif /* not lint */
+static char sccsid[] = "@(#)tftpd.c	5.12.2 (2.11BSD) 2026/9/21";
+#endif
 
 /*
  * Trivial file transfer protocol server.
@@ -36,7 +36,7 @@ static char sccsid[] = "@(#)tftpd.c	5.12.1 (2.11BSD GTE) 1/1/94";
 #include <sys/ioctl.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
-#include <sys/signal.h>
+#include <signal.h>
 
 #include <netinet/in.h>
 
@@ -288,6 +288,7 @@ validate_access(filename, mode)
 int	timeout;
 jmp_buf	timeoutbuf;
 
+void
 timer()
 {
 
@@ -359,6 +360,7 @@ abort:
 	(void) fclose(file);
 }
 
+void
 justquit()
 {
 	exit(0);

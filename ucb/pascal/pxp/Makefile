@@ -1,5 +1,5 @@
 #
-#       #(@)Makefile    2.0 (2.11BSD) 2025/11/25
+#       #(@)Makefile    2.1 (2.11BSD) 2026/1/13
 #
 
 ED=	-ed
@@ -57,4 +57,4 @@ tags: FRC
 FRC:
 
 clean:
-	rm -f pi1.2strings a.out core y.tab.c y.output *.o x* tags
+	rm -f pxp pi1.2strings a.out core y.tab.c y.tab.h y.output *.o x* tags

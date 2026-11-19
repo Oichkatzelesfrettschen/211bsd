@@ -16,9 +16,9 @@
 
 #if !defined(lint) && !defined(NOSCCS)
 static char sccsid[] = "@(#)version.c	5.59 (Berkeley) 3/13/88";
-#endif /* not lint */
+#endif 
 
-char	Version[] = "5.59";
+char	*Version = "5.59";
 
 # ifdef COMMENT
 

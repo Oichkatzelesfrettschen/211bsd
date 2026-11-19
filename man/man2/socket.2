@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)socket.2	6.5 (Berkeley) 5/23/86
+.\"	@(#)socket.2	6.6 (2.11BSD) 2026/9/28
 .\"
 .TH SOCKET 2 "May 23, 1986"
 .UC 5
@@ -13,13 +13,13 @@ socket \- create an endpoint for communication
 .ft B
 #include <sys/types.h>
 #include <sys/socket.h>
-.PP
-.ft B
-s = socket(domain, type, protocol)
-int s, domain, type, protocol;
+
+int
+socket(\fIint domain\fP, \fIint type\fP, \fIint protocol\fP)
+.ft R
 .fi
 .SH DESCRIPTION
-.I Socket
+.B socket
 creates an endpoint for communication and returns a descriptor.
 .PP
 The
@@ -54,7 +54,6 @@ SOCK_STREAM
 SOCK_DGRAM
 SOCK_RAW
 SOCK_SEQPACKET
-SOCK_RDM
 .fi
 .RE
 .PP
@@ -71,10 +70,9 @@ an entire packet with each read system call.
 This facility is protocol specific, and presently implemented
 only for PF_NS.
 SOCK_RAW sockets provide access to internal network protocols and interfaces.
-The types SOCK_RAW,
-which is available only to the super-user, and
-SOCK_RDM, which is planned,
-but not yet implemented, are not described here.
+The type SOCK_RAW
+is available only to the super-user
+and is not described here.
 .PP
 The
 .I protocol
@@ -85,7 +83,7 @@ that many protocols may exist, in which case a particular protocol
 must be specified in this manner.  The protocol number to use is
 particular to the \*(lqcommunication domain\*(rq in which communication
 is to take place; see
-.IR protocols (3N).
+.BR protocols (3).
 .PP
 Sockets of type SOCK_STREAM
 are full-duplex byte streams, similar
@@ -93,22 +91,22 @@ to pipes.  A stream socket must be in a
 .I connected
 state before any data may be sent or received
 on it.  A connection to another socket is created with a
-.IR connect (2)
+.BR connect (2)
 call.  Once connected, data may be transferred using
-.IR read (2)
+.BR read (2)
 and
-.IR write (2)
+.BR write (2)
 calls or some variant of the 
-.IR send (2)
+.BR send (2)
 and
-.IR recv (2)
+.BR recv (2)
 calls.  When a session has been completed a
-.IR close (2)
+.BR close (2)
 may be performed.
 Out-of-band data may also be transmitted as described in
-.IR send (2)
+.BR send (2)
 and received as described in
-.IR recv (2).
+.BR recv (2).
 .PP
 The communications protocols used to implement a
 SOCK_STREAM insure that data
@@ -132,20 +130,20 @@ which do not handle the signal, to exit.
 SOCK_SEQPACKET sockets employ the same system calls
 as SOCK_STREAM sockets.  The only difference
 is that 
-.IR read (2)
+.BR read (2)
 calls will return only the amount of data requested,
 and any remaining in the arriving packet will be discarded.
 .PP
 SOCK_DGRAM and SOCK_RAW
 sockets allow sending of datagrams to correspondents
 named in
-.IR send (2)
+.BR send (2)
 calls.  Datagrams are generally received with
-.IR recvfrom (2),
+.BR recvfrom (2),
 which returns the next datagram with its return address.
 .PP
 An 
-.IR fcntl (2)
+.BR fcntl (2)
 call can be used to specify a process group to receive
 a SIGURG signal when the out-of-band data arrives.
 It may also enable non-blocking I/O
@@ -156,15 +154,15 @@ The operation of sockets is controlled by socket level
 .IR options .
 These options are defined in the file
 .RI < sys/socket.h >.
-.IR Setsockopt (2)
+.BR setsockopt (2)
 and
-.IR getsockopt (2)
+.BR getsockopt (2)
 are used to set and get options, respectively.
 .SH "RETURN VALUE
 A \-1 is returned if an error occurs, otherwise the return
 value is a descriptor referencing the socket.
 .SH "ERRORS
-The \fIsocket\fP call fails if:
+The \fBsocket\fP call fails if:
 .TP 20
 [EPROTONOSUPPORT]
 The protocol type or the specified protocol is not supported
@@ -187,8 +185,9 @@ The socket cannot be created until sufficient resources are freed.
 accept(2), bind(2), connect(2), getsockname(2), getsockopt(2),
 ioctl(2), listen(2), read(2), recv(2),
 select(2), send(2), shutdown(2), socketpair(2), write(2)
-.br
+.sp
 ``An Introductory 4.3BSD Interprocess Communication Tutorial.''
 (reprinted in UNIX Programmer's Supplementary Documents Volume 1, PS1:7)
+.sp
 ``An Advanced 4.3BSD Interprocess Communication Tutorial.''
 (reprinted in UNIX Programmer's Supplementary Documents Volume 1, PS1:8)

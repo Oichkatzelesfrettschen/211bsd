@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)networks.5	6.2 (Berkeley) 5/6/86
+.\"	@(#)networks.5	6.3 (2.11BSD) 2026/9/28
 .\"
 .TH NETWORKS 5  "May 6, 1986"
 .UC 5
@@ -36,12 +36,12 @@ and/or unknown networks.
 Network number may be specified in the conventional
 ``.'' notation using the \fIinet_network\fP() routine
 from the Internet address manipulation library,
-.IR inet (3N).
+.BR inet (3).
 Network names may contain any printable character other than a field
 delimiter, newline, or comment character.
 .SH FILES
 /etc/networks
 .SH "SEE ALSO"
-getnetent(3N)
+getnetent(3)
 .SH BUGS
 A name server should be used instead of a static file.

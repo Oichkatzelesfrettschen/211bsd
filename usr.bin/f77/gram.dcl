@@ -13,12 +13,12 @@ spec:	  dcl
 	| SPARAM in_dcl SLPAR paramlist SRPAR
 	;
 
-dcl:	  type name in_dcl lengspec dims
-		{ settype($2, $1, $4);
+dcl:	  type name in_dcl dims lengspec
+		{ settype($2, $1, $5);
 		  if(ndim>0) setbound($2,ndim,dims);
 		}
-	| dcl SCOMMA name lengspec dims
-		{ settype($3, $1, $4);
+	| dcl SCOMMA name dims lengspec
+		{ settype($3, $1, $5);
 		  if(ndim>0) setbound($3,ndim,dims);
 		}
 	;
@@ -128,16 +128,22 @@ in_data:
 		}
 	;
 
-datalist:  datavarlist SSLASH vallist SSLASH
+datalist:  datainit datavarlist SSLASH datapop vallist SSLASH
 		{ ftnint junk;
 		  if(nextdata(&junk,&junk) != NULL)
 			{
 			error("too few initializers",0,0,ERR);
 			curdtp = NULL;
 			}
-		  frdata($1);
+		  frdata($2);
 		  frrpl();
 		}
+	;
+
+datainit: /* nothing */ { frchain(&datastack); curdtp = 0; }
+	;
+
+datapop: /* nothing */ { pop_datastack(); }
 	;
 
 vallist:  { toomanyinit = NO; }  val
@@ -207,6 +213,7 @@ datavar:	  lhs
 		}
 	| SLPAR datavarlist SCOMMA dospec SRPAR
 		{ chainp p; struct impldoblock *q;
+		pop_datastack();
 		q = ALLOC(impldoblock);
 		q->tag = TIMPLDO;
 		q->varnp = $4->datap;
@@ -221,7 +228,11 @@ datavar:	  lhs
 	;
 
 datavarlist: datavar
-		{ curdtp = $1; curdtelt = 0; }
+		{ if (!datastack)
+			curdtp = 0;
+		  datastack = mkchain((char *)curdtp, datastack);
+		  curdtp = $1; curdtelt = 0;
+		  }
 	| datavarlist SCOMMA datavar
 		{ $$ = hookup($1, $3); }
 	;

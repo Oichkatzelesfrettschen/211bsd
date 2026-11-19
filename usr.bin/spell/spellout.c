@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)spellout.c	4.1 12/18/82";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)spellout.c	4.2 (2.11BSD) 2026/5/8";
 #endif
 
 #include "spell.h"
@@ -7,12 +7,12 @@ static char sccsid[] = "@(#)spellout.c	4.1 12/18/82";
 main(argc, argv)
 char **argv;
 {
-	register i, j;
+	register int i;
 	long h;
 	register long *lp;
 	char word[NW];
 	int dflag = 0;
-	int indict;
+	int indict, j;
 	register char *wp;
 
 	if (argc>1 && argv[1][0]=='-' && argv[1][1]=='d') {

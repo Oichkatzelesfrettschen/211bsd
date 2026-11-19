@@ -2,44 +2,42 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)arp.8c	6.3 (2.11BSD) 2024/9/20
+.\"	@(#)arp.8	6.3 (2.11BSD) 2026/9/26
 .\"
-.TH ARP 8C "Sep 20, 2024"
+.TH ARP 8 "September 26, 2026"
 .UC 6
 .SH NAME
 arp \- address resolution display and control
 .SH SYNOPSIS
 .B arp
 .I hostname
-.br
+.sp
 .B arp -a
 [
 .I unix
 ] [
 .I kmem
 ]
-.br
+.sp
 .B arp -d
 .I hostname
-.br
+.sp
 .B arp -s
 .I hostname ether_addr
 [
 .B temp
 ] [
 .B pub
-] [
-.B trail
 ]
-.br
+.sp
 .B arp -f
 .I filename
 .SH DESCRIPTION
 The
-.I arp
+.B arp
 program displays and modifies the Internet-to-Ethernet address translation
 tables used by the address resolution protocol
-.RI ( arp (4p)).
+.RB ( arp (4)).
 .LP
 With no flags, the program displays the current ARP entry for
 .I hostname.
@@ -76,9 +74,6 @@ act as an ARP server,
 responding to requests for 
 .I hostname
 even though the host address is not its own.
-The word
-.B trail
-indicates that trailer encapsulations may be sent to this host.
 .LP
 The 
 .B -f
@@ -92,8 +87,6 @@ in the file should be of the form
 .B temp
 ] [
 .B pub
-] [
-.B trail
 ]
 .LP
 with argument meanings as given above.

@@ -1,7 +1,3 @@
-/* $Header: /home/hyperion/mu/christos/src/sys/tcsh-6.00/RCS/sh.c,v 3.0 1991/07/04 23:34:26 christos Exp $ */
-/*
- * sh.c: Main shell routines
- */
 /*-
  * Copyright (c) 1980, 1991 The Regents of the University of California.
  * All rights reserved.
@@ -35,15 +31,13 @@
  * SUCH DAMAGE.
  */
 #include "config.h"
-#if !defined(lint)  && !defined(pdp11)
+#if !defined(lint)  && defined(DOSCCS)
 char    copyright[] =
 "@(#) Copyright (c) 1991 The Regents of the University of California.\n\
  All rights reserved.\n";
-#endif				/* not lint */
 
-#if !defined(lint) && !defined(pdp11)
 static char *rcsid() 
-    { return "$Id: sh.c,v 3.0 1991/07/04 23:34:26 christos Exp $"; }
+    { return "$Id: sh.c,v 3.1 2026/6/1 23:34:26 (2.11BSD) Exp $"; }
 #endif
 
 #include "sh.h"
@@ -83,20 +77,12 @@ extern bool NoNLSRebind;
  * ported to Apple Unix (TM) (OREO)  26 -- 29 Jun 1987
  */
 
-#ifdef TESLA
-static int do_logout;
-#endif				/* TESLA */
-
 Char   *dumphist[] = {STRhsto, STRmh, 0, 0};
 Char   *loadhist[] = {STRsource, STRmh, STRhstf, 0};
 
 #ifdef CSHDIRS
 Char   *loaddirs[] = {STRsource, STRdirfile, 0};
 bool    dflag = 0;
-#endif
-
-#if defined(convex) || defined(__convex__)
-bool    use_fork = 0;		/* use fork() instead of vfork()? */
 #endif
 
 int     nofile = 0;
@@ -116,7 +102,7 @@ extern char **environ;
 
 static	int		  srccat	__P((Char *, Char *));
 static	int		  srcfile	__P((char *, bool, bool));
-static	sigret_t	  phup		__P((int));
+static	void		phup		__P((void));
 static	void		  srcunit	__P((int, bool, bool));
 static	void		  mailchk	__P((void));
 static	Char	 	**d_path	__P((void));
@@ -131,16 +117,9 @@ main(argc, argv)
     register int f;
     register char **tempv;
 
-#ifdef BSDSIGS
     sigvec_t osv;
-#endif				/* BSDSIGS */
 
     settimes();			/* Immed. estab. timing base */
-#ifdef TESLA
-    do_logout = 0;
-#endif				/* TESLA */
-
-    osinit();			/* Os dependent initialization */
 
     /*
      * Initialize non constant strings
@@ -332,12 +311,6 @@ main(argc, argv)
 
 	Char    buff[BUFSIZ];
 
-#ifdef apollo
-	int     oid = getoid();
-
-	Itoa(oid, buff);
-	set(STRoid, Strsave(buff));
-#endif				/* apollo */
 	Itoa(uid, buff);
 	set(STRuid, Strsave(buff));
 
@@ -365,11 +338,6 @@ main(argc, argv)
      * HOSTTYPE, too. Just set it again.
      */
     Setenv(STRHSTTYPE, GetHostType());
-#ifdef apollo
-    if ((tcp = getenv("SYSTYPE")) == NULL)
-	tcp = "bsd4.3";
-    Setenv(STRSYSTYPE, str2short(tcp));
-#endif				/* apollo */
 
     /*
      * set editing on by default, unless running under Emacs as an inferior
@@ -413,18 +381,11 @@ main(argc, argv)
      * be either. Our children inherit termination from our parent. We catch it
      * only if we are the login shell.
      */
-#ifdef BSDSIGS
     /* parents interruptibility */
     (void) mysigvec(SIGINT, NULL, &osv);
-    parintr = (sigret_t(*) ()) osv.sv_handler;
+    parintr = osv.sv_handler;
     (void) mysigvec(SIGTERM, NULL, &osv);
-    parterm = (sigret_t(*) ()) osv.sv_handler;
-#else				/* BSDSIGS */
-    parintr = signal(SIGINT, SIG_IGN);	/* parents interruptibility */
-    (void) sigset(SIGINT, parintr);	/* ... restore */
-    parterm = signal(SIGTERM, SIG_IGN);	/* parents terminability */
-    (void) sigset(SIGTERM, parterm);	/* ... restore */
-#endif				/* BSDSIGS */
+    parterm = osv.sv_handler;
 
     if (loginsh) {
 	(void) signal(SIGHUP, phup);	/* exit processing on HUP */
@@ -435,11 +396,6 @@ main(argc, argv)
 	(void) signal(SIGXFSZ, phup);	/* ...and on XFSZ */
 #endif				/* SIGXFSZ */
     }
-
-#ifdef TCF
-    /* Enable process migration on ourselves and our progeny */
-    (void) signal(SIGMIGRATE, SIG_DFL);
-#endif				/* TCF */
 
     /*
      * Process the arguments.
@@ -550,16 +506,6 @@ main(argc, argv)
 	    case 'X':		/* -X	Echo just before execution */
 		setNS(STRecho);	/* NOW! */
 		break;
-
-#if defined(__convex__) || defined(convex)
-	    case 'F':		/* Undocumented flag */
-		/*
-		 * This will cause children to be created using fork instead of
-		 * vfork.
-		 */
-		use_fork = 1;
-		break;
-#endif
 
 	} while (*tcp);
 	tempv++, argc--;
@@ -692,7 +638,7 @@ main(argc, argv)
 #ifdef BSDJOBS			/* if we have tty job control */
 	    if ((tpgrp = tcgetpgrp(f)) != -1) {
 		if (tpgrp != shpgrp) {
-		    sigret_t(*old) () = signal(SIGTTIN, SIG_DFL);
+		    sig_t old = signal(SIGTTIN, SIG_DFL);
 		    (void) kill(0, SIGTTIN);
 		    (void) signal(SIGTTIN, old);
 		    goto retry;
@@ -787,11 +733,7 @@ main(argc, argv)
 	{
 	    int     osetintr = setintr;
 
-#ifdef BSDSIGS
 	    sigmask_t omask = sigblock(sigmask(SIGINT));
-#else
-	    sighold(SIGINT);
-#endif
 	    setintr = 0;
 #ifdef _PATH_DOTCSHRC
 	    (void) srcfile(_PATH_DOTCSHRC, 0, 0);
@@ -802,11 +744,7 @@ main(argc, argv)
 	    if (loginsh)
 		(void) srcfile(_PATH_DOTLOGIN, 0, 0);
 #endif
-#ifdef BSDSIGS
 	    (void) sigsetmask(omask);
-#else
-	    (void) sigrelse(SIGINT);
-#endif
 	    setintr = osetintr;
 	}
 #ifdef LOGINFIRST
@@ -880,9 +818,6 @@ main(argc, argv)
 	    xprintf("logout\n");
 	    (void) close(SHIN);
 	    child = 1;
-#ifdef TESLA
-	    do_logout = 1;
-#endif				/* TESLA */
 	    goodbye();
 	}
 	else {
@@ -1022,9 +957,7 @@ srcunit(unit, onlyown, hflg)
     char    OHIST = HIST;
     bool    otell = cantell;
     struct Bin saveB;
-#ifdef BSDSIGS
     volatile sigmask_t omask = (sigmask_t) 0;
-#endif
     jmp_buf oldexit;
 
     /* The (few) real local variables */
@@ -1059,11 +992,7 @@ srcunit(unit, onlyown, hflg)
     getexit(oldexit);
 
     if (setintr)
-#ifdef BSDSIGS
 	omask = sigblock(sigmask(SIGINT));
-#else
-	(void) sighold(SIGINT);
-#endif
     /*
      * Bugfix for running out of memory by: Jak Kirman
      * <jak%cs.brown.edu@RELAY.CS.NET>.  Solution: pay attention to what
@@ -1088,11 +1017,7 @@ srcunit(unit, onlyown, hflg)
      * interrupted.
      */
     if (setintr)
-#ifdef BSDSIGS
 	(void) sigsetmask(omask);
-#else
-	(void) sigrelse(SIGINT);
-#endif
     settell();
 
 /* PWP: think of this as like a LISP (unwind-protect ...) */
@@ -1102,16 +1027,11 @@ srcunit(unit, onlyown, hflg)
     }
 
     if (setintr)
-#ifdef BSDSIGS
 	(void) sigsetmask(omask);
-#else
-	(void) sigrelse(SIGINT);
-#endif
     if (oSHIN >= 0) {
 	register int i;
 
 	/* We made it to the new state... free up its storage */
-	/* This code could get run twice but xfree doesn't care */
 	for (i = 0; i < fblocks; i++)
 	    xfree((ptr_t) fbuf[i]);
 	xfree((ptr_t) fbuf);
@@ -1186,9 +1106,6 @@ goodbye()
 #endif
 	if (adrof(STRhome))
 	    (void) srccat(value(STRhome), STRs_logout);
-#ifdef TESLA
-	do_logout = 1;
-#endif				/* TESLA */
     }
     exitstat();
 }
@@ -1212,9 +1129,8 @@ exitstat()
 /*
  * in the event of a HUP we want to save the history
  */
-static  sigret_t
-phup(i)
-int i;
+static  void
+phup()
 {
     rechist();
 #ifdef CSHDIRS
@@ -1223,10 +1139,7 @@ int i;
      */
     recdirs();
 #endif
-    xexit(i);
-#ifndef SIGVOID
-    return (i);
-#endif
+    xexit(0);
 }
 
 Char   *jobargv[2] = {STRjobs, 0};
@@ -1240,15 +1153,11 @@ Char   *jobargv[2] = {STRjobs, 0};
  */
 int     just_signaled;		/* bugfix by Michael Bloom (mg@ttidca.TTI.COM) */
 
-sigret_t
-pintr(i)
-int i;
+void
+pintr()
 {
     just_signaled = 1;
     pintr1(1);
-#ifndef SIGVOID
-    return (i);
-#endif
 }
 
 void
@@ -1256,19 +1165,12 @@ pintr1(wantnl)
     bool    wantnl;
 {
     register Char **v;
-#ifdef BSDSIGS
     sigmask_t omask;
-#endif
 
-#ifdef BSDSIGS
     omask = sigblock((sigmask_t) 0);
-#endif
+
     if (setintr) {
-#ifdef BSDSIGS
 	(void) sigsetmask(omask & ~sigmask(SIGINT));
-#else
-	(void) sigrelse(SIGINT);
-#endif
 	if (pjobs) {
 	    pjobs = 0;
 	    xprintf("\n");
@@ -1283,13 +1185,7 @@ pintr1(wantnl)
 	(void) Cookedmode();
 	GettingInput = 0;
     }
-#ifdef BSDSIGS
     (void) sigsetmask(omask & ~sigmask(SIGCHLD));
-#else
-    if (setintr)
-	(void) sighold(SIGINT);
-    (void) sigrelse(SIGCHLD);
-#endif
     draino();
     (void) endpwent();
 
@@ -1353,13 +1249,7 @@ process(catch)
 	 * Interruptible during interactive reads
 	 */
 	if (setintr)
-#ifdef BSDSIGS
 	    (void) sigsetmask(sigblock((sigmask_t) 0) & ~sigmask(SIGINT));
-#else
-	    (void) sigrelse(SIGINT);
-#endif
-
-
 	/*
 	 * For the sake of reset()
 	 */
@@ -1436,11 +1326,7 @@ process(catch)
 	 * The parser may lose space if interrupted.
 	 */
 	if (setintr)
-#ifdef BSDSIGS
 	    (void) sigblock(sigmask(SIGINT));
-#else
-	    (void) sighold(SIGINT);
-#endif
 
 	/*
 	 * Save input text on the history list if reading in old history, or it
@@ -1511,7 +1397,7 @@ process(catch)
 	freesyn(savet), savet = NULL;
 #ifdef SIG_WINDOW
 	if (catch && intty && !whyles && !tellwhat)
-	    window_change(0);	/* for window systems */
+	    window_change();	/* for window systems */
 #endif				/* SIG_WINDOW */
     }
     savet = t;
@@ -1573,11 +1459,7 @@ mailchk()
     for (; *vp; vp++) {
 	if (stat(short2str(*vp), &stb) < 0)
 	    continue;
-#if defined(BSDTIMES) || defined(_SEQUENT_)
 	new = stb.st_mtime > time0.tv_sec;
-#else
-	new = stb.st_mtime > time0;
-#endif
 	if (stb.st_size == 0 || stb.st_atime > stb.st_mtime ||
 	    (stb.st_atime < chktim && stb.st_mtime < chktim) ||
 	    loginsh && !new)
@@ -1661,23 +1543,6 @@ xexit(i)
 #endif
     int     i;
 {
-#ifdef TESLA
-    if (loginsh && do_logout) {
-	/* this is to send hangup signal to the develcon */
-	/* we toggle DTR. clear dtr - sleep 1 - set dtr */
-	/* ioctl will return ENOTTY for pty's but we ignore it 	 */
-	/* exitstat will run after disconnect */
-	/* we sleep for 2 seconds to let things happen in */
-	/* .logout and rechist() */
-#ifdef TIOCCDTR
-	(void) sleep(2);
-	(void) ioctl(FSHTTY, TIOCCDTR, NULL);
-	(void) sleep(1);
-	(void) ioctl(FSHTTY, TIOCSDTR, NULL);
-#endif				/* TIOCCDTR */
-    }
-#endif				/* TESLA */
-
     untty();
     _exit(i);
 }
@@ -1705,10 +1570,6 @@ d_path()
 
 #ifdef _PATH_USRUCB
     DIRAPPEND(_PATH_USRUCB);
-#endif
-
-#ifdef _PATH_USRBSD
-    DIRAPPEND(_PATH_USRBSD);
 #endif
 
 #ifdef _PATH_BIN

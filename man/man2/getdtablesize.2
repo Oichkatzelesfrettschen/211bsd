@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)getdtablesize.2	6.2 (Berkeley) 6/28/85
+.\"	@(#)getdtablesize.2	6.3 (2.11BSD) 2026/9/20
 .\"
 .TH GETDTABLESIZE 2 "June 28, 1985"
 .UC 5
@@ -11,15 +11,18 @@ getdtablesize \- get descriptor table size
 .SH SYNOPSIS
 .nf
 .ft B
-nfds = getdtablesize()
-int nfds;
+#include <unistd.h>
+
+int
+getdtablesize(\fIvoid\fP)
 .fi
+.ft R
 .SH DESCRIPTION
 Each process has a fixed size descriptor table,
 which is guaranteed to have at least 20 slots.  The entries in
 the descriptor table are numbered with small integers starting at 0.
 The call
-.I getdtablesize
+.B getdtablesize
 returns the size of this table.
 .SH "SEE ALSO"
 close(2), dup(2), open(2), select(2)

@@ -15,9 +15,9 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#if	!defined(lint) && !defined(pdp11)
-static char sccsid[] = "@(#)glob.c	5.7 (Berkeley) 12/14/88";
-#endif /* not lint */
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)glob.c	5.8 (2.11BSD) 2026/9/14";
+#endif
 
 /*
  * C-shell glob for random programs.
@@ -28,8 +28,10 @@ static char sccsid[] = "@(#)glob.c	5.7 (Berkeley) 12/14/88";
 #include <sys/dir.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <pwd.h>
+#include <strings.h>
 
 #define	QUOTE 0200
 #define	TRIM 0177
@@ -45,10 +47,7 @@ static	int tglob();
 char	**glob();
 char	*globerr;
 char	*home;
-struct	passwd *getpwnam();
-extern	int errno;
 static	char *strspl(), *strend();
-char	*malloc(), *strcpy(), *strcat();
 char	**copyblk();
 
 static	int globcnt;

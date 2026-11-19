@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)box.c	5.2 (Berkeley) 6/8/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)box.c     5.3 (2.11BSD) 2026/5/11";
+#endif
 
 box_(x0, y0, x1, y1)
 int *x0, *y0, *x1, *y1;

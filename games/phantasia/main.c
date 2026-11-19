@@ -3,6 +3,8 @@
  *
  * Edward A. Estes
  * AT&T Teletype Corp., September 4, 1984
+ *
+ * main.c      1.2 (2.11BSD) 2026/7/12
  */
 
 /*
@@ -23,11 +25,6 @@
  * The file is purged upon normal entry to try to avoid that problem.
  * A similar problem exists for energy voids.  To alleviate the problem here,
  * the void file is cleared with every new king.
- */
-
-/*
- * The support functions are split between various files with no apparent
- * order.  Use of 'ctags' is recommended to find a particular function.
  */
 
 /*
@@ -80,7 +77,7 @@ struct	stats	charac;
 char	aline[200], *login = NULL;
 double	x = 0.0, y = 0.0;
 int	ch, ch2;
-reg	int	loop, temp;
+register int	loop, temp;
 FILE	*fp;
 bool	shrt = FALSE, examine = FALSE, header = FALSE;
 
@@ -102,7 +99,6 @@ bool	shrt = FALSE, examine = FALSE, header = FALSE;
 		fclose (fp);
 		}
 #endif
-	setbuf(stdin, (char *) NULL);	/* this may or may not be necessary */
 	su = (getuid() == UID);
 	fghting = FALSE;
 	users = 0;
@@ -240,51 +236,18 @@ bool	shrt = FALSE, examine = FALSE, header = FALSE;
 	charac.lastused = localtime(&secs)->tm_yday;
 	update(&charac,fileloc);
 	clear();
-#ifdef	BSD41
-	sigset(SIGINT,interrupt);
-#endif
-#ifdef	BSD42
-	signal(SIGINT,interrupt,-1);
-#endif
-#ifdef	USG3
 	signal(SIGINT,interrupt);
-#endif
-#ifdef	USG5
-	signal(SIGINT,interrupt);
-#endif
 
 /* all set for now */
 
 TOP:	switch (setjmp(mainenv))
 		{
 		case QUIT:
-#ifdef	BSD41
-			sigrelse(SIGINT);
-#endif
-#ifdef	BSD42
-			signal(SIGINT,interrupt,-1);
-#endif
-#ifdef	USG3
 			signal(SIGINT,interrupt);
-#endif
-#ifdef	USG5
-			signal(SIGINT,interrupt);
-#endif
 			leave(&charac);
 			/*NOTREACHED*/
 		case DIE:
-#ifdef	BSD41
-			sigrelse(SIGINT);
-#endif
-#ifdef	BSD42
-			signal(SIGINT,interrupt,-1);
-#endif
-#ifdef	USG3
 			signal(SIGINT,interrupt);
-#endif
-#ifdef	USG5
-			signal(SIGINT,interrupt);
-#endif
 			death(&charac);
 			break;
 		}
@@ -556,8 +519,8 @@ CHKMOVE:	if (!temp)
 bool	ok_to_play()		/* return FALSE if playing is not allowed at this time */
 {
 #define	MAXUSERS	8	/* max. number of people on system */
-reg	struct	tm	*tp;
-reg	int	numusers = 0;
+register struct	tm	*tp;
+register int	numusers = 0;
 FILE	*fp;
 long	now;
 struct	utmp	ubuf;
@@ -572,12 +535,8 @@ struct	utmp	ubuf;
 	/* check # of users */
 	fp = fopen(_PATH_UTMP,"r");
 	while (fread((char *) &ubuf,sizeof(ubuf),1,fp))
-#ifdef	USG5
-		if (ubuf.ut_type == USER_PROCESS)
-#else
 	if (*ubuf.ut_name)
-#endif
-			++numusers;
+		++numusers;
 	fclose(fp);
 	if (numusers > MAXUSERS)
 		return (FALSE);

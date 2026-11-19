@@ -4,16 +4,14 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)util.c	5.1 (Berkeley) 4/30/85";
-#endif not lint
-
-char *malloc();
-#ifdef lint
-int xv_oid;
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)util.c     5.2 (2.11BSD) 2026/5/11";
 #endif
+
 #include <stdio.h>
 #include <mp.h>
+#include <stdlib.h>
+
 move(a,b) MINT *a,*b;
 {	int i,j;
 	xfree(b);

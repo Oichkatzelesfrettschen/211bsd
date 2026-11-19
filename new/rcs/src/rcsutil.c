@@ -1,9 +1,9 @@
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)rcsutil.c 4.3.2 (2.11BSD) 2026/5/11";
+#endif
 /*
  *                     RCS utilities
  */
-#if	!defined(lint) && defined(DOSCCS)
-static char rcsid[]= "$Id: rcsutil.c,v 4.3.1 (2.11BSD) 2025/12/26";
-#endif
 /*****************************************************************************
  *****************************************************************************
  *
@@ -17,8 +17,6 @@ static char rcsid[]= "$Id: rcsutil.c,v 4.3.1 (2.11BSD) 2025/12/26";
  * author.
  * Report problems and direct all inquiries to Tichy@purdue (ARPA net).
  */
-
-
 
 /* $Log:	rcsutil.c,v $
  * Revision 4.3.1 97/10/2 sms
@@ -74,9 +72,6 @@ static char rcsid[]= "$Id: rcsutil.c,v 4.3.1 (2.11BSD) 2025/12/26";
  * Cleanup message is now suppressed in quiet mode.
  */
 
-
-
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <signal.h>
@@ -84,7 +79,6 @@ static char rcsid[]= "$Id: rcsutil.c,v 4.3.1 (2.11BSD) 2025/12/26";
 #include <pwd.h>
 #include <unistd.h>
 
-extern char * malloc();
 extern char * bindex();
 extern FILE * finptr;
 extern char * RCSfilename;
@@ -138,12 +132,6 @@ char * who; int delete;
         } else  return nil;
 }
 
-
-
-
-
-
-
 struct lock * addlock(delta,who)
 struct hshentry * delta; char * who;
 /* Given a delta, addlock checks whether
@@ -185,8 +173,6 @@ struct hshentry * delta; char * who;
         return next;
 }
 
-
-
 int addsymbol(delta,name,rebind)
 struct hshentry * delta; char * name; int rebind;
 /* Function: adds a new symbolic name and associates it with node delta.
@@ -217,9 +203,6 @@ struct hshentry * delta; char * name; int rebind;
         return true;
 }
 
-
-
-
 int checkaccesslist(who)
 char * who;
 /* function: Returns true if who is the superuser, the owner of the
@@ -240,53 +223,51 @@ char * who;
                 next=next->nextaccess;
         } while (next!=nil);
 
-        VOID fstat(fileno(finptr),&statbuf);  /* get owner of file */
+        fstat(fileno(finptr),&statbuf);  /* get owner of file */
         if (getuid() == statbuf.st_uid) return true;
 
         error("User %s not on the access list",who);
         return false;
 }
 
+void
 catchsig(sig)
 {
-	VOID signal(sig, SIG_IGN);
+	signal(sig, SIG_IGN);
         diagnose("\nRCS: cleaning up\n");
-        VOID cleanup();
+        cleanup();
         exit(1);
 }
 
-  
-  void catchints()
+void catchints()
   {
         cksignal(SIGINT); cksignal(SIGHUP);
         cksignal(SIGQUIT); cksignal(SIGPIPE);
  	cksignal(SIGTERM);
   }
   
- 
 cksignal(sig)
 int	sig;
 {
 	if (signal(sig,SIG_IGN) != SIG_IGN)
-		VOID signal(sig,catchsig);
+		signal(sig,catchsig);
 }
 
   void ignoreints()
   {
-        VOID signal(SIGINT,SIG_IGN); VOID signal(SIGHUP,SIG_IGN);
-        VOID signal(SIGQUIT,SIG_IGN); VOID signal(SIGPIPE,SIG_IGN);
-	VOID signal(SIGTERM,SIG_IGN);
+        signal(SIGINT,SIG_IGN); signal(SIGHUP,SIG_IGN);
+        signal(SIGQUIT,SIG_IGN); signal(SIGPIPE,SIG_IGN);
+	signal(SIGTERM,SIG_IGN);
   }
   
   
 void restoreints()
 {
         if (oldSIGINT!=SIG_IGN)
-                VOID signal(SIGINT,catchsig);
-        VOID signal(SIGHUP,catchsig); VOID signal(SIGQUIT,catchsig);
-        VOID signal(SIGPIPE,catchsig); VOID signal(SIGTERM,catchsig);
+                signal(SIGINT,catchsig);
+        signal(SIGHUP,catchsig); signal(SIGQUIT,catchsig);
+        signal(SIGPIPE,catchsig); signal(SIGTERM,catchsig);
 }
-
 
 fastcopy(inf,outf)
 FILE * inf, * outf;
@@ -299,7 +280,7 @@ FILE * inf, * outf;
 
         /* write the rest of the buffer to outf */
         while ((--inf->_r)>=0) {
-                VOID putc(*inf->_p++&0377,outf);
+                putc(*inf->_p++&0377,outf);
         }
         if (fflush(outf) == EOF) {
 		faterror("write error");
@@ -314,16 +295,10 @@ FILE * inf, * outf;
         }
 }
 
-
-
-
-
-
 #ifdef SNOOPFILE
 
 #include "time.h"
 extern struct tm* localtime();
-extern long time();
 
 logcommand(commandname,delta, sequence,login)
 char* commandname; struct hshentry * delta, * sequence[];char * login;
@@ -341,10 +316,10 @@ char* commandname; struct hshentry * delta, * sequence[];char * login;
         long clock;
         struct tm * tm;
 
-        clock=time((long *)0);
+        clock=time((time_t *)0);
         tm=localtime(&clock);
 
-        VOID sprintf(curdate,DATEFORM,
+        sprintf(curdate,DATEFORM,
                 tm->tm_year, tm->tm_mon+1, tm->tm_mday,
                 tm->tm_hour, tm->tm_min, tm->tm_sec);
 
@@ -355,18 +330,9 @@ char* commandname; struct hshentry * delta, * sequence[];char * login;
         else    forward++;   /* branch delta  */
         i++;
         }
-        VOID sprintf(command,"%s \"%s %10sr %3db %3df %3dt %sc %so %s %s\" &\n",
+        sprintf(command,"%s \"%s %10sr %3db %3df %3dt %sc %so %s %s\" &\n",
                 SNOOP, commandname,delta->num,backward,forward,TotalDeltas,delta->date,
                 curdate,login,bindex(RCSfilename,'/'));
-        VOID system(command);
+        system(command);
 }
 #endif
-
-
-
-
-
-
-
-
-

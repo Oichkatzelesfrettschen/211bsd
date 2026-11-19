@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)xp.4	6.4 (2.11BSD GTE) 1995/08/14
+.\"	@(#)xp.4	6.5 (2.11BSD) 2026/9/10
 .\"
 .TH XP 4 "August 14, 1995"
 .UC 2
@@ -153,10 +153,3 @@ and
 should always deal in 512-byte multiples.
 .PP
 DEC-standard error logging should be supported.
-.PP
-The kernel uses partition 'h' to access the badblock information.  This 
-should have been 'c' except that almost all of the /etc/disktab entries
-(and thus existing systems) use 'h' for this purpose.  Unless you are
-very careful with \fIdisklabel\fP|(8) (to make certain that no data
-partition overlaps the badblock area) you should probably leave BADSECT
-undefined in the kernel config file.

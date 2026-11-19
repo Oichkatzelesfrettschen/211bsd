@@ -1,4 +1,4 @@
-.\"	@(#)group.5	6.1 (Berkeley) 5/15/85
+.\"	@(#)group.5	6.2 (2.11BSD) 2026/9/28
 .\"
 .TH GROUP 5  "May 15, 1985"
 .AT 3
@@ -37,8 +37,8 @@ to map numerical group ID's to names.
 .SH FILES
 /etc/group
 .SH "SEE ALSO"
-setgroups(2), initgroups(3X), crypt(3), passwd(1), passwd(5)
+setgroups(2), initgroups(3), crypt(3), passwd(1), passwd(5)
 .SH BUGS
 The
-.IR passwd (1)
-command won't change the passwords.
+.BR passwd (1)
+command won't change the group password.

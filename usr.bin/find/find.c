@@ -1,5 +1,5 @@
 #if	defined(DOSCCS) && !defined(lint)
-static char *sccsid = "@(#)find.c	4.17.3 (2.11BSD GTE) 1996/10/23";
+static char *sccsid = "@(#)find.c	4.17.4 (2.11BSD) 2026/1/28";
 #endif
 
 #include <stdio.h>
@@ -7,6 +7,9 @@ static char *sccsid = "@(#)find.c	4.17.3 (2.11BSD GTE) 1996/10/23";
 #include <sys/param.h>
 #include <sys/dir.h>
 #include <sys/stat.h>
+#include <errno.h>
+#include <string.h>
+#include <unistd.h>
 
 #define A_DAY	86400L /* a day full of seconds */
 #define EQ(x, y)	(strcmp(x, y)==0)
@@ -48,8 +51,6 @@ struct	anode	*exp(),
 char	*nxtarg();
 int	Home;
 long	Blocks;
-char *rindex();
-char *sbrk();
 
 /*
  * SEE ALSO:	updatedb, bigram.c, code.c
@@ -70,7 +71,6 @@ char *sbrk();
  *
  *		1/83 incorporate glob-style matching -- jaw
  */
-#define	AMES	1
 
 main(argc, argv)
 	int argc;
@@ -79,11 +79,7 @@ main(argc, argv)
 	struct anode *exlist;
 	int paths;
 	register char *cp, *sp = 0;
-#ifdef	SUID_PWD
-	FILE *pwd, *popen();
-#endif
 
-#ifdef  AMES
 	if (argc < 2) {
 		fprintf(stderr,
 			"Usage: find name, or find path-list predicate-list\n");
@@ -93,7 +89,7 @@ main(argc, argv)
 		fastfind(argv[1]);
 		exit(0);
 	}
-#endif
+
 	time(&Now);
 	Home = open(".", O_RDONLY);
 	if (Home < 0) {
@@ -125,13 +121,13 @@ usage:		fprintf(stderr, "Usage: find path-list predicate-list\n");
 		if(cp = rindex(Pathname, '/')) {
 			sp = cp + 1;
 			*cp = '\0';
-			if(chdir(*Pathname? Pathname: "/") == -1) {
+			if(chdir(*Pathname ? Pathname : "/") == -1) {
 				fprintf(stderr, "find: bad starting directory\n");
 				exit(2);
 			}
 			*cp = '/';
 		}
-		Fname = sp? sp: Pathname;
+		Fname = sp ? sp : Pathname;
 		if (!Xdev)
 			stat(Pathname, &Devstat);
 		descend(Pathname, Fname, exlist); /* to find files that match  */
@@ -233,7 +229,7 @@ struct anode *e3() { /* parse parens and predicates */
 	else if(EQ(a, "-atime"))
 		return(mk(atime, (struct anode *)atoi(b), (struct anode *)s));
 	else if(EQ(a, "-user")) {
-		if((i=getuid(b)) == -1) {
+		if((i=xgetuid(b)) == -1) {
 			if(gmatch(b, "[0-9]*"))
 				return mk(user, (struct anode *)atoi(b), (struct anode *)s);
 			fprintf(stderr, "find: cannot find -user name\n");
@@ -244,7 +240,7 @@ struct anode *e3() { /* parse parens and predicates */
 	else if(EQ(a, "-inum"))
 		return(mk(ino, (struct anode *)atoi(b), (struct anode *)s));
 	else if(EQ(a, "-group")) {
-		if((i=getgid(b)) == -1) {
+		if((i=xgetgid(b)) == -1) {
 			if(gmatch(b, "[0-9]*"))
 				return mk(group, (struct anode *)atoi(b), (struct anode *)s);
 			fprintf(stderr, "find: cannot find -group name\n");
@@ -567,7 +563,7 @@ doex(com)
 
 	case 0:
 		fchdir(Home);
-		execvp(nargv[0], nargv, np);
+		execvp(nargv[0], nargv);
 		write(2, "find: Can't execute ", 20);
 		perror(nargv[0]);
 		/*
@@ -631,7 +627,7 @@ descend(name, fname, exlist)
 	char *endofname;
 
 	if (lstat(fname, &Statb)<0) {
-		fprintf(stderr, "find: bad status < %s >\n", name);
+		fprintf(stderr, "find: bad status (%d) <%s>\n", errno, name);
 		return(0);
 	}
 	(*exlist->F)(exlist);
@@ -644,11 +640,27 @@ descend(name, fname, exlist)
 		--c1;
 	endofname = c1;
 
+/* 
+ * If the directory can not be entered (chdir fails) then the recursion
+ * can not continue but the current directory has not changed.  return(1)
+ * so the caller will continue the readdir() loop without doing an
+ * unnecessary fchdir/chdir.
+*/
 	if (chdir(fname) == -1)
-		return(0);
+		return(1);	
+/*
+ * If the directory is public 'x' (711 for example) it is possible to chdir
+ * but not open for reading.  If read access is denied then quietly back up
+ * and return without printing an ominous looking message.
+*/
+	if (access(".", R_OK) == -1)
+	   goto ret;
+ 
+/*
+ * opendir can fail for other reasons than access denied.
+*/
 	if ((dir = opendir(".")) == NULL) {
 		fprintf(stderr, "find: cannot open < %s >\n", name);
-		rv = 0;
 		goto ret;
 	}
 	for (dp = readdir(dir); dp != NULL; dp = readdir(dir)) {
@@ -662,7 +674,14 @@ descend(name, fname, exlist)
 		if(!descend(name, Fname, exlist)) {
 			*endofname = '\0';
 			fchdir(Home);
-			if(chdir(Pathname) == -1) {
+/*
+ * If Pathname was "/" before the "*endofname = '\0'" above then Pathname is 
+ * now "".  chdir("") will do nothing so find's home directory remains "." 
+ * from the fchdir(Home). That is wrong.  If Pathname is now "" do chdir("/").
+ * This could happen for example if the chdir(fname) succeeds but the 
+ * opendir(".") fails.
+*/
+			if (chdir(Pathname[0] ? Pathname : "/") == -1) {
 				fprintf(stderr, "find: bad directory tree\n");
 				exit(1);
 			}
@@ -792,7 +811,6 @@ again:
 	return f;
 }
 
-#ifdef	AMES
 /*
  * 'fastfind' scans a file list for the full pathname of a file
  * given only a piece of the name.  The list has been processed with
@@ -924,7 +942,6 @@ patprep ( name )
 	*subp = '\0';
 	return ( --subp );
 }
-#endif
 
 /* rest should be done with nameserver or database */
 
@@ -1027,7 +1044,7 @@ rescan:
 }
 
 int
-getuid(username)
+xgetuid(username)
 	char *username;
 {
 	register struct passwd *pw;
@@ -1045,7 +1062,7 @@ getuid(username)
 }
 
 int
-getgid(groupname)
+xgetgid(groupname)
 	char *groupname;
 {
 	register struct group *gr;
@@ -1181,11 +1198,7 @@ list(file, stp)
 	else
 		sprintf(ftime, "%-12.12s", cp + 4);
 
-#ifdef pdp11
 	printf("%5u %4ld %s %2d %s%s%s %s %s%s%s\n",
-#else
-	printf("%5lu %4ld %s %2d %s%s%s %s %s%s%s\n",
-#endif
 		stp->st_ino,				/* inode #	*/
 #ifdef	S_IFSOCK
 		(long) kbytes(dbtob(stp->st_blocks)),	/* kbytes       */

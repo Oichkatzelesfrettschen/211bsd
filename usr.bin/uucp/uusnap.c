@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)uusnap.c	5.7 (Berkeley) 10/9/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)uusnap.c	5.8 (2.11BSD) 2026/5/9";
 #endif
 
 /*
@@ -9,18 +9,10 @@ static char sccsid[] = "@(#)uusnap.c	5.7 (Berkeley) 10/9/85";
 
 #include "uucp.h"
 #include <sys/stat.h>
-#ifdef	NDIR
-#include "ndir.h"
-#else
 #include <sys/dir.h>
-#endif
 #include <ctype.h>
 
-#ifndef	SYSBUF
-char SYSBUF[BUFSIZ];
-#endif
-
-#define	NSYSTEM	100				/* max # of systems queued */
+#define	NSYSTEM 100				/* max # of systems queued */
 
 #define	CMDSLEN	5				/* Length of trailer */
 #define	DATALEN	5				/* Length of trailer */
@@ -49,7 +41,6 @@ main()
 {	register int i, j, nlen = 0;
 	time_t	curtime, t;
 
-	setbuf(stdout, SYSBUF);
 	scandir(CMDSDIR, "C.", CMDSLEN, NULL, CMDTYPE);
 	scandir(DATADIR, "D.", DATALEN, NULL, DATTYPE);
 	scandir(XEQTDIR, "X.", XEQTLEN, 'X', XEQTYPE);

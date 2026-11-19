@@ -4,12 +4,14 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)mout.c	5.2 (Berkeley) 3/13/86";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)mout.c     5.3 (2.11BSD) 2026/5/11";
+#endif
 
 #include <stdio.h>
 #include <mp.h>
+#include <stdlib.h>
+
 m_in(a,b,f) MINT *a; FILE *f;
 {	MINT x,y,ten;
 	int sign,c;
@@ -54,7 +56,7 @@ m_out(a,b,f) MINT *a; FILE *f;
 {	int sign,xlen,i;
 	short r;
 	MINT x;
-	char *obuf, *malloc();
+	char *obuf;
 	register char *bp;
 	sign=1;
 	xlen=a->len;

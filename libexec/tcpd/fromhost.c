@@ -10,8 +10,8 @@
   * Author: Wietse Venema, Eindhoven University of Technology, The Netherlands.
   */
 
-#ifndef lint
-static char sccsid[] = "@(#) fromhost.c 1.17 94/12/28 17:42:23";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#) fromhost.c 1.18 (2.11BSD) 2026/5/11";
 #endif
 
 #if defined(TLI) || defined(PTX) || defined(TLI_SEQUENT)

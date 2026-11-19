@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)move.c	5.1 (Berkeley) 5/29/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)move.c	5.2 (2.11BSD) 2026/5/11";
+#endif
 
 #include "back.h"
 
@@ -55,7 +55,7 @@ static int	cp[5];				/* candidate start position */
 static int	cg[5];				/* candidate finish position */
 
 static int	race;				/* game reduced to a race */
-
+
 move (okay)
 int	okay;					/* zero if first move */
 {
@@ -145,7 +145,7 @@ int	okay;					/* zero if first move */
 	}
 	fixtty (raw);				/* no more tty interrupt */
 }
-
+
 trymove (mvnum,swapped)
 register int	mvnum;				/* number of move (rel zero) */
 int		swapped;			/* see if swapped also tested */
@@ -200,7 +200,7 @@ int		swapped;			/* see if swapped also tested */
 	if ((!swapped) && D0 != D1)
 		trymove (0,1);
 }
-
+
 struct BOARD *
 bsave ()  {
 	register int	i;		/* index */
@@ -221,7 +221,7 @@ bsave ()  {
 	}
 	return (now);
 }
-
+
 binsert (new)
 struct BOARD	*new;					/* item to insert */
 {
@@ -264,7 +264,7 @@ struct BOARD	*new;					/* item to insert */
 	p->b_next = new;
 	new->b_next = -1;
 }
-
+
 bcomp (a,b)
 struct BOARD	*a;
 struct BOARD	*b;
@@ -281,7 +281,7 @@ struct BOARD	*b;
 	}
 	return (0);				/* same position */
 }
-
+
 mvcheck (incumbent,candidate)
 register struct BOARD 	*incumbent;
 register struct BOARD 	*candidate;
@@ -303,7 +303,7 @@ register struct BOARD 	*candidate;
 		incumbent->b_fn[i] = candidate->b_fn[i];
 	}
 }
-
+
 makefree (dead)
 struct BOARD	*dead;			/* dead position */
 {
@@ -328,7 +328,7 @@ nextfree ()  {
 	new = freeq;
 	freeq = freeq->b_next;
 }
-
+
 pickmove ()  {
 						/* current game position */
 	register struct BOARD	*now = bsave();
@@ -350,7 +350,7 @@ pickmove ()  {
 
 	bcopy (now);
 }
-
+
 bcopy (s)
 register struct BOARD	*s;			/* game situation */
 {
@@ -367,7 +367,7 @@ register struct BOARD	*s;			/* game situation */
 		g[i] = s->b_fn[i];
 	}
 }
-
+
 movcmp ()  {
 	register int	i;
 	register int	c;
@@ -440,7 +440,7 @@ movcmp ()  {
 	}
 #endif
 }
-
+
 movegood ()  {
 	register int	n;
 

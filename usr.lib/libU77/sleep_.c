@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)sleep_.c	5.1	6/7/85
+ *	@(#)sleep_.c	5.2 (2.11BSD) 2026/9/19
  */
 
 /*
@@ -18,5 +18,5 @@
 sleep_(sec)
 long *sec;
 {
-	sleep((unsigned int)*sec);
+	sleep((int)*sec);
 }

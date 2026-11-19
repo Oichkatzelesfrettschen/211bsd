@@ -4,23 +4,20 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
+#if	!defined(lint) && defined(DOSCCS)
 char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
-#endif not lint
 
-#ifndef lint
-static char sccsid[] = "@(#)pwd.c	5.1 (Berkeley) 4/30/85";
-#endif not lint
+static char sccsid[] = "@(#)pwd.c	5.2 (2.11BSD) 2026/5/7";
+#endif
 
 /*
  * Print working (current) directory
  */
 #include <stdio.h>
+#include <unistd.h>
 #include <sys/param.h>
-
-char *getwd();
 
 main()
 {

@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)checksys.c	1.7 (2.11BSD) 2025/12/24
+ *	@(#)checksys.c	1.8 (2.11BSD) 2026/5/16
  */
 
 /*
@@ -20,6 +20,8 @@
 #include "stdio.h"
 #include "namei.h"
 #include "msgbuf.h"
+#include "disklabel.h"
+#include "mount.h"
 
 /* Round up to a click boundary. */
 #define	cround(bytes)	((bytes + ctob(1) - 1) / ctob(1) * ctob(1));
@@ -38,7 +40,9 @@
 #define	N_NAMECACHE	18
 #define	N_IOSIZE	19
 #define	N_NLOG		20
-#define	N_NUMSYMS	21
+#define	N_SOFUBSIZE	21
+#define N_DLABELNUM	22
+#define	N_NUMSYMS	23
 
 	struct	nlist	nl[N_NUMSYMS + 1];  /* need null entry for nlist */
 
@@ -63,7 +67,9 @@ char	*names[] = {
 	"_quotdesc",			/* 17 */
 	"_namecache",			/* 18 */
 	"__iosize",			/* 19 */
-	"_nlog"				/* 20 */
+	"_nlog",			/* 20 */
+	"_sofub_size",			/* 21 */
+	"__dlabelnum",                  /* 22 */
 	};
 
 static struct exec obj;
@@ -234,8 +240,14 @@ checkov:
 		totsize += getval(N_IOSIZE);
 	if (nl[N_NLOG].n_type)
 		totsize += (getval(N_NLOG) * MSG_BSIZE);
+	if (nl[N_SOFUBSIZE].n_type)
+		totsize += getval(N_SOFUBSIZE);
+	if (nl[N_DLABELNUM].n_type)
+		totsize += (getval(N_DLABELNUM) * sizeof (struct disklabel));
+	totsize += (NMOUNT * sizeof (struct xmount));
 	totsize += ctob(USIZE);
-	printf("System will occupy %ld bytes of memory (including buffers and clists).\n", totsize);
+
+	printf("System will occupy %ld bytes of memory (including buffers, clists, sofub)\n", totsize);
 	for (i = 0; i < N_NUMSYMS; i++) {
 		if (!(i % 3))
 			putchar('\n');

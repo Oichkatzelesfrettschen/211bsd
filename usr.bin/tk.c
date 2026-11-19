@@ -1,4 +1,7 @@
-static char *sccsid = "@(#)tk.c	4.2 (Berkeley) 5/15/84";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)tk.c	4.3 (2.11BSD) 2026/5/8";
+#endif
+
 /*
  * optimize output for Tek 4014
  */
@@ -39,7 +42,7 @@ int argc;
 char **argv;
 {
 	register i, j;
-	extern ex();
+	extern void ex();
 
 	while (--argc > 0 && (++argv)[0][0]=='-')
 		switch(argv[0][1]) {
@@ -197,7 +200,7 @@ kwait()
 
 execom()
 {
-	int (*si)(), (*sq)();
+	sig_t si, sq;
 
 	if (fork() != 0) {
 		si = signal(SIGINT, SIG_IGN);

@@ -1,6 +1,6 @@
-#ifndef lint
-static char sccsid[] = "@(#)mkfont.c	4.3 2/16/88";
-#endif lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)mkfont.c	4.4 2026/5/9";
+#endif
 
 #include "mkfont1.c"
 

@@ -1,6 +1,6 @@
-#ifndef lint
-static char sccsid[] = "@(#)0.string.c	4.1	(Berkeley)	2/11/83";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)0.string.c	4.2	(2.11BSD)	2026/5/9";
+#endif
 
 #include <stdio.h>
 #include "def.h"
@@ -9,7 +9,7 @@ static char sccsid[] = "@(#)0.string.c	4.1	(Berkeley)	2/11/83";
 str_copy(s,ptr,length)	/* copy s at ptr, return length of s */
 char *s, *ptr;
 int length;
-	{int i;
+	{register int i;
 	for (i = 0; i < length; i++)
 		{
 		ptr[i] = s[i];
@@ -24,7 +24,7 @@ find(s,ar,size)
 char *s,*ar[];
 int size;
 	{
-	int i;
+	register int i;
 	for (i=0; i < size; i++)
 		{if (str_eq(s, ar[i])) return(i);}
 	return(-1);
@@ -33,7 +33,7 @@ int size;
 
 str_eq(s,t)
 char s[],t[];
-	{int j;
+	{register int j;
 	for (j = 0; s[j] == t[j]; j++)
 		{if (s[j] == '\0') return(1);}
 	return(0);

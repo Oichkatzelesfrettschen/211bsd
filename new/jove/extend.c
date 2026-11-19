@@ -1,55 +1,31 @@
-/***************************************************************************
- * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
- * is provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is    *
- * included in all the files.                                              *
- ***************************************************************************/
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)extend.c 2.0 (2.11BSD) 2026/7/27";
+#endif
 
+/*
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE
+ * is provided to you without charge, and with no warranty.  You may give
+ * away copies of JOVE, including sources, provided that this notice is
+ * included in all the files.
+ */
+
+#include <stdlib.h>
 #include "jove.h"
 #include "io.h"
 #include "termcap.h"
 #include "ctype.h"
-#ifdef JOB_CONTROL
-#	include <signal.h>
-#endif
+#include <signal.h>
+#include <strings.h>
+#include <varargs.h>
 
-#ifdef MAC
-#	include "mac.h"
-#else
-#	include <varargs.h>
-#endif
-
-#ifdef MSDOS
-#include <process.h>
-#endif
-
-#ifdef MAC
-#	undef private
-#	define private
-#endif
-
-#ifdef	LINT_ARGS
-private	void
-	fb_aux(data_obj *, data_obj **, char *, char *),
-	find_binds(data_obj *, char *),
-	vpr_aux(struct variable *, char *);
-#else
 private	void
 	fb_aux(),
 	find_binds(),
 	vpr_aux();
-#endif	/* LINT_ARGS */
-
-#ifdef MAC
-#	undef private
-#	define private static
-#endif
-
 
 int	InJoverc = 0;
 
-extern int	getch(),
-		getchar();
+extern int	getch(), getchar();
 
 /* Auto execute code */
 
@@ -78,15 +54,9 @@ MAutoExec()
 	DefAutoExec(findmac);
 }
 
-/* VARARGS0 */
-
 void
 DefAutoExec(proc)
-#ifdef LINT_ARGS
-data_obj	*(*proc)(char *);
-#else
 data_obj	*(*proc)();
-#endif
 {
 	data_obj	*d;
 	char	*pattern;
@@ -147,11 +117,7 @@ data_obj **
 IsPrefix(cp)
 data_obj	*cp;
 {
-#ifdef MAC
-	void (*proc)();
-#else
 	int	(*proc)();
-#endif
 	
 	if (cp == 0 || (cp->Type & TYPEMASK) != FUNCTION)
 		return 0;
@@ -231,25 +197,13 @@ data_obj	**map,
 			BindWMap(nextmap, c, cmd);
 		else {
 			map[c] = cmd;
-#ifdef MAC
-			((struct cmd *) cmd)->c_key = c;	/* see about_j() in mac.c */
-			if(map == mainmap) ((struct cmd *) cmd)->c_map = F_MAINMAP;
-			else if(map == pref1map) ((struct cmd *) cmd)->c_map = F_PREF1MAP;
-			else if(map == pref2map) ((struct cmd *) cmd)->c_map = F_PREF2MAP;
-#endif
 		}
 	}
 }
 
-/* VARARGS0 */
-
 void
 BindSomething(proc)
-#ifdef LINT_ARGS
-data_obj	*(*proc)(char *);
-#else
 data_obj	*(*proc)();
-#endif
 {
 	data_obj	*d;
 
@@ -373,10 +327,6 @@ char	*pref;
 	char	keydescbuf[40];
 	data_obj	**prefp;
 
-#ifdef IBMPC
-	specialmap = (map == miscmap);
-#endif
-
 	for (c1 = 0; c1 < NCHARS && c2 < NCHARS; c1 = c2 + 1) {
 		c2 = c1;
 		if (map[c1] == 0)
@@ -424,10 +374,6 @@ char	*buf,
 	char	*bufp = buf + strlen(buf),
 		prefbuf[20];
 	data_obj	**prefp;
-
-#ifdef IBMPC
-	specialmap = (map == miscmap);
-#endif	
 
 	for (c1 = c2 = 0; c1 < NCHARS && c2 < NCHARS; c1 = c2 + 1) {
 		c2 = c1;
@@ -650,9 +596,6 @@ SetVar()
 	    	else
 	    		complain("Boolean variables must be ON or OFF.");
 	    	*(vp->v_value) = value;
-#ifdef MAC
-		MarkVar(vp,-1,0);	/* mark the menu item */
-#endif
 	    	s_mess("%s%s", prompt, value ? "on" : "off");
 	    	break;
 	    }
@@ -687,9 +630,6 @@ SetVar()
 	if (vp->v_flags & V_MODELINE)
 		UpdModLine = YES;
 	if (vp->v_flags & V_CLRSCREEN) {
-#ifdef IBMPC
-		setcolor(Fgcolor, Bgcolor);
-#endif /* IBMPC */
 		ClAndRedraw();
 	}
 	if (vp->v_flags & V_TTY_RESET)
@@ -717,12 +657,8 @@ aux_complete(c)
 		char	*lp;
 
 		for (lp = linebuf; *lp != '\0'; lp++)
-#if (defined(IBMPC) || defined(MAC))
-			lower(lp);
-#else			
 			if (isupper(*lp))
 				*lp = tolower(*lp);
-#endif
 	}
 	switch (c) {
 	case EOF:
@@ -875,14 +811,7 @@ Source()
 	char	*com, *getenv(),
 		buf[FILESIZE];
 
-#ifndef MSDOS
 	sprintf(buf, "%s/.joverc", getenv("HOME"));
-#else /* MSDOS */
-	if (com = getenv("JOVERC"))
-		strcpy(buf, com);
-	else
-		strcpy(buf, Joverc);
-#endif /* MSDOS */
 	com = ask_file((char *) 0, buf, buf);
 	if (joverc(buf) == 0)
 		complain(IOerr("read", com));
@@ -916,18 +845,12 @@ BufPos()
 #define IF_TRUE		1
 #define IF_FALSE	!IF_TRUE
 
-#ifndef MAC
 int
 do_if(cmd)
 char	*cmd;
 {
-#ifdef MSDOS
-	int status;
-#else	
 	int	pid,
 		status;
-#endif /* MSDOS */
-#ifndef MSDOS
 
 	switch (pid = fork()) {
 	case -1:
@@ -935,7 +858,6 @@ char	*cmd;
 
 	case 0:
 	    {
-#endif /* MSDOS */
 		char	*args[12],
 			*cp = cmd,
 			**ap = args;
@@ -949,35 +871,23 @@ char	*cmd;
 		}
 		*ap = 0;
 
-#ifndef MSDOS
 		close(0);	/*	we want reads to fail */
 		/* close(1);	 but not writes or ioctl's
 		close(2);    */
-#else /* MSDOS */
-	if ((status = spawnvp(0, args[0], args)) < 0)
-		complain("[Spawn failed: if]");
-#endif /* MSDOS */
 
-#ifndef MSDOS
 	    	(void) execvp(args[0], args);
 		_exit(-10);	/* signals exec error (see below) */
 	    }
 	}
-#ifdef IPROCS
 	sighold(SIGCHLD);
-#endif
 	dowait(pid, &status);
-#ifdef IPROCS
 	sigrelse(SIGCHLD);
-#endif
 	if (status == -10)
 		complain("[Exec failed]");
 	if (status < 0)
 		complain("[Exit %d]", status);
-#endif /* MSDOS */
 	return (status == 0);	/* 0 means successful */
 }
-#endif /* MAC */
 
 int
 joverc(file)
@@ -1015,7 +925,6 @@ char	*file;
 		lnum += 1;
 		if (lbuf[0] == '#')		/* a comment */
 			continue;
-#ifndef MAC
 		if (casencmp(lbuf, "if", 2) == 0) {
 			char	cmd[128];
 
@@ -1037,7 +946,6 @@ char	*file;
 			IfStatus = IF_UNBOUND;
 			continue;
 		}
-#endif
 		if (IfStatus == IF_FALSE)
 			continue;
 		(void) strcat(lbuf, "\n");

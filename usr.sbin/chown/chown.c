@@ -9,11 +9,11 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)chown.c	5.6.1 (2.11BSD GTE) 11/4/94";
+static char sccsid[] = "@(#)chown.c	5.6.2 (2.11BSD) 2026/2/1";
 #endif
 
 /*
- * chown [-fR] uid[.gid] file ...
+ * chown [-fR] uid[:gid] file ...
  */
 
 #include <stdio.h>
@@ -38,10 +38,10 @@ int	rflag;
 main(argc, argv)
 	char *argv[];
 {
-	register int c;
-	register gid_t gid;
+	int c;
+	gid_t gid;
 	register char *cp, *group;
-	struct group *grp;
+	register struct group *grp;
 	int	fcurdir;
 
 	argc--, argv++;
@@ -65,8 +65,12 @@ main(argc, argv)
 		fprintf(stderr, "usage: chown [-fR] owner[.group] file ...\n");
 		exit(-1);
 	}
+
 	gid = -1;
-	group = index(argv[0], '.');
+	group = index(argv[0], ':');
+	if (group == NULL)
+	   group = index(argv[0], '.');
+
 	if (group != NULL) {
 		*group++ = '\0';
 		if (!isnumber(group)) {

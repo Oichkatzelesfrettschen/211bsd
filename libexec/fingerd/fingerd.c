@@ -35,26 +35,23 @@
 static char copyright[] =
 "@(#) Copyright (c) 1983, 1993\n\
 	The Regents of the University of California.  All rights reserved.\n";
-#endif /* not lint */
 
-#if	defined(DOSCCS) & !defined(lint)
-static char sccsid[] = "@(#)fingerd.c	8.1.1 (2.11BSD) 1995/04/01";
-#endif /* not lint */
+static char sccsid[] = "@(#)fingerd.c	8.1.2 (2.11BSD) 2026/9/30";
+#endif
 
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <sys/errno.h>
-
+#include <errno.h>
 #include <syslog.h>
 #include <netdb.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <strings.h>
-#include "pathnames.h"
 
-extern char *optarg;
-extern int optind, opterr, errno;
+#define	_PATH_FINGER	"/usr/ucb/finger"
 
 int
 main(argc, argv)

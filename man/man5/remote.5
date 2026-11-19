@@ -2,7 +2,7 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)remote.5	6.1 (Berkeley) 5/15/85
+.\"	@(#)remote.5	6.2 (2.11BSD) 2026/9/27
 .\"
 .TH REMOTE 5 "May 15, 1985"
 .UC 5
@@ -10,10 +10,10 @@
 remote \- remote host description file
 .SH DESCRIPTION
 The systems known by
-.IR tip (1C)
+.BR tip (1)
 and their attributes are stored in an ASCII file which
 is structured somewhat like the
-.IR termcap (5)
+.BR termcap (5)
 file.  Each line in the file provides a description for a single
 .IR system .
 Fields are separated by a colon (``:'').
@@ -28,17 +28,17 @@ name followed by a `#' sign indicates a following numeric value.
 .PP
 Entries named ``tip*'' and ``cu*''
 are used as default entries by 
-.IR tip ,
+.BR tip ,
 and the
-.I cu
+.B cu
 interface to 
-.IR tip ,
+.BR tip ,
 as follows.  When
-.I tip
+.B tip
 is invoked with only a phone number, it looks for an entry
 of the form ``tip300'', where 300 is the baud rate with
 which the connection is to be made.  When the
-.I cu
+.B cu
 interface is used, entries of the form ``cu300'' are used.
 .SH CAPABILITIES
 Capabilities are either strings (str), numbers (num), or boolean
@@ -86,7 +86,7 @@ This host is on a dial-up line.
 (str)
 UNIX device(s) to open to establish a connection. 
 If this file refers to a terminal line,
-.IR tip (1C)
+.BR tip (1)
 attempts to perform an exclusive open on the device to insure only
 one user at a time has access to the port.
 .TP 0.5i
@@ -95,7 +95,7 @@ one user at a time has access to the port.
 Characters marking an end-of-line. 
 The default is NULL.  `~' escapes are only
 recognized by
-.I tip
+.B tip
 after one of the characters in `el',
 or after a carriage-return.
 .TP 0.5i
@@ -135,12 +135,12 @@ is even parity.
 Telephone number(s) for this host.
 If the telephone number field contains
 an @ sign, 
-.I tip
+.B tip
 searches the file
-.I /etc/phones
+.B /etc/phones
 file for a list of telephone numbers;
 c.f.
-.IR phones (5).
+.BR phones (5).
 .TP 0.5i
 .B tc
 (str)
@@ -161,5 +161,5 @@ arpavax|ax:\e
 .SH FILES
 /etc/remote
 .SH "SEE ALSO"
-tip(1C),
+tip(1),
 phones(5)

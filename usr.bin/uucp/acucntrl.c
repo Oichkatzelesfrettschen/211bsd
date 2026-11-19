@@ -1,5 +1,5 @@
 #if	defined(DOSCCS) && !defined(lint)
-static char sccsid[] = "@(#)acucntrl.c	5.9 (2.11BSD) 2024/9/20";
+static char sccsid[] = "@(#)acucntrl.c	5.9 (2.11BSD) 2026/2/6";
 #endif
 
 /*  acucntrl - turn around tty line between dialin and dialout
@@ -49,15 +49,7 @@ static char sccsid[] = "@(#)acucntrl.c	5.9 (2.11BSD) 2024/9/20";
 #include <sys/buf.h>
 #include <signal.h>
 #include <sys/conf.h>
-#ifdef pdp11
 #include <pdpuba/ubavar.h>
-#else
-#ifdef BSD4_2
-#include <vaxuba/ubavar.h>
-#else
-#include <sys/ubavar.h>
-#endif
-#endif
 #include <sys/stat.h>
 #include <nlist.h>
 #include <sgtty.h>
@@ -70,11 +62,9 @@ static char sccsid[] = "@(#)acucntrl.c	5.9 (2.11BSD) 2024/9/20";
 
 #define NDZLINE	8	/* lines/dz */
 #define NDHLINE	16	/* lines/dh */
-#define NDMFLINE 8	/* lines/dmf */
 
 #define DZ11	1
 #define DH11	2
-#define DMF	3
 
 #define NLVALUE(val)	(nl[val].n_value)
 
@@ -90,7 +80,6 @@ struct nlist nl[] = {
 	{ "_dz_cnt" },
 #define DZSCAR	4
 	{ "_dzsoftCAR" },
-
 #define DHOPEN	5
 	{ "_dhopen" },
 #define DHINFO	6
@@ -99,16 +88,6 @@ struct nlist nl[] = {
 	{ "_ndh11" },
 #define DHSCAR	8
 	{ "_dhsoftCAR" },
-
-#define DMFOPEN	9
-	{ "_dmfopen" },
-#define DMFINFO	10
-	{ "_dmfinfo" },
-#define NDMF	11
-	{ "_ndmf" },
-#define DMFSCAR	12
-	{ "_dmfsoftCAR" },
-
 	{ "\0" }
 };
 
@@ -117,11 +96,8 @@ struct nlist nl[] = {
 
 char Etcutmp[] = _PATH_UTMP;
 char Etcttys[] = "/etc/ttys";
-#ifdef BSD4_3
 FILE *ttysfile, *nttysfile;
 char NEtcttys[] = "/etc/ttys.new";
-extern long ftell();
-#endif BSD4_3
 char Devhome[] = "/dev";
 
 char usage[] = "Usage: acucntrl {dis|en}able ttydX\n";
@@ -145,9 +121,6 @@ int argc; char *argv[];
 	char *device;
 	int devfile;
 	int uid, gid;
-	off_t lseek();
-	struct passwd *getpwuid();
-	char *rindex();
 
 	/* check input arguments */
 	if (argc!=3) {
@@ -390,14 +363,12 @@ char *uname, *device; int enable;
 	} while (utmp.ut_name[0] != '\0' && --i > 0);
 }
 
-#ifdef BSD4_3
 /* identify terminal line in ttys */
 opnttys(device)
 char *device;
 {
 	register int  ndevice; 
 	register char *p;
-	char *index();
 	char linebuf[BUFSIZ];
 
 	ttysfile = NULL;
@@ -421,11 +392,7 @@ char *device;
 	}
 
 	ndevice = strlen(device);
-#ifndef BRL4_2
 	utmploc = sizeof(utmp);
-#else BRL4_2
-	utmploc = 0;
-#endif BRL4_2
 
 	while(fgets(linebuf, sizeof(linebuf) - 1, ttysfile) != NULL) {
 		if(strncmp(device, linebuf, ndevice) == 0)
@@ -524,85 +491,10 @@ int enable;
 	return enable^resettty;
 }
 
-#else !BSD4_3
-
-/* identify terminal line in ttys */
-opnttys(device)
-char *device;
-{
-	register FILE *ttysfile;
-	register int  ndevice, lnsiz; 
-	register char *p;
-	char *index();
-	char linebuf[BUFSIZ];
-
-	ttysfile = fopen(Etcttys, "r");
-	if(ttysfile == NULL) {
-		fprintf(stderr, "Cannot open %s: %s\n", Etcttys,
-			strerror(errno));
-		exit(1);
-	}
-
-	ndevice = strlen(device);
-	ttyslnbeg = 0;
-	utmploc = 0;
-
-	while(fgets(linebuf, sizeof(linebuf) - 1, ttysfile) != NULL) {
-		lnsiz = strlen(linebuf);
-		if ((p = index(linebuf, '\n')) != NULL)
-			*p = '\0';
-		if(strncmp(device, &linebuf[2], ndevice) == 0) {
-			(void)fclose(ttysfile);
-			return;
-		}
-		ttyslnbeg += lnsiz;
-		utmploc += sizeof(utmp);
-	}
-	fprintf(stderr, "%s not found in %s\n", device, Etcttys);
-	exit(1);
-}
-
-/* modify appropriate line in /etc/ttys to turn on/off the device */
-settys(enable)
-int enable;
-{
-	int ittysfil;
-	char out, in;
-
-	ittysfil = open(Etcttys, 2);
-	if(ittysfil < 0) {
-		fprintf(stderr, "Cannot open %s for output: %s\n",
-			Etcttys, strerror(errno));
-		exit(1);
-	}
-	(void)lseek(ittysfil, ttyslnbeg, 0);
-	if(read(ittysfil, &in, 1)<0) {
-		fprintf(stderr, "On %s write: %s\n",
-			Etcttys, strerror(errno));
-		exit(1);
-	}
-	resettty = (in == '1');
-	out = enable ? '1' : '0';
-	(void)lseek(ittysfil, ttyslnbeg, 0);
-	if(write(ittysfil, &out, 1)<0) {
-		fprintf(stderr, "On %s write: %s\n",
-			Etcttys, strerror(errno));
-		exit(1);
-	}
-	(void)close(ittysfil);
-	return(in==out);
-}
-#endif !BSD4_3
-
 /*
  * Excerpted from (June 8, 1983 W.Sebok)
- * > ttymodem.c - enable/disable modem control for tty lines.
- * >
- * > Knows about DZ11s and DH11/DM11s.
- * > 23.3.83 - TS
- * > modified to know about DMF's  (hasn't been tested) Nov 8, 1984 - WLS
+ * ttymodem.c - enable/disable modem control for tty lines.
  */
-
 
 /*
  * 2.11BSD NOTE:  2.11BSD doesn't use ui_flags.  We've included the code
@@ -632,11 +524,8 @@ char *ttyline; int enable;
 	int devtype=0;
 	char cflags;
 	unsigned short sflags;
-#ifdef BSD4_2
 	long flags, tflags;
-#else
-	short flags, tflags;
-#endif
+
 	struct uba_device *ubinfo;
 	struct stat statb;
 	struct cdevsw cdevsw;
@@ -670,32 +559,14 @@ char *ttyline; int enable;
 		devtype = DZ11;
 		unit = minor(dev) / NDZLINE;
 		line = minor(dev) % NDZLINE;
-#ifdef pdp11
 		ubinfo = &(((struct uba_device *)NLVALUE(DZINFO))[unit]);
-#else
-		addr = (int) &(((int *)NLVALUE(DZINFO))[unit]);
-#endif
 		(void)lseek(kmem, (off_t) NLVALUE(NDZ11), 0);
 	} else if((int)(cdevsw.d_open) == NLVALUE(DHOPEN)) {
 		devtype = DH11;
 		unit = minor(dev) / NDHLINE;
 		line = minor(dev) % NDHLINE;
-#ifdef pdp11
 		ubinfo = &(((struct uba_device *)NLVALUE(DHINFO))[unit]);
-#else
-		addr = (int) &(((int *)NLVALUE(DHINFO))[unit]);
-#endif
 		(void)lseek(kmem, (off_t) NLVALUE(NDH11), 0);
-	} else if((int)(cdevsw.d_open) == NLVALUE(DMFOPEN)) {
-		devtype = DMF;
-		unit = minor(dev) / NDMFLINE;
-		line = minor(dev) % NDMFLINE;
-#ifdef pdp11
-		ubinfo = &(((struct uba_device *)NLVALUE(DMFINFO))[unit]);
-#else
-		addr = (int) &(((int *)NLVALUE(DMFINFO))[unit]);
-#endif
-		(void)lseek(kmem, (off_t) NLVALUE(NDMF), 0);
 	} else {
 		fprintf(stderr, "Device %s (%d/%d) unknown.\n", ttyline,
 		    major(dev), minor(dev));
@@ -709,23 +580,16 @@ char *ttyline; int enable;
 		return(-1);
 	}
 
-#ifndef pdp11
-	(void)lseek(kmem, (off_t)addr, 0);
-	(void)read(kmem, (char *) &ubinfo, sizeof ubinfo);
-#endif
 	(void)lseek(kmem, (off_t) &(ubinfo->ui_flags), 0);
 	(void)read(kmem, (char *) &flags, sizeof flags);
 
-#ifdef BSD4_2
 	tflags = 1L<<line;
-#else
-	tflags = 1<<line;
-#endif
 	resetmodem = ((flags&tflags) == 0);
 	flags = enable ? (flags & ~tflags) : (flags | tflags);
 	(void)lseek(kmem, (off_t) &(ubinfo->ui_flags), 0);
 	(void)write(kmem, (char *) &flags, sizeof flags);
-#ifndef pdp11
+
+#if	defined(KERNELsoftCAR)
 	switch(devtype) {
 		case DZ11:
 			if((addr = NLVALUE(DZSCAR)) == 0) {
@@ -744,15 +608,6 @@ char *ttyline; int enable;
 			sflags = flags;
 			(void)lseek(kmem, (off_t) &(((short *)addr)[unit]), 0);
 			(void)write(kmem, (char *) &sflags, sizeof sflags);
-			break;
-		case DMF:
-			if((addr = NLVALUE(DMFSCAR)) == 0) {
-				fprintf(stderr, "No dmfsoftCAR.\n");
-				return(-1);
-			}
-			cflags = flags;
-			(void)lseek(kmem, (off_t) &(((char *)addr)[unit]), 0);
-			(void)write(kmem, (char *) &flags, sizeof cflags);
 			break;
 		default:
 			fprintf(stderr, "Unknown device type\n");

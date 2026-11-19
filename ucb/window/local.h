@@ -1,5 +1,5 @@
 /*
- * @(#)local.h	3.6 2020/1/7
+ * @(#)local.h	3.7 (2.11BSD) 2026/9/14
  */
 
 /*
@@ -14,9 +14,5 @@
 
 #define RUNCOM		".windowrc"
 #define ESCAPEC		ctrl('p')
-#ifdef pdp11
 #define NLINE		3			/* default text buffer size */
-#else
-#define NLINE		48			/* default text buffer size */
-#endif
 #define SHELL		"/bin/csh"		/* if no environment SHELL */

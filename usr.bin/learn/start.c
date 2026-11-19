@@ -1,8 +1,8 @@
-#ifndef lint
-static char sccsid[] = "@(#)start.c	4.5	(Berkeley)	5/15/86";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)start.c	4.6	(2.11BSD)	2026/5/8";
+#endif
 
-#include "stdio.h"
+#include <stdio.h>
 #include "lrnref.h"
 #include <sys/types.h>
 #ifndef DIR

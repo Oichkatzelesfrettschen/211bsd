@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)telnetd.c	5.23 (2.11BSD) 2025/8/11";
+static char sccsid[] = "@(#)telnetd.c	5.24 (2.11BSD) 2026/9/22";
 #endif
 
 /*
@@ -187,7 +187,7 @@ main(argc, argv)
 
 char	*terminaltype = 0;
 char	*env[128];
-int	cleanup();
+void	cleanup();
 
 /*
  * ttloop
@@ -1288,6 +1288,7 @@ netflush()
     }
 }
 
+void
 cleanup()
 {
 

@@ -29,23 +29,24 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"     @(#)devname.3	8.1.1 (2.11BSD GTE) 2/3/95
+.\"     @(#)devname.3	8.1.2 (2.11BSD) 2026/5/27
 .\"
-.TH DEVNAME 3 "February 3, 1995"
+.TH DEVNAME 3 "May 27, 2026"
 .UC 4
 .SH NAME
 devname \- get device name
 .SH SYNOPSIS
-.nf
-.ft B
-#include <sys/types.h>
-
-char *
-devname(dev, type)
-    dev_t dev;
-    mode_t type;
-.ft R
-.fi
+.B #include <stdlib.h>
+.br
+.B #include <sys/stat.h>
+.sp
+.B char *
+.br
+\fBdevname\fP(\fIdev_t, mode_t\fP)
+.sp
+.B void
+.br
+\fBdevname_close\fP()
 .SH DESCRIPTION
 The
 .B devname
@@ -61,10 +62,17 @@ If no device matches the specified values, or no information is
 available, the string
 .I ??
 is returned.
+.sp
+.B devname_close
+releases the DBM database memory and file descriptors if those were
+allocated by \fBdevname\fP.  It is harmless to call \fBdevname_close\fP 
+if \fBdevname\fP was not called or returned "??".
 .SH SEE ALSO
 stat(2),
 dev_mkdb(8)
 .SH HISTORY
-The
 .B devname
 function call appeared in 4.4BSD.
+.sp
+.B devname_close
+function call appeared in 2.11BSD 35th Anniversary Edition

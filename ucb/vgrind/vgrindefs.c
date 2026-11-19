@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)vgrindefs.c	5.1 (Berkeley) 6/5/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)vgrindefs.c	5.2 (2.11BSD) 2026/5/9";
+#endif
 
 #define	BUFSIZ	1024
 #define MAXHOP	32	/* max number of tc= indirections */
@@ -44,7 +44,7 @@ tgetent(bp, name, file)
 	char *bp, *name, *file;
 {
 	register char *cp;
-	register int c;
+	int c;
 	register int i = 0, cnt = 0;
 	char ibuf[BUFSIZ];
 	char *cp2;

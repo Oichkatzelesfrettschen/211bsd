@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)open.c	5.1 (Berkeley) 5/7/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)open.c     5.2 (2.11BSD) 2026/5/11";
+#endif
 
 /*
  * Displays plot files on a gigi "graphics" terminal.
@@ -24,7 +24,7 @@ double scaley = 1.0;
 
 openpl()
 {
-	int closepl();
+	sig_t closepl;
 
 	/* catch interupts */
 	signal(SIGINT, closepl);

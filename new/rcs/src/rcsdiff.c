@@ -1,10 +1,9 @@
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)rcsdiff.c 4.5 (2.11BSD) 2026/5/11";
+#endif
 /*
  *                     RCS rcsdiff operation
  */
-#ifndef lint
-static char rcsid[]=
-"$Header: /usr/src/new/rcs/src/RCS/rcsdiff.c,v 3.9 88/02/18 11:55:57 bostic Exp $ Purdue CS";
-#endif
 /*****************************************************************************
  *                       generate difference between RCS revisions
  *****************************************************************************
@@ -70,9 +69,6 @@ static char rcsid[]=
 #include <ctype.h>
 #include "rcsbase.h"
 #define ERRCODE 2                   /*error code for exit status            */
-#ifndef lint
-static char rcsbaseid[] = RCSBASE;
-#endif
 
 extern int    cleanup();            /* cleanup after signals                */
 extern char * mktempfile();         /*temporary file name generator         */

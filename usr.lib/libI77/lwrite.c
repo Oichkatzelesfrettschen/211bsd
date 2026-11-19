@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)lwrite.c	5.2	7/30/85
+ *	@(#)lwrite.c	5.3 (2.11BSD) 2026/8/10
  */
 
 /*
@@ -86,11 +86,23 @@ l_write(number,ptr,len,type) ftnint *number,type; flex *ptr; ftnlen len;
 			ERRCHK(lwrt_DC(yd,zd));
 			break;
 		case TYLOGICAL:
+/*
+ * f77 allocates a short in the call frame (but sets 'len' to 4) for 
+ * .TRUE. and .FALSE. in WRITE(x,*) and passes a 'short *' to do_lio().
+ * Logical data/variables are handled as longs (with 'len' set to 4) and
+ * a 'long *' passed to do_lio().  There is no way to know what 'ptr' is 
+ * pointing to since 'len' is the same.  Therefore use 'ptr' only as a
+ * 'short *'.
+*/
+#ifdef  SHORT_LOGICAL
+			x = ptr->flshort;
+#else
 			if(len == sizeof(short))
 				x = ptr->flshort;
 			else
 				x = ptr->flint;
-			ERRCHK(lwrt_L(x));
+#endif
+			ERRCHK(lwrt_L(x, len));
 			break;
 		case TYCHAR:
 			ERRCHK(lwrt_A((char *)ptr,len));
@@ -109,8 +121,10 @@ got_err:
 
 LOCAL
 lwrt_I(in) ftnint in;
-{	int n;
+{
+	register int	n;
 	char buf[16],*p;
+
 	sprintf(buf,"  %ld",(long)in);
 	chk_len(LINTW);
 	for(p=buf;*p;) PUT(*p++)
@@ -118,15 +132,18 @@ lwrt_I(in) ftnint in;
 }
 
 LOCAL
-lwrt_L(ln) ftnint ln;
-{	int n;
+lwrt_L(ln, len) ftnint ln; ftnlen len;
+{
+	register int n;
+
 	chk_len(LLOGW);
-	return(wrt_L(&ln,LLOGW));
+	return(wrt_L(&ln,LLOGW, len));
 }
 
 LOCAL
 lwrt_A(p,len) char *p; ftnlen len;
-{	int i,n;
+{	
+	register int i,n;
 	chk_len(LSTRW);
 	if(formatted == LISTDIRECTED)
 	{
@@ -159,7 +176,7 @@ lwrt_F(fn) float fn;
 	else
 	{
 		scale = 1;
-		return(wrt_E(&f,LEW,LED-scale,LEE,(ftnlen)sizeof(float),'e'));
+		return(wrt_E(&f,LEW,LED-scale,LEE,(ftnlen)sizeof(float),'E'));
 	}
 }
 
@@ -179,7 +196,7 @@ lwrt_D(dn) double dn;
 	else
 	{
 		scale = 1;
-		return(wrt_E(&f,LDEW,LDED-scale,LDEE,(ftnlen)sizeof(double),'d'));
+		return(wrt_E(&f,LDEW,LDED-scale,LDEE,(ftnlen)sizeof(double),'D'));
 	}
 }
 

@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)dhv.c	2.6 (2.11BSD) 2026/1/1
+ *	@(#)dhv.c	2.7 (2.11BSD) 2026/5/14
  */
 
 /*
@@ -333,21 +333,9 @@ dhvrint(dhv)
  * the comment in dh.c
 */
 				if	(!(tp->t_flags&RAW))
-#ifdef	OLDWAY
-					c = tp->t_intrc;
-#else
 					c = tp->t_brkc;
 				}
-#endif
 			}
-#if NBK > 0
-		if	(tp->t_line == NETLDISC)
-			{
-			c &= 0x7f;
-			BKINPUT(c, tp);
-			}
-		else
-#endif
 			{
 			if	(!(c & DHV_RB_PE) && dhv_hwxon[(dhv<<3)+line] &&
 				 ((c & 0x7f) == CSTOP || (c & 0x7f) == CSTART))

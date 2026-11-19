@@ -14,14 +14,14 @@
 # IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 # WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
-#	@(#)Makefile	5.4.9 (2.11BSD) 2025/11/25
+#	@(#)Makefile	5.4.10 (2.11BSD) 2026/5/17
 #
 MDIR=	/usr/man/cat8
 SRCS=	adduser.8 autoconfig.8 \
 	bugfiler.8 crash.8 \
 	boot.8 \
-	drtest.8 dump.8 dumpdir.8 \
-	format.8 fsck.8 \
+	dump.8 dumpdir.8 \
+	fsck.8 \
 	getty.8 \
 	intro.8 lpc.8 lpd.8 makedev.8 \
 	makekey.8 \
@@ -35,8 +35,8 @@ SRCS=	adduser.8 autoconfig.8 \
 OBJS=	adduser.0 autoconfig.0 \
 	bugfiler.0 crash.0 \
 	boot.0 \
-	drtest.0 dump.0 dumpdir.0 \
-	format.0 fsck.0 \
+	dump.0 dumpdir.0 \
+	fsck.0 \
 	getty.0 \
 	intro.0 lpc.0 lpd.0 makedev.0 \
 	makekey.0 \

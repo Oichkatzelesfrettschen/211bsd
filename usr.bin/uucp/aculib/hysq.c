@@ -1,5 +1,5 @@
-#ifndef lint
-static char sccsid[] = "@(#)hysq.c	4.1 (Berkeley) 1/22/85";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)hysq.c	4.2 (2.11BSD) 2026/5/9";
 #endif
 
 #include "../condevs.h"
@@ -55,9 +55,6 @@ struct Devices *dev;
 int toneflag;
 {
 	char dcname[20], phone[MAXPH+10], c = 0;
-#ifdef	USG
-	struct termio ttbuf;
-#endif USG
 	int status, dnf;
 	unsigned timelim;
 

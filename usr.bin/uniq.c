@@ -1,9 +1,13 @@
-static char *sccsid = "@(#)uniq.c	4.1 (Berkeley) 10/1/80";
+#if	!defined(lint) && defined(DOSCCS)
+static char *sccsid = "@(#)uniq.c	4.2 (2.11BSD) 2026/5/8";
+#endif
+
 /*
  * Deal with duplicated lines in a file
  */
 #include <stdio.h>
 #include <ctype.h>
+
 int	fields;
 int	letters;
 int	linec;

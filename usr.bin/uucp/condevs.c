@@ -1,5 +1,5 @@
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)condevs.c	5.15.2 (2.11BSD) 1997/10/2";
+static char sccsid[] = "@(#)condevs.c	5.15.3 (2.11BSD) 2026/5/9";
 #endif
 
 /*
@@ -149,36 +149,13 @@ register char *flds[];
 	struct Devices dev;
 	char dcname[20];
 	FILE *dfp;
-#ifdef VMSDTR	/* Modem control on vms(works dtr) */
-	int modem_control;
-	short iosb[4]; 
-	int sys$qiow();	/* use this for long reads on vms */
-	int ret;
-	long mode[2];
-	modem_control = 0;
-#endif
+
 	dfp = fopen(DEVFILE, "r");
 	ASSERT(dfp != NULL, "CAN'T OPEN", DEVFILE, 0);
 	while ((status = rddev(dfp, &dev)) != FAIL) {
-#ifdef VMSDTR	/* Modem control on vms(works dtr) */
-		/* If we find MOD in the device type field we go into action */
-		if (strcmp(dev.D_type, "MOD") == SAME) {
-			modem_control = 1;
-		        DEBUG(7, "Setting Modem control to %d",modem_control);
-		}
-		if (strcmp(flds[F_CLASS], dev.D_class) != SAME)
-				continue;
-		/*
-		 * Modem control on vms(works dtr) Take anything in MOD class.
-	  	 * It probably should work differently anyway so we can have
-		 *  multiple hardwired lines.
-		 */
-		if (!modem_control&&strcmp(flds[F_PHONE], dev.D_line) != SAME)
-#else !VMSDTR
 		if (strcmp(flds[F_CLASS], dev.D_class) != SAME)
 			continue;
 		if (strcmp(flds[F_PHONE], dev.D_line) != SAME)
-#endif !VMSDTR
 			continue;
 		if (mlock(dev.D_line) != FAIL)
 			break;
@@ -202,27 +179,6 @@ register char *flds[];
 	errno = 0;
         DEBUG(4,"Opening %s\n",dcname);
 	dcr = open(dcname, 2); /* read/write */
-#ifdef VMSDTR	/* Modem control on vms(works dtr) */
-	fflush(stdout);
-	if (modem_control) { /* Did we have MOD in the device type field ? */
-		/* Sense the current terminal setup and save it */
-		if ((ret = sys$qiow(_$EFN,(fd_fab_pointer[dcr]->fab).fab$l_stv,
-			IO$_SENSEMODE,iosb,0,0,mode,8,0,0,0,0))
-				!= SS$_NORMAL) {
-			DEBUG(7, "ret status on sense failed on Modem sense=%x<", ret);
-			return CF_DIAL;
-		}
-		mode[1] |= TT$M_MODEM; /* Or in modem control(DTR) */
-		/* Now set the new terminal characteristics */
-		/* This is temporary and will go away when we let go of it */
-		if ((ret = sys$qiow(_$EFN,(fd_fab_pointer[dcr]->fab).fab$l_stv,
-			IO$_SETMODE,iosb,0,0,mode,8,0,0,0,0))
-				!= SS$_NORMAL) {
-			DEBUG(7, "ret status on sense failed on Modem setup=%x<", ret);
-			return CF_DIAL;
-		}
-	}
-#endif VMSDTR
 	next_fd = -1;
 	alarm(0);
 	if (dcr < 0) {
@@ -360,8 +316,8 @@ register char *flds[];
  * intervaldelay:  delay execution for numerator/denominator seconds.
  */
 
-#ifdef INTERVALTIMER
 #define uucpdelay(num,denom) intervaldelay(num,denom)
+
 intervaldelay(num,denom)
 int num, denom;
 {
@@ -370,45 +326,6 @@ int num, denom;
 	tv.tv_usec = (num * 1000000L / denom ) % 1000000L;
 	(void) select (0, (int *)0, (int *)0, (int *)0, &tv);
 }
-#endif INTERVALTIMER
-
-#ifdef FASTTIMER
-#define uucpdelay(num,denom) nap(60*num/denom)
-/*	Sleep in increments of 60ths of second.	*/
-nap (time)
-register int time;
-{
-	static int fd;
-
-	if (fd == 0)
-		fd = open (FASTTIMER, 0);
-
-	read (fd, 0, time);
-}
-#endif FASTTIMER
-
-#ifdef FTIME
-#define uucpdelay(num,denom) ftimedelay(1000*num/denom)
-ftimedelay(n)
-{
-	static struct timeb loctime;
-	register i = loctime.millitm;
-
-	ftime(&loctime);
-	while (abs((int)(loctime.millitm - i))<n) ftime(&loctime)
-		;
-}
-#endif FTIME
-
-#ifdef BUSYLOOP
-#define uucpdelay(num,denom) busyloop(CPUSPEED*num/denom)
-#define CPUSPEED 1000000	/* VAX 780 is 1MIPS */
-#define	DELAY(n)	{ register long N = (n); while (--N > 0); }
-busyloop(n)
-{
-	DELAY(n);
-}
-#endif BUSYLOOP
 
 slowrite(fd, str)
 register char *str;
@@ -431,10 +348,6 @@ register char *str;
 genbrk(fn, bnulls)
 register int fn, bnulls;
 {
-#ifdef	USG
-	if (ioctl(fn, TCSBRK, STBNULL) < 0)
-		DEBUG(5, "break TCSBRK %s\n", strerror(errno));
-#else	!USG
 # ifdef	TIOCSBRK
 	if (ioctl(fn, TIOCSBRK, STBNULL) < 0)
 		DEBUG(5, "break TIOCSBRK %s\n", strerror(errno));
@@ -467,7 +380,6 @@ badbreak:
 		goto badbreak;
 	DEBUG(4, "sent BREAK nulls - %d\n", bnulls);
 #endif !TIOCSBRK
-#endif !USG
 }
 
 

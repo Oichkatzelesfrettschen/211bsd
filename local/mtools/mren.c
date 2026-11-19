@@ -1,3 +1,7 @@
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)mren.c 2.1 (2.11BSD) 2026/3/21";
+#endif
+
 /*
  * Rename an existing MSDOS file
  *
@@ -9,6 +13,7 @@
  */
 
 #include <stdio.h>
+#include <strings.h>
 #include "msdos.h"
 #include "patchlevel.h"
 
@@ -25,10 +30,11 @@ int argc;
 char *argv[];
 {
 	int entry, ismatch, nogo, fargn, verbose;
-	char filename[13], *newfile, *strncpy(), *unix_name();
-	char new[13], ans[10], *temp, *strcpy(), drive, get_drive();
+	char filename[13], *newfile, *unix_name();
+	char new[13], ans[10], *temp, drive, get_drive();
 	char *get_path(), *pathname, *get_name(), *fix_mcwd();
 	unsigned char *target, *dos_name();
+	register char *cp;
 	void exit(), dir_write(), disk_flush(), dir_flush();
 	struct directory *dir, *dir_read();
 
@@ -66,7 +72,11 @@ char *argv[];
 	if (strcmp(temp, new) && verbose) {
 		while (!nogo) {
 			printf("Do you accept \"%s\" as the new filename (y/n) ? ", new);
-			gets(ans);
+			ans[0] = '\0';
+			fgets(ans, sizeof ans, stdin);
+			cp = index(ans, '\n');
+			if	(cp) *cp = '\0';
+
 			if (ans[0] == 'y' || ans[0] == 'Y')
 				break;
 			if (ans[0] == 'n' || ans[0] == 'N')

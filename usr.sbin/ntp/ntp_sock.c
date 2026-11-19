@@ -1,5 +1,5 @@
-#ifndef	lint
-static char *RCSid = "$Source: /usr/users/louie/ntp/RCS/ntp_sock.c,v $ $Revision: 3.4.1.3 $ $Date: 89/05/18 18:28:20 $";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)ntp_sock.c 3.4.1.4 (2.11BSD) 2026/5/10"
 #endif
 
 /*
@@ -62,7 +62,6 @@ struct intf addrs[MAX_INTF];
 int nintf;
 
 #ifdef	TEST
-extern int errno;
 
 main() {
 	int i, cc, val;

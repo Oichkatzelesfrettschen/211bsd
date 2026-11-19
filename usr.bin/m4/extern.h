@@ -33,7 +33,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)extern.h	8.1 (Berkeley) 6/6/93
+ *	@(#)extern.h	8.2 (2.11BSD) 2026/9/16
  */
 
 char	*basename __P((char *));
@@ -61,7 +61,7 @@ int	hash __P((char *));
 int	indx __P((char *, char *));
 ndptr	lookup __P((char *));
 void	map __P((char *, char *, char *, char *));
-int	onintr __P((int));
+void	onintr __P((int));
 void	oops __P((const char *, ...));
 void	pbnum __P((int));
 void	pbstr __P((char *));
@@ -93,6 +93,3 @@ extern char *null;		/* as it says.. just a null. */
 extern char *progname;		/* program name */
 extern char rquote;		/* right quote character (') */
 extern char scommt;		/* start character for comment */
-
-extern	char	*mktemp();
-extern	char	*malloc();

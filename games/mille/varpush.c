@@ -1,7 +1,8 @@
 # include	"mille.h"
+#include <strings.h>
 
 /*
- * @(#)varpush.c	1.1 (Berkeley) 4/1/82
+ * @(#)varpush.c	1.2 (2.11BSD) 2026/1/27
  */
 
 int	read(), write();
@@ -11,8 +12,8 @@ int	read(), write();
  * channel file.  func() is either read or write.
  */
 varpush(file, func)
-reg int	file;
-reg int	(*func)(); {
+register int	file;
+register int	(*func)(); {
 
 	int	temp;
 
@@ -34,9 +35,13 @@ reg int	(*func)(); {
 		Topcard = &Deck[temp];
 		if (Debug) {
 			char	buf[80];
+			register char *cp;
 over:
 			printf("Debug file:");
-			gets(buf);
+			buf[0] = '\0';
+			fgets(buf, sizeof buf, stdin);
+			cp = index(buf, '\n');
+			if (cp) *cp = '\0';
 			if ((outf = fopen(buf, "w")) == NULL) {
 				perror(buf);
 				goto over;

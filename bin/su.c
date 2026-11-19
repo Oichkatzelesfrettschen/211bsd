@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1980 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)su.c	5.4.1 (2.11BSD) 1997/10/2";
+static char sccsid[] = "@(#)su.c	5.4.2 (2.11BSD) 2026/9/17";
 #endif
 
 #include <stdio.h>
@@ -31,6 +31,13 @@ char	*user = "root";
 char	*shell = "/bin/sh";
 int	fulllogin;
 int	fastlogin;
+
+/*
+ * Extremely bad coding practice to re-use libc function names!  getenv and
+ * setenv renamed to xgetenv and xsetenv to avoid conflict with stdlib.h
+*/
+static	void	xsetenv(char *, char *, char *);
+static	char	*xgetenv(char *);
 
 extern char	**environ;
 struct	passwd *pwd;
@@ -122,13 +129,13 @@ ok:
 	if (pwd->pw_shell && *pwd->pw_shell)
 		shell = pwd->pw_shell;
 	if (fulllogin) {
-		cleanenv[4] = getenv("TERM");
+		cleanenv[4] = xgetenv("TERM");
 		environ = cleanenv;
 	}
 	if (strcmp(user, "root"))
-		setenv("USER", pwd->pw_name, userbuf);
-	setenv("SHELL", shell, shellbuf);
-	setenv("HOME", pwd->pw_dir, homebuf);
+		xsetenv("USER", pwd->pw_name, userbuf);
+	xsetenv("SHELL", shell, shellbuf);
+	xsetenv("HOME", pwd->pw_dir, homebuf);
 	setpriority(PRIO_PROCESS, 0, 0);
 	if (fastlogin) {
 		*argv-- = "-f";
@@ -146,7 +153,8 @@ ok:
 	exit(7);
 }
 
-setenv(ename, eval, buf)
+static void
+xsetenv(ename, eval, buf)
 	char *ename, *eval, *buf;
 {
 	register char *cp, *dp;
@@ -166,8 +174,8 @@ setenv(ename, eval, buf)
 	}
 }
 
-char *
-getenv(ename)
+static char *
+xgetenv(ename)
 	char *ename;
 {
 	register char *cp, *dp;

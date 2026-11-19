@@ -13,8 +13,8 @@
   * Author: Wietse Venema, Eindhoven University of Technology, The Netherlands.
   */
 
-#ifndef lint
-static char sccsid[] = "@(#) tcpdmatch.c 1.4 95/01/01 13:34:07";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#) tcpdmatch.c 1.5 (2.11BSD) 2026/5/11";
 #endif
 
 /* System libraries. */
@@ -29,10 +29,7 @@ static char sccsid[] = "@(#) tcpdmatch.c 1.4 95/01/01 13:34:07";
 #include <syslog.h>
 #include <setjmp.h>
 #include <string.h>
-
-extern void exit();
-extern int optind;
-extern char *optarg;
+#include <stdlib.h>
 
 #ifndef	INADDR_NONE
 #define	INADDR_NONE	(-1)		/* XXX should be 0xffffffff */

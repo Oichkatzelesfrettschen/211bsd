@@ -6,7 +6,7 @@
 */
 
 #if	!defined(lint) && defined(DOSCCS)
-static	char	sccsid[] = "@(#)c10.c	2.2 (2.11BSD) 2025/12/25";
+static	char	sccsid[] = "@(#)c10.c	2.3 (2.11BSD) 2026/1/28";
 #endif
 
 #include "c1.h"
@@ -1172,6 +1172,7 @@ struct table *table;
 	lbuf.type = tree->t.type;
 	lbuf.degree = tree->t.degree;
 	lbuf.tr1 = tree;
+	lbuf.tr2 = NULL;
 	return(rcexpr((union tree *)&lbuf, table, reg));
 }
 

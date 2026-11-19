@@ -1,8 +1,9 @@
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)rcsclean.c 4.3 (2.11BSD) 2026/5/11";
+#endif
 /*
  *                     RCS rcsclean operation
  */
-static char rcsid[]=
-"$Header $ Purdue CS";
 /*****************************************************************************
  *                       remove unneded working files
  *****************************************************************************
@@ -37,7 +38,6 @@ static char rcsid[]=
  */
 #include "rcsbase.h"
 #define ERRCODE 2                   /*error code for exit status            */
-static char rcsbaseid[] = RCSBASE;
 
 extern int    cleanup();            /* cleanup after signals                */
 extern char * mktempfile();         /*temporary file name generator         */

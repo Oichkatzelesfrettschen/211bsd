@@ -3,7 +3,7 @@
  * All rights reserved.  The Berkeley software License Agreement
  * specifies the terms and conditions for redistribution.
  *
- *	@(#)time.h	1.3 (2.11BSD) 2000/4/21
+ *	@(#)time.h	1.4 (2.11BSD) 2026/7/21
  */
 
 #ifndef	_SYS_TIME_H_
@@ -16,7 +16,7 @@
  * and used in other calls.
  */
 struct timeval {
-	long	tv_sec;		/* seconds */
+	time_t	tv_sec;		/* seconds */
 	long	tv_usec;	/* and microseconds */
 };
 

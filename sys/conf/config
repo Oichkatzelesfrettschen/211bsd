@@ -1,6 +1,10 @@
 #! /bin/sh
 #	2.11BSD script to set up a new kernel configuration directory.
 #
+#	2026/10/30 - remove 45, 50, 53 and 55 from case PDP11
+#	2026/9/11  - remove TMSCP_DEBUG (not used)
+#	2026/5/15  - remove NHY
+#	2026/2/28  - remove pdpmba
 #       2025/08/11 - add NDHUL to specify no. of lines per DHU
 #       2019/10/18 - the kernel runs on GMT.  The kernel timezone structure
 #                   is obsolete, will be initialized to 0 now and only 
@@ -76,13 +80,13 @@ case $PDP11 in
 		KERN_NONSEP=NO
 		NETFIX=splfix.movb+mfps.sed
 		SPLFIX=splfix.mfps.sed;;
-	44|45|50|55|70)
+	44|70)
 		KERN_NONSEP=NO
 		NETFIX=splfix.movb.sed
 		SPLFIX=splfix.spl.sed;;
 	*)
 		echo "$0: unrecognized PDP11 type $PDP11."
-		echo 'use GENERIC, 44, 70, 73'
+		echo 'use GENERIC, 44, 53, 70, 73, 83, 93, 94'
 		exit 1;;
 esac
 
@@ -185,7 +189,6 @@ echo "#define NEC	$NEC"		> ../$MACHINE/ec.h
 echo "#define NEN	$NEN"		> ../$MACHINE/en.h
 echo "#define NETHER	$NETHER"	> ../$MACHINE/ether.h
 echo "#define NHT	$NHT"		> ../$MACHINE/ht.h
-echo "#define NHY	$NHY"		> ../$MACHINE/hy.h
 echo "#define NIL	$NIL"		> ../$MACHINE/il.h
 echo "#define NIMP	$NIMP"		> ../$MACHINE/imp.h
 echo "#define NKL	$NKL"		> ../$MACHINE/cn.h
@@ -209,9 +212,6 @@ echo "#define NTB	$NTB"		> ../$MACHINE/tb.h
 echo "#define NTS	$NTS"		> ../$MACHINE/ts.h
 echo "#define NTMSCP	$NTMSCP"	> ../$MACHINE/tms.h
 echo "#define NTMS	$NTMS"		>> ../$MACHINE/tms.h
-if [ $TMSCP_DEBUG = YES ]; then
-	echo "#define TMSCP_DEBUG"	>> ../$MACHINE/tms.h
-fi
 if [ $DUMPROUTINE = tmsdump ]; then
 	echo "#define TMSCP_DUMP 1"	>> ../$MACHINE/tms.h
 fi
@@ -268,7 +268,7 @@ fi
 
 echo "OPTS=$OPTS" > ../$MACHINE/Makefile
 
-cp Make.sys Make.pdp Make.pdpuba Make.pdpmba ../$MACHINE
+cp Make.sys Make.pdp Make.pdpuba ../$MACHINE
 
 if   [ $INET = YES ]; then
      cat Make.nsunix >> ../$MACHINE/Makefile

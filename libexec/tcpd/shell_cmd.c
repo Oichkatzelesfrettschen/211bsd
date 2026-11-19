@@ -8,8 +8,8 @@
   * Author: Wietse Venema, Eindhoven University of Technology, The Netherlands.
   */
 
-#ifndef lint
-static char sccsid[] = "@(#) shell_cmd.c 1.5 94/12/28 17:42:44";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#) shell_cmd.c 1.6 (2.11BSD) 2026/5/11";
 #endif
 
 /* System libraries. */
@@ -20,8 +20,7 @@ static char sccsid[] = "@(#) shell_cmd.c 1.5 94/12/28 17:42:44";
 #include <stdio.h>
 #include <syslog.h>
 #include <string.h>
-
-extern void exit();
+#include <stdlib.h>
 
 /* Local stuff. */
 

@@ -1,4 +1,4 @@
-#       Makefile        2.1 (2.11BSD) 2025/11/29
+#       Makefile        2.2 (2.11BSD) 2026/5/19
 #
 # Copyright (C) 1982 by Walter F. Tichy
 #                       Purdue University
@@ -38,14 +38,6 @@ MERGE     = $(RCSDIR)/merge
 OLDDIR    = /usr/old/bin
 
 # 4.  Set the operating system variable OS. If you run on 4.1 BSD, do not
-#     define OS:
-#     OS  =
-#     If you run on USG Unix or UN*X, use:
-#     OS  = -DUSG
-#     If you run on Version 6 Unix, use:
-#     OS  = -DV6
-#     If you run on 4.2 or 4.3 BSD, use:
-#     OS = -DV4_2BSD
 OS        = -DV4_2BSD
 
 # 5.  Decide whether you want strict locking as the default or not.

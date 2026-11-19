@@ -2,9 +2,9 @@
 .\" All rights reserved.  The Berkeley software License Agreement
 .\" specifies the terms and conditions for redistribution.
 .\"
-.\"	@(#)stty.3c	6.1 (Berkeley) 5/15/85
+.\"	@(#)stty.3	6.2 (2.11BSD) 2026/9/27
 .\"
-.TH STTY 3C "May 15, 1985"
+.TH STTY 3 "May 15, 1985"
 .UC 5
 .SH NAME
 stty, gtty \- set and get terminal state (defunct)
@@ -13,22 +13,23 @@ stty, gtty \- set and get terminal state (defunct)
 .B #include <sgtty.h>
 .sp
 .B stty(fd, buf)
-.B int fd;
-.B struct sgttyb *buf;
+.I int fd;
+.I struct sgttyb *buf;
 .sp
 .B gtty(fd, buf)
-.B int fd;
-.B struct sgttyb *buf;
+.I int fd;
+.I struct sgttyb *buf;
 .fi
 .SH DESCRIPTION
 .ft B
-This interface is obsoleted by ioctl(2).
+This interface is obsoleted by and implemented using ioctl(2).
 .ft R
 .PP
-.I Stty
+.B stty
 sets the state of the terminal associated with
 .IR fd .
-.I Gtty
+.sp
+.B gtty
 retrieves the state of the terminal associated
 with
 .IR fd .
@@ -36,15 +37,15 @@ To set the state of a terminal the call must have
 write permission.
 .PP
 The
-.I stty
+.B stty
 call is actually ``ioctl(fd, TIOCSETP, buf)'', while
 the
-.I gtty
+.B gtty
 call is ``ioctl(fd, TIOCGETP, buf)''.
 See 
-.IR ioctl (2)
+.BR ioctl (2)
 and
-.IR tty (4)
+.BR tty (4)
 for an explanation.
 .SH DIAGNOSTICS
 If the call is successful 0 is returned, otherwise \-1 is

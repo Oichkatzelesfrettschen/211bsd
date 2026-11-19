@@ -1,3 +1,7 @@
+#if     !defined(lint) && defined(DOSCCS)
+static  char    sccsid[] = "@(#)main.c 2.0 (2.11BSD) 2026/9/21";
+#endif
+
 #include "defs.h"
 
 	MSG	NOEOR;
@@ -9,8 +13,8 @@
 	char	*lp;
 	int	maxoff;
 	int	maxpos;
-	int	(*sigint)();
-	int	(*sigqit)();
+	sig_t	sigint;
+	sig_t	sigqit;
 	int	wtflag;
 	int	kernel;
 	long	maxfile;
@@ -59,6 +63,7 @@ error(n)
 	longjmp(erradb,1);
 }
 
+void
 fault(a)
 {
 	signal(a,fault);
@@ -113,10 +118,10 @@ main(argc, argv)
 	THEN	var[VARO] = ovlsiz;
 	FI
 
-	IF (sigint=signal(SIGINT,SIG_IGN))!=SIG_IGN
+	IF (sigint=signal(SIGINT, SIG_IGN))!=SIG_IGN
 	THEN	sigint=fault; signal(SIGINT,fault);
 	FI
-	sigqit=signal(SIGQUIT,SIG_IGN);
+	sigqit=signal(SIGQUIT, SIG_IGN);
 	siginterrupt(SIGINT, 1);
 	siginterrupt(SIGQUIT, 1);
 	setjmp(erradb);

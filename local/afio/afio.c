@@ -24,11 +24,14 @@
  *  o Define CTC3B2 to support AT&T 3B2 streaming cartridge tape.
  */
 
-static char *ident = "$Header: afio.c,v 1.68.1 96/3/21 13:07:11 mdb Exp $";
+/*
+ * afio.c 1.68.2  (2.11BSD) 2026/9/21
+*/
 
 #include <stdio.h>
 #include <errno.h>
-#include <sys/signal.h>
+#include <signal.h>
+#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -45,11 +48,6 @@ static char *ident = "$Header: afio.c,v 1.68.1 96/3/21 13:07:11 mdb Exp $";
 #else	/* SYSTIME */
 #	include <time.h>
 #endif	/* SYSTIME */
-
-#ifdef	CTC3B2
-#	include <sys/vtoc.h>
-#	include <sys/ct.h>
-#endif	/* CTC3B2 */
 
 /*
  * Address link information base.
@@ -288,24 +286,6 @@ typedef struct pattern {
  * External functions.
  */
 void	_exit();
-void	exit();
-void	free();
-char	*getenv();
-ushort	getgid();
-Group	*getgrgid();
-Passwd	*getpwuid();
-ushort	getuid();
-Time	*localtime();
-off_t	lseek();
-char	*malloc();
-VOIDFN	(*signal())();
-uint	sleep();
-char	*strcat();
-char	*strchr();
-char	*strcpy();
-char	*strncpy();
-char	*strrchr();
-time_t	time();
 ushort	umask();
 
 /*
@@ -454,7 +434,7 @@ reg char	**av;
 	if (uid == 0)
 		++xflag;
 	VOID signal(SIGPIPE, SIG_IGN);
-	while (c = options(ac, av, "ioptIOVCb:c:de:fghjklmns:uvxXy:Y:z")) {
+	while (c = options(ac, av, "ioptIOVb:c:de:fghjklmns:uvxXy:Y:z")) {
 		switch (c) {
 		case 'i':
 			if (fn)
@@ -487,16 +467,8 @@ reg char	**av;
 			fn = copyout;
 			break;
 		case 'V':
-			VOID printf("%s\n", ident);
+			VOID printf("1.68.2\n");
 			exit(0);
-#ifdef	CTC3B2
-		case 'C':
-			++Cflag;
-			arbsize = 31 * 512;
-			group = 10;
-			aruntil = 1469 * 31 * 512;
-			break;
-#endif	/* CTC3B2 */
 		case 'b':
 			if ((arbsize = (uint) optsize(optarg)) == 0)
 				fatal(optarg, "Bad block size");
@@ -1851,7 +1823,7 @@ STATIC int
 openq()
 {
 	reg int		fd;
-	reg VOIDFN	(*intr)();
+	sig_t intr;
 
 	if ((intr = signal(SIGINT, SIG_IGN)) == SIG_IGN)
 		return (-1);

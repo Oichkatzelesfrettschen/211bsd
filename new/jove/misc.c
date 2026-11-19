@@ -1,16 +1,17 @@
-/***************************************************************************
- * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE *
- * is provided to you without charge, and with no warranty.  You may give  *
- * away copies of JOVE, including sources, provided that this notice is    *
- * included in all the files.                                              *
- ***************************************************************************/
+#if     defined(DOSCCS) && !defined(lint)
+static char *sccsid = "@(#)misc.c 2.0 (2.11BSD) 2026/7/27";
+#endif
+/*
+ * This program is Copyright (C) 1986, 1987, 1988 by Jonathan Payne.  JOVE
+ * is provided to you without charge, and with no warranty.  You may give
+ * away copies of JOVE, including sources, provided that this notice is
+ * included in all the files.
+ */
 
 #include "jove.h"
 #include "ctype.h"
 #include <signal.h>
-#ifdef ANSICODES
-# include "termcap.h"
-#endif
+#include "termcap.h"
 
 void
 prCTIME()
@@ -265,9 +266,7 @@ put_bufs(askp)
 		if (askp && (yes_or_no_p("Write %s? ", curbuf->b_fname) == NO))
 			continue;
 		filemunge(curbuf->b_fname);
-#if !(defined(MSDOS) || defined(MAC))
 		chk_mtime(curbuf, curbuf->b_fname, "save");
-#endif
 		file_write(curbuf->b_fname, 0);
 		unmodify();
 	}
@@ -293,10 +292,6 @@ GoLine()
 {
   	Line	*newline;
 
-#ifndef ANSICODES
- 	if (!is_an_arg())
- 		set_arg_value(ask_int("Line: ",10));
-#else /* not ANSICODES */
  	if (!is_an_arg() || arg_value() <= 0) {
   		if (SP) {
   			putpad(SP, 1);	/* Ask for cursor position */
@@ -304,13 +299,11 @@ GoLine()
 		}
  		set_arg_value(ask_int("Line: ", 10));
   	}
-#endif /* ANSICODES */
  	newline = next_line(curbuf->b_first, arg_value() - 1);
   	PushPntp(newline);
   	SetLine(newline);
 }
 
-#ifdef ANSICODES
 void
 MoveToCursor(line, col)
 {
@@ -503,7 +496,6 @@ AnsiCodes()
 		complain(unsupported);
 	}
 }
-#endif /* ANSICODES */
 
 void
 NotModified()

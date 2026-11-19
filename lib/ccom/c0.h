@@ -3,7 +3,7 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static	char	sccsid[] = "@(#)c0.h	2.0 (2.11BSD) 2020/1/7";
+static	char	sccsid[] = "@(#)c0.h	2.1 (2.11BSD) 2026/1/26";
 #endif
 #include <stdio.h>
 
@@ -304,9 +304,9 @@ int	mossym;
 #define	ASSIGN	80
 
 #define	QUEST	90
-#define	MAX	93
+/* #define	MAX	93 */
 #define	MAXP	94
-#define	MIN	95
+/* #define	MIN	95 */
 #define	MINP	96
 #define	SEQNC	97
 #define	CALL	100
@@ -370,6 +370,7 @@ int	mossym;
 #define	SIGNED	5
 #define	CONST	16
 #define	VOLATIL	17
+#define	RESTR	18
 
 /*
   keywords

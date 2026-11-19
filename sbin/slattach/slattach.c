@@ -1,6 +1,7 @@
-#ifndef lint
-static char sccsid[] = "@(#)slattach.c	4.1 (Berkeley) 2/17/86";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)slattach.c	4.2 (2.11BSD) 2026/5/7";
 #endif
+
 #include <stdio.h>
 #include <sys/param.h>
 #include <sgtty.h>
@@ -9,10 +10,6 @@ static char sccsid[] = "@(#)slattach.c	4.1 (Berkeley) 2/17/86";
 #include <net/if.h>
 #include <netdb.h>
 #include <fcntl.h>
-
-#ifndef lint
-static char rcsid[] = "$Header: slattach.c,v 1.1 84/10/04 12:57:12 rick Exp $";
-#endif
 
 #define DEFAULT_BAUD	9600
 int	slipdisc = SLIPDISC;

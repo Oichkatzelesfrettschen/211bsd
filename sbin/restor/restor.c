@@ -10,7 +10,7 @@
  *		longer ifdef'd on STANDALONE (and is always 3 instead of 1).
  */
 #if     !defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)restor.c     2.0 (2.11BSD) 2025/12/26";
+static char sccsid[] = "@(#)restor.c     2.1 (2.11BSD) 2026/9/22";
 #endif
 
 #include <sys/param.h>
@@ -158,7 +158,7 @@ register char *argv[];
 {
 	register char *cp;
 	char command;
-	int done();
+	void done();
 
 #ifndef STANDALONE
 	mktemp(dirfile);
@@ -291,7 +291,7 @@ newvol:
 		close(mt);
 getvol:
 		printf("Mount desired tape volume: Specify volume #: ");
-		if (gets(tbf) == NULL)
+		if (fgets(tbf, sizeof tbf, stdin) == NULL)
 			return;
 		volno = atoi(tbf);
 		if (volno <= 0) {
@@ -384,7 +384,7 @@ done:
 #ifndef STANDALONE
 		if (command == 'R') {
 			printf("Enter starting volume number: ");
-			if (gets(tbf) == EOF) {
+			if (fgets(tbf, sizeof tbf, stdin) == NULL) {
 				volno = 1;
 				printf("\n");
 			}
@@ -1320,6 +1320,7 @@ register short	*m;
 		;
 }
 
+void
 done()
 {
 #ifndef STANDALONE

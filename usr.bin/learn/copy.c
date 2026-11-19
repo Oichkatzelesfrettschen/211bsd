@@ -22,7 +22,7 @@ FILE *fin;
 	char s[100], t[100], s1[100], nm[30];
 	char *r, *tod, c;
 	int *p, tv[2];
-	extern int intrpt(), *action();
+	extern void intrpt(), *action();
 	extern char *wordb();
 	int nmatch = 0;
 	long mark;

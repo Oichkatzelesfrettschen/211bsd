@@ -32,11 +32,11 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)popen.c	5.16 (Berkeley) 4/1/91";
+static char sccsid[] = "@(#)popen.c	5.17 (2.11BSD) 2026/9/21";
 #endif
 
 #include "rcv.h"
-#include <sys/signal.h>
+#include <signal.h>
 #include <sys/wait.h>
 
 #define READ 0

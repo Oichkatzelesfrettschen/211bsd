@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)escseq.c	5.1 (Berkeley) 4/30/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)escseq.c     5.2 (2.11BSD) 2026/5/11";
+#endif
 
 /*
  * escseq: get us out of any escape sequence we are in the middle of

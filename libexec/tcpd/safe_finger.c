@@ -14,8 +14,8 @@
   * Author: Wietse Venema, Eindhoven University of Technology, The Netherlands.
   */
 
-#ifndef lint
-static char sccsid[] = "@(#) safe_finger.c 1.4 94/12/28 17:42:41";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#) safe_finger.c 1.5 (2.11BSD) 2026/5/11";
 #endif
 
 /* System libraries */
@@ -26,12 +26,11 @@ static char sccsid[] = "@(#) safe_finger.c 1.4 94/12/28 17:42:41";
 #include <stdio.h>
 #include <ctype.h>
 #include <pwd.h>
-
-extern void exit();
+#include <stdlib.h>
 
 /* Local stuff */
 
-char    path[] = "PATH=/bin:/usr/bin:/usr/ucb:/usr/bsd:/etc:/usr/etc:/usr/sbin";
+char    path[] = "/bin:/usr/bin:/usr/ucb:/usr/sbin";
 
 #define	TIME_LIMIT	60		/* Do not keep listinging forever */
 #define	INPUT_LENGTH	100000		/* Do not keep listinging forever */
@@ -76,8 +75,8 @@ char  **argv;
     /*
      * Redirect our standard input through the raw finger command.
      */
-    if (putenv(path)) {
-	fprintf(stderr, "%s: putenv: out of memory", argv[0]);
+    if (setenv("PATH", path, 1)) {
+	fprintf(stderr, "%s: setenv: out of memory", argv[0]);
 	exit(1);
     }
     argv[0] = FINGER_PROGRAM;

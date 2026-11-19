@@ -9,7 +9,7 @@ char copyright[] =
 "@(#) Copyright (c) 1983 Regents of the University of California.\n\
  All rights reserved.\n";
 
-static char sccsid[] = "@(#)atq.c	5.3 (2.11BSD) 9/18/2021";
+static char sccsid[] = "@(#)atq.c	5.4 (2.11BSD) 2026/9/17";
 #endif
 
 /*
@@ -329,7 +329,7 @@ plastrun()
 	struct timeval now;			/* time it is right now */
 	struct timezone zone;			/* NOT USED */
 	struct tm *loc;				/* detail of time it is right */
-	u_long lasttime;			/* last update time in seconds
+	time_t lasttime;			/* last update time in seconds
 						   since 1/1/70 */
 	FILE *last;				/* file where last update hour
 						   is stored */

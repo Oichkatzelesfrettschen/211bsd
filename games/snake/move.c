@@ -530,7 +530,7 @@ getcap()
 	char *term;
 	char *xPC;
 	struct point z;
-	int stop();
+	void stop();
 
 	term = getenv("TERM");
 	if (term==0) {

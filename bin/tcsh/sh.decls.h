@@ -1,5 +1,5 @@
 /*
- *      @(#)sh.decls.h 2.1 (2.11BSD) 2020/1/7
+ *      @(#)sh.decls.h 2.2 (2.11BSD) 2026/9/22
 */
 /*
  * sh.decls	 External declarations from sh*.c
@@ -48,7 +48,7 @@ extern	void		  exitstat	__P((void));
 extern	void		  goodbye	__P((void));
 extern	void		  importpath	__P((Char *));
 extern	void		  initdesc	__P((void));
-extern	sigret_t	  pintr		__P((int));
+extern	void	  	pintr		__P((int));
 extern	void		  pintr1	__P((bool));
 extern	void		  process	__P((bool));
 extern	void		  rechist	__P((void));
@@ -288,7 +288,7 @@ extern	void		  dostop	__P((Char **));
 extern	void		  dowait	__P((void));
 extern	void		  palloc	__P((int, struct command *));
 extern	void		  panystop	__P((bool));
-extern	sigret_t	  pchild	__P((int));
+extern	void	  pchild	__P((int));
 extern	void		  pendjob	__P((void));
 extern	struct process 	 *pfind		__P((Char *));
 extern	int		  pfork		__P((struct command *, int));

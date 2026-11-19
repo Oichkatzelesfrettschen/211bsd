@@ -1,39 +1,22 @@
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)t1.c	4.2.1 (2.11BSD) 1996/10/23";
+static char sccsid[] = "@(#)t1.c	4.2.2 (2.11BSD) 2026/9/21";
 #endif
 
  /* t1.c: main control and input switching */
 #
 # include "t..c"
 #include <signal.h>
-# ifdef gcos
-/* required by GCOS because file is passed to "tbl" by troff preprocessor */
-# define _f1 _f
-extern FILE *_f[];
-# endif
 
-# ifdef unix
 # define MACROS "/usr/share/tmac/tmac.s"
 # define PYMACS "/usr/share/tmac/tmac.m"
-# endif
-
-# ifdef gcos
-# define MACROS "cc/troff/smac"
-# define PYMACS "cc/troff/mmac"
-# endif
 
 # define ever (;;)
 
 main(argc,argv)
 	char *argv[];
 {
-# ifdef unix
-int badsig();
+void badsig();
 signal(SIGPIPE, badsig);
-# endif
-# ifdef gcos
-if(!intss()) tabout = fopen("qq", "w"); /* default media code is type 5 */
-# endif
 exit(tbl(argc,argv));
 }
 

@@ -4,9 +4,9 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)clospl.c	5.2 (Berkeley) 6/8/85";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)clospl.c     5.3 (2.11BSD) 2026/5/11";
+#endif
 
 clospl_(){
 	closepl();

@@ -1,4 +1,4 @@
-# @(#) Makefile 1.1 (2.11BSD) 2025/11/25
+# @(#) Makefile 1.2 (2.11BSD) 2026/6/16
 #
 # $Log:	Makefile,v $
 # Revision 3.4.1.7  89/05/18  12:43:32  louie
@@ -83,27 +83,12 @@ INSTALL= install -c -s -m 755
 
 # FEATURES=
 FEATURES= -DDEBUG -DLOG_NTP=LOG_LOCAL3
-#FEATURES= -DBROADCAST_NTP -DSETTICKADJ -DDEBUG -DLOG_NTP=LOG_LOCAL3
 
 # for 2.11BSD
 DEFINES= -DGENERIC_UNS_BUG -DSUN_FLT_BUG
 
 # for 4.3 BSD
 #DEFINES=
-
-# for Sun
-#DEFINES= -DSUN_FLT_BUG
-
-# for Ultrix 2.0/2.2
-# don't forget to fix the broken definition of inet_addr in netdb.h
-# it should be declared as a u_long not a in_addr  (the doc is wrong also)
-# VAX_COMPILER_FLT_BUG is defined for pcc which doesn't know how to 
-# convert an unsigned long into a float/double
-#DEFINES= -DVAX_COMPILER_FLT_BUG -DNOSWAP
-
-#
-# for a NeXT system, define these pre-processor symbols.
-#DEFINES=-DSUN_FLT_BUG -DGENERIC_UNS_BUG 
 
 CFLAGS= -O ${DEFINES} ${FEATURES}
 #
@@ -170,82 +155,3 @@ depend:
 
 # DO NOT DELETE THIS LINE -- mkdep uses it.
 # DO NOT PUT ANYTHING AFTER THIS LINE, IT WILL GO AWAY.
-
-ntp.o: ntp.c /usr/include/stdio.h /usr/include/sys/types.h
-ntp.o: /usr/include/sys/param.h /usr/include/sys/localopts.h
-ntp.o: /usr/include/machine/machparam.h /usr/include/sys/types.h
-ntp.o: /usr/include/signal.h /usr/include/sys/types.h /usr/include/sys/time.h
-ntp.o: /usr/include/time.h /usr/include/sys/uio.h /usr/include/sys/socket.h
-ntp.o: /usr/include/sys/ioctl.h /usr/include/sys/ttychars.h
-ntp.o: /usr/include/sys/ttydev.h /usr/include/netinet/in.h
-ntp.o: /usr/include/netinet/in_systm.h /usr/include/netinet/ip.h
-ntp.o: /usr/include/netinet/udp.h /usr/include/arpa/inet.h /usr/include/netdb.h
-ntp.o: /usr/include/strings.h /usr/include/errno.h ntp.h
-ntpdc.o: ntpdc.c /usr/include/sys/types.h /usr/include/sys/param.h
-ntpdc.o: /usr/include/sys/localopts.h /usr/include/machine/machparam.h
-ntpdc.o: /usr/include/sys/types.h /usr/include/signal.h
-ntpdc.o: /usr/include/sys/types.h /usr/include/signal.h /usr/include/sys/uio.h
-ntpdc.o: /usr/include/sys/socket.h /usr/include/sys/time.h /usr/include/time.h
-ntpdc.o: /usr/include/netinet/in.h /usr/include/netinet/udp.h
-ntpdc.o: /usr/include/errno.h /usr/include/stdio.h /usr/include/netdb.h
-ntpdc.o: /usr/include/strings.h /usr/include/arpa/inet.h ntp.h
-ntpd.o: ntpd.c /usr/include/stdio.h /usr/include/sys/types.h
-ntpd.o: /usr/include/sys/param.h /usr/include/sys/localopts.h
-ntpd.o: /usr/include/machine/machparam.h /usr/include/sys/types.h
-ntpd.o: /usr/include/signal.h /usr/include/sys/types.h /usr/include/sys/uio.h
-ntpd.o: /usr/include/sys/socket.h /usr/include/sys/time.h /usr/include/time.h
-ntpd.o: /usr/include/sys/ioctl.h /usr/include/sys/ttychars.h
-ntpd.o: /usr/include/sys/ttydev.h /usr/include/sys/resource.h
-ntpd.o: /usr/include/sys/file.h /usr/include/net/if.h /usr/include/net/if_arp.h
-ntpd.o: /usr/include/netinet/in.h /usr/include/netinet/in_systm.h
-ntpd.o: /usr/include/netinet/ip.h /usr/include/netinet/udp.h
-ntpd.o: /usr/include/arpa/inet.h /usr/include/netdb.h /usr/include/strings.h
-ntpd.o: /usr/include/errno.h /usr/include/syslog.h /usr/include/nlist.h
-ntpd.o: /usr/include/sys/types.h ntp.h patchlevel.h
-ntpsubs.o: ntpsubs.c /usr/include/stdio.h /usr/include/sys/types.h
-ntpsubs.o: /usr/include/sys/param.h /usr/include/sys/localopts.h
-ntpsubs.o: /usr/include/machine/machparam.h /usr/include/sys/types.h
-ntpsubs.o: /usr/include/signal.h /usr/include/sys/types.h
-ntpsubs.o: /usr/include/sys/time.h /usr/include/time.h /usr/include/sys/uio.h
-ntpsubs.o: /usr/include/sys/socket.h /usr/include/netinet/in.h
-ntpsubs.o: /usr/include/arpa/inet.h /usr/include/errno.h /usr/include/syslog.h
-ntpsubs.o: ntp.h
-ntp_proto.o: ntp_proto.c /usr/include/stdio.h /usr/include/sys/types.h
-ntp_proto.o: /usr/include/sys/param.h /usr/include/sys/localopts.h
-ntp_proto.o: /usr/include/machine/machparam.h /usr/include/sys/types.h
-ntp_proto.o: /usr/include/signal.h /usr/include/sys/types.h
-ntp_proto.o: /usr/include/sys/uio.h /usr/include/sys/socket.h
-ntp_proto.o: /usr/include/sys/time.h /usr/include/time.h
-ntp_proto.o: /usr/include/sys/ioctl.h /usr/include/sys/ttychars.h
-ntp_proto.o: /usr/include/sys/ttydev.h /usr/include/sys/resource.h
-ntp_proto.o: /usr/include/net/if.h /usr/include/net/if_arp.h
-ntp_proto.o: /usr/include/netinet/in.h /usr/include/netinet/in_systm.h
-ntp_proto.o: /usr/include/netinet/ip.h /usr/include/netinet/udp.h
-ntp_proto.o: /usr/include/arpa/inet.h /usr/include/netdb.h
-ntp_proto.o: /usr/include/strings.h /usr/include/errno.h /usr/include/syslog.h
-ntp_proto.o: ntp.h
-ntp_sock.o: ntp_sock.c /usr/include/sys/types.h /usr/include/sys/param.h
-ntp_sock.o: /usr/include/sys/localopts.h /usr/include/machine/machparam.h
-ntp_sock.o: /usr/include/sys/types.h /usr/include/signal.h
-ntp_sock.o: /usr/include/sys/types.h /usr/include/sys/ioctl.h
-ntp_sock.o: /usr/include/sys/ttychars.h /usr/include/sys/ttydev.h
-ntp_sock.o: /usr/include/sys/file.h /usr/include/sys/socket.h
-ntp_sock.o: /usr/include/netinet/in.h /usr/include/net/if.h
-ntp_sock.o: /usr/include/net/if_arp.h /usr/include/errno.h
-ntp_sock.o: /usr/include/syslog.h /usr/include/stdio.h ntp.h
-ntp_adjust.o: ntp_adjust.c /usr/include/stdio.h /usr/include/sys/types.h
-ntp_adjust.o: /usr/include/sys/param.h /usr/include/sys/localopts.h
-ntp_adjust.o: /usr/include/machine/machparam.h /usr/include/sys/types.h
-ntp_adjust.o: /usr/include/signal.h /usr/include/sys/types.h
-ntp_adjust.o: /usr/include/sys/socket.h /usr/include/sys/time.h
-ntp_adjust.o: /usr/include/time.h /usr/include/sys/ioctl.h
-ntp_adjust.o: /usr/include/sys/ttychars.h /usr/include/sys/ttydev.h
-ntp_adjust.o: /usr/include/sys/resource.h /usr/include/netinet/in.h
-ntp_adjust.o: /usr/include/netinet/in_systm.h /usr/include/netinet/ip.h
-ntp_adjust.o: /usr/include/netinet/udp.h /usr/include/arpa/inet.h
-ntp_adjust.o: /usr/include/netdb.h /usr/include/strings.h /usr/include/errno.h
-ntp_adjust.o: /usr/include/syslog.h ntp.h
-read_local.o: read_local.c
-read_psti.o: read_psti.c
-
-# IF YOU PUT ANYTHING HERE IT WILL GO AWAY

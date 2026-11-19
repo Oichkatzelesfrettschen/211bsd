@@ -1,4 +1,3 @@
-/* $Header: /home/hyperion/mu/christos/src/sys/tcsh-6.00/RCS/tc.func.c,v 3.0 1991/07/04 21:49:28 christos Exp $ */
 /*
  * tc.func.c: New tcsh builtins.
  */
@@ -35,9 +34,9 @@
  * SUCH DAMAGE.
  */
 #include "config.h"
-#if !defined(lint) && !defined(pdp11)
+#if !defined(lint) && defined(DOSCCS)
 static char *rcsid() 
-    { return "$Id: tc.func.c,v 3.0 1991/07/04 21:49:28 christos Exp $"; }
+    { return "$Id: tc.func.c,v 3.1 2026/6/1 21:49:28 (2.11BSD) Exp $"; }
 #endif
 
 #include "sh.h"
@@ -206,14 +205,10 @@ dolist(v)
 	struct wordent cmd, *nextword, *lastword;
 	Char   *cp;
 
-#ifdef BSDSIGS
 	sigmask_t omask = 0;
 
 	if (setintr)
 	    omask = sigblock(sigmask(SIGINT)) & ~sigmask(SIGINT);
-#else
-	sighold(SIGINT);
-#endif
 	if (seterr) {
 	    xfree((ptr_t) seterr);
 	    seterr = NULL;
@@ -251,11 +246,7 @@ dolist(v)
 	/* done. free the lex list and parse tree. */
 	freelex(&cmd), freesyn(t);
 	if (setintr)
-#ifdef BSDSIGS
 	    (void) sigsetmask(omask);
-#else
-	    (void) sigrelse(SIGINT);
-#endif
     }
     else {
 	Char   *dp, *tmp, buf[MAXPATHLEN];
@@ -264,9 +255,6 @@ dolist(v)
 	    tmp = dnormalize(v[k]);
 	    dp = &tmp[Strlen(tmp) - 1];
 	    if (*dp == '/' && dp != tmp)
-#ifdef apollo
-		if (dp != &tmp[1])
-#endif
 		*dp = '\0';
 	    if (stat(short2str(tmp), &st) == -1) {
 		if (k != i) {
@@ -437,19 +425,13 @@ void
 fg_proc_entry(pp)
     register struct process *pp;
 {
-#ifdef BSDSIGS
     sigmask_t omask;
-#endif
     jmp_buf osetexit;
     bool    ohaderr;
 
     getexit(osetexit);
 
-#ifdef BSDSIGS
     omask = sigblock(sigmask(SIGINT));
-#else
-    (void) sighold(SIGINT);
-#endif
 
     ohaderr = haderr;		/* we need to ignore setting of haderr due to
 				 * process getting stopped by a signal */
@@ -462,12 +444,7 @@ fg_proc_entry(pp)
     resexit(osetexit);
     haderr = ohaderr;
 
-#ifdef BSDSIGS
     (void) sigsetmask(omask);
-#else
-    (void) sigrelse(SIGINT);
-#endif
-
 }
 
 static void
@@ -480,16 +457,12 @@ auto_logout()
     (void) close(SHIN);
     set(STRlogout, Strsave(STRa_matic));
     child = 1;
-#ifdef TESLA
-    do_logout = 1;
-#endif				/* TESLA */
     goodbye();
 }
 
-sigret_t
+void
 /*ARGSUSED*/
-alrmcatch(snum)
-int snum;
+alrmcatch()
 {
     time_t  cl, nl;
 
@@ -501,9 +474,6 @@ int snum;
     else
 	auto_logout();
     setalarm();
-#ifndef SIGVOID
-    return (snum);
-#endif
 }
 
 /*
@@ -518,15 +488,10 @@ int snum;
 void
 precmd()
 {
-#ifdef BSDSIGS
     sigmask_t omask;
-#endif
 
-#ifdef BSDSIGS
     omask = sigblock(sigmask(SIGINT));
-#else
-    (void) sighold(SIGINT);
-#endif
+
     if (precmd_active) {	/* an error must have been caught */
 	aliasrun(2, STRunalias, STRprecmd);
 	xprintf("Faulty alias 'precmd' removed.\n");
@@ -537,11 +502,7 @@ precmd()
 	aliasrun(1, STRprecmd, NULL);
 leave:
     precmd_active = 0;
-#ifdef BSDSIGS
     (void) sigsetmask(omask);
-#else
-    (void) sigrelse(SIGINT);
-#endif
 }
 
 /*
@@ -553,15 +514,10 @@ leave:
 void
 cwd_cmd()
 {
-#ifdef BSDSIGS
     sigmask_t omask;
-#endif
 
-#ifdef BSDSIGS
     omask = sigblock(sigmask(SIGINT));
-#else
-    (void) sighold(SIGINT);
-#endif
+
     if (cwdcmd_active) {	/* an error must have been caught */
 	aliasrun(2, STRunalias, STRcwdcmd);
 	xprintf("Faulty alias 'cwdcmd' removed.\n");
@@ -572,13 +528,8 @@ cwd_cmd()
 	aliasrun(1, STRcwdcmd, NULL);
 leave:
     cwdcmd_active = 0;
-#ifdef BSDSIGS
     (void) sigsetmask(omask);
-#else
-    (void) sigrelse(SIGINT);
-#endif
 }
-
 
 /*
  * Karl Kleinpaste, 18 Jan 1984.
@@ -590,15 +541,10 @@ period_cmd()
 {
     register Char *vp;
     time_t  t, interval;
-#ifdef BSDSIGS
     sigmask_t omask;
-#endif
 
-#ifdef BSDSIGS
     omask = sigblock(sigmask(SIGINT));
-#else
-    (void) sighold(SIGINT);
-#endif
+
     if (periodic_active) {	/* an error must have been caught */
 	aliasrun(2, STRunalias, STRperiodic);
 	xprintf("Faulty alias 'periodic' removed.\n");
@@ -618,11 +564,7 @@ period_cmd()
     }
 leave:
     periodic_active = 0;
-#ifdef BSDSIGS
     (void) sigsetmask(omask);
-#else
-    (void) sigrelse(SIGINT);
-#endif
 }
 
 /*

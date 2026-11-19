@@ -5,7 +5,7 @@
  */
 
 #if !defined(lint) && !defined(pdp11)
-static char sccsid[] = "@(#)fly.c	1.3 4/24/85";
+static char sccsid[] = "@(#)fly.c 1.4 (2.11BSD) 2026/9/22";
 #endif
 
 #include "externs.h"
@@ -21,8 +21,9 @@ int dr = 0, dc = 0;
 char destroyed;
 int clock = 120;		/* time for all the flights in the game */
 char cross = 0;
-int (*oldsig)();
+sig_t oldsig;
 
+void
 succumb()
 {
 	switch (oldsig) {
@@ -33,13 +34,13 @@ succumb()
 		break;
 	default:
 		endfly();
-		(*oldsig)();
+		(*oldsig)(0);
 	}
 }
 
 visual()
 {
-	int moveenemy();
+	void moveenemy();
 
 	destroyed = 0;
 	savetty();
@@ -209,6 +210,7 @@ blast()
 	alarm(1);
 }
 
+void
 moveenemy()
 {
 	double d;

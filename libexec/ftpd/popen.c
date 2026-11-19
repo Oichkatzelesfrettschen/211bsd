@@ -20,14 +20,15 @@
  */
 
 #if	!defined(lint) && defined(DOSCCS)
-static char sccsid[] = "@(#)popen.c	5.7.1 (2.11BSD) 1999/10/25";
+static char sccsid[] = "@(#)popen.c	5.7.2 (2.11BSD) 2026/9/21";
 #endif
 
 #include <sys/types.h>
-#include <sys/signal.h>
 #include <sys/wait.h>
+#include <signal.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 /*
  * Special version of popen which avoids call to shell.  This insures noone
@@ -45,7 +46,7 @@ ftpd_popen(program, type)
 	FILE *iop;
 	int argc, gargc, pdes[2], pid;
 	char **pop, *argv[100], *gargv[1000], *vv[2], **ppop, *endprogram;
-	extern char **glob(), **copyblk(), *malloc();
+	extern char **glob(), **copyblk();
 
 	if (*type != 'r' && *type != 'w' || type[1])
 		return(NULL);

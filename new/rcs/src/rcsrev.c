@@ -1,12 +1,10 @@
 /*
  *                     RCS revision number handling
  */
-#ifndef lint
-static char rcsid[]= "$Id: rcsrev.c,v 4.3 87/10/18 10:38:42 narten Exp $ Purdue CS";
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)rcsrev.c 4.4 (2.11BSD) 2026/5/11";
 #endif
-/*********************************************************************************
- *********************************************************************************
- *
+/*
  * Copyright (C) 1982 by Walter F. Tichy
  *                       Purdue University
  *                       Computer Science Department
@@ -17,7 +15,6 @@ static char rcsid[]= "$Id: rcsrev.c,v 4.3 87/10/18 10:38:42 narten Exp $ Purdue 
  * author.
  * Report problems and direct all inquiries to Tichy@purdue (ARPA net).
  */
-
 
 /* $Log:	rcsrev.c,v $
  * Revision 4.3  87/10/18  10:38:42  narten
@@ -53,8 +50,6 @@ static char rcsid[]= "$Id: rcsrev.c,v 4.3 87/10/18 10:38:42 narten Exp $ Purdue 
  * in that case.
  */
 
-
-
 /*
 #define REVTEST
 /* version REVTEST is for testing the routines that generate a sequence
@@ -62,6 +57,7 @@ static char rcsid[]= "$Id: rcsrev.c,v 4.3 87/10/18 10:38:42 narten Exp $ Purdue 
  */
 
 #include "rcsbase.h"
+#include <strings.h>
 
 extern FILE * finptr;   /* RCS input file */
 extern char * getid();
@@ -73,7 +69,18 @@ extern char * getkeyval();
 extern int delta(), deltatext();
 struct hshentry * genbranch(); /* forward */
 
+static char *xgets(char *buf, int sz)
+	{
+	register char *cp;
 
+	buf[0] = '\0';
+	if	(fgets(buf, sz, stdin) == NULL)
+		return(0);
+	cp = index(buf, '\n');
+	if	(cp)
+		*cp = '\0';
+	return(buf);
+	}
 
 int countnumflds(s)
 char * s;
@@ -104,7 +111,7 @@ char * revno, * branchno;
 
         numflds=countnumflds(revno);
         if (numflds%2 == 1)
-                VOID strcpy(branchno,revno);
+                strcpy(branchno,revno);
         else {
                 sp=revno; tp=branchno;
                 for (i=1;i<numflds;i++) {
@@ -666,18 +673,18 @@ int argc; char * argv[];
         do {
                 /* all output goes to stderr, to have diagnostics and       */
                 /* errors in sequence.                                      */
-                VOID fprintf(stderr,"\nEnter revision number or <return> or '.': ");
-                if(gets(symrevno)==NULL) break;
+                fprintf(stderr,"\nEnter revision number or <return> or '.': ");
+                if (xgets(symrevno, sizeof symrevno) == NULL) break;
                 if (*symrevno == '.') break;
-                VOID fprintf(stderr,"%s;\n",symrevno);
+                fprintf(stderr,"%s;\n",symrevno);
                 expandsym(symrevno,numricrevno);
-                VOID fprintf(stderr,"expanded number: %s; ",numricrevno);
-                VOID fprintf(stderr,"Date: ");
-                gets(date); VOID fprintf(stderr,"%s; ",date);
-                VOID fprintf(stderr,"Author: ");
-                gets(author);VOID fprintf(stderr,"%s; ",author);
-                VOID fprintf(stderr,"State: ");
-                gets(state); VOID fprintf(stderr, "%s;\n", state);
+                fprintf(stderr,"expanded number: %s; ",numricrevno);
+                fprintf(stderr,"Date: ");
+                xgets(date, sizeof date); fprintf(stderr,"%s; ",date);
+                fprintf(stderr,"Author: ");
+                xgets(author, sizeof author)); fprintf(stderr,"%s; ",author);
+                fprintf(stderr,"State: ");
+                xgets(state, sizeof state); fprintf(stderr, "%s;\n", state);
                 target=genrevs(numricrevno,*date=='\0'?(char *)nil:date, *author=='\0'?(char *)nil:author,
                               *state=='\0'?(char *)nil:state,gendeltas);
                 if (target!=nil) {
@@ -692,6 +699,5 @@ int argc; char * argv[];
 }
 
 cleanup(){}
-/*dummy*/
 
 #endif REVTEST

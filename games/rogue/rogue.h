@@ -8,7 +8,7 @@
  *    3.)  This code is not to be traded, sold, or used for personal
  *         gain or profit.
  *
- *	@(#)rogue.h	5.2 (Berkeley) 11/25/87
+ *	@(#)rogue.h	5.3 (2.11BSD) 2026/9/22
  */
 
 #define boolean char
@@ -427,7 +427,7 @@ unsigned short gr_what_is();
 long rrandom();
 long lget_number();
 long xxx();
-int byebye(), onintr(), error_save();
+void byebye(), onintr(), error_save();
 
 struct rogue_time {
 	short year;		/* >= 1987 */

@@ -39,11 +39,11 @@ static char copyright[] =
 "@(#) Copyright (c) 1987, 1993\n\
 	The Regents of the University of California.  All rights reserved.\n";
 
-static char sccsid[] = "@(#)disklabel.c	8.1.4 (2.11BSD) 2025/12/11";
+static char sccsid[] = "@(#)disklabel.c	8.1.5 (2.11BSD) 2026/9/21";
 #endif
 
 #include <sys/param.h>
-#include <sys/signal.h>
+#include <signal.h>
 #include <sys/errno.h>
 #include <sys/file.h>
 #include <sys/ioctl.h>
@@ -56,7 +56,11 @@ static char sccsid[] = "@(#)disklabel.c	8.1.4 (2.11BSD) 2025/12/11";
 #include <stdio.h>
 #include <ctype.h>
 #include <strings.h>
-#include "pathnames.h"
+#include <paths.h>
+
+#define _PATH_BOOTDIR	"/mdec"
+#undef	_PATH_TMP
+#define _PATH_TMP	"/tmp/EdDk.aXXXXXX"
 
 /*
  * Disklabel: read and write disklabels.

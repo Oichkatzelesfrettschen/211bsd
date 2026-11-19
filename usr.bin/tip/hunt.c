@@ -4,18 +4,19 @@
  * specifies the terms and conditions for redistribution.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)hunt.c	5.2 (Berkeley) 4/23/87";
-#endif not lint
+#if	!defined(lint) && defined(DOSCCS)
+static char sccsid[] = "@(#)hunt.c	5.3 (2.11BSD) 2026/5/9";
+#endif
 
 #include "tip.h"
+#include <strings.h>
 
 extern char *getremote();
-extern char *rindex();
 
 static	jmp_buf deadline;
 static	int deadfl;
 
+void
 dead()
 {
 
@@ -27,7 +28,7 @@ hunt(name)
 	char *name;
 {
 	register char *cp;
-	int (*f)();
+	sig_t f;
 
 	f = signal(SIGALRM, dead);
 	while (cp = getremote(name)) {
